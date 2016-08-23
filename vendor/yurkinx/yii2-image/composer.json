@@ -1,0 +1,24 @@
+{
+    "name": "yurkinx/yii2-image",
+    "description": "Yii2 extension for image manipulating using Kohana Image Library.",
+    "keywords": ["yii2", "extension", "image"],
+    "homepage": "https://github.com/yurkinx/yii2-image",
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Yuri Kileev",
+            "email": "kileev@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+	"yiisoft/yii2": "*"
+    },
+     "autoload": {
+                "psr-0": {
+                        "yii\\image\\": ""
+                }
+        }
+}
