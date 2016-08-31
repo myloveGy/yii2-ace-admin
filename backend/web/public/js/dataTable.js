@@ -122,9 +122,9 @@ var MeTable = (function($) {
         // 服务器数据处理
         this.tableOptions.fnServerData = function (sSource, aoData, fnCallback)
         {
-            self.options.iLoading = layer.load(),
-                attributes = aoData[2].value.split(","),
-                mSort 	   = (attributes.length + 1) * 5 + 2;
+            self.options.iLoading = layer.load();
+            var attributes = aoData[2].value.split(","),
+            	mSort 	   = (attributes.length + 1) * 5 + 2;
 
             // 添加查询条件
             var data = $(self.options.sSearchForm).serializeArray();
