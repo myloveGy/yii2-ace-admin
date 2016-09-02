@@ -136,7 +136,7 @@ use yii\helpers\Url;
                         <span class="editable editable-click">中国</span>
                         <span id="country" class="editable editable-click"><?=isset($china[0]) ? $china[0]->Name : '选择省'?></span>
                         <span id="city" class="editable editable-click"><?=isset($china[1]) ? $china[1]->Name : '选择市'?></span>
-                        <span id="address" class="editable editable-click" <?=$address == '选择县' ? 'style="display:none"': ''?>"><?=$address?></span>
+                        <span id="address" class="editable editable-click" <?=$address == '选择县' ? 'style="display:none"': ''?>><?=$address?></span>
                     </div>
                 </div>
 

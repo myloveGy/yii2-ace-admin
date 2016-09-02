@@ -134,7 +134,6 @@ var MeTable = (function($) {
                 aoData.push({"name":"params[" + data[i]['name'] + "]", "value":data[i]["value"]});
             }
 
-
             // 添加排序字段信息
             if (aoData[mSort].value != undefined && aoData[mSort].value != "") aoData.push({"name":'params[orderBy]', "value": attributes[parseInt(aoData[mSort].value)]});
 
@@ -209,9 +208,9 @@ var MeTable = (function($) {
 						}
 
 					},		// 获取数据的处理函数
-					"searching": 	 false,
-					"ordering":  	 false,
-					"oLanguage": 	 oTableLanguage,		// 语言配置
+					"searching": 	 false,				// 搜索
+					"ordering":  	 false,			 	// 排序
+					"oLanguage": 	 oTableLanguage,	// 语言配置
 				}
 			};
 
@@ -313,8 +312,7 @@ var MeTable = (function($) {
         if (this.options.bRenderH1) $('h1').html(this.options.sTitle);		// 判断是否渲染H1
 
         // 判断初始化处理(搜索添加位置)
-        if (this.options.sSearchType == 'middle')
-        {
+        if (this.options.sSearchType == 'middle') {
             $('#showTable_filter').html('<form action="post" id="searchForm">' + self.options.sSearchHtml + '</form>');
             $('.me-search').on('keyup change', function () { self.table.draw();}); 						// 搜索事件
             $('#showTable_wrapper div.row div.col-xs-6:first').removeClass('col-xs-6').addClass('col-xs-2').next().removeClass('col-xs-6').addClass('col-xs-10');	// 处理搜索信息
