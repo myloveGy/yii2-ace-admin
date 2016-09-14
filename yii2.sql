@@ -47,7 +47,7 @@ CREATE TABLE `my_admin` (
   UNIQUE KEY `username` (`username`),
   KEY `role` (`role`),
   KEY `status` (`status`),
-  KEY `created_at` (`create_time`)
+  KEY `created_at` (`created_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
