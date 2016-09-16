@@ -16,7 +16,7 @@ nbproject
 Thumbs.db
 
 # composer vendor dir
-# /vendor
+/vendor
 
 # composer itself is not needed
 composer.phar
@@ -31,6 +31,3 @@ phpunit.phar
 
 # vagrant runtime
 /.vagrant
-/backend/web/assets
-/frontend/runtime
-/frontend/web/assets

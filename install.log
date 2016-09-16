@@ -33,7 +33,7 @@ if (! empty($_POST) && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_
     $password = post('pass');     // 数据库密码
     $database = post('database'); // 数据库
     $prefix   = post('prefix');   // 表前缀
-
+	
     $arrError = [
         'status' => 0,
         'msg'    => '提交参数存在问题, 请确认填写完成',
