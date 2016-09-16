@@ -116,7 +116,7 @@ var MeTable = (function($) {
 			iViewLoading: 0, 				// 详情加载Loading
 			iLoading:     0, 				// 页面加载Loading
 			bViewFull: 	  false,			// 详情打开的方式 1 2 打开全屏
-            bColResize:   false,            // 是否运行列宽拖拽
+            bColResize:   false             // 是否运行列宽拖拽
 		};
 
         // 服务器数据处理

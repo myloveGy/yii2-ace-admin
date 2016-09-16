@@ -11,6 +11,7 @@ return [
     'controllerNamespace' => 'backend\controllers',
     'bootstrap'  => ['log'],
     'modules'    => [],
+    'language'   => 'zh-CN',
     'components' => [
         // 权限管理
         'authManager' => [
@@ -80,6 +81,10 @@ return [
         // 错误页面
         'errorHandler' => [
             'errorAction' => 'site/error',
+        ],
+
+        'redis' => [
+            'class' => 'common\components\Redis',
         ],
     ],
 
