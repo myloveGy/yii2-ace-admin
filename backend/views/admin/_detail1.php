@@ -151,7 +151,7 @@ use yii\helpers\Url;
                 <div class="profile-info-row">
                     <div class="profile-info-name"> 添加时间 </div>
                     <div class="profile-info-value">
-                        <span id="login_time"  class="editable editable-click"><?=date('Y-m-d H:i:s', $this->params['user']->create_time)?></span>
+                        <span id="login_time"  class="editable editable-click"><?=date('Y-m-d H:i:s', $this->params['user']->created_at)?></span>
                     </div>
                 </div>
 

@@ -75,7 +75,7 @@
                                     <div class="profile-info-name"> 创建时间 </div>
 
                                     <div class="profile-info-value">
-                                        <span><?=date('Y-m-d H:i:s', $this->params['user']->create_time)?></span>
+                                        <span><?=date('Y-m-d H:i:s', $this->params['user']->created_at)?></span>
                                     </div>
                                 </div>
 
