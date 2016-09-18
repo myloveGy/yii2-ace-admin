@@ -16,6 +16,7 @@ class AppAsset extends AssetBundle
     public $css = [
         'assets/css/bootstrap.min.css',
         'assets/css/font-awesome.min.css',
+        'assets/css/fullcalendar.css',
         'assets/css/jquery-ui.custom.min.css',
         'assets/css/jquery.gritter.css',
         'assets/css/select2.css',
@@ -31,9 +32,11 @@ class AppAsset extends AssetBundle
     public $js = [
         'assets/js/jquery-ui.custom.min.js',
         'assets/js/jquery.ui.touch-punch.min.js',
+        'assets/js/date-time/moment.min.js',
         'assets/js/chosen.jquery.min.js',
         'assets/js/fuelux/fuelux.spinner.min.js',
         'assets/js/fuelux/fuelux.wizard.min.js',
+        'assets/js/fullcalendar.min.js',
         'assets/js/jquery.gritter.min.js',
         'assets/js/bootbox.min.js',
         'assets/js/jquery.easypiechart.min.js',

@@ -132,10 +132,9 @@ AppAsset::register($this);
 
         <div class="sidebar-shortcuts" id="sidebar-shortcuts">
             <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-                <button class="btn btn-success">
-                    <i class="ace-icon fa fa-signal"></i>
+                <button class="btn btn-success" id="bt-me-calendar">
+                    <i class="ace-icon fa fa-calendar"></i>
                 </button>
-
                 <button class="btn btn-info">
                     <i class="ace-icon fa fa-pencil"></i>
                 </button>
@@ -360,6 +359,7 @@ AppAsset::register($this);
         // 用户页面
         $('#bt-me-user').click(function(){window.location.href="<?=Url::toRoute(['admin/view'])?>"});
         $('#bt-me-set').click(function(){window.location.href="<?=Url::toRoute(['site/index'])?>"});
+        $('#bt-me-calendar').click(function(){window.location.href="<?=Url::toRoute(['admin/calendar'])?>"});
     })
 </script>
 </body>
