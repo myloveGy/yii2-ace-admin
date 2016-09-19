@@ -3,8 +3,7 @@
 namespace backend\models;
 
 use Yii;
-use yii\behaviors\TimestampBehavior;
-use common\behaviors\UpdateBehavior;
+use common\models\AdminModel;
 
 /**
  * This is the model class for table "{{%menu}}".
@@ -16,12 +15,12 @@ use common\behaviors\UpdateBehavior;
  * @property string  $url
  * @property integer $status
  * @property integer $sort
- * @property integer $create_time
- * @property integer $create_id
- * @property integer $update_time
- * @property integer $update_id
+ * @property integer $created_at
+ * @property integer $created_id
+ * @property integer $updated_at
+ * @property integer $updated_id
  */
-class Menu extends \common\models\Model
+class Menu extends AdminModel
 {
     /**
      * @inheritdoc
@@ -29,14 +28,6 @@ class Menu extends \common\models\Model
     public static function tableName()
     {
         return '{{%menu}}';
-    }
-
-    public function behaviors()
-    {
-        return [
-            TimestampBehavior::className(),
-            UpdateBehavior::className(),
-        ];
     }
 
     /**
@@ -57,17 +48,17 @@ class Menu extends \common\models\Model
     public function attributeLabels()
     {
         return [
-            'id'          => 'ID',
-            'pid'         => '上级分类',
-            'menu_name'   => '栏目名称',
-            'icons'       => '图标',
-            'url'         => '访问地址',
-            'status'      => '状态',
-            'sort'        => '排序字段',
-            'create_time' => '创建时间',
-            'create_id'   => '创建用户',
-            'update_time' => '修改时间',
-            'update_id'   => '修改用户',
+            'id'         => 'ID',
+            'pid'        => '上级分类',
+            'menu_name'  => '栏目名称',
+            'icons'      => '图标',
+            'url'        => '访问地址',
+            'status'     => '状态',
+            'sort'       => '排序字段',
+            'created_at' => '创建时间',
+            'created_id' => '创建用户',
+            'updated_at' => '修改时间',
+            'updated_id' => '修改用户',
         ];
     }
 

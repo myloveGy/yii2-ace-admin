@@ -70,7 +70,7 @@ class Controller extends \yii\web\Controller
 
         // 查询导航栏信息
         $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
-        if ( ! $menus) throw new \yii\web\UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
+        // if ( ! $menus) throw new \yii\web\UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
 
         // 注入变量信息
         Yii::$app->view->params['menus'] = $menus;

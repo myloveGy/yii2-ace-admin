@@ -129,7 +129,7 @@ class ModuleController extends Controller
             if ($attr && $table && $title && $html && $php)
             {
                 $this->arrError['code'] = 217;
-                if ($table && ($name = trim($table, 'my_')))
+                if ($table && ($name = trim($table, Yii::$app->db->tablePrefix)))
                 {
                     // 拼接字符串
                     $dirName  = Yii::$app->basePath.'/';
@@ -196,15 +196,12 @@ class ModuleController extends Controller
     {
         if ( ! Menu::find()->where(['menu_name' => $title])->one())
         {
-            $time = time();
             $model = new Menu();
             $model->menu_name   = $title;
             $model->pid         = 0;
             $model->icons       = 'icon-cog';
             $model->url         = $name.'/index';
             $model->status      = 1;
-            $model->create_time = $model->update_time = $time;
-            $model->create_id   = $model->update_id   = Yii::$app->user->id;
             $model->save(false);
         }
     }
@@ -374,6 +371,8 @@ html;
         // 生成文件
         if ( ! empty($path))
         {
+            $dirName = dirname($path);
+            if (!file_exists($dirName)) mkdir($dirName, 0755, true);
             file_put_contents($path, $sHtml);
             return $strWhere;
         }
