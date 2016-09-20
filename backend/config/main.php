@@ -68,6 +68,7 @@ return [
                 ],
             ],
         ],
+
         // 日志
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -78,13 +79,10 @@ return [
                 ],
             ],
         ],
+
         // 错误页面
         'errorHandler' => [
             'errorAction' => 'site/error',
-        ],
-
-        'redis' => [
-            'class' => 'common\components\Redis',
         ],
     ],
 
