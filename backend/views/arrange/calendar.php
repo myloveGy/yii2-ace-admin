@@ -172,7 +172,7 @@ $this->params['breadcrumbs'] = [
                              <div class="modal-body">\
                                <button type="button" class="close" data-dismiss="modal" style="margin-top:-10px;">&times;</button>\
                                <form class="no-margin">\
-                                  <label> 更改时间名称 &nbsp;</label>\
+                                  <label> 更改事件名称 &nbsp;</label>\
                                   <input class="middle" autocomplete="off" type="text" value="' + calEvent.title + '" />\
                          <button type="submit" class="btn btn-sm btn-success"><i class="ace-icon fa fa-check"></i> 保存 </button>\
                        </form>\
