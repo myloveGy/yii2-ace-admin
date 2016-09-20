@@ -81,7 +81,6 @@ $this->params['breadcrumbs'] = [
         var m = date.getMonth();
         var y = date.getFullYear();
 
-
         var calendar = $('#calendar').fullCalendar({
             //isRTL: true,
             buttonHtml: {
@@ -94,24 +93,25 @@ $this->params['breadcrumbs'] = [
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay'
             },
-            events: [
-                {
-                    title: '这一天要办',
-                    start: new Date(y, m, 1),
-                    className: 'label-important'
-                },
-                {
-                    title: '长期代办事务',
-                    start: new Date(y, m, d - 5),
-                    end: new Date(y, m, d - 2),
-                    className: 'label-success'
-                },
-                {
-                    title: '一些事件',
-                    start: new Date(y, m, d - 3, 16, 0),
-                    allDay: false
-                }
-            ]
+            events: <?=$userArrange?>
+//            events: [
+//                {
+//                    title: '这一天要办',
+//                    start: new Date(y, m, 1),
+//                    className: 'label-important'
+//                },
+//                {
+//                    title: '长期代办事务',
+//                    start: new Date(y, m, d - 5),
+//                    end: new Date(y, m, d - 2),
+//                    className: 'label-success'
+//                },
+//                {
+//                    title: '一些事件',
+//                    start: new Date(y, m, d - 3, 16, 0),
+//                    allDay: false
+//                }
+//            ]
             ,
             editable: true,
             droppable: true, // this allows things to be dropped onto the calendar !!!
@@ -145,8 +145,8 @@ $this->params['breadcrumbs'] = [
             selectable: true,
             selectHelper: true,
             select: function(start, end, allDay) {
-
-                bootbox.prompt("New Event Title:", function(title) {
+                bootbox.prompt("添加一个新的事件:", function(title) {
+                    console.info(start, end, allDay);
                     if (title !== null) {
                         calendar.fullCalendar('renderEvent',
                             {
@@ -160,38 +160,34 @@ $this->params['breadcrumbs'] = [
                     }
                 });
 
-
                 calendar.fullCalendar('unselect');
             }
             ,
             eventClick: function(calEvent, jsEvent, view) {
-
-                //display a modal
+                // display a modal
                 var modal =
-                    '<div class="modal fade">\
-                      <div class="modal-dialog">\
-                       <div class="modal-content">\
-                         <div class="modal-body">\
-                           <button type="button" class="close" data-dismiss="modal" style="margin-top:-10px;">&times;</button>\
-                           <form class="no-margin">\
-                              <label>Change event name &nbsp;</label>\
-                              <input class="middle" autocomplete="off" type="text" value="' + calEvent.title + '" />\
-					 <button type="submit" class="btn btn-sm btn-success"><i class="ace-icon fa fa-check"></i> Save</button>\
-				   </form>\
-				 </div>\
-				 <div class="modal-footer">\
-					<button type="button" class="btn btn-sm btn-danger" data-action="delete"><i class="ace-icon fa fa-trash-o"></i> Delete Event</button>\
-					<button type="button" class="btn btn-sm" data-dismiss="modal"><i class="ace-icon fa fa-times"></i> Cancel</button>\
-				 </div>\
-			  </div>\
-			 </div>\
-			</div>';
-
+                        '<div class="modal fade">\
+                          <div class="modal-dialog">\
+                           <div class="modal-content">\
+                             <div class="modal-body">\
+                               <button type="button" class="close" data-dismiss="modal" style="margin-top:-10px;">&times;</button>\
+                               <form class="no-margin">\
+                                  <label> 更改时间名称 &nbsp;</label>\
+                                  <input class="middle" autocomplete="off" type="text" value="' + calEvent.title + '" />\
+                         <button type="submit" class="btn btn-sm btn-success"><i class="ace-icon fa fa-check"></i> 保存 </button>\
+                       </form>\
+                     </div>\
+                     <div class="modal-footer">\
+                        <button type="button" class="btn btn-sm btn-danger" data-action="delete"><i class="ace-icon fa fa-trash-o"></i> 删除这个事件 </button>\
+                        <button type="button" class="btn btn-sm" data-dismiss="modal"><i class="ace-icon fa fa-times"></i> 取消 </button>\
+                     </div>\
+                  </div>\
+                 </div>\
+                </div>';
 
                 var modal = $(modal).appendTo('body');
                 modal.find('form').on('submit', function(ev){
                     ev.preventDefault();
-
                     calEvent.title = $(this).find("input[type=text]").val();
                     calendar.fullCalendar('updateEvent', calEvent);
                     modal.modal("hide");
@@ -199,7 +195,7 @@ $this->params['breadcrumbs'] = [
                 modal.find('button[data-action=delete]').on('click', function() {
                     calendar.fullCalendar('removeEvents' , function(ev){
                         return (ev._id == calEvent._id);
-                    })
+                    });
                     modal.modal("hide");
                 });
 
@@ -207,14 +203,11 @@ $this->params['breadcrumbs'] = [
                     modal.remove();
                 });
 
-
                 //console.log(calEvent.id);
                 //console.log(jsEvent);
                 //console.log(view);
-
                 // change the border color just for fun
                 //$(this).css('border-color', 'red');
-
             }
 
         });

@@ -41,6 +41,22 @@ class ArrangeController extends Controller
     {
         // 查询管理员的日程
         $arrUserArrange = Arrange::findAll(['admin_id' => Yii::$app->user->id]);
+        if ($arrUserArrange) {
+            $arrTmp = [];
+            foreach ($arrUserArrange as $value) {
+                $arrTmp[] = [
+                    'id'    => $value->id,
+                    'title' => $value->title,
+                    'start' => date('Y-m-d H:i:s', $value->start_at),
+                    'end'   => date('Y-m-d H:i:s', $value->end_at),
+                    'className' => Arrange::getStatusColors($value->status),
+                ];
+            }
+
+            $arrUserArrange = $arrTmp;
+        }
+
+        $arrUserArrange = \yii\helpers\Json::encode($arrUserArrange);
 
         // 查询没有委派的信息
         $arrArrange    = Arrange::find()->where(['status' => Arrange::STATUS_PENDING, 'admin_id' => 0])->orderBy(['time_status' => SORT_DESC])->all();
