@@ -209,6 +209,5 @@ $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.tree.min.js');
     });
 
     // 导航栏样式装换
-    var select = 'ul.nav-list a[href=\\/role\\/index]';
-    $(select).closest('li').addClass('active').parentsUntil('ul.nav-list').addClass('active open');
+    handleMenuActive('\\/role\\/index');
 </script>

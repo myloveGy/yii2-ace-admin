@@ -1,7 +1,15 @@
 <?php
 // 定义标题和面包屑信息
-$this->title = '日程管理';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = '我的日程管理';
+$this->params['breadcrumbs'] = [
+    [
+        'label' => '日程管理',
+        'url'   => ['/arrange/index']
+    ],
+
+    $this->title
+];
+
 ?>
 <div class="row">
     <div class="col-sm-9">
@@ -22,41 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="widget-body">
                 <div class="widget-main no-padding">
                     <div id="external-events">
-                        <div class="external-event label-grey" data-class="label-grey">
+                        <?php if ($arrange) : ?>
+                        <?php foreach ($arrange as $value) : ?>
+                        <div class="external-event <?=$timeColors[$value->time_status]?>" data-class="<?=$timeColors[$value->time_status]?>">
                             <i class="ace-icon fa fa-arrows"></i>
-                            My Event 1
+                            <?=$value->title?>
                         </div>
-
-                        <div class="external-event label-success" data-class="label-success">
-                            <i class="ace-icon fa fa-arrows"></i>
-                            My Event 2
-                        </div>
-
-                        <div class="external-event label-danger" data-class="label-danger">
-                            <i class="ace-icon fa fa-arrows"></i>
-                            My Event 3
-                        </div>
-
-                        <div class="external-event label-purple" data-class="label-purple">
-                            <i class="ace-icon fa fa-arrows"></i>
-                            My Event 4
-                        </div>
-
-                        <div class="external-event label-yellow" data-class="label-yellow">
-                            <i class="ace-icon fa fa-arrows"></i>
-                            My Event 5
-                        </div>
-
-                        <div class="external-event label-pink" data-class="label-pink">
-                            <i class="ace-icon fa fa-arrows"></i>
-                            My Event 6
-                        </div>
-
-                        <div class="external-event label-info" data-class="label-info">
-                            <i class="ace-icon fa fa-arrows"></i>
-                            My Event 7
-                        </div>
-
+                        <?php endforeach; ?>
+                        <?php endif; ?>
                         <label>
                             <input type="checkbox" class="ace ace-checkbox" id="drop-remove" />
                             <span class="lbl"> 删除移动掉事件 </span>
@@ -69,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script type="text/javascript">
     jQuery(function($) {
-
+        handleMenuActive('\\/arrange\\/index');
         /* initialize the external events
          -----------------------------------------------------------------*/
         $('#external-events div.external-event').each(function() {

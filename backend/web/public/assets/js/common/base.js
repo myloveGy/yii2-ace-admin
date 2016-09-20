@@ -423,3 +423,9 @@ function viewTable(object, data, tClass, row)
         (k.createdCell != undefined && typeof k.createdCell == "function") ? k.createdCell(dataInfo, tmpValue, data, row, undefined) : dataInfo.html(tmpValue);
     });
 }
+
+// 处理导航显示
+function handleMenuActive(strUrl)
+{
+    $('ul.nav-list a[href=' + strUrl + ']').closest('li').addClass('active').parentsUntil('ul.nav-list').addClass('active open');
+}

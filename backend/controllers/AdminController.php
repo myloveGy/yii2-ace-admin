@@ -41,12 +41,6 @@ class AdminController extends Controller
         ]);
     }
 
-    // 管理员日程
-    public function actionCalendar()
-    {
-        return $this->render('calendar');
-    }
-
     // 返回model
     public function getModel() { return new Admin();}
 

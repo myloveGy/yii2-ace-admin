@@ -61,8 +61,8 @@ AppAsset::register($this);
     <![endif]-->
     <script src="/public/assets/js/ace-elements.min.js"></script>
     <script src="/public/assets/js/ace.min.js"></script>
-    <script src="/public/js/base.js"></script>
-    <script src="/public/js/dataTable.js"></script>
+    <script src="/public/assets/js/common/base.js"></script>
+    <script src="/public/assets/js/common/dataTable.js"></script>
 </head>
 <body class="no-skin">
 <?php $this->beginBody() ?>
@@ -359,7 +359,7 @@ AppAsset::register($this);
         // 用户页面
         $('#bt-me-user').click(function(){window.location.href="<?=Url::toRoute(['admin/view'])?>"});
         $('#bt-me-set').click(function(){window.location.href="<?=Url::toRoute(['site/index'])?>"});
-        $('#bt-me-calendar').click(function(){window.location.href="<?=Url::toRoute(['admin/calendar'])?>"});
+        $('#bt-me-calendar').click(function(){window.location.href="<?=Url::toRoute(['arrange/calendar'])?>"});
     })
 </script>
 </body>

@@ -117,9 +117,6 @@ class Menu extends AdminModel
                     $navigation[$id]['child'][] = $value;
             }
 
-            // 按照ID排序
-            ksort($navigation);
-
             // 将导航栏信息添加到缓存
             $cache = Yii::$app->cache;
             if ($cache->get($index)) $cache->delete($index);
