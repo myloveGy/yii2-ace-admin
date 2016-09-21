@@ -40,7 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
         "aoColumns":[
 			oCheckBox,
 			{"title": "id ", "data": "id", "sName": "id", "edit": {"type": "hidden", "options": {}}, "search": {"type": "text"}}, 
-			{"title": "事件标题", "data": "title", "sName": "title", "edit": {"type": "text", "options": {"required":true, "rangelength":"[2, 100]"}}, "search": {"type": "text"}, "bSortable": false},
+			{"title": "事件标题", "data": "title", "editTable":{validate:function(x){
+                var l = x.length; if (x > 100 || x < 2) return "长度必须为2到50字符";
+            }}, "sName": "title", "edit": {"type": "text", "options": {"required":true, "rangelength":"[2, 100]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "事件描述", "data": "desc", "sName": "desc", "edit": {"type": "textarea", "options": {"required":true, "rangelength":"[2, 255]"}}, "bSortable": false},
 			{"title": "开始时间", "data": "start_at", "sName": "start_at", "edit": {"type": "datetime", "options": {"required":true}}, "createdCell" : dateTimeString},
 			{"title": "结束时间", "data": "end_at", "sName": "end_at", "edit": {"type": "datetime", "options": {"required":true, "class": "m-time"}}, "createdCell" : dateTimeString},
