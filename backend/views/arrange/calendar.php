@@ -47,6 +47,8 @@ $this->params['breadcrumbs'] = [
         </div>
     </div>
 </div>
+
+<!--隐藏的编辑表单-->
 <div class="modal fade" id="calendarModal"  tabindex="-1" role="dialog" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
