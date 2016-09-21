@@ -42,7 +42,6 @@ class AppAsset extends AssetBundle
         'js/jquery.easypiechart.min.js',
         'js/date-time/bootstrap-datepicker.min.js',
         'js/date-time/bootstrap-timepicker.min.js',
-        'js/date-time/moment.min.js',
         'js/date-time/daterangepicker.min.js',
         'js/date-time/bootstrap-datetimepicker.min.js',
         'js/date-time/locales/bootstrap-datepicker.zh-CN.js',
