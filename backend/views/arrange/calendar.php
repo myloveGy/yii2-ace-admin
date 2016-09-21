@@ -186,16 +186,6 @@ $this->params['breadcrumbs'] = [
         /* initialize the external events
          -----------------------------------------------------------------*/
         $('#external-events div.external-event').each(function() {
-
-            // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
-            // it doesn't need to have a start or end
-            var eventObject = {
-                title: $.trim($(this).text()) // use the element's text as the event title
-            };
-
-            // store the Event Object in the DOM element so we can get to it later
-            $(this).data('eventObject', eventObject);
-
             // make the event draggable using jQuery UI
             $(this).draggable({
                 zIndex: 999,
@@ -258,7 +248,7 @@ $this->params['breadcrumbs'] = [
                     'title':        $.trim($(this).attr('sTitle')),
                     'desc':         $.trim($(this).attr('sDesc')),
                     'start_at':     date.format('YYYY-MM-DD HH:mm:ss'),
-                    'end_at':       (new Date(form.start_at.value)).getTime() / 1000 + 86400,
+                    'end_at':       (new Date(date.format('YYYY-MM-DD HH:mm:ss'))).getTime() / 1000 + 86400,
                     'status':       1,
                     'time_status': $.trim($(this).attr('iTimeStatus')),
                     'actionType':  isDel ? 'update' : 'insert'
