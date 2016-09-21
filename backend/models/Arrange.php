@@ -12,6 +12,7 @@ use common\models\AdminModel;
  * @property string $desc
  * @property integer $start_at
  * @property integer $status
+ * @property integer $time_status
  * @property integer $end_at
  * @property integer $created_at
  * @property integer $created_id

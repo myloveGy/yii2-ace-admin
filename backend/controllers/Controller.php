@@ -82,8 +82,7 @@ class Controller extends \yii\web\Controller
     {
         parent::init();
         // 查询后台管理员信息
-        $admin = Admin::find()->select(['id', 'username'])->all();
-        $this->admins = ArrayHelper::map($admin, 'id', 'username');
+        $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
         // 注入变量信息
         Yii::$app->view->params['admins'] = $this->admins;
         Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
@@ -223,22 +222,19 @@ class Controller extends \yii\web\Controller
                 {
                     // 修改和删除时的查询数据
                     if ($type == 'update' || $type == 'delete') $model = $model->findOne($data[$index[0]]);
-
-                    // 删除数据
-                    if ($type == 'delete')
-                    {
-                        $this->arrError['code'] = 206;
-                        $isTrue = $model->delete();
-                    }
-                    else
-                    {
-                        // 新增数据
-                        $this->arrError['code'] = 205;
-                        $isTrue = $model->load(['params' => $data], 'params');
-                        if ($isTrue)
-                        {
-                            $isTrue = $model->save();
-                            $this->arrError['msg'] = $model->getErrorString();
+                    if ($model) {
+                        // 删除数据
+                        if ($type == 'delete') {
+                            $this->arrError['code'] = 206;
+                            $isTrue = $model->delete();
+                        } else {
+                            // 新增数据
+                            $this->arrError['code'] = 205;
+                            $isTrue = $model->load(['params' => $data], 'params');
+                            if ($isTrue) {
+                                $isTrue = $model->save();
+                                $this->arrError['msg'] = $model->getErrorString();
+                            }
                         }
                     }
                 }
