@@ -300,8 +300,8 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 -- Table structure for china
 -- ----------------------------
-DROP TABLE IF EXISTS `china`;
-CREATE TABLE `china` (
+DROP TABLE IF EXISTS `yii2_china`;
+CREATE TABLE `yii2_china` (
   `Id` int(11) NOT NULL,
   `Name` varchar(40) default NULL,
   `Pid` int(11) default NULL,

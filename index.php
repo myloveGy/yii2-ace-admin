@@ -42,7 +42,7 @@ if (! empty($_POST) && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_
     // 验证数据的有性
     if ($host && $username && $password && $database)
     {
-        $prefix = $prefix ? $prefix : 'my_';
+        $prefix = $prefix ? $prefix : 'yii_2';
         // 验证数据库名称只能小写字母加下划线
         $arrError['msg'] = '数据库名称只能小写字母加下划线';
         if (preg_match('/^[a-z]{1,}[a-z_0-9]{1,}$/', $database))
@@ -86,7 +86,7 @@ if (! empty($_POST) && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_
                     {
                         set_time_limit(0);
                         // 执行数据库操作
-                        $mysql->multi_query(str_replace('my_', $prefix, file_get_contents('./yii2.sql')));
+                        $mysql->multi_query(str_replace('yii2_', $prefix, file_get_contents('./yii2.sql')));
                         do {
                             $result = $mysql->store_result();
                             if ($result) $result->free();
