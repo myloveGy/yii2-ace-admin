@@ -44,7 +44,7 @@ class AppAsset extends AssetBundle
         'js/date-time/bootstrap-timepicker.min.js',
         'js/date-time/daterangepicker.min.js',
         'js/date-time/bootstrap-datetimepicker.min.js',
-        'js/date-time/locales/bootstrap-datepicker.zh-CN.js',
+//        'js/date-time/locales/bootstrap-datepicker.zh-CN.js',
         'js/jquery.hotkeys.min.js',
         'js/bootstrap-wysiwyg.min.js',
         'js/select2.min.js',
