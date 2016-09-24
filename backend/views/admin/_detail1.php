@@ -134,8 +134,8 @@ use yii\helpers\Url;
                     <div class="profile-info-value">
                         <i class="fa fa-map-marker light-orange bigger-110"></i>
                         <span class="editable editable-click">中国</span>
-                        <span id="country" class="editable editable-click"><?=isset($china[0]) ? $china[0]->Name : '选择省'?></span>
-                        <span id="city" class="editable editable-click"><?=isset($china[1]) ? $china[1]->Name : '选择市'?></span>
+                        <span id="country" class="editable editable-click"><?=isset($china[0]) ? $china[0]->name : '选择省'?></span>
+                        <span id="city" class="editable editable-click"><?=isset($china[1]) ? $china[1]->name : '选择市'?></span>
                         <span id="address" class="editable editable-click" <?=$address == '选择县' ? 'style="display:none"': ''?>><?=$address?></span>
                     </div>
                 </div>
@@ -387,12 +387,12 @@ use yii\helpers\Url;
 
         // 市
         <?php if (isset($china[0]) && isset($china[1])) : ?>
-        selectCity(<?=$china[0]->Id?>, '<?=$china[1]->Name?>');
+        selectCity(<?=$china[0]->id?>, '<?=$china[1]->name?>');
         <?php endif; ?>
 
         // 县
         <?php if (isset($china[1]) && $address !== '选择县') : ?>
-        selectAddress(<?=$china[1]->Id?>, '<?=$address?>');
+        selectAddress(<?=$china[1]->id?>, '<?=$address?>');
         <?php endif; ?>
 
 

@@ -14,13 +14,12 @@ use yii\helpers\ArrayHelper;
 
 class ChinaController extends Controller
 {
-    public $sort = 'Id';
     // 查询方法
     public function where($params)
     {
         return [
-            'Name' => 'like',
-            'Pid'  => '='
+            'name' => 'like',
+            'pid'  => '='
         ];
     }
 
@@ -29,7 +28,7 @@ class ChinaController extends Controller
     {
         // 加载视图
         return $this->render('index', [
-            'parent' => ArrayHelper::map(China::find()->where(['Pid' => 0])->all(), 'Id', 'Name'),
+            'parent' => ArrayHelper::map(China::find()->where(['pid' => 0])->all(), 'id', 'name'),
         ]);
     }
 

@@ -161,7 +161,7 @@ class AdminController extends Controller
                 if (isset($arrAddress[2])) $address = $arrAddress[2];
 
                 // 查询省市信息
-                $arrChina = \common\models\China::find()->where(['Name' => array_slice($arrAddress, 0, 2)])->orderBy(['Pid' => SORT_ASC])->all();
+                $arrChina = \common\models\China::find()->where(['name' => array_slice($arrAddress, 0, 2)])->orderBy(['pid' => SORT_ASC])->all();
             }
         }
 
@@ -234,12 +234,12 @@ class AdminController extends Controller
         {
             $strName = $request->get('query');          // 查询参数
             $intPid  = (int)$request->get('iPid', 0);   // 父类ID
-            $where   = ['and', ['Pid' => $intPid], ['<>', 'Id', 0]];
-            if ( ! empty($strName)) array_push($where, ['like', 'Name', $strName]);
-            $arrCountry = China::find()->select(['Id', 'Name'])->where($where)->all();
+            $where   = ['and', ['pid' => $intPid], ['<>', 'id', 0]];
+            if ( ! empty($strName)) array_push($where, ['like', 'name', $strName]);
+            $arrCountry = China::find()->select(['id', 'name'])->where($where)->all();
             if ($arrCountry)
             {
-                foreach ($arrCountry as $value) $array[] = ['id' => $value->Id, 'text' => $value->Name];
+                foreach ($arrCountry as $value) $array[] = ['id' => $value->id, 'text' => $value->name];
             }
         }
 

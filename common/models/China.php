@@ -28,10 +28,10 @@ class China extends \common\models\Model
     public function rules()
     {
         return [
-            [['Id'], 'required'],
-            [['Id', 'Pid'], 'integer'],
-            [['Name'], 'string', 'max' => 40],
-            [['Pid'], 'exist', 'skipOnError' => true, 'targetClass' => China::className(), 'targetAttribute' => ['Pid' => 'Id']],
+            [['id'], 'required'],
+            [['id', 'pid'], 'integer'],
+            [['name'], 'string', 'max' => 40],
+            [['pid'], 'exist', 'skipOnError' => true, 'targetClass' => China::className(), 'targetAttribute' => ['Pid' => 'Id']],
         ];
     }
 
@@ -41,18 +41,18 @@ class China extends \common\models\Model
     public function attributeLabels()
     {
         return [
-            'Id' => 'ID',
-            'Name' => 'Name',
-            'Pid' => 'Pid',
+            'id'   => 'ID',
+            'name' => '名称',
+            'pid'  => '父类ID',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getP()
+    public function getParent()
     {
-        return $this->hasOne(China::className(), ['Id' => 'Pid']);
+        return $this->hasOne(China::className(), ['id' => 'pid']);
     }
 
     /**
@@ -60,7 +60,7 @@ class China extends \common\models\Model
      */
     public function getChinas()
     {
-        return $this->hasMany(China::className(), ['Pid' => 'Id']);
+        return $this->hasMany(China::className(), ['pid' => 'id']);
     }
 
 }
