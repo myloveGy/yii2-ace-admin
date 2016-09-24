@@ -296,7 +296,6 @@ INSERT INTO `yii2_menu` VALUES ('6', '1', '权限管理', '', 'authority/index',
 INSERT INTO `yii2_menu` VALUES ('7', '0', '地址信息', 'menu-icon fa fa-bank', 'china/index', '1', '3', '1469415343', '2', '1474340794', '1');
 INSERT INTO `yii2_menu` VALUES ('8', '0', '日程管理', 'menu-icon fa fa-calendar', 'arrange/index', '1', '1', '1474340682', '1', '1474340932', '1');
 
-SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 -- Table structure for china
 -- ----------------------------
