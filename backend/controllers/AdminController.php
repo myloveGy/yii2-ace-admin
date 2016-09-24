@@ -59,20 +59,20 @@ class AdminController extends Controller
             {
                 case 'insert':
                     $model = new Admin(['scenario' => 'admin-create']);
-                    $this->arrError['code'] = 206;
+                    $this->arrAjax['code'] = 206;
                     if ($model->load(['params' => Yii::$app->request->post()], 'params'))
                     {
                         if ($model->save())
                         {
                             Yii::$app->authManager->assign(Yii::$app->authManager->getRole($model->role), $model->id);
-                            $this->arrError = [
+                            $this->arrAjax = [
                                 'code' => 0,
                                 'data' => $model,
                             ];
                         }
 
                         // 返回错误信息
-                        if ($this->arrError['code'] !== 0) $this->arrError['msg'] = $model->getErrorString();
+                        if ($this->arrAjax['code'] !== 0) $this->arrAjax['msg'] = $model->getErrorString();
                     }
                     break;
                 case 'update':
@@ -84,25 +84,25 @@ class AdminController extends Controller
                         if ($model)
                         {
                             // 判断权限 管理员可以操作所有权限,其他用户只能修改自己添加的用户
-                            $this->arrError['code'] = 216;
+                            $this->arrAjax['code'] = 216;
                             if ($uid == 1 || ($model->create_id == $uid || $model->id == $uid))
                             {
                                 $model->setScenario('admin-update');
-                                $this->arrError['code'] = 206;
+                                $this->arrAjax['code'] = 206;
                                 if ($model->load(['params' => Yii::$app->request->post()], 'params'))
                                 {
                                     if ($model->save())
                                     {
                                         Yii::$app->authManager->revokeAll($id);
                                         Yii::$app->authManager->assign(Yii::$app->authManager->getRole($model->role), $id);
-                                        $this->arrError = [
+                                        $this->arrAjax = [
                                             'code'   => 0,
                                             'data'   => $model,
                                         ];
                                     }
 
                                     // 返回错误信息
-                                    if ($this->arrError['code'] !== 0) $this->arrError['msg'] = $model->getErrorString();
+                                    if ($this->arrAjax['code'] !== 0) $this->arrAjax['msg'] = $model->getErrorString();
                                 }
                             }
                         }
@@ -115,16 +115,16 @@ class AdminController extends Controller
                     if ($id !== 1)
                     {
                         // 需要有删除管理员的权限
-                        $this->arrError['code'] = 216;
+                        $this->arrAjax['code'] = 216;
                         if (Yii::$app->user->can('deleteAdmin'))
                         {
-                            $this->arrError['code'] = 207;
+                            $this->arrAjax['code'] = 207;
                             $arrUser = Admin::findOne($id);
                             if ($arrUser && $arrUser->delete())
                             {
                                 // 移出权限
                                 Yii::$app->authManager->revokeAll($id);
-                                $this->arrError = [
+                                $this->arrAjax = [
                                     'code' => 0,
                                     'data' => $arrUser,
                                 ];
@@ -139,7 +139,7 @@ class AdminController extends Controller
                 'action' => 'admin/update',
                 'type'   => $action,
                 'data'   => $array,
-                'code'   => $this->arrError['code'],
+                'code'   => $this->arrAjax['code'],
                 'time'   => date('Y-m-d H:i:s')
             ]);
         }

@@ -3,12 +3,12 @@
 namespace backend\controllers;
 
 use Yii;
-use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
+
 use backend\models\Admin;
 use common\models\UploadForm;
 use yii\web\UploadedFile;
 use yii\helpers\ArrayHelper;
+use backend\models\Menu;
 
 /**
  * Class    PraiseController
@@ -17,40 +17,10 @@ use yii\helpers\ArrayHelper;
  * User     liujx
  * Date     2016-4-8
  */
-class Controller extends \yii\web\Controller
+class Controller extends \common\controllers\Controller
 {
     public    $enableCsrfValidation = false, $admins = null;    // 'enableCsrfValidation' => true // 配置文件关闭CSRF
     protected $sort                 = 'id';                     // 默认排序字段
-
-    // 定义响应请求的返回数据
-    public $arrError = [
-        'code'   => 201,
-        'msg'    => '',
-        'status' => 0,
-        'data'   => [],
-    ];
-
-    // 初始化处理
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                ],
-            ],
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@']
-                    ]
-                ]
-            ],
-        ];
-    }
 
     // 权限验证
     public function beforeAction($action)
@@ -70,7 +40,13 @@ class Controller extends \yii\web\Controller
 
         // 查询导航栏信息
         $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
-        // if ( ! $menus) throw new \yii\web\UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
+        if ($menus) {
+            Menu::setNavigation();  // 生成缓存导航栏文件
+            $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
+        }
+
+        // 没有权限
+        if ( ! $menus) throw new \yii\web\UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
 
         // 注入变量信息
         Yii::$app->view->params['menus'] = $menus;
@@ -176,7 +152,7 @@ class Controller extends \yii\web\Controller
             if ($arrObject) $this->afterSearch($arrObject);
 
             // 返回数据
-            $this->arrError = [
+            $this->arrAjax = [
                 'code'  => 2,
                 'other' => $objQuery->offset($arrSearch['offset'])->limit($arrSearch['limit'])->orderBy($arrSearch['orderBy'])->createCommand()->getRawSql(),
                 'data'  => [
@@ -199,7 +175,7 @@ class Controller extends \yii\web\Controller
         {
             // 接收参数
             $type = $request->post('actionType'); // 操作类型
-            $this->arrError['code'] = 207;
+            $this->arrAjax['code'] = 207;
             if ($type)
             {
                 $data   = $request->post();
@@ -212,7 +188,7 @@ class Controller extends \yii\web\Controller
                 if ($type === 'deleteAll' && isset($data['ids']) && ! empty($data['ids']))
                 {
                     // 判断是否有删除全部的权限
-                    $this->arrError['code'] = 216;
+                    $this->arrAjax['code'] = 216;
                     if (Yii::$app->user->can(Yii::$app->controller->id.'/deleteAll'))
                     {
                         $isTrue = $model->deleteAll([$index[0] => explode(',', $data['ids'])]);
@@ -225,30 +201,30 @@ class Controller extends \yii\web\Controller
                     if ($model) {
                         // 删除数据
                         if ($type == 'delete') {
-                            $this->arrError['code'] = 206;
+                            $this->arrAjax['code'] = 206;
                             $isTrue = $model->delete();
                         } else {
                             // 新增数据
-                            $this->arrError['code'] = 205;
+                            $this->arrAjax['code'] = 205;
                             $isTrue = $model->load(['params' => $data], 'params');
                             if ($isTrue) {
                                 $isTrue = $model->save();
-                                $this->arrError['msg'] = $model->getErrorString();
+                                $this->arrAjax['msg'] = $model->getErrorString();
                             }
                         }
                     }
                 }
 
                 // 判断是否成功
-                if ($isTrue) $this->arrError['code'] = 0;
-                $this->arrError['data'] = $model;
+                if ($isTrue) $this->arrAjax['code'] = 0;
+                $this->arrAjax['data'] = $model;
 
                 // 记录日志
                 $this->info('update', [
                     'action' => Yii::$app->controller->id.'/update',
                     'type'   => $type,
                     'data'   => $data,
-                    'code'   => $this->arrError['code'],
+                    'code'   => $this->arrAjax['code'],
                     'time'   => date('Y-m-d H:i:s')
                 ]);
             }
@@ -284,17 +260,17 @@ class Controller extends \yii\web\Controller
                 else
                 {
                     $isTrue = $model->load(['params' => $data], 'params');
-                    $this->arrError['code'] = 205;
+                    $this->arrAjax['code'] = 205;
                     if ($isTrue)
                     {
                         $isTrue = $model->save();
-                        $this->arrError['code'] = 206;
-                        $this->arrError['msg']  = $model->getErrorString();
+                        $this->arrAjax['code'] = 206;
+                        $this->arrAjax['msg']  = $model->getErrorString();
                     }
                 }
 
                 // 判断是否成功
-                if ($isTrue) $this->arrError['code'] = 0;
+                if ($isTrue) $this->arrAjax['code'] = 0;
             }
         }
 
@@ -311,20 +287,20 @@ class Controller extends \yii\web\Controller
             $mixPk    = $request->post('pk');    // 主键值
             $strAttr  = $request->post('name');  // 字段名
             $mixValue = $request->post('value'); // 字段值
-            $this->arrError['code'] = 207;
+            $this->arrAjax['code'] = 207;
             if ($mixPk && $strAttr  && $mixValue != '')
             {
                 // 查询到数据
                 $model = $this->getModel()->findOne($mixPk);
-                $this->arrError['code'] = 220;
+                $this->arrAjax['code'] = 220;
                 if ($model)
                 {
                     $model->$strAttr = $mixValue;
-                    $this->arrError['code'] = 206;
+                    $this->arrAjax['code'] = 206;
                     if ($model->save())
                     {
-                        $this->arrError['code'] = 0;
-                        $this->arrError['data'] = $model;
+                        $this->arrAjax['code'] = 0;
+                        $this->arrAjax['data'] = $model;
                     }
                 }
             }
@@ -334,7 +310,7 @@ class Controller extends \yii\web\Controller
                 'action' => Yii::$app->controller->id.'/editable',
                 'type'   => 'editable',
                 'data'   => ['pk' => $mixPk, 'name' => $strAttr, 'value' => $mixValue],
-                'code'   => $this->arrError['code'],
+                'code'   => $this->arrAjax['code'],
                 'time'   => date('Y-m-d H:i:s')
             ]);
         }
@@ -351,8 +327,8 @@ class Controller extends \yii\web\Controller
             $id = $request->get('id');
             if ($id)
             {
-                $this->arrError['code'] = 0;
-                $this->arrError['data'] = $this->getDetailModel()->find()->where(['parent_id' => $id])->all();
+                $this->arrAjax['code'] = 0;
+                $this->arrAjax['data'] = $this->getDetailModel()->find()->where(['parent_id' => $id])->all();
             }
         }
 
@@ -401,28 +377,28 @@ class Controller extends \yii\web\Controller
                 $model->scenario = $strField;
                 try {
                     $objFile = $model->$strField = UploadedFile::getInstance($model, $strField);
-                    $this->arrError['code'] = 221;
+                    $this->arrAjax['code'] = 221;
                     if ($objFile)
                     {
                         $isTrue = $model->validate();
-                        $this->arrError['msg'] = $model->getFirstError($strField);
+                        $this->arrAjax['msg'] = $model->getFirstError($strField);
                         if ($isTrue)
                         {
                             // 创建目录
                             $dirName = $this->getUploadPath();
                             if ( ! file_exists($dirName)) mkdir($dirName, 0777, true);
-                            $this->arrError['code'] = 202;
-                            $this->arrError['data'] = $dirName;
+                            $this->arrAjax['code'] = 202;
+                            $this->arrAjax['data'] = $dirName;
                             if (file_exists($dirName))
                             {
                                 // 生成文件随机名
                                 $strFileName = uniqid() . '.';
                                 $strFilePath = $dirName. $strFileName. $objFile->extension;
-                                $this->arrError['code'] = 204;
+                                $this->arrAjax['code'] = 204;
                                 if ($objFile->saveAs($strFilePath) && $this->afterUpload($objFile, $strFilePath, $strField))
                                 {
-                                    $this->arrError['code'] = 1;
-                                    $this->arrError['data'] = [
+                                    $this->arrAjax['code'] = 1;
+                                    $this->arrAjax['data'] = [
                                         'sFilePath' => trim($strFilePath, '.'),
                                         'sFileName' => $objFile->baseName.'.'.$objFile->extension,
                                     ];
@@ -432,8 +408,8 @@ class Controller extends \yii\web\Controller
                     }
 
                 } catch (\Exception $e) {
-                    $this->arrError['code'] = 203;
-                    $this->arrError['msg']  = $e->getMessage();
+                    $this->arrAjax['code'] = 203;
+                    $this->arrAjax['msg']  = $e->getMessage();
                 }
             }
         }
@@ -468,7 +444,7 @@ class Controller extends \yii\web\Controller
                 // var_dump($this->getModel()->find()->where($arrSearch['where'])->orderBy($arrSearch['orderBy'])->createCommand()->getRawSql());exit;
 
                 // 判断数据是否存在
-                $this->arrError['code'] = 220;
+                $this->arrAjax['code'] = 220;
                 if ($objArray)
                 {
                     // 处理查询到的数据
@@ -542,93 +518,9 @@ class Controller extends \yii\web\Controller
         return $this->returnAjax();
     }
 
-    // ajax返回
-    protected function returnAjax($array = '')
-    {
-        if (empty($array)) $array = $this->arrError;                    // 默认赋值
-        if ( ! isset($array['msg']) || empty($array['msg']))
-        {
-            $errCode      = Yii::t('error', 'errorCode');
-            $array['msg'] = $errCode[$array['code']];
-        }
-
-        if ($array['code'] <= 200) $array['status'] = 1;
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;   // json 返回
-        return $array;
-    }
-
     // 获取model对象
     protected function getModel(){ return new Admin();}
 
     // 获取详情model对象
     protected function getDetailModel(){return new Admin();}
-
-    /**
-     * info() 记录日志信息(管理员操作日志)
-     * @access protected
-     * @param  string   $strFile   文件名(不包括后缀名)
-     * @param  mixed    $data      日志信息
-     * @param  bool     $isUseUser 是否使用管理员记录
-     */
-    protected function info($strFile, array $data, $isUseUser = true)
-    {
-        // 写入文件名
-        if ($isUseUser) $strFile .= '_' . Yii::$app->user->id;
-        $strFile .= '.log';
-
-        // 写入目录
-        $strPath = Yii::$app->basePath.'/runtime/logs/admin/';
-        if ( ! file_exists($strPath)) mkdir($strPath, 0777, true);
-
-        // 写入数据
-        file_put_contents($strPath.$strFile, serialize($data) . "\n", FILE_APPEND);
-    }
-
-    /**
-     * getInfo() 获取管理员的日志信息
-     * @param string $strFile   日志文件名(不包含后缀名)
-     * @param bool   $isUseUser 是否使用管理员ID
-     * @param int    $intStart  读取开始位置
-     * @param int    $intLength 读取数据条数
-     * @return array 返回数组
-     */
-    protected function getInfo($strFile, $isUseUser = true)
-    {
-        // 读取文件名
-        if ($isUseUser) $strFile .= '_' . Yii::$app->user->id;
-
-        // 读取文件全路径
-        $strPath = Yii::$app->basePath.'/runtime/logs/admin/'.$strFile.'.log';
-
-        // 判读是否存在
-        $array = [];
-        if (file_exists($strPath))
-        {
-            $resFile = fopen($strPath, 'a+');
-            if ($resFile)
-            {
-                while ( ! feof($resFile))
-                {
-                    $tmpStr = fgets($resFile);
-                    if ($tmpStr) $array[] = unserialize($tmpStr);
-                }
-
-                // 只保存用户的200条记录
-                $intCount = count($array);
-                if ($intCount > 200)
-                {
-                    unlink($strPath);
-                    $array = array_slice($array, $intCount-200);
-                    $resFile = fopen($strPath, 'w+');
-                    flock($resFile, LOCK_EX);
-                    foreach ($array as $value) fwrite($resFile, serialize($value) . "\n");
-                }
-
-                fclose($resFile);
-                krsort($array);
-            }
-        }
-
-        return $array;
-    }
 }

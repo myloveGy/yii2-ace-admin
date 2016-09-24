@@ -35,7 +35,7 @@ class ModuleController extends Controller
             {
                 // 获取表信息
                 $db = Yii::$app->db;
-                $this->arrError['code'] = 217;
+                $this->arrAjax['code'] = 217;
                 $tables = $db->createCommand('SHOW TABLES')->queryAll();
                 if ($tables)
                 {
@@ -53,11 +53,11 @@ class ModuleController extends Controller
                     {
                         // 查询表结构信息
                         $arrTables = $db->createCommand('SHOW FULL COLUMNS FROM `'.$strTable.'`')->queryAll();
-                        $this->arrError['msg'] = 218;
+                        $this->arrAjax['msg'] = 218;
                         if ($arrTables)
                         {
                             // 成功返回
-                            $this->arrError = [
+                            $this->arrAjax = [
                                 'code' => 3,
                                 'data' => $this->createForm($arrTables),
                             ];
@@ -82,7 +82,7 @@ class ModuleController extends Controller
             $table = $request->post('table');
             if ($attr)
             {
-                $this->arrError['code'] = 217;
+                $this->arrAjax['code'] = 217;
                 if ($table && ($name = ltrim($table, 'my_')))
                 {
                     // 拼接字符串
@@ -95,7 +95,7 @@ class ModuleController extends Controller
                     if ( ! file_exists($strVPath)) mkdir($strVPath, 644, true);
 
                     // 返回数据
-                    $this->arrError = [
+                    $this->arrAjax = [
                         'code' => 4,
                         'data' => [
                             'html'       => highlight_string($this->createPHP($attr, $request->post('title')), true),
@@ -128,7 +128,7 @@ class ModuleController extends Controller
 
             if ($attr && $table && $title && $html && $php)
             {
-                $this->arrError['code'] = 217;
+                $this->arrAjax['code'] = 217;
                 if ($table && ($name = trim($table, Yii::$app->db->tablePrefix)))
                 {
                     // 拼接字符串
@@ -137,7 +137,7 @@ class ModuleController extends Controller
                     $strVName = $dirName.'views/'.$name.'/'.(stripos($html, '.php') ? $html : $html.'.php');
 
                     // 验证文件不存在
-                    $this->arrError['code'] = 219;
+                    $this->arrAjax['code'] = 219;
                     if ($allow === 1 ||  (! file_exists($strCName) && ! file_exists($strVName)))
                     {
                         // 生成权限
@@ -153,7 +153,7 @@ class ModuleController extends Controller
                         $this->createController($name, $title, $strCName, $strWhere);
 
                         // 返回数据
-                        $this->arrError = [
+                        $this->arrAjax = [
                             'code' => 4,
                             'data' => Url::toRoute([$name.'/index']),
                         ];

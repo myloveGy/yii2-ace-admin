@@ -6,7 +6,7 @@
  * Time: 11:56
  */
 
-namespace common\components\payments;
+namespace common\payments;
 
 
 class Skrill extends Payment

@@ -52,7 +52,7 @@ class RoleController extends Controller
         // 判断数据正确提交
         if (! empty($action) && ! empty($array))
         {
-            $this->arrError['code'] = 216;
+            $this->arrAjax['code'] = 216;
             if ($type == Auth::TYPE_ROLE || Yii::$app->user->can('authority/update'))
             {
                 // 判断类型
@@ -67,8 +67,8 @@ class RoleController extends Controller
                             $permissions = $this->preparePermissions(Yii::$app->request->post());
                             // 判断类型 (添加角色还是操作权限)
                             $isTrue = $type == Auth::TYPE_ROLE ? $model->createRole($permissions) : $model->createPermission();
-                            $this->arrError['code']  = $type == Auth::TYPE_ROLE ? 211 : 212;
-                            if ($isTrue) $this->arrError['code'] = 0;
+                            $this->arrAjax['code']  = $type == Auth::TYPE_ROLE ? 211 : 212;
+                            if ($isTrue) $this->arrAjax['code'] = 0;
                         }
                         break;
                     // 删除角色和权限
@@ -76,11 +76,11 @@ class RoleController extends Controller
                         // 判断是否有权限进行该操作
                         if ($type == Auth::TYPE_ROLE)
                         {
-                            $this->arrError['code'] = 208;
+                            $this->arrAjax['code'] = 208;
                             if ( Yii::$app->user->can('deleteRole'))
                             {
                                 $name = $array['name'];
-                                $this->arrError['code'] = 209;
+                                $this->arrAjax['code'] = 209;
                                 if ( ! Auth::hasUsersByRole($name))
                                 {
                                     $auth = Yii::$app->getAuthManager();
@@ -88,22 +88,22 @@ class RoleController extends Controller
                                     // clear asset permissions
                                     $permissions = $auth->getPermissionsByRole($name);
                                     foreach($permissions as $permission) {$auth->removeChild($role, $permission);}
-                                    $this->arrError['code'] = 210;
+                                    $this->arrAjax['code'] = 210;
 
                                     // 删除角色成功
-                                    if($auth->remove($role)) $this->arrError['code'] = 0;
+                                    if($auth->remove($role)) $this->arrAjax['code'] = 0;
                                 }
                             }
 
                             // 删除权限
                         } else {
-                            $this->arrError['code'] = 214;
+                            $this->arrAjax['code'] = 214;
                             if (Yii::$app->user->can('deleteAuthority'))
                             {
                                 $auth = Yii::$app->getAuthManager();
                                 $item = $auth->getPermission($array['name']);
-                                $this->arrError['code'] = 214;
-                                if ($item){if ($auth->remove($item)) $this->arrError['code'] = 0;}
+                                $this->arrAjax['code'] = 214;
+                                if ($item && $auth->remove($item)) $this->arrAjax['code'] = 0;
                             }
                         }
 
@@ -114,7 +114,7 @@ class RoleController extends Controller
                         if ($name)
                         {
                             $model = Auth::findOne(['name' => $name]);
-                            $this->arrError['code'] = 213;
+                            $this->arrAjax['code'] = 213;
                             // 执行修改权限
                             if ($model->load(['params' => $array], 'params'))
                             {
@@ -130,7 +130,7 @@ class RoleController extends Controller
                                     $isTrue = $model->updatePermission($name);
 
                                 // 修改成功
-                                if ($isTrue) $this->arrError['code'] = 0;
+                                if ($isTrue) $this->arrAjax['code'] = 0;
                             }
                         }
                         break;

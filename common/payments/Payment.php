@@ -1,6 +1,6 @@
 <?php
 // 定义命名空间
-namespace common\components\payments;
+namespace common\payments;
 
 /**
  * Class Payment
