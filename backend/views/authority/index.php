@@ -1,5 +1,4 @@
 <?php
-use yii\helpers\Url;
 // 定义标题和面包屑信息
 $this->title = '角色信息';
 $this->params['breadcrumbs'][] = $this->title;
@@ -30,10 +29,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <!--表格数据-->
 <table class="table table-striped table-bordered table-hover" id="showTable">
 </table>
+<?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var myTable = new MeTable({
-        sTitle:   "权限信息",
-        sBaseUrl: "<?=Url::toRoute(['role/update', 'type' => 2])?>"
+        sTitle: "权限信息"
     },{
         "aoColumns":[
 			oCheckBox,
@@ -45,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
 
         // 设置隐藏和排序信息
-         "order":[[3, "desc"]],
+         "order":[[3, "desc"]]
         // "columnDefs":[{"targets":[2,3], "visible":false}],
     });
 
@@ -59,3 +58,4 @@ $this->params['breadcrumbs'][] = $this->title;
         myTable.init();
     })
 </script>
+<?php $this->endBlock(); ?>

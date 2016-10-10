@@ -11,9 +11,10 @@ namespace backend\controllers;
 
 use backend\models\Auth;
 
-class AuthorityController extends Controller
+class AuthorityController extends RoleController
 {
-    public $sort = "created_at";
+    public $type = Auth::TYPE_PERMISSION;
+
     // 查询方法
     public function where($params)
     {
@@ -24,16 +25,12 @@ class AuthorityController extends Controller
         ];
     }
 
-    // 返回 Modal
-    public function getModel(){return new Auth();}
-
-    // 导出数据显示问题(时间问题可以通过Excel自动装换)
-    public function handleExport(&$arrObject)
+    /**
+     * handleExport() 导出数据显示问题(时间问题可以通过Excel自动装换)
+     */
+    public function handleExport(&$objModel)
     {
-        foreach ($arrObject as $value)
-        {
-            $value->created_at = date('Y-m-d H:i:s', $value->created_at);
-            $value->updated_at = date('Y-m-d H:i:s', $value->updated_at);
-        }
+        $objModel->created_at = date('Y-m-d H:i:s', $objModel->created_at);
+        $objModel->updated_at = date('Y-m-d H:i:s', $objModel->updated_at);
     }
 }

@@ -236,12 +236,13 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
+<?php $this->beginBlock('javascript-1') ?>
 <script type="text/javascript">
     var sBaseUrl = "<?=Url::toRoute(['admin/editable'])?>",                             // 行内编辑提交地址
         iUserId  = <?=$this->params['user']->id?>,                                      // 用户唯一ID
-        fSuccess = function(response, newValue) {                                       // 成功执行函数
-            if (response.status == 1) return true;
-            layer.msg(response.msg, {icon: 5, time:1000});
+        fSuccess = function(response, newValue) {// 成功执行函数
+            if (response.errCode == 0) return true;
+            layer.msg(response.errMsg, {icon: 5, time:1000});
             return false;
         },
 
@@ -339,7 +340,7 @@ use yii\helpers\Url;
                                 "value": $('#country').html() + ',' + $('#city').html()
                             }
                         }).done(function(json){
-                            layer.msg(json.msg, {icon: json.status == 1 ? 6 : 5})
+                            layer.msg(json.errMsg, {icon: json.errCode == 0 ? 6 : 5})
                         }).fail(ajaxFail).always(alwaysClose)
                     }
                     return true;
@@ -381,6 +382,7 @@ use yii\helpers\Url;
             },
             success: function(response, newValue)
             {
+                console.info(response);
                 selectCity(newValue);
             }
         });
@@ -498,7 +500,7 @@ use yii\helpers\Url;
                     },
                     on_success : function() {
                         $.gritter.removeAll();
-                    },
+                    }
                 },
                 url: function(params) {
                     var submit_url = sUploadUrl, // 提交页面
@@ -589,10 +591,10 @@ use yii\helpers\Url;
                     //deferred callbacks, triggered by both ajax and iframe solution
                     deferred
                         .done(function(result) {
-                            if(result.status == 1)
+                            if(result.errCode == 0)
                                 $(avatar).get(0).src = result.data.sFilePath;
                             else
-                                layer.msg(result.msg, {icon:5, time:1000})
+                                layer.msg(result.errMsg, {icon:5, time:1000})
                         })
                         .fail(ajaxFail)
                         .always(function() {//called on both success and failure
@@ -604,7 +606,7 @@ use yii\helpers\Url;
                 },
                 success: function(response, newValue) {
 
-                },
+                }
             })
         }catch(e) {}
 
@@ -631,3 +633,4 @@ use yii\helpers\Url;
         });
     })
 </script>
+<?php $this->endBlock(); ?>

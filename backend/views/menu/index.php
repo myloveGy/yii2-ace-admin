@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </table>
 </div>
 
+<?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var aAdmins  = <?=json_encode($this->params['admins'])?>,
         aParents = <?= $parents ?>;
@@ -66,3 +67,4 @@ $this->params['breadcrumbs'][] = $this->title;
         myTable.init();
     })
 </script>
+<?php $this->endBlock(); ?>

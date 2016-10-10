@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </p>
 <!--表格数据-->
 <table class="table table-striped table-bordered table-hover" id="showTable"></table>
+<?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var sUpload = '<?=\yii\helpers\Url::toRoute(['admin/upload', 'sField' => 'face'])?>',
         aStatus = <?=json_encode($status)?>,
@@ -73,15 +74,13 @@ $this->params['breadcrumbs'][] = $this->title;
       * myTable.beforeSave(array data) return true 前置
       * myTable.afterSave(array data)  return true 后置
       */
+    myTable.init();
 
-    $(function(){
-        myTable.init();
-
-        // 文件上传
-        aceFileInput('#ace_myfile', sUpload, false, {"before_remove":function(){
-            if ($("#myfile").val()){ $.post(sUpload, {"face":$("#myfile").val()})}
-            $("#myfile").val('');
-            return true;
-        }});
-    })
+    // 文件上传
+    aceFileInput('#ace_myfile', sUpload, false, {"before_remove":function(){
+        if ($("#myfile").val()){ $.post(sUpload, {"face":$("#myfile").val()})}
+        $("#myfile").val('');
+        return true;
+    }});
 </script>
+<?php $this->endBlock(); ?>

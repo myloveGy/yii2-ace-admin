@@ -7,32 +7,44 @@ use Yii;
 class Controller extends \yii\web\Controller
 {
     // 定义 AJAX 响应请求的返回数据
-    public $arrAjax = [
-        'code'   => 201,
-        'msg'    => '',
-        'status' => 0,
-        'data'   => [],
+    public $arrJson = [
+        'errCode' => 201,
+        'errMsg'  => '',
+        'data'    => [],
     ];
 
     /**
-     * returnAjax() 响应ajax 返回
+     * returnJson() 响应ajax 返回
      * @param string $array
      * @return mixed|string
      */
-    protected function returnAjax($array = null)
+    protected function returnJson($array = null)
     {
-        if ($array == null) $array = $this->arrAjax;                    // 默认赋值
+        if ($array == null) $array = $this->arrJson;                    // 默认赋值
 
         // 没有错误信息使用code 确定错误信息
-        if ( ! isset($array['msg']) || empty($array['msg'])) {
-            $errCode      = Yii::t('error', 'errorCode');
-            $array['msg'] = $errCode[$array['code']];
+        if ( ! isset($array['errMsg']) || empty($array['errMsg'])) {
+            $errCode = Yii::t('error', 'errCode');
+            $array['errMsg'] = $errCode[$array['errCode']];
         }
 
-        // 返回成功状态通过 code 判断
-        if ($array['code'] <= 200) $array['status'] = 1;
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;   // json 返回
         return $array;
+    }
+
+    /**
+     * handleJson() 处理返回数据
+     * @param mixed $data     返回数据
+     * @param int   $errCode  返回状态码
+     * @param null  $errMsg   提示信息
+     */
+    protected function handleJson($data, $errCode = 0, $errMsg = null)
+    {
+        $this->arrJson['errCode'] = $errCode;
+        $this->arrJson['data']    = $data;
+        if ($errMsg !== null) {
+            $this->arrJson['errMsg'] = $errMsg;
+        }
     }
 
     /**

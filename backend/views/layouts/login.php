@@ -38,8 +38,8 @@
     <script src="/public/assets/js/ace-extra.min.js"></script>
     <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
     <!--[if lte IE 8]>
-    <script src="/public/js/html5shiv.min.js"></script>
-    <script src="/public/js/respond.min.js"></script>
+    <script src="/public/assets/js/html5shiv.min.js"></script>
+    <script src="/public/assets/js/respond.min.js"></script>
     <![endif]-->
 
     <!-- 公共的JS文件 -->
@@ -60,9 +60,6 @@
     <!--[if lte IE 8]>
     <script src="/public/assets/js/excanvas.min.js"></script>
     <![endif]-->
-    <script type="text/javascript" src="/public/js/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="/public/js/validate.message.js"></script>
-    <script type="text/javascript" src="/public/js/layer/layer.js"></script>
 </head>
 <body class="login-layout light-login">
 <div class="main-container">

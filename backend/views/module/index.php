@@ -188,6 +188,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="code"></div>
 </div>
 
+<?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var file       = null,
         controller = null;
@@ -284,3 +285,4 @@ $this->params['breadcrumbs'][] = $this->title;
         });
     });
 </script>
+<?php $this->endBlock(); ?>

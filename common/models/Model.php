@@ -8,8 +8,7 @@ class Model extends \yii\db\ActiveRecord
     {
         $str    = '';
         $errors = $this->getErrors();
-        if ( ! empty($errors))
-        {
+        if ( ! empty($errors)) {
             foreach ($errors as $value)
             {
                 if (is_array($value))

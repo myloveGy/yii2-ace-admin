@@ -9,6 +9,8 @@ use common\models\UploadForm;
 use yii\web\UploadedFile;
 use yii\helpers\ArrayHelper;
 use backend\models\Menu;
+use yii\helpers\Json;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * Class    PraiseController
@@ -29,39 +31,35 @@ class Controller extends \common\controllers\Controller
         if ( ! parent::beforeAction($action)) {return false;}
 
         // 验证权限
-        if( ! \Yii::$app->user->can($action->controller->id . '/' . $action->id) && Yii::$app->getErrorHandler()->exception === null)
-        {
+        if( ! Yii::$app->user->can($action->controller->id . '/' . $action->id) && Yii::$app->getErrorHandler()->exception === null) {
             // 没有权限AJAX返回
             if (Yii::$app->request->isAjax)
-                exit(json_encode(['status' => 0, 'msg' => '对不起，您现在还没获得该操作的权限!', 'data' => [],]));
+                exit(Json::encode(['errCode' => 216, 'errMsg' => '对不起，您现在还没获得该操作的权限!', 'data' => []]));
             else
-                throw new \yii\web\UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
+                throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
         }
 
-        // 查询导航栏信息
-        $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
-        if ($menus) {
-            Menu::setNavigation();  // 生成缓存导航栏文件
+        // 处理提前获取数据
+        if ( ! in_array($action->id, ['insert', 'update', 'delete'])) {
+            // 查询导航栏信息
             $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
+            if ($menus) {
+                Menu::setNavigation();  // 生成缓存导航栏文件
+                $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
+            }
+
+            // 没有权限
+            if ( ! $menus) throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
+
+            // 查询后台管理员信息
+            $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
+            // 注入变量信息
+            Yii::$app->view->params['menus']  = $menus;
+            Yii::$app->view->params['admins'] = $this->admins;
+            Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
         }
 
-        // 没有权限
-        if ( ! $menus) throw new \yii\web\UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
-
-        // 注入变量信息
-        Yii::$app->view->params['menus'] = $menus;
         return true;
-    }
-
-    // 初始化处理函数
-    public function init()
-    {
-        parent::init();
-        // 查询后台管理员信息
-        $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
-        // 注入变量信息
-        Yii::$app->view->params['admins'] = $this->admins;
-        Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
     }
 
     // 首页显示
@@ -78,7 +76,10 @@ class Controller extends \common\controllers\Controller
         return [];
     }
 
-    // 处理查询信息
+    /**
+     * query() 查询查询参数信息
+     * @return array
+     */
     protected function query()
     {
         $request = Yii::$app->request;
@@ -136,148 +137,109 @@ class Controller extends \common\controllers\Controller
      */
     protected function afterSearch(&$array){}
 
-    // 查询方法
+    /**
+     * actionSearch() 处理查询数据
+     * @return mixed|string
+     */
     public function actionSearch()
     {
         // 定义请求数据
-        if (Yii::$app->request->isAjax)
-        {
-            $arrSearch = $this->query();                          // 处理查询参数
-            $objQuery  = $this->getModel()->find()->where($arrSearch['where']);
+        $search = $this->query();                          // 处理查询参数
+        $query  = $this->getModel()->find()->where($search['where']);
 
-            // 查询之前的处理
-            $objMod    = clone $objQuery;
-            $intTotal  = $objMod->count();                        // 查询数据条数
-            $arrObject = $objQuery->offset($arrSearch['offset'])->limit($arrSearch['limit'])->orderBy($arrSearch['orderBy'])->all();
-            if ($arrObject) $this->afterSearch($arrObject);
+        // 查询之前的处理
+        $total = $query->count();                        // 查询数据条数
+        $array = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->all();
+        if ($array) $this->afterSearch($array);
 
-            // 返回数据
-            $this->arrAjax = [
-                'code'  => 2,
-                'other' => $objQuery->offset($arrSearch['offset'])->limit($arrSearch['limit'])->orderBy($arrSearch['orderBy'])->createCommand()->getRawSql(),
-                'data'  => [
-                    'sEcho'                => $arrSearch['echo'],     // 查询次数
-                    'iTotalRecords'        => count($arrObject),      // 本次查询数据条数
-                    'iTotalDisplayRecords' => $intTotal,              // 数据总条数
-                    'aaData'               => $arrObject,             // 本次查询数据信息
-                ]
-            ];
-        }
+        // 返回数据
+        $this->arrJson = [
+            'errCode' => 0,
+            'other'   => $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->createCommand()->getRawSql(),
+            'data'    => [
+                'sEcho'                => $search['echo'],  // 查询次数
+                'iTotalRecords'        => count($array),    // 本次查询数据条数
+                'iTotalDisplayRecords' => $total,           // 数据总条数
+                'aaData'               => $array,           // 本次查询数据信息
+            ]
+        ];
 
-        return $this->returnAjax();
+        return $this->returnJson();
     }
 
-    // 编辑修改
+    /**
+     * actionInsert() 处理新增数据
+     * @return mixed|string
+     */
+    public function actionCreate()
+    {
+        $data = Yii::$app->request->post();
+        if ($data) {
+            $model  = $this->getModel();
+            $isTrue = $model->load(['params' => $data], 'params');
+            if ($isTrue) {
+                $isTrue = $model->save();
+                $this->arrJson['errMsg'] = $model->getErrorString();
+                if ($isTrue) $this->handleJson($model);
+            }
+
+        }
+
+        // 返回数据
+        return $this->returnJson();
+    }
+
+    /**
+     * actionUpdate() 处理修改数据
+     * @return mixed|string
+     */
     public function actionUpdate()
     {
-        $request = Yii::$app->request;
-        if ($request->isAjax)
-        {
+        // 接收参数判断
+        $data = Yii::$app->request->post();
+        if ($data) {
             // 接收参数
-            $type = $request->post('actionType'); // 操作类型
-            $this->arrAjax['code'] = 207;
-            if ($type)
-            {
-                $data   = $request->post();
-                $model  = $this->getModel();
-                $index  = $model->primaryKey();
-                $isTrue = false;
-                unset($data['actionType']);
-
-                // 删除全部
-                if ($type === 'deleteAll' && isset($data['ids']) && ! empty($data['ids']))
-                {
-                    // 判断是否有删除全部的权限
-                    $this->arrAjax['code'] = 216;
-                    if (Yii::$app->user->can(Yii::$app->controller->id.'/deleteAll'))
-                    {
-                        $isTrue = $model->deleteAll([$index[0] => explode(',', $data['ids'])]);
-                    }
+            $model = $this->findModel($data);
+            if ($model) {
+                // 新增数据
+                $this->arrJson['errCode'] = 205;
+                $isTrue = $model->load(['params' => $data], 'params');
+                if ($isTrue) {
+                    $isTrue = $model->save();
+                    $this->arrJson['errMsg'] = $model->getErrorString();
+                    if ($isTrue) $this->handleJson($model);
                 }
-                else
-                {
-                    // 修改和删除时的查询数据
-                    if ($type == 'update' || $type == 'delete') $model = $model->findOne($data[$index[0]]);
-                    if ($model) {
-                        // 删除数据
-                        if ($type == 'delete') {
-                            $this->arrAjax['code'] = 206;
-                            $isTrue = $model->delete();
-                        } else {
-                            // 新增数据
-                            $this->arrAjax['code'] = 205;
-                            $isTrue = $model->load(['params' => $data], 'params');
-                            if ($isTrue) {
-                                $isTrue = $model->save();
-                                $this->arrAjax['msg'] = $model->getErrorString();
-                            }
-                        }
-                    }
-                }
-
-                // 判断是否成功
-                if ($isTrue) $this->arrAjax['code'] = 0;
-                $this->arrAjax['data'] = $model;
-
-                // 记录日志
-                $this->info('update', [
-                    'action' => Yii::$app->controller->id.'/update',
-                    'type'   => $type,
-                    'data'   => $data,
-                    'code'   => $this->arrAjax['code'],
-                    'time'   => date('Y-m-d H:i:s')
-                ]);
             }
         }
 
         // 返回数据
-        return $this->returnAjax();
+        return $this->returnJson();
     }
 
-    // 编辑修改
-    public function actionEdit()
+    /**
+     * actionDelete() 处理删除数据
+     * @return mixed|string
+     */
+    public function actionDelete()
     {
-        $request = Yii::$app->request;
-        if ($request->isAjax)
-        {
-            // 接收参数
-            $type = $request->post('actionType'); // 操作类型
-            if ($type)
-            {
-                $data  = $request->post();
-                unset($data['actionType']);
-                $model = $this->getDetailModel();
-                $index = $model->primaryKey();
-
-                // 修改和删除时的查询数据
-                if ($type == 'update' || $type == 'delete') $model = $model->findOne($data[$index[0]]);
-
-                // 删除数据
-                if ($type == 'delete')
-                {
-                    $isTrue = $model->delete();
-                }
+        $data = Yii::$app->request->post();
+        if ($data) {
+            $model = $this->findModel($data);
+            if ($model) {
+                if ($model->delete())
+                    $this->handleJson($model);
                 else
-                {
-                    $isTrue = $model->load(['params' => $data], 'params');
-                    $this->arrAjax['code'] = 205;
-                    if ($isTrue)
-                    {
-                        $isTrue = $model->save();
-                        $this->arrAjax['code'] = 206;
-                        $this->arrAjax['msg']  = $model->getErrorString();
-                    }
-                }
-
-                // 判断是否成功
-                if ($isTrue) $this->arrAjax['code'] = 0;
+                    $this->arrJson['errMsg'] = $model->getErrorString();
             }
         }
 
-        return $this->returnAjax();
+        return $this->returnJson();
     }
 
-    // 行内编辑
+    /**
+     * actionEditable 处理行内编辑
+     * @return mixed|string
+     */
     public function actionEditable()
     {
         $request = Yii::$app->request;
@@ -287,54 +249,25 @@ class Controller extends \common\controllers\Controller
             $mixPk    = $request->post('pk');    // 主键值
             $strAttr  = $request->post('name');  // 字段名
             $mixValue = $request->post('value'); // 字段值
-            $this->arrAjax['code'] = 207;
+            $this->arrJson['errCode'] = 207;
             if ($mixPk && $strAttr  && $mixValue != '')
             {
                 // 查询到数据
                 $model = $this->getModel()->findOne($mixPk);
-                $this->arrAjax['code'] = 220;
+                $this->arrJson['errCode'] = 220;
                 if ($model)
                 {
                     $model->$strAttr = $mixValue;
-                    $this->arrAjax['code'] = 206;
-                    if ($model->save())
-                    {
-                        $this->arrAjax['code'] = 0;
-                        $this->arrAjax['data'] = $model;
-                    }
+                    $this->arrJson['errCode'] = 206;
+                    if ($model->save()) $this->handleJson($model);
                 }
             }
-
-            // 记录日志
-            $this->info('update', [
-                'action' => Yii::$app->controller->id.'/editable',
-                'type'   => 'editable',
-                'data'   => ['pk' => $mixPk, 'name' => $strAttr, 'value' => $mixValue],
-                'code'   => $this->arrAjax['code'],
-                'time'   => date('Y-m-d H:i:s')
-            ]);
-        }
-        return $this->returnAjax();
-    }
-
-    // 查看详情信息
-    public function actionViews()
-    {
-        $request = Yii::$app->request;
-        if ($request->isAjax)
-        {
-            // 接收参数
-            $id = $request->get('id');
-            if ($id)
-            {
-                $this->arrAjax['code'] = 0;
-                $this->arrAjax['data'] = $this->getDetailModel()->find()->where(['parent_id' => $id])->all();
-            }
         }
 
-        return $this->returnAjax();
+        // 返回数据
+        return $this->returnJson();
     }
-
+    
     /**
      * getUploadPath() 获取上传文件目录(默认是相对路径 ./public/uploads)
      * @access protected
@@ -348,17 +281,20 @@ class Controller extends \common\controllers\Controller
     /**
      * afterUpload() 文件上传成功的处理信息
      * @access protected
-     * @param  object $objFile     文件上传类
+     * @param  object $object     文件上传类
      * @param  string $strFilePath 文件保存路径
      * @param  string $strField    上传文件表单名
      * @return bool 上传成功返回true
      */
-    public function afterUpload($objFile, &$strFilePath, $strField)
+    public function afterUpload($object, &$strFilePath, $strField)
     {
         return true;
     }
 
-    // 图片上传
+    /**
+     * actionUpload() 处理文件上传操作
+     * @return mixed|string
+     */
     public function actionUpload()
     {
         // 定义请求数据
@@ -377,44 +313,38 @@ class Controller extends \common\controllers\Controller
                 $model->scenario = $strField;
                 try {
                     $objFile = $model->$strField = UploadedFile::getInstance($model, $strField);
-                    $this->arrAjax['code'] = 221;
-                    if ($objFile)
-                    {
+                    $this->arrJson['errCode'] = 221;
+                    if ($objFile) {
                         $isTrue = $model->validate();
-                        $this->arrAjax['msg'] = $model->getFirstError($strField);
-                        if ($isTrue)
-                        {
+                        $this->arrJson['errMsg'] = $model->getFirstError($strField);
+                        if ($isTrue) {
                             // 创建目录
                             $dirName = $this->getUploadPath();
                             if ( ! file_exists($dirName)) mkdir($dirName, 0777, true);
-                            $this->arrAjax['code'] = 202;
-                            $this->arrAjax['data'] = $dirName;
-                            if (file_exists($dirName))
-                            {
+                            $this->arrJson['errCode'] = 202;
+                            $this->arrJson['data'] = $dirName;
+                            if (file_exists($dirName)) {
                                 // 生成文件随机名
                                 $strFileName = uniqid() . '.';
                                 $strFilePath = $dirName. $strFileName. $objFile->extension;
-                                $this->arrAjax['code'] = 204;
-                                if ($objFile->saveAs($strFilePath) && $this->afterUpload($objFile, $strFilePath, $strField))
-                                {
-                                    $this->arrAjax['code'] = 1;
-                                    $this->arrAjax['data'] = [
+                                $this->arrJson['errCode'] = 204;
+                                if ($objFile->saveAs($strFilePath) && $this->afterUpload($objFile, $strFilePath, $strField)) {
+                                    $this->handleJson([
                                         'sFilePath' => trim($strFilePath, '.'),
                                         'sFileName' => $objFile->baseName.'.'.$objFile->extension,
-                                    ];
+                                    ]);
                                 }
                             }
                         }
                     }
 
                 } catch (\Exception $e) {
-                    $this->arrAjax['code'] = 203;
-                    $this->arrAjax['msg']  = $e->getMessage();
+                    $this->handleJson([], 203, $e->getMessage());
                 }
             }
         }
 
-        return $this->returnAjax();
+        return $this->returnJson();
     }
 
     /**
@@ -423,7 +353,10 @@ class Controller extends \common\controllers\Controller
      */
     protected function handleExport(&$arrObject){}
 
-    // 导出Excel文件
+    /**
+     * actionExport() 文件导出处理
+     * @return mixed|string
+     */
     public function actionExport()
     {
         $request = Yii::$app->request;
@@ -431,7 +364,6 @@ class Controller extends \common\controllers\Controller
         {
             // 接收参数
             $arrFields = $request->post('aFields');         // 字段信息
-//            $intSize   = (int)$request->post('iSize');      // 查询数据条数
             $strTitle  = $request->post('sTitle');          // 标题信息
 
             // 判断数据的有效性
@@ -441,15 +373,11 @@ class Controller extends \common\controllers\Controller
                 $arrKeys   = array_keys($arrFields);        // 所有的字段
                 $arrSearch = $this->query();                // 处理查询参数
                 $objArray  = $this->getModel()->find()->where($arrSearch['where'])->orderBy($arrSearch['orderBy'])->all();
-                // var_dump($this->getModel()->find()->where($arrSearch['where'])->orderBy($arrSearch['orderBy'])->createCommand()->getRawSql());exit;
 
                 // 判断数据是否存在
-                $this->arrAjax['code'] = 220;
+                $this->arrJson['errCode'] = 220;
                 if ($objArray)
                 {
-                    // 处理查询到的数据
-                    $this->handleExport($objArray);
-
                     ob_end_clean();
                     ob_start();
                     $objPHPExcel = new \PHPExcel();
@@ -483,6 +411,8 @@ class Controller extends \common\controllers\Controller
                     $intNum = 2;
                     foreach ($objArray as $value)
                     {
+                        // 处理查询到的数据
+                        $this->handleExport($value);
                         // 写入信息数据
                         foreach ($arrLetter as $intKey => $strValue)
                         {
@@ -515,12 +445,32 @@ class Controller extends \common\controllers\Controller
             }
         }
 
-        return $this->returnAjax();
+        return $this->returnJson();
     }
 
-    // 获取model对象
+    /**
+     * getModel() 获取model对象
+     * @return Admin
+     */
     protected function getModel(){ return new Admin();}
 
-    // 获取详情model对象
-    protected function getDetailModel(){return new Admin();}
+    /**
+     * findModel() 查询单个model
+     * @param  array $data 请求的数据
+     * @return Controller|Admin
+     */
+    protected function findModel($data)
+    {
+        $model = $this->getModel();
+        $index = $model->primaryKey();
+        if ($index && isset($index[0]) && isset($data[$index[0]])) {
+            $mixReturn = $model->findOne($data[$index[0]]);
+        } else {
+            $mixReturn = false;
+            $this->arrJson['errCode'] = 220; // 查询数据不存在
+        }
+
+        return $mixReturn;
+    }
+
 }

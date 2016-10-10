@@ -18,9 +18,8 @@ class AdminController extends Controller
     {
         $where  = [];
         $intUid = (int)Yii::$app->user->id;
-        if ($intUid != 1)
-        {
-            $where = [['or', ['id' => $intUid], ['create_id' => $intUid]]];
+        if ($intUid != 1) {
+            $where = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
         }
 
         return [
@@ -44,122 +43,16 @@ class AdminController extends Controller
     // 返回model
     public function getModel() { return new Admin();}
 
-    // 重新新增和修改的方法
-    public function actionUpdate()
-    {
-        // 接收参数
-        $request = Yii::$app->request;           // 请求信息
-        $array   = $request->post();             // 请求参数
-        $action  = $request->post('actionType'); // 操作类型
-
-        // 判断数据的有效性
-        if ($action && $array)
-        {
-            switch ($action)
-            {
-                case 'insert':
-                    $model = new Admin(['scenario' => 'admin-create']);
-                    $this->arrAjax['code'] = 206;
-                    if ($model->load(['params' => Yii::$app->request->post()], 'params'))
-                    {
-                        if ($model->save())
-                        {
-                            Yii::$app->authManager->assign(Yii::$app->authManager->getRole($model->role), $model->id);
-                            $this->arrAjax = [
-                                'code' => 0,
-                                'data' => $model,
-                            ];
-                        }
-
-                        // 返回错误信息
-                        if ($this->arrAjax['code'] !== 0) $this->arrAjax['msg'] = $model->getErrorString();
-                    }
-                    break;
-                case 'update':
-                    $id  = (int)$array['id'];
-                    $uid = Yii::$app->user->id;
-                    if ($id)
-                    {
-                        $model = Admin::findOne($id);
-                        if ($model)
-                        {
-                            // 判断权限 管理员可以操作所有权限,其他用户只能修改自己添加的用户
-                            $this->arrAjax['code'] = 216;
-                            if ($uid == 1 || ($model->create_id == $uid || $model->id == $uid))
-                            {
-                                $model->setScenario('admin-update');
-                                $this->arrAjax['code'] = 206;
-                                if ($model->load(['params' => Yii::$app->request->post()], 'params'))
-                                {
-                                    if ($model->save())
-                                    {
-                                        Yii::$app->authManager->revokeAll($id);
-                                        Yii::$app->authManager->assign(Yii::$app->authManager->getRole($model->role), $id);
-                                        $this->arrAjax = [
-                                            'code'   => 0,
-                                            'data'   => $model,
-                                        ];
-                                    }
-
-                                    // 返回错误信息
-                                    if ($this->arrAjax['code'] !== 0) $this->arrAjax['msg'] = $model->getErrorString();
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case 'delete':
-                    $id = (int)$array['id'];
-                    // 不能删除管理员
-                    if ($id !== 1)
-                    {
-                        // 需要有删除管理员的权限
-                        $this->arrAjax['code'] = 216;
-                        if (Yii::$app->user->can('deleteAdmin'))
-                        {
-                            $this->arrAjax['code'] = 207;
-                            $arrUser = Admin::findOne($id);
-                            if ($arrUser && $arrUser->delete())
-                            {
-                                // 移出权限
-                                Yii::$app->authManager->revokeAll($id);
-                                $this->arrAjax = [
-                                    'code' => 0,
-                                    'data' => $arrUser,
-                                ];
-                            }
-                        }
-                    }
-                    break;
-            }
-
-            // 记录日志
-            $this->info('update', [
-                'action' => 'admin/update',
-                'type'   => $action,
-                'data'   => $array,
-                'code'   => $this->arrAjax['code'],
-                'time'   => date('Y-m-d H:i:s')
-            ]);
-        }
-
-        return $this->returnAjax();
-    }
-
     // 我的信息
     public function actionView()
     {
         $address  = '选择县';
         $user     = Yii::$app->view->params['user'];
         $arrChina = [];
-        if ($user->address)
-        {
+        if ($user->address) {
             $arrAddress = explode(',', $user->address);
-            if ($arrAddress)
-            {
+            if ($arrAddress) {
                 if (isset($arrAddress[2])) $address = $arrAddress[2];
-
                 // 查询省市信息
                 $arrChina = \common\models\China::find()->where(['name' => array_slice($arrAddress, 0, 2)])->orderBy(['pid' => SORT_ASC])->all();
             }

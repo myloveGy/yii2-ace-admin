@@ -186,6 +186,7 @@
         </div>
     </div>
 </div>
+<?php $this->beginBlock('javascript-3') ?>
 <script type="text/javascript">
     var $form  = $('#sUserForm'),
         $input = $form.find('input[type!=hidden]').add('textarea');
@@ -223,7 +224,7 @@
                 })
                 .always(alwaysClose)
                 .done(function(json){
-                    layer.msg(json.msg, {icon:json.status == 1 ? 6 : 5});
+                    layer.msg(json.errMsg, {icon:json.errCode == 1 ? 6 : 5});
                 })
                 .fail(ajaxFail);
             }
@@ -241,3 +242,4 @@
         });
     })
 </script>
+<?php $this->endBlock(); ?>

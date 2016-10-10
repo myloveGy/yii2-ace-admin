@@ -18,6 +18,16 @@ return [
             'class' => 'yii\rbac\DbManager',
         ],
 
+        // 资源管理修改
+        'assetManager' => [
+            'bundles' => [
+                // 去掉自己加载的Jquery
+                'yii\web\JqueryAsset' => [
+                    'js' => [],
+                ],
+            ],
+        ],
+
         // 图片处理
         'image' => [
             'class'  => 'yii\image\ImageDriver',

@@ -90,4 +90,15 @@ class ArrangeController extends Controller
 
     // 返回 Modal
     public function getModel(){return new Arrange();}
+
+    /**
+     * handleExport() 导出数据显示问题(时间问题可以通过Excel自动装换)
+     */
+    public function handleExport(&$objModel)
+    {
+        $objModel->start_at   = date('Y-m-d H:i:s', $objModel->start_at);
+        $objModel->end_at     = date('Y-m-d H:i:s', $objModel->end_at);
+        $objModel->created_at = date('Y-m-d H:i:s', $objModel->created_at);
+        $objModel->updated_at = date('Y-m-d H:i:s', $objModel->updated_at);
+    }
 }

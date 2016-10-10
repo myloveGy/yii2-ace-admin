@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use common\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "auth_item".
@@ -29,6 +30,17 @@ class Auth extends \common\models\Model
     const TYPE_PERMISSION = 2;
 
     public $_permissions = [];
+
+    /**
+     * behaviors() 定义行为
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className(),
+        ];
+    }
 
     /**
      * @inheritdoc
@@ -85,7 +97,7 @@ class Auth extends \common\models\Model
             $permission = $auth->createPermission($this->name);
             $permission->description = $this->description;
             $auth->add($permission);
-            $admin = $auth->getRole('admin');
+            $admin = $auth->getRole(Yii::$app->params['adminRoleName']);
             return $auth->addChild($admin, $permission);
         }
         return false;
@@ -118,7 +130,6 @@ class Auth extends \common\models\Model
                 // 将角色添加给用户
                 $uid = Yii::$app->user->id;
                 if ($uid != 1) $auth->assign($role, $uid);
-
                 return true;
             }
         }

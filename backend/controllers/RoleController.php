@@ -15,6 +15,9 @@ use yii\web\HttpException;
 
 class RoleController extends Controller
 {
+    public $sort = 'created_at';        // 排序
+    public $type = Auth::TYPE_ROLE;     // 类型
+
     // 搜索配置信息
     public function where($params)
     {
@@ -22,8 +25,7 @@ class RoleController extends Controller
         $where = [['=', 'type', Auth::TYPE_ROLE]]; // 查询角色信息
 
         // 不是管理员
-        if ($uid != 1)
-        {
+        if ($uid != 1) {
             $name = [];
             // 获取用户的所有角色
             $roles = Yii::$app->authManager->getRolesByUser($uid);
@@ -38,116 +40,116 @@ class RoleController extends Controller
         ];
     }
 
-    public function getModel() {return new Auth();}
-
-    // 权限管理
-    public function actionUpdate()
+    /**
+     * getModel() 获取model
+     * @return Auth
+     */
+    public function getModel()
     {
-        // 获取请求参数
-        $request = Yii::$app->request;
-        $action  = $request->post('actionType');    // 类型
-        $array   = $request->post();                // 请求参数
-        $type    = (int)$request->get('type');      // 操作类型 1 角色 2 权限
+        $model = new Auth();
+        $model->type = $this->type;
+        return $model;
+    }
 
-        // 判断数据正确提交
-        if (! empty($action) && ! empty($array))
-        {
-            $this->arrAjax['code'] = 216;
-            if ($type == Auth::TYPE_ROLE || Yii::$app->user->can('authority/update'))
-            {
-                // 判断类型
-                switch ($action)
-                {
-                    // 添加角色
-                    case 'insert':
-                        $model = new Auth();
-                        if ($model->load(['params' => $array], 'params'))
-                        {
-                            // 添加角色成功
-                            $permissions = $this->preparePermissions(Yii::$app->request->post());
-                            // 判断类型 (添加角色还是操作权限)
-                            $isTrue = $type == Auth::TYPE_ROLE ? $model->createRole($permissions) : $model->createPermission();
-                            $this->arrAjax['code']  = $type == Auth::TYPE_ROLE ? 211 : 212;
-                            if ($isTrue) $this->arrAjax['code'] = 0;
-                        }
-                        break;
-                    // 删除角色和权限
-                    case 'delete':
-                        // 判断是否有权限进行该操作
-                        if ($type == Auth::TYPE_ROLE)
-                        {
-                            $this->arrAjax['code'] = 208;
-                            if ( Yii::$app->user->can('deleteRole'))
-                            {
-                                $name = $array['name'];
-                                $this->arrAjax['code'] = 209;
-                                if ( ! Auth::hasUsersByRole($name))
-                                {
-                                    $auth = Yii::$app->getAuthManager();
-                                    $role = $auth->getRole($name);
-                                    // clear asset permissions
-                                    $permissions = $auth->getPermissionsByRole($name);
-                                    foreach($permissions as $permission) {$auth->removeChild($role, $permission);}
-                                    $this->arrAjax['code'] = 210;
-
-                                    // 删除角色成功
-                                    if($auth->remove($role)) $this->arrAjax['code'] = 0;
-                                }
-                            }
-
-                            // 删除权限
-                        } else {
-                            $this->arrAjax['code'] = 214;
-                            if (Yii::$app->user->can('deleteAuthority'))
-                            {
-                                $auth = Yii::$app->getAuthManager();
-                                $item = $auth->getPermission($array['name']);
-                                $this->arrAjax['code'] = 214;
-                                if ($item && $auth->remove($item)) $this->arrAjax['code'] = 0;
-                            }
-                        }
-
-                        break;
-                    // 修改权限
-                    case 'update':
-                        $name = $array['name'];
-                        if ($name)
-                        {
-                            $model = Auth::findOne(['name' => $name]);
-                            $this->arrAjax['code'] = 213;
-                            // 执行修改权限
-                            if ($model->load(['params' => $array], 'params'))
-                            {
-                                // 修改角色
-                                if ($type == Auth::TYPE_ROLE)
-                                {
-                                    $auth = Yii::$app->getAuthManager();
-                                    $role = $auth->getRole($name);
-                                    $role->description = $model->description;
-                                    $isTrue = $auth->update($name, $role);
-                                }
-                                else
-                                    $isTrue = $model->updatePermission($name);
-
-                                // 修改成功
-                                if ($isTrue) $this->arrAjax['code'] = 0;
-                            }
-                        }
-                        break;
-                }
+    /**
+     * actionCreate() 处理新增数据
+     * @return mixed|string
+     */
+    public function actionCreate()
+    {
+        $array = Yii::$app->request->post();
+        if ($array) {
+            $model = $this->getModel();
+            if ($model->load(['params' => $array], 'params')) {
+                // 添加角色成功
+                $permissions = $this->preparePermissions(Yii::$app->request->post());
+                // 判断类型 (添加角色还是操作权限)
+                $isTrue = $model->type == Auth::TYPE_ROLE ? $model->createRole($permissions) : $model->createPermission();
+                $this->arrJson['errCode']  = $model->type == Auth::TYPE_ROLE ? 211 : 212;
+                if ($isTrue) $this->handleJson($model);
             }
-
         }
 
-        return $this->returnAjax();
+        // 返回数据
+        return $this->returnJson();
+    }
+
+    /**
+     * actionUpdate() 编辑数据处理
+     * @return mixed|string
+     */
+    public function actionUpdate()
+    {
+        $array = Yii::$app->request->post();                // 请求参数
+        // 判断数据正确提交
+        if ($array && isset($array['name'])) {
+            $model = Auth::findOne($array['name']);
+            $this->arrJson['errCode'] = 213;
+            // 执行修改权限
+            if ($model->load(['params' => $array], 'params')) {
+                // 修改角色
+                if ($model->type == Auth::TYPE_ROLE) {
+                    $auth = Yii::$app->getAuthManager();
+                    $role = $auth->getRole($model->name);
+                    $role->description = $model->description;
+                    $isTrue = $auth->update($model->name, $role);
+                }
+                else
+                    $isTrue = $model->updatePermission($model->name);
+
+                // 修改成功
+                if ($isTrue) $this->handleJson($model);
+            }
+        }
+
+        return $this->returnJson();
+    }
+
+    /**
+     * actionDelete() 处理删除数据
+     * @return mixed|string
+     */
+    public function actionDelete()
+    {
+        $array = Yii::$app->request->post();
+        if ($array && isset($array['name'])) {
+            $model = Auth::findOne($array['name']);
+            if ($model) {
+                // 判断操作数据类型
+                if ($model->type == Auth::TYPE_ROLE) {
+                    // 删除角色
+                    $this->arrJson['errCode'] = 209;
+                    if ( ! Auth::hasUsersByRole($model->name) && $model->name != Yii::$app->params['adminRoleName']) {
+                        $auth = Yii::$app->getAuthManager();
+                        $role = $auth->getRole($model->name);
+
+                        // 请求这个角色的所有权限
+                        $permissions = $auth->getPermissionsByRole($model->name);
+                        foreach($permissions as $permission) {$auth->removeChild($role, $permission);}
+                        $this->arrJson['errCode'] = 210;
+
+                        // 删除角色成功
+                        if($auth->remove($role)) $this->handleJson($model);
+                    }
+
+                } else {
+                    // 删除权限
+                    $this->arrJson['errCode'] = 214;
+                    $auth = Yii::$app->getAuthManager();
+                    $item = $auth->getPermission($model->name);
+                    if ($item && $auth->remove($item)) $this->handleJson($model);
+                }
+            }
+        }
+
+        return $this->returnJson();
     }
 
     // 修改用户的权限
-    public function actionCreate($name)
+    public function actionEdit($name)
     {
         // 管理员直接返回
-        if($name == 'admin')
-        {
+        if($name == Yii::$app->params['adminRoleName']) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'The Administrator has all permissions'));
             return $this->redirect(['view', 'name' => $name]);
         }
@@ -205,7 +207,7 @@ class RoleController extends Controller
         }
 
         // 加载视图返回
-        return $this->render('update', [
+        return $this->render('edit', [
             'model'       => $model,        // 模型对象
             'permissions' => $permissions,  // 权限信息
             'trees'       => $trees,        // 导航栏树
@@ -224,13 +226,10 @@ class RoleController extends Controller
         // 查询导航栏信息
         $menus = $parent = [];
         $child = Menu::find()->where(['url' => array_keys($permissions)])->all();
-        if ($child)
-        {
+        if ($child) {
             // 处理数据
-            foreach ($child as $key => $value)
-            {
-                if ($value->pid == 0)
-                {
+            foreach ($child as $key => $value) {
+                if ($value->pid == 0) {
                     $menus[$value->id]  = ['name' => $value->menu_name, 'child' => []];
                     unset($child[$key]);
                 }
@@ -254,10 +253,15 @@ class RoleController extends Controller
         ]);
     }
 
+    /**
+     * findModel() 查询单个model
+     * @param array $name
+     * @return Auth
+     * @throws HttpException
+     */
     protected function findModel($name)
     {
-        if ($name)
-        {
+        if ($name) {
             $auth  = Yii::$app->getAuthManager();
             $model = new Auth();
             $role  = $auth->getRole($name);
@@ -270,6 +274,7 @@ class RoleController extends Controller
                 return $model;
             }
         }
+
         throw new HttpException(404);
     }
 

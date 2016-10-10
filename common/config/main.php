@@ -38,7 +38,6 @@ return [
                 // 去掉自己加载的Jquery
                 'yii\web\JqueryAsset' => [
                     'sourcePath' => null,
-                    'js'         => [],
                 ],
             ],
         ],

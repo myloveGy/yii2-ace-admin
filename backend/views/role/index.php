@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </p>
 <!--表格数据-->
 <table class="table table-striped table-bordered table-hover" id="showTable"></table>
+<?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     // 设置表单信息
     function setOperate(td, data, rowArr, row, col)
@@ -37,8 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
     }
 
     var myTable = new MeTable({
-        sTitle:   "角色信息",
-        sBaseUrl: "<?=Url::toRoute(['role/update', 'type' => 1])?>"
+        sTitle:   "角色信息"
     },{
         "aoColumns":[
 			oCheckBox,
@@ -64,3 +64,4 @@ $this->params['breadcrumbs'][] = $this->title;
         myTable.init();
     })
 </script>
+<?php $this->endBlock(); ?>

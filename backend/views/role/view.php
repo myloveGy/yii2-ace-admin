@@ -158,6 +158,7 @@ $this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js');
     </div>
 </div>
 
+<?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     $(function(){
         $('.dd').add('.myclass').nestable();
@@ -192,3 +193,4 @@ $this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js');
         handleMenuActive('\\/role\\/index');
     });
 </script>
+<?php $this->endBlock(); ?>

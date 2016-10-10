@@ -30,6 +30,10 @@ class AppAsset extends AssetBundle
 
     // 加载的JavaScript
     public $js = [
+        'js/ace-elements.min.js',
+        'js/ace.min.js',
+        'js/common/base.js',
+        'js/common/dataTable.js',
         'js/jquery-ui.custom.min.js',
         'js/jquery.ui.touch-punch.min.js',
         'js/date-time/moment.min.js',

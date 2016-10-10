@@ -37,32 +37,6 @@ AppAsset::register($this);
     <script src="/public/assets/js/html5shiv.min.js"></script>
     <script src="/public/assets/js/respond.min.js"></script>
     <![endif]-->
-
-
-    <!-- 公共的JS文件 -->
-    <!-- basic scripts -->
-    <!--[if !IE]> -->
-    <script type="text/javascript">
-        window.jQuery || document.write("<script src='/public/assets/js/jquery.min.js'>"+"<"+"/script>");
-    </script>
-    <!-- <![endif]-->
-    <!--[if IE]>
-    <script type="text/javascript">
-        window.jQuery || document.write("<script src='/public/assets/js/jquery1x.min.js'>"+"<"+"/script>");
-    </script>
-    <![endif]-->
-    <script type="text/javascript">
-        if('ontouchstart' in document.documentElement) document.write("<script src='/public/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
-    </script>
-    <script src="/public/assets/js/bootstrap.min.js"></script>
-    <!-- page specific plugin scripts -->
-    <!--[if lte IE 8]>
-    <script src="/public/assets/js/excanvas.min.js"></script>
-    <![endif]-->
-    <script src="/public/assets/js/ace-elements.min.js"></script>
-    <script src="/public/assets/js/ace.min.js"></script>
-    <script src="/public/assets/js/common/base.js"></script>
-    <script src="/public/assets/js/common/dataTable.js"></script>
 </head>
 <body class="no-skin">
 <?php $this->beginBody() ?>
@@ -329,6 +303,26 @@ AppAsset::register($this);
         <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
     </a>
 </div>
+<!-- 公共的JS文件 -->
+<!-- basic scripts -->
+<!--[if !IE]> -->
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='/public/assets/js/jquery.min.js'>"+"<"+"/script>");
+</script>
+<!-- <![endif]-->
+<!--[if IE]>
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='/public/assets/js/jquery1x.min.js'>"+"<"+"/script>");
+</script>
+<![endif]-->
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='/public/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="/public/assets/js/bootstrap.min.js"></script>
+<!-- page specific plugin scripts -->
+<!--[if lte IE 8]>
+<script src="/public/assets/js/excanvas.min.js"></script>
+<![endif]-->
 <?php $this->endBody() ?>
 <script type="text/javascript">
     $(function(){
@@ -362,6 +356,7 @@ AppAsset::register($this);
         $('#bt-me-calendar').click(function(){window.location.href="<?=Url::toRoute(['arrange/calendar'])?>"});
     })
 </script>
+<?=$this->blocks['javascript']?>
 </body>
 </html>
 <?php $this->endPage() ?>
