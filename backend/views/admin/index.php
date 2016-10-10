@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         // 设置隐藏和排序信息
         // "order":[[0, "desc"]],
-         "columnDefs":[{"targets":[3, 4, 5], "visible":false}],
+         "columnDefs":[{"targets":[3, 4, 5], "visible":false}]
     });
 
     /**

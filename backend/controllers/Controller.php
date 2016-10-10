@@ -237,6 +237,27 @@ class Controller extends \common\controllers\Controller
     }
 
     /**
+     * actionDeleteAll()批量删除操作
+     * @return mixed|string
+     */
+    public function actionDeleteAll()
+    {
+        $ids = Yii::$app->request->post('ids');
+        if ($ids) {
+            $model = $this->getModel();
+            $index = $model->primaryKey();
+            $this->arrJson['errCode'] = 220; // 查询数据不存在
+            if ($index && isset($index[0])) {
+                if ($model->deleteAll([$index[0] => explode(',', $ids)])) {
+                    $this->handleJson([]);
+                }
+            }
+        }
+
+        return $this->returnJson();
+    }
+
+    /**
      * actionEditable 处理行内编辑
      * @return mixed|string
      */

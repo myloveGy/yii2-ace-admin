@@ -334,11 +334,11 @@ function aceFileInput(select, url, fun) {
     };
     if (arguments[3]) conf = $.extend(conf, arguments[3]);
     if (!fun) fun = function(result) {
-        if (result.status == 1) {
+        if (result.errCode == 0) {
             gAlert("上传文件成功", "上传文件的地址为：" + result.data.sFilePath, "success");
             objHide.val(result.data.sFilePath)
         } else {
-            gAlert("上传文件出现错误Error:", result.msg);
+            gAlert("上传文件出现错误Error:", result.errMsg);
             $input.ace_file_input('apply_settings').ace_file_input('reset_input');
         }
         // 失败执行

@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
     {
         var str = '<a class="btn btn-success btn-xs" href="<?=Url::toRoute(['role/view'])?>?name=' + rowArr['name'] + '"><i class="glyphicon glyphicon-zoom-in"></i></a> ';
         str += '<a class="btn btn-info btn-xs" href="javascript:;" onclick="myTable.update('+row+');"><i class="glyphicon glyphicon-edit "></i></a> ';
-        str += '<a class="btn btn-warning btn-xs" href="<?=Url::toRoute(['role/create'])?>?name=' + rowArr['name'] + '" ><i class="glyphicon glyphicon-edit "></i>编辑权限</a> ';
+        str += '<a class="btn btn-warning btn-xs" href="<?=Url::toRoute(['role/edit'])?>?name=' + rowArr['name'] + '" ><i class="glyphicon glyphicon-edit "></i>编辑权限</a> ';
         str += '<a class="btn btn-danger btn-xs" href="javascript:;" onclick="myTable.delete('+row+');"><i class="glyphicon glyphicon-trash "></i></a>';
         $(td).html(str);
     }

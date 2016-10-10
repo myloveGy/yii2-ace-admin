@@ -206,10 +206,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             'url' :         f.attr('action'),
                             'data' :        $('form').serialize(),
                             'type' :        'POST',
-                            'dataType' :    'json',
+                            'dataType' :    'json'
                         }).done(function(json){
-                            layer.msg(json.msg, {icon:json.status == 1 ? 6 : 5});
-                            if (json.status == 1)
+                            layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
+                            if (json.errCode == 0)
                             {
                                 // 第一步提交
                                 if (info.step === 1) $('#my-content').html(json.data);
@@ -257,10 +257,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             url: "<?=Url::toRoute('module/produce')?>",
                             data: $('form').serialize(),
                             dataType: "json",
-                            type: "POST",
+                            type: "POST"
                         }).done(function(json){
-                            layer.msg(json.msg, {icon:json.status == 1 ? 6 : 5});
-                            if (json.status == 1)
+                            layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
+                            if (json.errCode == 0)
                             {
                                 if ($('input[name=menu]:checked').val() == 1)
                                     window.location.href = json.data;

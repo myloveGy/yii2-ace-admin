@@ -31,45 +31,31 @@ class ModuleController extends Controller
         {
             $strTitle = $request->post('title'); // 标题
             $strTable = $request->post('table'); // 数据库表
-            if ( ! empty($strTable) && ! empty($strTitle))
-            {
+            if ( ! empty($strTable) && ! empty($strTitle)) {
                 // 获取表信息
                 $db = Yii::$app->db;
-                $this->arrAjax['code'] = 217;
+                $this->arrJson['errCode'] = 217;
                 $tables = $db->createCommand('SHOW TABLES')->queryAll();
-                if ($tables)
-                {
+                if ($tables) {
                     $isHave = false;
-                    foreach ($tables as $value)
-                    {
-                        if (in_array($strTable, $value))
-                        {
+                    foreach ($tables as $value) {
+                        if (in_array($strTable, $value)) {
                             $isHave = true;
                             break;
                         }
                     }
 
-                    if ($isHave)
-                    {
+                    if ($isHave) {
                         // 查询表结构信息
                         $arrTables = $db->createCommand('SHOW FULL COLUMNS FROM `'.$strTable.'`')->queryAll();
-                        $this->arrAjax['msg'] = 218;
-                        if ($arrTables)
-                        {
-                            // 成功返回
-                            $this->arrAjax = [
-                                'code' => 3,
-                                'data' => $this->createForm($arrTables),
-                            ];
-                        }
+                        $this->arrJson['errCode'] = 218;
+                        if ($arrTables) $this->handleJson($this->createForm($arrTables));
                     }
                 }
-
-
             }
         }
 
-        return $this->returnAjax();
+        return $this->returnJson();
     }
 
     // 第二步生成预览HTML文件
@@ -82,7 +68,7 @@ class ModuleController extends Controller
             $table = $request->post('table');
             if ($attr)
             {
-                $this->arrAjax['code'] = 217;
+                $this->arrJson['errCode'] = 217;
                 if ($table && ($name = ltrim($table, 'my_')))
                 {
                     // 拼接字符串
@@ -95,19 +81,16 @@ class ModuleController extends Controller
                     if ( ! file_exists($strVPath)) mkdir($strVPath, 644, true);
 
                     // 返回数据
-                    $this->arrAjax = [
-                        'code' => 4,
-                        'data' => [
-                            'html'       => highlight_string($this->createPHP($attr, $request->post('title')), true),
-                            'file'       => [$strVName, file_exists($strVPath . $strVName)],
-                            'controller' => [$strCName, file_exists($dirName . 'Controllers/'.$strCName)],
-                        ],
-                    ];
+                    $this->handleJson([
+                        'html'       => highlight_string($this->createPHP($attr, $request->post('title')), true),
+                        'file'       => [$strVName, file_exists($strVPath . $strVName)],
+                        'controller' => [$strCName, file_exists($dirName . 'Controllers/'.$strCName)],
+                    ]);
                 }
             }
         }
 
-        return $this->returnAjax();
+        return $this->returnJson();
     }
 
     // 第三步开始生成文件
@@ -128,7 +111,7 @@ class ModuleController extends Controller
 
             if ($attr && $table && $title && $html && $php)
             {
-                $this->arrAjax['code'] = 217;
+                $this->arrJson['errCode'] = 217;
                 if ($table && ($name = trim($table, Yii::$app->db->tablePrefix)))
                 {
                     // 拼接字符串
@@ -137,7 +120,7 @@ class ModuleController extends Controller
                     $strVName = $dirName.'views/'.$name.'/'.(stripos($html, '.php') ? $html : $html.'.php');
 
                     // 验证文件不存在
-                    $this->arrAjax['code'] = 219;
+                    $this->arrJson['errCode'] = 219;
                     if ($allow === 1 ||  (! file_exists($strCName) && ! file_exists($strVName)))
                     {
                         // 生成权限
@@ -153,16 +136,13 @@ class ModuleController extends Controller
                         $this->createController($name, $title, $strCName, $strWhere);
 
                         // 返回数据
-                        $this->arrAjax = [
-                            'code' => 4,
-                            'data' => Url::toRoute([$name.'/index']),
-                        ];
+                        $this->handleJson(Url::toRoute([$name.'/index']));
                     }
                 }
             }
         }
 
-        return $this->returnAjax();
+        return $this->returnJson();
     }
 
     /**
@@ -175,12 +155,19 @@ class ModuleController extends Controller
     private function createAuth($prefix, $title)
     {
         $strPrefix = trim($prefix, '/').'/';
-        $arrAuth   = ['index' => '显示', 'search' => '搜索', 'update' => '编辑'];
+        $arrAuth   = [
+            'index'  => '显示',
+            'search' => '搜索',
+            'create' => '创建',
+            'update' => '修改',
+            'delete' => '删除',
+            'export' => '导出'
+        ];
         foreach ($arrAuth as $key => $value)
         {
             $model = new Auth();
             $model->name        = $strPrefix.$key;
-            $model->description = $title.$value;
+            $model->description = $value.$title;
             $model->createPermission();
         }
     }
@@ -338,13 +325,12 @@ HTML;
     </button>
 </p>
 <!--表格数据-->
-<table class="table table-striped table-bordered table-hover" id="showTable">
-</table>
+<table class="table table-striped table-bordered table-hover" id="showTable"></table>
 <script type="text/javascript">
     var myTable = new MeTable({sTitle:"{$title}"},{
         "aoColumns":[
 {$strHtml}
-        ],
+        ]
 
         // 设置隐藏和排序信息
         // "order":[[0, "desc"]],
@@ -363,9 +349,7 @@ HTML;
       * myTable.afterSave(object data)  return true 后置
       */
 
-    $(function(){
-        myTable.init();
-    })
+     myTable.init();
 </script>
 html;
         // 生成文件
@@ -399,7 +383,6 @@ html;
 /**
  * file: {$strFile}
  * desc: {$title} 执行操作控制器
- * user: liujx
  * date: {$strDate}
  */
 
