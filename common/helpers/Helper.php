@@ -2,8 +2,29 @@
 
 namespace common\helpers;
 
+use yii\helpers\ArrayHelper;
+
 class Helper
 {
+    /**
+     * map() 使用ArrayHelper 处理数组, 并添加其他信息
+     * @param  mixed  $array 需要处理的数据
+     * @param  string $id    键名
+     * @param  string $name  键值
+     * @param  array $params 其他数据
+     * @return array
+     */
+    public static function map($array, $id, $name, $params = ['请选择'])
+    {
+        $array = ArrayHelper::map($array, $id, $name);
+        if ($params) {
+            foreach ($params as $key => $value) $array[$key] = $value;
+        }
+
+        ksort($array);
+        return $array;
+    }
+
     /**
      * getIpAddress() 获取IP地址
      * @return string 返回字符串
