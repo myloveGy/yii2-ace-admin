@@ -13,7 +13,11 @@ use Yii;
  */
 class AdminController extends Controller
 {
-    // 搜索配置
+    /**
+     * where() 搜索配置
+     * @param  array $params 查询参数
+     * @return array
+     */
     public function where($params)
     {
         $where  = [];
@@ -30,7 +34,10 @@ class AdminController extends Controller
         ];
     }
 
-    // 首页显示
+    /**
+     * actionIndex() 首页显示
+     * @return string
+     */
     public function actionIndex()
     {
         // 查询用户数据
@@ -41,10 +48,19 @@ class AdminController extends Controller
         ]);
     }
 
-    // 返回model
-    public function getModel() { return new Admin();}
+    /**
+     * getModel() 获取model
+     * @return Admin
+     */
+    public function getModel()
+    {
+        return new Admin();
+    }
 
-    // 我的信息
+    /**
+     * actionView() 查看个人信息
+     * @return string
+     */
     public function actionView()
     {
         $address  = '选择县';
@@ -70,13 +86,22 @@ class AdminController extends Controller
         ]);
     }
 
-    // 上传文件目录
+    /**
+     * getUploadPath() 获取上传文件路径
+     * @return string
+     */
     public function getUploadPath()
     {
         return './public/assets/avatars/';
     }
 
-    // 上传头像之后的处理
+    /**
+     * afterUpload() 上传文件之后的处理
+     * @param object $objFile
+     * @param string $strFilePath
+     * @param string $strField
+     * @return bool
+     */
     public function afterUpload($objFile, &$strFilePath, $strField)
     {
         // 上传头像信息
@@ -119,7 +144,9 @@ class AdminController extends Controller
         return true;
     }
 
-    // 获取地址信息
+    /**
+     * actionAddress() 获取地址信息
+     */
     public function actionAddress()
     {
         $request = Yii::$app->request;
@@ -131,8 +158,7 @@ class AdminController extends Controller
             $where   = ['and', ['pid' => $intPid], ['<>', 'id', 0]];
             if ( ! empty($strName)) array_push($where, ['like', 'name', $strName]);
             $arrCountry = China::find()->select(['id', 'name'])->where($where)->all();
-            if ($arrCountry)
-            {
+            if ($arrCountry) {
                 foreach ($arrCountry as $value) $array[] = ['id' => $value->id, 'text' => $value->name];
             }
         }

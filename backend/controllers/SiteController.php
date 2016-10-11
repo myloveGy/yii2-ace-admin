@@ -56,6 +56,9 @@ class SiteController extends \yii\web\Controller
         ];
     }
 
+    /**
+     * actionTest() 用来生成默认的权限信息
+     */
     public function actionTest()
     {
         $controller = [
@@ -111,7 +114,11 @@ class SiteController extends \yii\web\Controller
         }
     }
 
-    // 首页显示
+    /**
+     * actionIndex() 管理员登录欢迎页
+     * @return string
+     * @throws UnauthorizedHttpException
+     */
     public function actionIndex()
     {
         // 查询导航栏信息
@@ -140,7 +147,10 @@ class SiteController extends \yii\web\Controller
         ]);
     }
 
-    // 用户登录
+    /**
+     * actionLogin() 后台管理员登录
+     * @return string|\yii\web\Response
+     */
     public function actionLogin()
     {
         $this->layout = 'login.php';
@@ -156,7 +166,10 @@ class SiteController extends \yii\web\Controller
         }
     }
 
-    // 用户退出
+    /**
+     * actionLogout() 后台管理员退出
+     * @return \yii\web\Response
+     */
     public function actionLogout()
     {
         // 用户退出修改登录时间

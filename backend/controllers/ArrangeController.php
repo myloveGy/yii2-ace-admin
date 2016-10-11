@@ -14,7 +14,11 @@ use backend\models\Arrange;
 
 class ArrangeController extends Controller
 {
-    // 查询方法
+    /**
+     * where() 查询参数配置
+     * @param array $params
+     * @return array
+     */
     public function where($params)
     {
         return [
@@ -25,7 +29,10 @@ class ArrangeController extends Controller
         ];
     }
 
-    // 首页显示
+    /**
+     * actionIndex() 首页显示
+     * @return string
+     */
     public function actionIndex()
     {
         return $this->render('index', [
@@ -36,7 +43,10 @@ class ArrangeController extends Controller
         ]);
     }
 
-    // 管理日程
+    /**
+     * actionCalendar()管理日程
+     * @return string
+     */
     public function actionCalendar()
     {
         // 查询没有委派的信息
@@ -51,7 +61,10 @@ class ArrangeController extends Controller
         ]);
     }
 
-    // 查询管理员日程信息
+    /**
+     * actionArrange 查询管理员日程信息
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function actionArrange()
     {
         $request = Yii::$app->request;
@@ -88,8 +101,14 @@ class ArrangeController extends Controller
         return $arrUserArrange;
     }
 
-    // 返回 Modal
-    public function getModel(){return new Arrange();}
+    /**
+     * getModel() 获取model
+     * @return Arrange
+     */
+    public function getModel()
+    {
+        return new Arrange();
+    }
 
     /**
      * handleExport() 导出数据显示问题(时间问题可以通过Excel自动装换)

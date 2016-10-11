@@ -16,13 +16,19 @@ use yii\helpers\Url;
 // 引入命名空间
 class ModuleController extends Controller
 {
-    // 首页显示
+    /**
+     * actionIndex() 首页显示
+     * @return string
+     */
     public function actionIndex()
     {
         return $this->render('index');
     }
 
-    // 第一步接收标题和数据表数据生成表单配置信息
+    /**
+     * actionCreate() 第一步接收标题和数据表数据生成表单配置信息
+     * @return mixed|string
+     */
     public function actionCreate()
     {
         // 接收参数
@@ -58,7 +64,10 @@ class ModuleController extends Controller
         return $this->returnJson();
     }
 
-    // 第二步生成预览HTML文件
+    /**
+     * actionUpdate() 第二步生成预览HTML文件
+     * @return mixed|string
+     */
     public function actionUpdate()
     {
         $request = Yii::$app->request;
@@ -93,7 +102,10 @@ class ModuleController extends Controller
         return $this->returnJson();
     }
 
-    // 第三步开始生成文件
+    /**
+     * actionProduce() 第三步开始生成文件
+     * @return mixed|string
+     */
     public function actionProduce()
     {
         $request = Yii::$app->request;
@@ -216,7 +228,7 @@ class ModuleController extends Controller
                 $sOption .= '"rangelength":"[2, '.$sLen.']"';
             }
 
-            $sOther = stripos($value['Field'], 'time') !== false ? 'dateTimeString' : '';
+            $sOther = stripos($value['Field'], '_at') !== false ? 'dateTimeString' : '';
 
             $strHtml .= <<<HTML
 <div class="alert alert-success me-alert-su">

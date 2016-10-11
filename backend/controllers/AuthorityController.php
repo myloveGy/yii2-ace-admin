@@ -15,7 +15,11 @@ class AuthorityController extends RoleController
 {
     public $type = Auth::TYPE_PERMISSION;
 
-    // 查询方法
+    /**
+     * where() 查询参数配置
+     * @param array $params
+     * @return array
+     */
     public function where($params)
     {
         return [

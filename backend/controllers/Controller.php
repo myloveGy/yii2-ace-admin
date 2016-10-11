@@ -135,7 +135,10 @@ class Controller extends \common\controllers\Controller
      * @param  mixed $array 查询出来的数组对象
      * @return void  对数据进行处理
      */
-    protected function afterSearch(&$array){}
+    protected function afterSearch(&$array)
+    {
+
+    }
 
     /**
      * actionSearch() 处理查询数据
@@ -473,7 +476,10 @@ class Controller extends \common\controllers\Controller
      * getModel() 获取model对象
      * @return Admin
      */
-    protected function getModel(){ return new Admin();}
+    protected function getModel()
+    {
+        return new Admin();
+    }
 
     /**
      * findModel() 查询单个model

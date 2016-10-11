@@ -2,20 +2,23 @@
 
 namespace backend\controllers;
 
-use Yii;
 use backend\models\Menu;
-use yii\helpers\ArrayHelper;
+use common\helpers\Helper;
+use yii\helpers\Json;
 
 /**
  * Class    MenuController
  * @package backend\controllers
  * Desc     导航栏目管理
- * User     liujx
  * Date     2016-4-18
  */
 class MenuController extends Controller
 {
-    // 定义查询信息
+    /**
+     * where() 查询参数配置
+     * @param array $params
+     * @return array
+     */
     public function where($params)
     {
         return [
@@ -26,15 +29,23 @@ class MenuController extends Controller
         ];
     }
 
+    /**
+     * actionIndex() 首页显示
+     * @return string
+     */
     public function actionIndex()
     {
         // 查询父级分类信息
         $parents = Menu::find()->select(['id', 'menu_name'])->where(['status' => 1, 'pid' => 0])->indexBy('id')->all();
-        $parents = ArrayHelper::map($parents, 'id', 'menu_name');
-        $parents[0] = '顶级分类';
-        return $this->render('index', ['parents' => json_encode($parents)]);
+        return $this->render('index', ['parents' => Json::encode(Helper::map($parents, 'id', 'menu_name', ['顶级分类']))]);
     }
 
-    // 返回model
-    public function getModel(){return new Menu();}
+    /**
+     * getModel() 获取model
+     * @return Menu
+     */
+    public function getModel()
+    {
+        return new Menu();
+    }
 }

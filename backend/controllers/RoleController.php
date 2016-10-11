@@ -18,7 +18,11 @@ class RoleController extends Controller
     public $sort = 'created_at';        // 排序
     public $type = Auth::TYPE_ROLE;     // 类型
 
-    // 搜索配置信息
+    /**
+     * where() 设置查询参数
+     * @param array $params
+     * @return array
+     */
     public function where($params)
     {
         $uid   = Yii::$app->user->id;
@@ -145,7 +149,12 @@ class RoleController extends Controller
         return $this->returnJson();
     }
 
-    // 修改用户的权限
+    /**
+     * actionEdit() 修改角色权限信息
+     * @param  string $name 角色名
+     * @return string|\yii\web\Response
+     * @throws \yii\web\UnauthorizedHttpException
+     */
     public function actionEdit($name)
     {
         // 管理员直接返回
@@ -164,12 +173,10 @@ class RoleController extends Controller
         $request = Yii::$app->request;       // 请求信息
         $model   = $this->findModel($name);  // 查询对象
         $array   = $request->post();         // 请求参数信息
-        if ($request->post() && $model->load(['params' => $array], 'params'))
-        {
+        if ($request->post() && $model->load(['params' => $array], 'params')) {
             // 修改权限
             $permissions = $this->preparePermissions($array);
-            if ($model->updateRole($name, $permissions))
-            {
+            if ($model->updateRole($name, $permissions)) {
                 Yii::$app->session->setFlash('success', " '$model->name' " . Yii::t('app', 'successfully updated'));
                 return $this->redirect(['view', 'name' => $name]);
             }
@@ -182,11 +189,9 @@ class RoleController extends Controller
         $trees = [];
         // 获取权限信息
         $arrHaves = array_keys($objAuth->getPermissionsByRole($name));
-        if ($menus)
-        {
+        if ($menus) {
             // 获取一级目录
-            foreach ($menus as $value)
-            {
+            foreach ($menus as $value) {
                 // 初始化的判断数据
                 $id    = $value->pid == 0 ? $value->id : $value->pid;
                 $array = ['name' => $value->menu_name, 'id' => $value->id, 'type' => 'item', 'data' => $value->url];
@@ -196,10 +201,9 @@ class RoleController extends Controller
                 if ( ! isset($trees[$id])) $trees[$id] = ['child' => []];
 
                 // 判断添加数据
-                if ($value->pid == 0)
+                if ($value->pid == 0) {
                     $trees[$id] = array_merge($trees[$id], $array);
-                else
-                {
+                } else {
                     $trees[$id]['child'][] = $array;
                     $trees[$id]['type']  = 'folder';
                 }
@@ -215,7 +219,11 @@ class RoleController extends Controller
 
     }
 
-    // 视图
+    /**
+     * actionView() 查看角色权限信息
+     * @param  string $name 角色名称
+     * @return string
+     */
     public function actionView($name)
     {
         // 查询角色信息
@@ -232,9 +240,9 @@ class RoleController extends Controller
                 if ($value->pid == 0) {
                     $menus[$value->id]  = ['name' => $value->menu_name, 'child' => []];
                     unset($child[$key]);
-                }
-                else
+                } else {
                     $parent[] = $value->pid;
+                }
             }
 
             // 查询父类数据
@@ -278,7 +286,10 @@ class RoleController extends Controller
         throw new HttpException(404);
     }
 
-    // 获取用户对应的权限信息
+    /**
+     * getPermissions() 获取用户对应的权限信息
+     * @return array
+     */
     protected function getPermissions()
     {
         $uid    = Yii::$app->user->id;
@@ -288,7 +299,11 @@ class RoleController extends Controller
         return $permissions;
     }
 
-    // 加载权限信息
+    /**
+     * preparePermissions() 加载权限信息
+     * @param  array $post 提交参数
+     * @return array
+     */
     protected function preparePermissions($post) {
         return (isset($post['Auth']['_permissions']) &&
             is_array($post['Auth']['_permissions'])) ? $post['Auth']['_permissions'] : [];
