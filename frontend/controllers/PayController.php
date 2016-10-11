@@ -3,7 +3,7 @@ namespace frontend\controllers;
 
 use Yii;
 use yii\web\Controller;
-use common\components\Helper;
+use common\helpers\Helper;
 
 class PayController extends Controller
 {
