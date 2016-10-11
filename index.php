@@ -121,7 +121,7 @@ HTML;
                             file_put_contents('./common/config/main-local.php', $strConfig);
 
                             // 修改文件名
-                            rename('./index.php', './install.log');
+                            // rename('./index.php', './install.log');
 
                             // 信息返回
                             $arrError = [
@@ -156,9 +156,9 @@ HTML;
     <!--引入公共js文件-->
     <script type="text/javascript" src="./backend/web/public/assets/js/jquery.min.js"></script>
     <script type="text/javascript" src="./backend/web/public/assets/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="./backend/web/public/js/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="./backend/web/public/js/validate.message.js"></script>
-    <script type="text/javascript" src="./backend/web/public/js/layer/layer.js"></script>
+    <script type="text/javascript" src="./backend/web/public/assets/js/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="./backend/web/public/assets/js/validate.message.js"></script>
+    <script type="text/javascript" src="./backend/web/public/assets/js/layer/layer.js"></script>
     <style type="text/css">
         div.main {margin-top:70px;}.error {color:red}
     </style>
