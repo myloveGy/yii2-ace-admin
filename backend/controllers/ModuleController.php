@@ -69,7 +69,7 @@ class ModuleController extends Controller
             if ($attr)
             {
                 $this->arrJson['errCode'] = 217;
-                if ($table && ($name = ltrim($table, 'my_')))
+                if ($table && ($name = ltrim($table, Yii::$app->db->tablePrefix)))
                 {
                     // 拼接字符串
                     $dirName  = Yii::$app->basePath.'/';
