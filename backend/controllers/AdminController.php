@@ -37,6 +37,7 @@ class AdminController extends Controller
         return $this->render('index', [
             'roles'  => Admin::getArrayRole(),      // 用户角色
             'status' => Admin::getArrayStatus(),    // 状态
+            'statusColor' => Admin::getStatusColor(), // 状态对应颜色
         ]);
     }
 

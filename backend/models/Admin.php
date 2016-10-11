@@ -25,31 +25,45 @@ class Admin extends \common\models\Admin
 {
     public $password;
     public $repassword;
-    private $_statusLabel;
     private $_roleLabel;
 
     /**
-     * @inheritdoc
+     * getArrayStatus() 获取状态说明信息
+     * @return array|string
      */
-    public function getStatusLabel()
+    public static function getArrayStatus($intStatus = null)
     {
-        if ($this->_statusLabel === null) {
-            $statuses = self::getArrayStatus();
-            $this->_statusLabel = $statuses[$this->status];
-        }
-        return $this->_statusLabel;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getArrayStatus()
-    {
-        return [
+        $array = [
             self::STATUS_ACTIVE   => Yii::t('app', 'STATUS_ACTIVE'),
             self::STATUS_INACTIVE => Yii::t('app', 'STATUS_INACTIVE'),
             self::STATUS_DELETED  => Yii::t('app', 'STATUS_DELETED'),
         ];
+
+        if ($intStatus !== null && isset($array[$intStatus])) {
+            $array = $array[$intStatus];
+        }
+
+        return $array;
+    }
+
+    /**
+     * getStatusColor() 获取状态值对应颜色信息
+     * @param null $intStatus
+     * @return array|mixed
+     */
+    public static function getStatusColor($intStatus = null)
+    {
+        $array = [
+            self::STATUS_ACTIVE   => 'label-success',
+            self::STATUS_INACTIVE => 'label-warning',
+            self::STATUS_DELETED  => 'label-danger',
+        ];
+
+        if ($intStatus !== null && isset($array[$intStatus])) {
+            $array = $array[$intStatus];
+        }
+
+        return $array;
     }
 
     public static function getArrayRole()
