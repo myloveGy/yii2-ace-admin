@@ -76,7 +76,7 @@ class User extends \common\models\User
             [['username', 'email', 'password', 'repassword'], 'trim'],
             [['password', 'repassword'], 'string', 'min' => 6, 'max' => 30],
             // Unique
-            [['email'], 'unique'],
+            [['email', 'username'], 'unique'],
             // Username
             ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/'],
             ['username', 'string', 'min' => 3, 'max' => 30],

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50624
 File Encoding         : 65001
 
-Date: 2016-10-11 13:35:21
+Date: 2016-10-11 13:51:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3943,6 +3943,7 @@ CREATE TABLE `yii2_user` (
   `last_ip` char(12) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '上一次登录IP',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`) USING BTREE,
+  UNIQUE KEY `username` (`username`),
   KEY `created_at` (`created_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
