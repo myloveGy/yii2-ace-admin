@@ -296,7 +296,7 @@ class Controller extends \common\controllers\Controller
      */
     protected function getUploadPath()
     {
-        return './public/uploads';
+        return './public/uploads/';
     }
 
     /**
