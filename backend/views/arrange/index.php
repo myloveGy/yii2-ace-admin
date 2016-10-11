@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
         aTimeStatus = <?=json_encode($timeStatus)?>,
         aColors     = <?=json_encode($statusColors)?>,
         aTimeColors = <?=json_encode($timeColors)?>;
-    aAdmins['0'] = '待定';
+        aAdmins['0'] = '待定';
     var myTable = new MeTable({sTitle:"管理员日程安排"},{
         "aoColumns":[
 			oCheckBox,
@@ -47,10 +47,10 @@ $this->params['breadcrumbs'][] = $this->title;
 			{"title": "开始时间", "data": "start_at", "sName": "start_at", "edit": {"type": "datetime", "options": {"required":true}}, "createdCell" : dateTimeString},
 			{"title": "结束时间", "data": "end_at", "sName": "end_at", "edit": {"type": "datetime", "options": {"required":true, "class": "m-time"}}, "createdCell" : dateTimeString},
             {"title": "日程状态", "data": "status", "sName": "status", "value": aStatus, "edit": {"type": "radio", "default": 0, "options": {"required":true,"number":true}}, "search": {"type": "select"}, "bSortable": false, "createdCell": function(td, data, rowArr, row, col) {
-                $(td).html('<span class="label label-sm ' + aColors[data] + '">' + (aStatus[data] ? aStatus[data] : data) + '</span>');
+                $(td).html(showSpan(aStatus, aColors, data));
             }},
             {"title": "时间状态", "data": "time_status", "sName": "time_status", "value": aTimeStatus, "edit": {"type": "radio", "default": 1, "options": {"required":true,"number":true}}, "search": {"type": "select"}, "bSortable": false, "createdCell": function(td, data, rowArr, row, col) {
-                $(td).html('<span class="label label-sm ' + aTimeColors[data] + '">' + (aTimeStatus[data] ? aTimeStatus[data] : data) + '</span>');
+                $(td).html(showSpan(aTimeStatus, aTimeColors, data));
             }},
             {"title": "处理人", "data": "admin_id", "sName": "admin_id", "value": aAdmins, "edit": {"type": "select", "options": {"required":true, "number":true}}, "search": {"type": "select"}, "createdCell" : adminToString, "bSortable": false},
             {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell" : dateTimeString},
@@ -77,13 +77,11 @@ $this->params['breadcrumbs'][] = $this->title;
       * myTable.afterSave(object data)  return true 后置
       */
 
-    $(function(){
-        myTable.init();
+    myTable.init();
 
-        // 时间选项
-        $('.me-datetime').datetimepicker({
-            format: 'YYYY-MM-DD H:mm:s'
-        });
-    })
+    // 时间选项
+    $('.me-datetime').datetimepicker({
+        format: 'YYYY-MM-DD H:mm:s'
+    });
 </script>
 <?php $this->endBlock(); ?>

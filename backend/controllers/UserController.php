@@ -8,19 +8,46 @@
 // 引入命名空间
 namespace backend\controllers;
 
-use common\models\User;
+use backend\models\User;
 
+/**
+ * Class UserController
+ * @package backend\controllers
+ * @description 用户信息
+ */
 class UserController extends Controller
 {
-    // 查询方法
+    /**
+     * where() 查询处理
+     * @param  array $params
+     * @return array 返回数组
+     */
     public function where($params)
     {
         return [
-            'created_at' => '=',
-			'updated_at' => '=',
+            'username' => 'like',
+			'email' => 'like',
         ];
     }
 
-    // 返回 Modal
-    public function getModel(){return new User();}
+    /**
+     * getModel() 返回model
+     * @return User
+     */
+    public function getModel()
+    {
+        return new User();
+    }
+
+    /**
+     * actionIndex() 首页显示
+     * @return string
+     */
+    public function actionIndex()
+    {
+        return $this->render('index', [
+            'status' => User::getArrayStatus(),
+            'statusColor' => User::getStatusColor(),
+        ]);
+    }
 }

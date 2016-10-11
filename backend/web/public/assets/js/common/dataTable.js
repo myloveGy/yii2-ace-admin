@@ -19,6 +19,12 @@ function stringToImage(td, data, rowdatas, row)
     }
 }
 
+// 显示标签
+function showSpan(aData, aColorData, iVal, sDefaultClass) {
+	if (sDefaultClass == undefined) sDefaultClass = 'label label-sm ';
+	return '<span class="' + sDefaultClass + ' ' + (aColorData[iVal] ? aColorData[iVal] : '') + '"> ' + (aData[iVal] ? aData[iVal] : iVal ) + ' </span>';
+}
+
 // 设置表单信息
 function setOperate(td, data, rowArr, row, col)
 {

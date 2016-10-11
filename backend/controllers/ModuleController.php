@@ -326,6 +326,8 @@ HTML;
 </p>
 <!--表格数据-->
 <table class="table table-striped table-bordered table-hover" id="showTable"></table>
+
+<?php \$this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var myTable = new MeTable({sTitle:"{$title}"},{
         "aoColumns":[
@@ -351,6 +353,7 @@ HTML;
 
      myTable.init();
 </script>
+<?php \$this->endBlock(); ?>
 html;
         // 生成文件
         if ( ! empty($path))
@@ -386,14 +389,17 @@ html;
  * date: {$strDate}
  */
 
-// 引入命名空间
 namespace backend\controllers;
 
 use backend\models\\{$strModel};
 
 class {$strName} extends Controller
 {
-    // 查询方法
+    /**
+     * where() 查询处理
+     * @param  array \$params
+     * @return array 返回数组
+     */
     public function where(\$params)
     {
         return [
@@ -401,8 +407,14 @@ class {$strName} extends Controller
         ];
     }
 
-    // 返回 Modal
-    public function getModel(){return new {$strModel}();}
+    /**
+     * getModel() 返回model
+     * @return {$strModel}
+     */
+    public function getModel()
+    {
+        return new {$strModel}();
+    }
 }
 
 Html;

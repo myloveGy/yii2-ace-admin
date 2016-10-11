@@ -1,4 +1,8 @@
 <?php
+
+use yii\helpers\Url;
+use yii\helpers\Json;
+
 // 定义标题和面包屑信息
 $this->title = '用户信息';
 $this->params['breadcrumbs'][] = $this->title;
@@ -30,19 +34,23 @@ $this->params['breadcrumbs'][] = $this->title;
 <table class="table table-striped table-bordered table-hover" id="showTable"></table>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var sUpload = '<?=\yii\helpers\Url::toRoute(['user/upload', 'sField' => 'face'])?>';
-    var myTable = new MeTable({
+    var sUpload = '<?=Url::toRoute(['user/upload', 'sField' => 'face'])?>',
+        aStatus = <?=Json::encode($status)?>,
+        aStatusColor = <?=Json::encode($statusColor)?>,
+        myTable = new MeTable({
         sTitle:"用户信息"
     },{
         "aoColumns":[
 			oCheckBox,
 			{"title": "用户ID", "data": "id", "sName": "id", "edit": {"type": "hidden"}},
-			{"title": "用户账号", "data": "username", "sName": "username", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 255]"}}, "bSortable": false}, 
+			{"title": "用户昵称", "data": "username", "sName": "username", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 255]"}}, "bSortable": false},
 			{"title": "邮箱", "data": "email", "sName": "email", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 255]"}}, "bSortable": false},
             {"title": "密码", "data": "password", "sName": "password", "edit": {"type": "password", "options": {"rangelength":"[2, 20]"}}, "bSortable": false, "defaultContent":"", "bViews":false},
             {"title": "确认密码", "data": "repassword", "sName": "repassword", "edit": {"type": "password", "options": {"rangelength":"[2, 20]", "equalTo":"input[name=password]:first"}}, "bSortable": false, "defaultContent":"", "bViews":false},
             {"title": "头像", "data": "face", "sName": "face", "edit": {"type": "file", options:{"id":"myfile", "type":"ace_input"}}},
-			{"title": "状态", "data": "status", "sName": "status", "edit": {"type": "text", "options": {"required":true,"number":true}}, "bSortable": false},
+			{"title": "状态", "data": "status", "sName": "status", "value": aStatus, "edit": {"type": "radio", "default": 10, "options": {"required":true, "number":true}}, "bSortable": false, "createdCell": function(td, data) {
+			    $(td).html(showSpan(aStatus, aStatusColor, data));
+            }},
 			{"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell" : dateTimeString},
 			{"title": "修改时间", "data": "updated_at", "sName": "updated_at",  "createdCell" : dateTimeString},
 			{"title": "上一次登录时间", "data": "last_time", "sName": "last_time", "createdCell" : dateTimeString},

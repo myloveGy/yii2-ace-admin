@@ -37,7 +37,7 @@ return [
         // 用户信息
         'user' => [
             'identityClass'   => 'common\models\Admin',
-            'enableAutoLogin' => false,
+            'enableAutoLogin' => true,
         ],
 
         // 错误页面
