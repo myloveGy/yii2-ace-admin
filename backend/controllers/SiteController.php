@@ -15,8 +15,6 @@ use yii\web\UnauthorizedHttpException;
  */
 class SiteController extends \yii\web\Controller
 {
-    public  $enableCsrfValidation = false;
-
     /**
      * @inheritdoc
      */
@@ -61,6 +59,16 @@ class SiteController extends \yii\web\Controller
      */
     public function actionTest()
     {
+
+        $this->layout = 'other.php';
+        // 查询导航栏信息
+        $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
+        if ( ! $menus) throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
+
+        // 用户信息和导航栏目
+        Yii::$app->view->params['menus'] = $menus;
+        Yii::$app->view->params['user']  = Yii::$app->getUser()->identity;
+        return $this->render('test');
         $controller = [
             'admin'     => '管理员信息',
             'arrange'   => '日程管理',
@@ -121,6 +129,7 @@ class SiteController extends \yii\web\Controller
      */
     public function actionIndex()
     {
+        $this->layout = 'ajax.php';
         // 查询导航栏信息
         $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
         if ( ! $menus) throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
