@@ -22,6 +22,9 @@ use common\models\AdminModel;
  */
 class Menu extends AdminModel
 {
+    // 缓存key
+    const CACHE_KEY = 'navigation';
+
     /**
      * @inheritdoc
      */
@@ -84,7 +87,6 @@ class Menu extends AdminModel
         $menus = $navigation =  [];                              // 初始化定义导航栏信息
         $sort  = ['sort' => SORT_ASC];                           // 排序条件
         $field = ['id', 'pid', 'menu_name', 'icons', 'url'];     // 查询字段信息
-        $index = 'navigation'.$intUserId;
 
         // 管理员登录
         if ($intUserId == 1) {
@@ -98,7 +100,12 @@ class Menu extends AdminModel
                 if ($menus) {
                     $parent = [];
                     // 获取父类信息
-                    foreach ($menus as $key => $value){ if ($value['pid'] != 0) $parent[] = $value['pid'];}
+                    foreach ($menus as $key => $value) {
+                        if ($value['pid'] != 0) {
+                            $parent[] = $value['pid'];
+                        }
+                    }
+
                     // 获取主要栏目信息
                     $parent = self::find()->select($field)->where(['status' => 1, 'pid' => 0, 'id' => $parent])->orderBy($sort)->indexBy('id')->asArray()->all();
                     $menus  = $menus + $parent;
@@ -123,9 +130,10 @@ class Menu extends AdminModel
 
             // 将导航栏信息添加到缓存
             $cache = Yii::$app->cache;
+            $index = self::CACHE_KEY.$intUserId;
+            // 存在先删除
             if ($cache->get($index)) $cache->delete($index);
-            $cache->set($index, $navigation, Yii::$app->params['cacheTime']);
-            return true;
+            return $cache->set($index, $navigation, Yii::$app->params['cacheTime']);
         }
 
         return false;
@@ -139,11 +147,11 @@ class Menu extends AdminModel
     public static function getUserMenus($intUserId)
     {
         // 查询导航栏信息
-        $menus = Yii::$app->cache->get('navigation'.$intUserId);
+        $menus = Yii::$app->cache->get(self::CACHE_KEY.$intUserId);
         if ( ! $menus) {
             // 生成缓存导航栏文件
             Menu::setNavigation($intUserId);
-            $menus = Yii::$app->cache->get('navigation'.$intUserId);
+            $menus = Yii::$app->cache->get(self::CACHE_KEY.$intUserId);
         }
 
         return $menus;
