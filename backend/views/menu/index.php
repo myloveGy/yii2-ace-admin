@@ -63,6 +63,8 @@ $this->params['breadcrumbs'][] = $this->title;
     };
 
     // 表单初始化
-    myTable.init();
+    $(function(){
+        myTable.init();
+    });
 </script>
 <?php $this->endBlock(); ?>

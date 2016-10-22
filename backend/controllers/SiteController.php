@@ -59,8 +59,6 @@ class SiteController extends \yii\web\Controller
      */
     public function actionTest()
     {
-
-        $this->layout = 'other.php';
         // 查询导航栏信息
         $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
         if ( ! $menus) throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
@@ -129,7 +127,6 @@ class SiteController extends \yii\web\Controller
      */
     public function actionIndex()
     {
-        $this->layout = 'ajax.php';
         // 查询导航栏信息
         $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
         if ( ! $menus) throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');

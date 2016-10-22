@@ -133,6 +133,7 @@ $this->params['breadcrumbs'] = [
         </div>
     </div>
 </div>
+<?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     /**
      * formObject() 给表单对象赋值
@@ -291,11 +292,11 @@ $this->params['breadcrumbs'] = [
                     dataType:   'json',
                     data:       $('#editForm').serializeArray()
                 }).always(alwaysClose).done(function(json) {
-                    layer.msg(json.msg, {icon:json.status == 1 ? 6 : 5});
-                    if (json.status == 1) {
+                    layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
+                    if (json.errCode == 0) {
                         // 开始修改数据
                         calenderCalEvent.id          = json.data.id;
-                        calenderCalEvent.desc        = json.data.desc;
+                        calenderCalEvent.dersc       = json.data.desc;
                         calenderCalEvent.title       = json.data.title;
                         calenderCalEvent.start       = new Date(json.data.start_at * 1000);
                         calenderCalEvent.end         = new Date(json.data.end_at * 1000);
@@ -329,7 +330,7 @@ $this->params['breadcrumbs'] = [
             }, function(){
                 oLoading = layer.load();
                 $.ajax({
-                    url:        'update',
+                    url:        'delete',
                     type:       'POST',
                     dataType:   'json',
                     data:       {
@@ -337,8 +338,8 @@ $this->params['breadcrumbs'] = [
                         'actionType': 'delete'
                     }
                 }).always(alwaysClose).done(function(json) {
-                    layer.msg(json.msg, {icon:json.status == 1 ? 6 : 5});
-                    if (json.status == 1) {
+                    layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
+                    if (json.errCode == 0) {
                         calendar.fullCalendar('removeEvents' , function(ev){
                             return (ev._id == calenderCalEvent._id);
                         });
@@ -351,3 +352,4 @@ $this->params['breadcrumbs'] = [
         });
     })
 </script>
+<?php $this->endBlock() ?>
