@@ -2,9 +2,10 @@
 
 namespace backend\controllers;
 
+use Yii;
 use backend\models\Admin;
 use common\models\China;
-use Yii;
+
 /**
  * file: AdminController.php
  * desc: 管理员操作控制器
@@ -105,12 +106,10 @@ class AdminController extends Controller
     public function afterUpload($objFile, &$strFilePath, $strField)
     {
         // 上传头像信息
-        if ($strField === 'avatar' || $strField === 'face')
-        {
+        if ($strField === 'avatar' || $strField === 'face') {
             // 删除之前的缩略图
             $strFace = Yii::$app->request->post('face');
-            if ($strFace)
-            {
+            if ($strFace) {
                 $strFace = dirname($strFace).'/thumb_'.basename($strFace);
                 if (file_exists('.'.$strFace)) @unlink('.'.$strFace);
             }
@@ -123,11 +122,9 @@ class AdminController extends Controller
 
             // 管理员页面修改头像
             $admin = Admin::findOne(Yii::$app->user->id);
-            if ($admin && $strField === 'avatar')
-            {
+            if ($admin && $strField === 'avatar') {
                 // 删除之前的图像信息
-                if ($admin->face && file_exists('.'.$admin->face))
-                {
+                if ($admin->face && file_exists('.'.$admin->face)) {
                     @unlink('.'.$admin->face);
                     @unlink('.'.dirname($admin->face).'/thumb_'.basename($admin->face));
                 }
@@ -137,9 +134,6 @@ class AdminController extends Controller
                 $strFilePath = $strTmpPath;
             }
         }
-
-
-
 
         return true;
     }
@@ -151,18 +145,19 @@ class AdminController extends Controller
     {
         $request = Yii::$app->request;
         $array   = [];
-        if ($request->isGet)
-        {
+        if ($request->isGet) {
             $strName = $request->get('query');          // 查询参数
             $intPid  = (int)$request->get('iPid', 0);   // 父类ID
             $where   = ['and', ['pid' => $intPid], ['<>', 'id', 0]];
             if ( ! empty($strName)) array_push($where, ['like', 'name', $strName]);
             $arrCountry = China::find()->select(['id', 'name'])->where($where)->all();
             if ($arrCountry) {
-                foreach ($arrCountry as $value) $array[] = ['id' => $value->id, 'text' => $value->name];
+                foreach ($arrCountry as $value) {
+                    $array[] = ['id' => $value->id, 'text' => $value->name];
+                }
             }
         }
 
-        exit(json_encode($array));
+        return $this->returnJson($array);
     }
 }

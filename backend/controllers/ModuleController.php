@@ -33,8 +33,7 @@ class ModuleController extends Controller
     {
         // 接收参数
         $request = Yii::$app->request;
-        if ($request->isAjax)
-        {
+        if ($request->isAjax) {
             $strTitle = $request->post('title'); // 标题
             $strTable = $request->post('table'); // 数据库表
             if ( ! empty($strTable) && ! empty($strTitle)) {
@@ -71,15 +70,12 @@ class ModuleController extends Controller
     public function actionUpdate()
     {
         $request = Yii::$app->request;
-        if ($request->isAjax)
-        {
+        if ($request->isAjax) {
             $attr  = $request->post('attr');
             $table = $request->post('table');
-            if ($attr)
-            {
+            if ($attr) {
                 $this->arrJson['errCode'] = 217;
-                if ($table && ($name = ltrim($table, Yii::$app->db->tablePrefix)))
-                {
+                if ($table && ($name = ltrim($table, Yii::$app->db->tablePrefix))) {
                     // 拼接字符串
                     $dirName  = Yii::$app->basePath.'/';
                     $strCName = ucfirst($name).'Controller.php';
@@ -109,8 +105,7 @@ class ModuleController extends Controller
     public function actionProduce()
     {
         $request = Yii::$app->request;
-        if ($request->isAjax)
-        {
+        if ($request->isAjax) {
             // 接收参数
             $attr  = $request->post('attr');       // 表单信息
             $table = $request->post('table');      // 操作表
@@ -121,11 +116,9 @@ class ModuleController extends Controller
             $menu  = (int)$request->post('menu');  // 生成导航
             $allow = (int)$request->post('allow'); // 允许文件覆盖
 
-            if ($attr && $table && $title && $html && $php)
-            {
+            if ($attr && $table && $title && $html && $php) {
                 $this->arrJson['errCode'] = 217;
-                if ($table && ($name = trim($table, Yii::$app->db->tablePrefix)))
-                {
+                if ($table && ($name = trim($table, Yii::$app->db->tablePrefix))) {
                     // 拼接字符串
                     $dirName  = Yii::$app->basePath.'/';
                     $strCName = $dirName.'Controllers/'.(stripos($php, '.php') ? $php : $php.'.php');
@@ -133,8 +126,7 @@ class ModuleController extends Controller
 
                     // 验证文件不存在
                     $this->arrJson['errCode'] = 219;
-                    if ($allow === 1 ||  (! file_exists($strCName) && ! file_exists($strVName)))
-                    {
+                    if ($allow === 1 ||  (! file_exists($strCName) && ! file_exists($strVName))) {
                         // 生成权限
                         if ($auth == 1) $this->createAuth($name, $title);
 
@@ -175,8 +167,8 @@ class ModuleController extends Controller
             'delete' => '删除',
             'export' => '导出'
         ];
-        foreach ($arrAuth as $key => $value)
-        {
+
+        foreach ($arrAuth as $key => $value) {
             $model = new Auth();
             $model->name        = $strPrefix.$key;
             $model->description = $value.$title;
@@ -193,8 +185,7 @@ class ModuleController extends Controller
      */
     private function createMenu($name, $title)
     {
-        if ( ! Menu::find()->where(['menu_name' => $title])->one())
-        {
+        if ( ! Menu::find()->where(['menu_name' => $title])->one()) {
             $model = new Menu();
             $model->menu_name   = $title;
             $model->pid         = 0;
@@ -217,8 +208,7 @@ class ModuleController extends Controller
     <button data-dismiss="alert" class="close" type="button">×</button>
     <strong>填写配置表格信息!</strong>
 </div>';
-        foreach ($array as $value)
-        {
+        foreach ($array as $value) {
             $key     = $value['Field'];
             $sTitle  = isset($value['Comment']) && ! empty($value['Comment']) ? $value['Comment'] : $value['Field'];
             $sOption = isset($value['Null']) && $value['Null'] == 'NO' ? '"required":true,' : '';
@@ -278,19 +268,16 @@ HTML;
     private function createPHP($array, $title, $path = '')
     {
         $strHtml = $strWhere =  '';
-        if ($array)
-        {
+        if ($array) {
             $strHtml = "\t\t\toCheckBox,\n";
-            foreach ($array as $key => $value)
-            {
+            foreach ($array as $key => $value) {
                 $html = "\t\t\t{\"title\": \"{$value['title']}\", \"data\": \"{$key}\", \"sName\": \"{$key}\", ";
 
                 // 编辑
                 if ($value['edit'] == 1) $html .= "\"edit\": {\"type\": \"{$value['type']}\", \"options\": {{$value['options']}}}, ";
 
                 // 搜索
-                if ($value['search'] == 1)
-                {
+                if ($value['search'] == 1) {
                     $html     .= "\"search\": {\"type\": \"text\"}, ";
                     $strWhere .= "\t\t\t'{$key}' => '=', \n";
                 }
@@ -363,13 +350,14 @@ HTML;
       * myTable.afterSave(object data)  return true 后置
       */
 
-     myTable.init();
+     \$(function(){
+         myTable.init();
+     });
 </script>
 <?php \$this->endBlock(); ?>
 html;
         // 生成文件
-        if ( ! empty($path))
-        {
+        if ( ! empty($path)) {
             $dirName = dirname($path);
             if (!file_exists($dirName)) mkdir($dirName, 0755, true);
             file_put_contents($path, $sHtml);

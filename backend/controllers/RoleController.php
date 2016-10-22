@@ -38,9 +38,9 @@ class RoleController extends Controller
         }
 
         return [
-            'name'        => 'like',
+            'name' => 'like',
             'description' => 'like',
-            'where'       => $where,    // 查询角色信息
+            'where' => $where,    // 查询角色信息
         ];
     }
 
@@ -97,9 +97,9 @@ class RoleController extends Controller
                     $role = $auth->getRole($model->name);
                     $role->description = $model->description;
                     $isTrue = $auth->update($model->name, $role);
-                }
-                else
+                } else {
                     $isTrue = $model->updatePermission($model->name);
+                }
 
                 // 修改成功
                 if ($isTrue) $this->handleJson($model);
@@ -133,7 +133,7 @@ class RoleController extends Controller
                         $this->arrJson['errCode'] = 210;
 
                         // 删除角色成功
-                        if($auth->remove($role)) $this->handleJson($model);
+                        if ($auth->remove($role)) $this->handleJson($model);
                     }
 
                 } else {
@@ -158,7 +158,7 @@ class RoleController extends Controller
     public function actionEdit($name)
     {
         // 管理员直接返回
-        if($name == Yii::$app->params['adminRoleName']) {
+        if ($name == Yii::$app->params['adminRoleName']) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'The Administrator has all permissions'));
             return $this->redirect(['view', 'name' => $name]);
         }
@@ -167,7 +167,9 @@ class RoleController extends Controller
         $uid      = Yii::$app->user->id;                     // 用户ID
         $objAuth  = Yii::$app->getAuthManager();             // 权限对象
         $mixRoles = $objAuth->getAssignment($name, $uid);    // 获取用户是否有改权限
-        if ( ! $mixRoles && $uid != 1) throw new \yii\web\UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
+        if ( ! $mixRoles && $uid != 1) {
+            throw new \yii\web\UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
+        }
 
         // 添加权限
         $request = Yii::$app->request;       // 请求信息
@@ -247,10 +249,18 @@ class RoleController extends Controller
 
             // 查询父类数据
             $parents = Menu::find()->where(['id' => $parent, 'pid' => 0])->all();
-            if ($parents) foreach ($parents as $value) $menus[$value->id] = ['name' => $value->menu_name, 'child' => []];
+            if ($parents) {
+                foreach ($parents as $value) {
+                    $menus[$value->id] = ['name' => $value->menu_name, 'child' => []];
+                }
+            }
 
             // 最后处理数据
-            foreach ($child as $value) { if (isset($menus[$value->pid])){$menus[$value->pid]['child'][] = ['name' => $value->menu_name];}}
+            foreach ($child as $value) {
+                if (isset($menus[$value->pid])) {
+                    $menus[$value->pid]['child'][] = ['name' => $value->menu_name];
+                }
+            }
         }
 
 

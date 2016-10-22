@@ -20,15 +20,18 @@ class Controller extends \yii\web\Controller
      */
     protected function returnJson($array = null)
     {
-        if ($array == null) $array = $this->arrJson;                    // 默认赋值
-
-        // 没有错误信息使用code 确定错误信息
-        if ( ! isset($array['errMsg']) || empty($array['errMsg'])) {
-            $errCode = Yii::t('error', 'errCode');
-            $array['errMsg'] = $errCode[$array['errCode']];
+        // 默认赋值
+        if ($array === null) {
+            $array = $this->arrJson;
+            // 没有错误信息使用code 确定错误信息
+            if ( ! isset($array['errMsg']) || empty($array['errMsg'])) {
+                $errCode = Yii::t('error', 'errCode');
+                $array['errMsg'] = $errCode[$array['errCode']];
+            }
         }
 
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;   // json 返回
+        // 设置JSON返回
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return $array;
     }
 

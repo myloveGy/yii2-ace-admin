@@ -27,7 +27,10 @@ class ChinaController extends Controller
         ];
     }
 
-    // 首页显示
+    /**
+     * actionIndex() 首页显示
+     * @return string
+     */
     public function actionIndex()
     {
         // 加载视图
@@ -36,6 +39,12 @@ class ChinaController extends Controller
         ]);
     }
 
-    // 返回 Modal
-    public function getModel(){return new China();}
+    /**
+     * getModel() 获取model
+     * @return China
+     */
+    public function getModel()
+    {
+        return new China();
+    }
 }

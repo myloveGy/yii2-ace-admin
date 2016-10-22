@@ -4,12 +4,12 @@ namespace backend\controllers;
 
 use Yii;
 
+use backend\models\Menu;
 use backend\models\Admin;
 use common\models\UploadForm;
-use yii\web\UploadedFile;
-use yii\helpers\ArrayHelper;
-use backend\models\Menu;
 use yii\helpers\Json;
+use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 use yii\web\UnauthorizedHttpException;
 
 /**
@@ -21,49 +21,60 @@ use yii\web\UnauthorizedHttpException;
  */
 class Controller extends \common\controllers\Controller
 {
-    public    $admins = null;    // 'enableCsrfValidation' => true // 配置文件关闭CSRF
+    // 'enableCsrfValidation' => true // 配置文件关闭CSRF
+    public    $admins = null;    //
     protected $sort   = 'id';    // 默认排序字段
 
-    // 权限验证
+    /**
+     * beforeAction() 请求之前的数据验证
+     * @param \yii\base\Action $action
+     * @return bool
+     * @throws UnauthorizedHttpException
+     */
     public function beforeAction($action)
     {
         // 主控制器验证
-        if ( ! parent::beforeAction($action)) {return false;}
-
-        // 验证权限
-        if( ! Yii::$app->user->can($action->controller->id . '/' . $action->id) && Yii::$app->getErrorHandler()->exception === null) {
-            // 没有权限AJAX返回
-            if (Yii::$app->request->isAjax)
-                exit(Json::encode(['errCode' => 216, 'errMsg' => '对不起，您现在还没获得该操作的权限!', 'data' => []]));
-            else
-                throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
-        }
-
-        // 处理提前获取数据
-        if ( ! in_array($action->id, ['insert', 'update', 'delete'])) {
-            // 查询导航栏信息
-            $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
-            if ($menus) {
-                Menu::setNavigation();  // 生成缓存导航栏文件
-                $menus = Yii::$app->cache->get('navigation'.Yii::$app->user->id);
+        if (parent::beforeAction($action)) {
+            // 验证权限
+            if( ! Yii::$app->user->can($action->controller->id . '/' . $action->id) && Yii::$app->getErrorHandler()->exception === null) {
+                // 没有权限AJAX返回
+                if (Yii::$app->request->isAjax)
+                    exit(Json::encode(['errCode' => 216, 'errMsg' => '对不起，您现在还没获得该操作的权限!', 'data' => []]));
+                else
+                    throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
             }
 
-            // 没有权限
-            if ( ! $menus) throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
+            // 处理提前获取数据
+            if ( ! in_array($action->id, ['insert', 'update', 'delete'])) {
+                // 获取用户导航栏信息
+                $menus = Menu::getUserMenus(Yii::$app->user->id);
+                if ($menus) {
+                    // 查询后台管理员信息
+                    $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
+                    // 注入变量信息
+                    Yii::$app->view->params['menus']  = $menus;
+                    Yii::$app->view->params['admins'] = $this->admins;
+                    Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
+                } else {
+                    // 没有权限
+                    throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
+                }
+            }
 
-            // 查询后台管理员信息
-            $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
-            // 注入变量信息
-            Yii::$app->view->params['menus']  = $menus;
-            Yii::$app->view->params['admins'] = $this->admins;
-            Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
+            return true;
+        } else {
+            return false;
         }
-
-        return true;
     }
 
-    // 首页显示
-    public function actionIndex() { return $this->render('index'); }
+    /**
+     * actionIndex() 首页显示
+     * @return string
+     */
+    public function actionIndex()
+    {
+        return $this->render('index');
+    }
 
     /**
      * where() 获取查询的配置信息(查询参数)
@@ -99,25 +110,21 @@ class Controller extends \common\controllers\Controller
         ];
 
         // 自定义了排序
-        if ( ! empty($aWhere) && isset($aWhere['orderBy']) && ! empty($aWhere['orderBy']))
-        {
+        if ( ! empty($aWhere) && isset($aWhere['orderBy']) && ! empty($aWhere['orderBy'])) {
             // 判断自定义排序字段还是方式
             $aSearch['orderBy'] = is_array($aWhere['orderBy']) ? $aSearch['orderBy'] : [$aSearch['orderBy'] => $sort];
             unset($aWhere['orderBy']);
         }
 
         // 处理默认查询条件
-        if ( ! empty($aWhere) && isset($aWhere['where']) && ! empty($aWhere['where']))
-        {
+        if ( ! empty($aWhere) && isset($aWhere['where']) && ! empty($aWhere['where'])) {
             $aSearch['where'] = array_merge($aSearch['where'], $aWhere['where']);
             unset($aWhere['where']);
         }
 
         // 处理其他查询条件
-        if ( ! empty($aWhere) && ! empty($params))
-        {
-            foreach ($params as $key => $value)
-            {
+        if ( ! empty($aWhere) && ! empty($params)) {
+            foreach ($params as $key => $value) {
                 if ( ! isset($aWhere[$key])) continue;
                 $tmpKey = $aWhere[$key];
                 $aSearch['where'][] = is_array($tmpKey) ? $tmpKey : [$tmpKey, $key, $value];
@@ -267,20 +274,17 @@ class Controller extends \common\controllers\Controller
     public function actionEditable()
     {
         $request = Yii::$app->request;
-        if ($request->isAjax)
-        {
+        if ($request->isAjax) {
             // 接收参数
             $mixPk    = $request->post('pk');    // 主键值
             $strAttr  = $request->post('name');  // 字段名
             $mixValue = $request->post('value'); // 字段值
             $this->arrJson['errCode'] = 207;
-            if ($mixPk && $strAttr  && $mixValue != '')
-            {
+            if ($mixPk && $strAttr  && $mixValue != '') {
                 // 查询到数据
                 $model = $this->getModel()->findOne($mixPk);
                 $this->arrJson['errCode'] = 220;
-                if ($model)
-                {
+                if ($model) {
                     $model->$strAttr = $mixValue;
                     $this->arrJson['errCode'] = 206;
                     if ($model->save()) $this->handleJson($model);
@@ -323,12 +327,10 @@ class Controller extends \common\controllers\Controller
     {
         // 定义请求数据
         $request = Yii::$app->request;
-        if ($request->isPost)
-        {
+        if ($request->isPost) {
             // 接收参数
             $strField = $request->get('sField');    // 上传文件表单名称
-            if ( ! empty($strField))
-            {
+            if ( ! empty($strField)) {
                 // 判断删除之前的文件
                 $strFile  = $request->post($strField);   // 旧的地址
                 if (! empty($strFile) && file_exists('.'.$strFile)) unlink('.'.$strFile);
@@ -375,7 +377,10 @@ class Controller extends \common\controllers\Controller
      * handleExport() 处理需要导出的数据显示问题
      * @param array $arrObject 查询到的对象数组
      */
-    protected function handleExport(&$arrObject){}
+    protected function handleExport(&$arrObject)
+    {
+
+    }
 
     /**
      * actionExport() 文件导出处理
@@ -384,15 +389,13 @@ class Controller extends \common\controllers\Controller
     public function actionExport()
     {
         $request = Yii::$app->request;
-        if ($request->isPost)
-        {
+        if ($request->isPost) {
             // 接收参数
             $arrFields = $request->post('aFields');         // 字段信息
             $strTitle  = $request->post('sTitle');          // 标题信息
 
             // 判断数据的有效性
-            if ($arrFields && $strTitle)
-            {
+            if ($arrFields && $strTitle) {
                 // 获取数据
                 $arrKeys   = array_keys($arrFields);        // 所有的字段
                 $arrSearch = $this->query();                // 处理查询参数
@@ -400,8 +403,7 @@ class Controller extends \common\controllers\Controller
 
                 // 判断数据是否存在
                 $this->arrJson['errCode'] = 220;
-                if ($objArray)
-                {
+                if ($objArray) {
                     ob_end_clean();
                     ob_start();
                     $objPHPExcel = new \PHPExcel();
@@ -417,8 +419,7 @@ class Controller extends \common\controllers\Controller
                     // 获取显示列的信息
                     $intLength = count($arrFields);
                     $arrLetter = range('A', 'Z');
-                    if ($intLength > 26)
-                    {
+                    if ($intLength > 26) {
                         $arrLetters = array_slice($arrLetter, 0, $intLength - 26);
                         if ($arrLetters) foreach ($arrLetters as $value) array_push($arrLetter, 'A'.$value);
                     }
@@ -426,20 +427,17 @@ class Controller extends \common\controllers\Controller
                     $arrLetter = array_slice($arrLetter, 0, $intLength);
 
                     // 确定第一行信息
-                    foreach ($arrLetter as $key => $value)
-                    {
+                    foreach ($arrLetter as $key => $value) {
                         $objPHPExcel->getActiveSheet()->setCellValue($value.'1', $arrFields[$arrKeys[$key]]);
                     }
 
                     // 写入数据信息
                     $intNum = 2;
-                    foreach ($objArray as $value)
-                    {
+                    foreach ($objArray as $value) {
                         // 处理查询到的数据
                         $this->handleExport($value);
                         // 写入信息数据
-                        foreach ($arrLetter as $intKey => $strValue)
-                        {
+                        foreach ($arrLetter as $intKey => $strValue) {
                             $tmpAttribute = $arrKeys[$intKey];
                             $objPHPExcel->getActiveSheet()->setCellValue($strValue.$intNum, $value->$tmpAttribute);
                         }

@@ -62,35 +62,40 @@ class Menu extends AdminModel
         ];
     }
 
-    // 修改之后
+    /**
+     * afterSave() 修改之后的处理
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @return bool
+     */
     public function afterSave($insert, $changedAttributes)
     {
-        self::setNavigation();
+        self::setNavigation(Yii::$app->user->id);
         return true;
     }
 
-    // 设置缓存数据信息
-    public static function setNavigation()
+    /**
+     * setNavigation() 设置用户导航栏信息
+     * @param  int $intUserId 用户ID
+     * @return bool
+     */
+    public static function setNavigation($intUserId)
     {
         $menus = $navigation =  [];                              // 初始化定义导航栏信息
-        $uid   = Yii::$app->user->id;                            // 用户ID
         $sort  = ['sort' => SORT_ASC];                           // 排序条件
         $field = ['id', 'pid', 'menu_name', 'icons', 'url'];     // 查询字段信息
-        $index = 'navigation'.$uid;
+        $index = 'navigation'.$intUserId;
 
         // 管理员登录
-        if ($uid == 1)
+        if ($intUserId == 1) {
             $menus = self::find()->select($field)->where(['status' => 1])->orderBy($sort)->asArray()->all();
-        else
-        {
+        } else {
             // 其他用户登录成功获取权限
-            $arrAuth = Yii::$app->getAuthManager()->getPermissionsByUser($uid);
-            if ($arrAuth)
-            {
+            $arrAuth = Yii::$app->getAuthManager()->getPermissionsByUser($intUserId);
+            if ($arrAuth) {
                 $menus = self::find()->select($field)->where(['status' => 1, 'url' => array_keys($arrAuth)])->orderBy($sort)->indexBy('id')->asArray()->all();
                 // 有导航栏信息
-                if ($menus)
-                {
+                if ($menus) {
                     $parent = [];
                     // 获取父类信息
                     foreach ($menus as $key => $value){ if ($value['pid'] != 0) $parent[] = $value['pid'];}
@@ -102,19 +107,18 @@ class Menu extends AdminModel
         }
 
         // 处理导航栏信息
-        if ($menus)
-        {
-            foreach ($menus as $value)
-            {
+        if ($menus) {
+            foreach ($menus as $value) {
                 // 判断是否存在
                 $id = $value['pid'] == 0 ? $value['id'] : $value['pid'];
                 if ( ! isset($navigation[$id])) $navigation[$id] = ['child' => []];
 
                 // 添加数据
-                if ($value['pid'] == 0)
+                if ($value['pid'] == 0) {
                     $navigation[$id] = array_merge($navigation[$id], $value);
-                else
+                } else {
                     $navigation[$id]['child'][] = $value;
+                }
             }
 
             // 将导航栏信息添加到缓存
@@ -125,5 +129,23 @@ class Menu extends AdminModel
         }
 
         return false;
+    }
+
+    /**
+     * getUserMenus() 获取用户导航栏信息
+     * @param  int $intUserId 用户ID
+     * @return mixed
+     */
+    public static function getUserMenus($intUserId)
+    {
+        // 查询导航栏信息
+        $menus = Yii::$app->cache->get('navigation'.$intUserId);
+        if ( ! $menus) {
+            // 生成缓存导航栏文件
+            Menu::setNavigation($intUserId);
+            $menus = Yii::$app->cache->get('navigation'.$intUserId);
+        }
+
+        return $menus;
     }
 }

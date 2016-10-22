@@ -50,7 +50,7 @@ class ArrangeController extends Controller
     public function actionCalendar()
     {
         // 查询没有委派的信息
-        $arrArrange    = Arrange::find()->where(['and', ['!=', 'status', Arrange::STATUS_DEFER], ['=', 'admin_id', 0]])->orderBy(['time_status' => SORT_DESC])->all();
+        $arrArrange = Arrange::find()->where(['and', ['!=', 'status', Arrange::STATUS_DEFER], ['=', 'admin_id', 0]])->orderBy(['time_status' => SORT_DESC])->all();
         // 载入视图
         return $this->render('calendar', [
             'status'       => Arrange::getStatus(),         // 状态
@@ -97,8 +97,7 @@ class ArrangeController extends Controller
             }
         }
 
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;   // json 返回
-        return $arrUserArrange;
+        return $this->returnJson($arrUserArrange);
     }
 
     /**
