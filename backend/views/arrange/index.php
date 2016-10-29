@@ -1,4 +1,6 @@
 <?php
+use backend\assets\AppAsset;
+AppAsset::loadTimeJavascript($this, 'datetime');
 // 定义标题和面包屑信息
 $this->title = '管理员日程安排';
 $this->params['breadcrumbs'][] = $this->title;

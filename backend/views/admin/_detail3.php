@@ -224,7 +224,7 @@
                 })
                 .always(alwaysClose)
                 .done(function(json){
-                    layer.msg(json.errMsg, {icon:json.errCode == 1 ? 6 : 5});
+                    layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
                 })
                 .fail(ajaxFail);
             }

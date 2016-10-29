@@ -7,6 +7,12 @@
  */
 $this->title = '管理员个人信息';
 $this->params['breadcrumbs'][] = $this->title;
+use backend\assets\AppAsset;
+AppAsset::loadTimeJavascript($this, 'datetime');
+$this->registerCssFile('@web/public/assets/css/select2.css', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/select2.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/jquery.easypiechart.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/jquery.maskedinput.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
 <div class="clearfix">
     <div class="pull-left alert alert-success no-margin">

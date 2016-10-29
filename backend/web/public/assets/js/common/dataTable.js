@@ -528,11 +528,22 @@ var MeTable = (function($) {
 
 			// 新增和修改验证数据、数据的处理
 			if (in_array(this.actionType, ["insert", "update"])) {
-				// if ($(sFormId).validate(validatorError).form()) {
+				if ($(sFormId).validate({
+						errorElement: 'div',
+						errorClass: 'help-block',
+						focusInvalid: false,
+						highlight: function (e) {
+							$(e).closest('.form-group').removeClass('has-info').addClass('has-error');
+						},
+						success: function (e) {
+							$(e).closest('.form-group').removeClass('has-error');//.addClass('has-info');
+							$(e).remove();
+						}
+					}).form()) {
 					data = $(sFormId).serialize();
-				// } else {
-					//return false;
-				// }
+				} else {
+					return false;
+				}
 			}
 
 			// 数据验证
@@ -577,6 +588,7 @@ var MeTable = (function($) {
             html = '<form action="' + self.options.sExportUrl + '" target="_blank" method="POST" class="me-export" style="display:none">';
         html += '<input type="hidden" name="iSize" value="' + (bAll ? 0 : $('select[name=' + self.options.sTable.replace('#', '') + '_length]').val()) + '"/>';
         html += '<input type="hidden" name="sTitle" value="' + self.options.sTitle + '"/>';
+		html += '<input type="hidden" name="_csrf" value="' + $('meta[name=csrf-token]').attr('content') + '"/>';
 
         // 添加字段信息
         this.tableOptions.aoColumns.forEach(function(k, v){
