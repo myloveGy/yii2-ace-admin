@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50624
 File Encoding         : 65001
 
-Date: 2016-10-11 13:51:41
+Date: 2016-10-29 23:57:48
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -48,13 +48,13 @@ CREATE TABLE `yii2_admin` (
   KEY `role` (`role`),
   KEY `status` (`status`),
   KEY `created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of yii2_admin
 -- ----------------------------
-INSERT INTO `yii2_admin` VALUES ('1', 'super', 'Super@admin.com', '/public/assets/avatars/57fb65402949f.jpg', 'administrator', '1', 'gKkLFMdB2pvIXOFNpF_Aeemvdf1j0YUM', '$2y$13$Nuf1mzDRoCMxrWI.rIjENu20QshJG41smdEeHFHxq0qdmS99YytHy', '5vLaPpUS-I-XxJaoGP-GZDk474WdnaK3_1469073015', '1457337222', '1', '1476163990', '1', '1476163990', '127.0.0.1', '湖南省,岳阳市,岳阳县', '23', '学会微笑，学会面对，学会放下，让一切随心，随意，随缘！', '', '1', '', '', '');
-INSERT INTO `yii2_admin` VALUES ('2', 'liujinxing', '821901008@qq.com', '/public/assets/avatars/57957eb2a5ca2.jpg', 'admin', '1', 'HuaNcS5PmT3vbRIy7P-bCYmHvtrfjczp', '$2y$13$ucKDyDzDJiOqo/g7s.GG2..fpbFZzISMnpabcaq6/i7kH7gPCj/Lq', 'Yk4V7A9L78lC1M1g7Z66VH5Qwt2HI9vr_1476079036', '1469413639', '1', '1476079053', '2', '1476079053', '127.0.0.1', '湖南省,岳阳市,岳阳县', '18', '', '', '1', '', '', '');
+INSERT INTO `yii2_admin` VALUES ('1', 'super', 'Super@admin.com', '/public/assets/avatars/5814aefaa93ec.jpg', 'admin', '1', 'gKkLFMdB2pvIXOFNpF_Aeemvdf1j0YUM', '$2y$13$Nuf1mzDRoCMxrWI.rIjENu20QshJG41smdEeHFHxq0qdmS99YytHy', '5vLaPpUS-I-XxJaoGP-GZDk474WdnaK3_1469073015', '1457337222', '1', '1477755832', '1', '1477753505', '127.0.0.1', '湖南省,岳阳市,岳阳县', '24', '学会微笑，学会面对，学会放下，让一切随心，随意，随缘！', '', '1', '', '', '');
+INSERT INTO `yii2_admin` VALUES ('2', 'liujinxing', '821901008@qq.com', '/public/assets/avatars/57957eb2a5ca2.jpg', 'user', '1', 'yz4AxLNDC_33mLQoz31ptePpTCWJOHbk', '$2y$13$OonjJGSZ.QpanoOdZbLbAOsB80UKYcWeXGA/vtNCTM1iMz1TNZR0u', 'Gtl9Z0Wk2CxRwI2IXWiv-SeBeNASmV3c_1469413639', '1469413639', '1', '1469415815', '2', '1469415815', '127.0.0.1', '湖南省,岳阳市,岳阳县', '18', '', '', '1', '', '', '');
 
 -- ----------------------------
 -- Table structure for yii2_arrange
@@ -74,7 +74,7 @@ CREATE TABLE `yii2_arrange` (
   `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
   `updated_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '修改用户',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='日程记录信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='日程记录信息表';
 
 -- ----------------------------
 -- Records of yii2_arrange
@@ -83,22 +83,9 @@ INSERT INTO `yii2_arrange` VALUES ('1', '这个事件已经处理了123', '这�
 INSERT INTO `yii2_arrange` VALUES ('2', '首页问题', '首页处理一些其他问题', '1', '1', '1', '1473782400', '1473868800', '1474353783', '1', '1474445505', '1');
 INSERT INTO `yii2_arrange` VALUES ('3', '手游问题', '首页的一些问题', '1', '1', '1', '1473955200', '1474041600', '1474353822', '1', '1474445822', '1');
 INSERT INTO `yii2_arrange` VALUES ('4', '其他问题', '其他问题', '1', '2', '1', '1473436800', '1473523200', '1474353858', '1', '1474445849', '1');
-INSERT INTO `yii2_arrange` VALUES ('6', '这一天要办的事情好多呵呵', '这一天要办的事情好多呵呵', '0', '0', '1', '1475856000', '1475942400', '1474354086', '1', '1474451481', '1');
-INSERT INTO `yii2_arrange` VALUES ('7', '这个事件已经延期了不要了吧', '这个事件已经延期了', '0', '1', '0', '1474357344', '1474617222', '1474354171', '1', '1474444440', '1');
-INSERT INTO `yii2_arrange` VALUES ('8', '测试数据', '测试数据', '1', '0', '1', '1474041600', '1474128000', '1474354386', '1', '1474445929', '1');
-INSERT INTO `yii2_arrange` VALUES ('11', '测试数据哦', '测试数据哦', '0', '1', '0', '1471449600', '1471536000', '1474435082', '1', '1474444943', '1');
-INSERT INTO `yii2_arrange` VALUES ('14', '学习Laravel', '基本了解Laravel', '0', '1', '0', '1472801049', '1473233307', '1474440310', '1', '1474445521', '1');
-INSERT INTO `yii2_arrange` VALUES ('15', '学习Laravel', '基本了解Laravel', '0', '1', '0', '1473350400', '1473436800', '1474445541', '1', '1474445541', '1');
-INSERT INTO `yii2_arrange` VALUES ('16', '其他问题', '其他问题', '0', '2', '0', '1472659200', '1472745600', '1474445843', '1', '1474445845', '1');
-INSERT INTO `yii2_arrange` VALUES ('17', '学习Laravel', '基本了解Laravel', '1', '1', '1', '1474646400', '1474732800', '1474445919', '1', '1474445919', '1');
-INSERT INTO `yii2_arrange` VALUES ('18', '这个事件已经延期了不要了吧', '这个事件已经延期了', '1', '1', '1', '1472572800', '1472659200', '1474446601', '1', '1474446601', '1');
-INSERT INTO `yii2_arrange` VALUES ('19', '学习Laravel121212', '基本了解Laravel', '1', '1', '1', '1473609600', '1473696000', '1474447449', '1', '1474449134', '1');
-INSERT INTO `yii2_arrange` VALUES ('20', '测试数据哦', '测试数据哦', '1', '1', '1', '1472745600', '1472832000', '1474447468', '1', '1474447468', '1');
-INSERT INTO `yii2_arrange` VALUES ('21', '测试数据哦', '测试数据哦', '2', '1', '1', '1473264000', '1473350400', '1474447478', '1', '1474451496', '1');
-INSERT INTO `yii2_arrange` VALUES ('22', '测试数据哦', '测试数据哦', '1', '1', '1', '1475164800', '1475313805', '1474447487', '1', '1474449837', '1');
-INSERT INTO `yii2_arrange` VALUES ('23', '学习Laravel', '基本了解Laravel', '1', '1', '1', '1474560000', '1474646400', '1474447511', '1', '1474447511', '1');
-INSERT INTO `yii2_arrange` VALUES ('24', '学习Laravel', '基本了解Laravel', '1', '1', '1', '1474992000', '1475078400', '1474447514', '1', '1474447518', '1');
-INSERT INTO `yii2_arrange` VALUES ('25', '123', '121212', '1', '1', '1', '1472486400', '1472572800', '1474448178', '1', '1474449249', '1');
+INSERT INTO `yii2_arrange` VALUES ('5', '这一天要办的事情好多呵呵', '这一天要办的事情好多呵呵', '0', '0', '1', '1475856000', '1475942400', '1474354086', '1', '1474451481', '1');
+INSERT INTO `yii2_arrange` VALUES ('6', '这个事件已经延期了不要了吧', '这个事件已经延期了', '0', '1', '0', '1474357344', '1474617222', '1474354171', '1', '1474444440', '1');
+INSERT INTO `yii2_arrange` VALUES ('7', '这个事件已经延期了不要了吧', '这个事件已经延期了', '1', '1', '1', '1475107200', '1475164800', '1477754225', '1', '1477754225', '1');
 
 -- ----------------------------
 -- Table structure for yii2_auth_assignment
@@ -133,7 +120,7 @@ CREATE TABLE `yii2_auth_item` (
   PRIMARY KEY (`name`),
   KEY `rule_name` (`rule_name`),
   KEY `idx-auth_item-type` (`type`),
-  CONSTRAINT `yii2_auth_item_ibfk_1` FOREIGN KEY (`rule_name`) REFERENCES `yii2_auth_rule` (`name`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `yii2_auth_item_ibfk_1` FOREIGN KEY (`rule_name`) REFERENCES `ks_auth_rule` (`name`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -151,6 +138,8 @@ INSERT INTO `yii2_auth_item` VALUES ('admin/update', '2', '修改管理员信息
 INSERT INTO `yii2_auth_item` VALUES ('admin/upload', '2', '上传管理员头像信息', null, null, '1476088424', '1476088424');
 INSERT INTO `yii2_auth_item` VALUES ('admin/view', '2', '查看管理员详情信息', null, null, '1476088536', '1476088536');
 INSERT INTO `yii2_auth_item` VALUES ('administrator', '1', '超级管理员', null, null, '1476085134', '1476085134');
+INSERT INTO `yii2_auth_item` VALUES ('arrange/arrange', '2', '我的日程查询', null, null, '1477753543', '1477753543');
+INSERT INTO `yii2_auth_item` VALUES ('arrange/calendar', '2', '我的日程信息', null, null, '1477752315', '1477752315');
 INSERT INTO `yii2_auth_item` VALUES ('arrange/create', '2', '创建日程管理', null, null, '1476085131', '1476085131');
 INSERT INTO `yii2_auth_item` VALUES ('arrange/delete', '2', '删除日程管理', null, null, '1476085131', '1476085131');
 INSERT INTO `yii2_auth_item` VALUES ('arrange/delete-all', '2', '批量删除日程信息', null, null, '1476095790', '1476095790');
@@ -233,6 +222,8 @@ INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/upload');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/upload');
 INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/view');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/view');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/arrange');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/calendar');
 INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/create');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/create');
 INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/delete');
@@ -3922,33 +3913,3 @@ INSERT INTO `yii2_menu` VALUES ('5', '1', '管理员信息', '', 'admin/index', 
 INSERT INTO `yii2_menu` VALUES ('6', '1', '权限管理', '', 'authority/index', '1', '3', '1468994819', '1', '1469410899', '1');
 INSERT INTO `yii2_menu` VALUES ('7', '0', '地址信息', 'menu-icon fa fa-bank', 'china/index', '1', '3', '1469415343', '2', '1474340794', '1');
 INSERT INTO `yii2_menu` VALUES ('8', '0', '日程管理', 'menu-icon fa fa-calendar', 'arrange/index', '1', '1', '1474340682', '1', '1474340932', '1');
-INSERT INTO `yii2_menu` VALUES ('9', '0', '用户信息', 'menu fa fa-user', 'user/index', '1', '100', '1476095210', '1', '1476157917', '1');
-
--- ----------------------------
--- Table structure for yii2_user
--- ----------------------------
-DROP TABLE IF EXISTS `yii2_user`;
-CREATE TABLE `yii2_user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
-  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT '管理员账号',
-  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT '邮箱',
-  `face` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '管理员头像',
-  `status` smallint(6) NOT NULL DEFAULT '10' COMMENT '状态',
-  `auth_key` varchar(32) COLLATE utf8_unicode_ci NOT NULL COMMENT '自动登录密钥',
-  `password_hash` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT '密码哈希值',
-  `password_reset_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '重新登录哈希值',
-  `created_at` int(11) NOT NULL COMMENT '创建时间',
-  `updated_at` int(11) NOT NULL COMMENT '修改时间',
-  `last_time` int(11) DEFAULT NULL COMMENT '上一次登录时间',
-  `last_ip` char(12) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '上一次登录IP',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`) USING BTREE,
-  UNIQUE KEY `username` (`username`),
-  KEY `created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- ----------------------------
--- Records of yii2_user
--- ----------------------------
-INSERT INTO `yii2_user` VALUES ('1', 'loveme', '821901008@qq.com', null, '10', '0DbD3_3a34xUdyy67lxvd6xxYfnXfa3u', '$2y$13$81uQdcqMPgoYy4./23sMS.UkFHih8y.hunLByCKgP5OHLEFRgVwtK', '5ELcYuZioMVfPGUSATi073txBJIJGlXD_1476149274', '1476149273', '1476149426', null, null);
-INSERT INTO `yii2_user` VALUES ('2', 'liujinxing', '1136261505@qq.com', null, '10', 'I8mzYBXovVOGZYJciXIU8h6FGpbzXm4Y', '$2y$13$FfQNL9NHG4ip.lIDf93NqOGndPYt5/IWG4lY1ykaKviFzZQv4ricG', 'n-87LA77EYZ5YyBBevSAAifkk8QdA3FU_1476156424', '1476156423', '1476156434', null, null);
