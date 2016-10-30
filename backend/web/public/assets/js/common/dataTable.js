@@ -123,7 +123,7 @@ var MeTable = (function($) {
 			sSearchType:  "middle",			// 搜索表单位置
 			sSearchForm:  "#searchForm",	// 搜索表单选择器
 			bRenderH1: 	  true,				// 是否渲染H1内容
-			bEditTable:   true,				// 是否开启行内编辑
+			bEditTable:   false,			// 是否开启行内编辑
 			oEditTable:   {},				// 行内编辑对象信息
 			sEditUrl:	  "editable",	    // 行内编辑请求地址
 			sEditPk: 	  "id",				// 行内编辑pk索引值

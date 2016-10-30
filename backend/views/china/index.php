@@ -1,4 +1,5 @@
 <?php
+
 // 定义标题和面包屑信息
 $this->title = '地址信息';
 $this->params['breadcrumbs'][] = $this->title;

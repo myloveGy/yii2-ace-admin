@@ -1,6 +1,8 @@
 <?php
 use backend\assets\AppAsset;
+
 AppAsset::loadTimeJavascript($this, 'datetime');
+
 // 定义标题和面包屑信息
 $this->title = '管理员日程安排';
 $this->params['breadcrumbs'][] = $this->title;
@@ -47,7 +49,8 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
     aAdmins['0'] = '待定';
 
     var myTable = new MeTable({
-        sTitle: "管理员日程安排"
+        sTitle: "管理员日程安排",
+        bEditTable: true
     }, {
         "aoColumns": [
             oCheckBox,
@@ -63,8 +66,7 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                 "data": "title",
                 "editTable": {
                     validate: function (x) {
-                        var l = x.length;
-                        if (x > 100 || x < 2) return "长度必须为2到50字符";
+                        if (x.length > 100 || x.length < 2) return "长度必须为2到50字符";
                     }
                 },
                 "sName": "title",
@@ -171,7 +173,9 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
      * myTable.afterSave(object data)  return true 后
      */
     myTable.beforeSave = function(data) {
-        data.push({"name": "desc", "value": $('#me-desc').html()}); // ;
+        if (this.actionType != 'delete' && this.actionType != 'deleteAll') {
+            data.push({"name": "desc", "value": $('#me-desc').html()}); //
+        }
         return true;
     };
 

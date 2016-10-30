@@ -17,24 +17,42 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/bootstrap.min.css',
         'css/font-awesome.min.css',
-//        'css/fullcalendar.css',
-//        'css/jquery-ui.custom.min.css',
+        'css/ace-fonts.css',
+
+        // dataTables
         'css/jquery.gritter.css',
+        'css/bootstrap-editable.css',
+
+        // datetime
 //        'css/select2.css',
 //        'css/datepicker.css',
 //        'css/bootstrap-timepicker.css',
 //        'css/daterangepicker.css',
 //        'css/bootstrap-datetimepicker.css',
-        'css/bootstrap-editable.css',
-        'css/ace-fonts.css',
+
+         // other
+//        'css/fullcalendar.css',
+//        'css/jquery-ui.custom.min.css',
     ];
 
     // 加载的JavaScript
     public $js = [
         'js/ace-elements.min.js',
         'js/ace.min.js',
+
+        // dataTables
         'js/common/base.js',
         'js/common/dataTable.js',
+        'js/jquery.gritter.min.js',
+        'js/x-editable/bootstrap-editable.min.js',
+        'js/x-editable/ace-editable.min.js',
+        'js/jquery.dataTables.min.js',
+        'js/jquery.dataTables.bootstrap.js',
+        'js/jquery.validate.min.js',
+        'js/validate.message.js',
+        'js/layer/layer.js',
+        'js/bootbox.min.js',
+
 //        'js/jquery-ui.custom.min.js',
 //        'js/jquery.ui.touch-punch.min.js',
 //        'js/date-time/moment.min.js',
@@ -42,8 +60,6 @@ class AppAsset extends AssetBundle
 //        'js/fuelux/fuelux.spinner.min.js',
 //        'js/fuelux/fuelux.wizard.min.js',
 //        'js/fullcalendar.min.js',
-        'js/jquery.gritter.min.js',
-        'js/bootbox.min.js',
 //        'js/jquery.easypiechart.min.js',
 //        'js/date-time/bootstrap-datepicker.min.js',
 //        'js/date-time/bootstrap-timepicker.min.js',
@@ -53,16 +69,9 @@ class AppAsset extends AssetBundle
 //        'js/jquery.hotkeys.min.js',
 //        'js/bootstrap-wysiwyg.min.js',
 //        'js/select2.min.js',
-        'js/x-editable/bootstrap-editable.min.js',
-        'js/x-editable/ace-editable.min.js',
 //        'js/jquery.maskedinput.min.js',
-        'js/jquery.dataTables.min.js',
-        'js/jquery.dataTables.bootstrap.js',
 //        'js/colResizable.min.js',
 //        'js/dataTables.colResize.js',
-        'js/jquery.validate.min.js',
-        'js/validate.message.js',
-        'js/layer/layer.js',
     ];
 
     // 加载选项
@@ -75,6 +84,92 @@ class AppAsset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
     ];
+
+    /**
+     * loadDataTables() 加载公共的dataTables 的css 和 javascript
+     * @param $view
+     * @param array $arrNoLoad
+     * @param array $options
+     */
+    public static function loadDataTables($view, $arrNoLoad = [], $options = ['depends' => 'backend\assets\AppAsset'])
+    {
+        // 必须加载的JS
+        $arrLoad = [
+            // 主要的CSS 和 javascript
+            'must' => [
+                'css' => [
+
+                ],
+
+                'javascript' => [
+                    'js/common/base.js',
+                    'js/common/dataTable.js',
+                    'js/jquery.dataTables.min.js',
+                    'js/jquery.dataTables.bootstrap.js',
+                    'js/layer/layer.js'
+                ]
+            ],
+
+            // validate
+            'validate' => [
+                'css' => [],
+                'javascript' => [
+                    'js/jquery.validate.min.js',
+                    'js/validate.message.js'
+                ],
+            ],
+
+            // editable
+            'editable' => [
+                'css' => [
+                    'css/bootstrap-editable.css'
+                ],
+                'javascript' => [
+                    'js/x-editable/bootstrap-editable.min.js',
+                    'js/x-editable/ace-editable.min.js'
+                ]
+            ],
+
+            // gritter
+            'gritter' => [
+                'css' => [
+                    'css/jquery.gritter.css',
+                ],
+                'javascript' => [
+                    'js/jquery.gritter.min.js'
+                ]
+            ],
+
+            // bootbox
+            'bootbox' => [
+                'css' => [
+
+                ],
+                'javascript' => [
+                    'js/bootbox.min.js',
+                ],
+            ],
+        ];
+
+        // 处理不需要加载的css和javascript
+        foreach ($arrNoLoad as $value) {
+            unset($arrLoad[$value]);
+        }
+
+        // 执行加载
+        foreach ($arrLoad as $value) {
+            // 执行加载css资源
+            foreach ($value['css'] as $css) {
+                $view->registerCssFile(self::$assetsUrl.$css, $options);
+            }
+
+            // 执行加载javascript资源
+            foreach ($value['javascript'] as $javascript) {
+                $view->registerJsFile(self::$assetsUrl.$javascript, $options);
+            }
+        }
+
+    }
 
     /**
      * loadTimeJavascript() 加载时间的资源
@@ -135,6 +230,5 @@ class AppAsset extends AssetBundle
         foreach ($arrLoad as $value) {
             $view->registerJsFile(self::$assetsUrl.$value, $options);
         }
-
     }
 }
