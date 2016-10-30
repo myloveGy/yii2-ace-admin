@@ -4,6 +4,13 @@ AppAsset::loadTimeJavascript($this, 'datetime');
 // 定义标题和面包屑信息
 $this->title = '管理员日程安排';
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerCssFile('@web/public/assets/css/jquery-ui.custom.min.css', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/jquery-ui.custom.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/jquery.ui.touch-punch.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/markdown/markdown.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/markdown/bootstrap-markdown.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/jquery.hotkeys.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
 <!--前面导航信息-->
 <p>
@@ -69,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 "title": "事件描述",
                 "data": "desc",
                 "sName": "desc",
-                "edit": {"type": "textarea", "options": {"required": true, "rangelength": "[2, 255]"}},
+                "edit": {"type": "div", "options": {"id": "me-desc", "class": "wysiwyg-editor", "rows": 5, "required": true, "rangelength": "[2, 255]"}},
                 "bSortable": false
             },
             {
@@ -150,12 +157,25 @@ $this->params['breadcrumbs'][] = $this->title;
      * myTable.beforeShow(object data, bool isDetail) return true 前置
      * myTable.afterShow(object data, bool isDetail)  return true 后置
      */
+    myTable.afterShow = function(data, isDetail) {
+        if ( ! isDetail) {
+            var html = this.actionType == "insert" ? "" : data.desc;
+            $('#me-desc').html(html);
+        }
+        return true;
+    };
 
     /**
      * 编辑的前置和后置操作
      * myTable.beforeSave(object data) return true 前置
      * myTable.afterSave(object data)  return true 后
      */
+    myTable.beforeSave = function(data) {
+        data.push({"name": "desc", "value": $('#me-desc').html()}); // ;
+        return true;
+    };
+
+
     $(function(){
         myTable.init();
 
@@ -163,6 +183,54 @@ $this->params['breadcrumbs'][] = $this->title;
         $('.me-datetime').datetimepicker({
             format: 'YYYY-MM-DD H:mm:s'
         });
+
+        function showErrorAlert (reason, detail) {
+            var msg='';
+            if (reason==='unsupported-file-type') { msg = "Unsupported format " +detail; }
+            else {
+                //console.log("error uploading file", reason, detail);
+            }
+            $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>'+
+                '<strong>File upload error</strong> '+msg+' </div>').prependTo('#alerts');
+        }
+
+        $('#me-desc').ace_wysiwyg({
+            toolbar:
+                [
+                    'font',
+                    null,
+                    'fontSize',
+                    null,
+                    {name:'bold', className:'btn-info'},
+                    {name:'italic', className:'btn-info'},
+                    {name:'strikethrough', className:'btn-info'},
+                    {name:'underline', className:'btn-info'},
+                    null,
+                    {name:'insertunorderedlist', className:'btn-success'},
+                    {name:'insertorderedlist', className:'btn-success'},
+                    {name:'outdent', className:'btn-purple'},
+                    {name:'indent', className:'btn-purple'},
+                    null,
+                    {name:'justifyleft', className:'btn-primary'},
+                    {name:'justifycenter', className:'btn-primary'},
+                    {name:'justifyright', className:'btn-primary'},
+                    {name:'justifyfull', className:'btn-inverse'},
+                    null,
+                    {name:'createLink', className:'btn-pink'},
+                    {name:'unlink', className:'btn-pink'},
+                    null,
+                    {name:'insertImage', className:'btn-success'},
+                    null,
+                    'foreColor',
+                    null,
+                    {name:'undo', className:'btn-grey'},
+                    {name:'redo', className:'btn-grey'}
+                ],
+            'wysiwyg': {
+                fileUploadError: showErrorAlert
+            }
+        }).prev().addClass('wysiwyg-style2');
+
     });
 </script>
 <?php $this->endBlock() ?>

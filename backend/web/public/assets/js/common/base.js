@@ -27,7 +27,8 @@ function createPassword(params){ return createInput(params, 'password');}
 // 生成text
 function createText(params) {return createInput(params, 'text')}
 // 生成textarea
-function createTextarea(params){if(empty(params)){params={"class":" form-control","rows":5}}else{params["class"]+=" form-control";params["rows"]=5}return"<textarea "+handleParams(params)+"></textarea>"}
+function createTextarea(params){if(empty(params)){params={"class":" form-control","rows":5}}return"<textarea "+handleParams(params)+"></textarea>"}
+function createDiv(params){return"<div "+handleParams(params)+"></div>"}
 // 生成radio
 function createRadio(params, data, checked){
     var html="",params=handleParams(params);
@@ -183,13 +184,11 @@ function createForm(k)
     if (k.edit.options == undefined) k.edit.options = {}; // 容错处理
     if (!k.edit.type) k.edit.type = "text";
     k.edit.options["name"]  = k.sName;
-    k.edit.options["class"] = "form-control";
+    k.edit.options["class"] = "form-control " + (k.edit.options["class"] ? k.edit.options["class"] : "");
     if (k.edit.type == undefined) k.edit.type = "text";
-
-    if ( k.edit.type == "hidden" )
+    if ( k.edit.type == "hidden" ) {
         form += createInput(k.edit.options, 'hidden');
-    else
-    {
+    } else {
         // 判断类型
         form += '<div class="form-group">' + Label(k.title, {"class":"col-sm-3 control-label"}) + '<div class="col-sm-9">';
 

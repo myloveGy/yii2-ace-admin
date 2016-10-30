@@ -540,7 +540,7 @@ var MeTable = (function($) {
 							$(e).remove();
 						}
 					}).form()) {
-					data = $(sFormId).serialize();
+					data = $(sFormId).serializeArray();
 				} else {
 					return false;
 				}
