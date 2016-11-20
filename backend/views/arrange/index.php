@@ -103,6 +103,11 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                 "edit": {"type": "radio", "default": 0, "options": {"required": true, "number": true}},
                 "search": {"type": "select"},
                 "bSortable": false,
+                "editTable": {
+                    validate: function (x) {
+                        if (x.length > 100 || x.length < 2) return "长度必须为2到50字符";
+                    }
+                },
                 "createdCell": function (td, data, rowArr, row, col) {
                     $(td).html(showSpan(aStatus, aColors, data));
                 }

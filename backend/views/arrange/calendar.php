@@ -314,7 +314,7 @@ $this->registerJsFile('@web/public/assets/js/fullcalendar.min.js', ['depends' =>
                     if (json.errCode == 0) {
                         // 开始修改数据
                         calenderCalEvent.id          = json.data.id;
-                        calenderCalEvent.dersc       = json.data.desc;
+                        calenderCalEvent.desc        = json.data.desc;
                         calenderCalEvent.title       = json.data.title;
                         calenderCalEvent.start       = new Date(json.data.start_at * 1000);
                         calenderCalEvent.end         = new Date(json.data.end_at * 1000);

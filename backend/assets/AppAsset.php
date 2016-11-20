@@ -15,24 +15,13 @@ class AppAsset extends AssetBundle
 
     // 加载CSS
     public $css = [
+        // 公共的css
         'css/bootstrap.min.css',
         'css/font-awesome.min.css',
         'css/ace-fonts.css',
-
         // dataTables
         'css/jquery.gritter.css',
         'css/bootstrap-editable.css',
-
-        // datetime
-//        'css/select2.css',
-//        'css/datepicker.css',
-//        'css/bootstrap-timepicker.css',
-//        'css/daterangepicker.css',
-//        'css/bootstrap-datetimepicker.css',
-
-         // other
-//        'css/fullcalendar.css',
-//        'css/jquery-ui.custom.min.css',
     ];
 
     // 加载的JavaScript
@@ -52,26 +41,6 @@ class AppAsset extends AssetBundle
         'js/validate.message.js',
         'js/layer/layer.js',
         'js/bootbox.min.js',
-
-//        'js/jquery-ui.custom.min.js',
-//        'js/jquery.ui.touch-punch.min.js',
-//        'js/date-time/moment.min.js',
-//        'js/chosen.jquery.min.js',
-//        'js/fuelux/fuelux.spinner.min.js',
-//        'js/fuelux/fuelux.wizard.min.js',
-//        'js/fullcalendar.min.js',
-//        'js/jquery.easypiechart.min.js',
-//        'js/date-time/bootstrap-datepicker.min.js',
-//        'js/date-time/bootstrap-timepicker.min.js',
-//        'js/date-time/daterangepicker.min.js',
-//        'js/date-time/bootstrap-datetimepicker.min.js',
-//        'js/date-time/locales/bootstrap-datepicker.zh-CN.js',
-//        'js/jquery.hotkeys.min.js',
-//        'js/bootstrap-wysiwyg.min.js',
-//        'js/select2.min.js',
-//        'js/jquery.maskedinput.min.js',
-//        'js/colResizable.min.js',
-//        'js/dataTables.colResize.js',
     ];
 
     // 加载选项

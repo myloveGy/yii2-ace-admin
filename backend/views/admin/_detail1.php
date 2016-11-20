@@ -467,7 +467,7 @@ use yii\helpers\Url;
                 Image.prototype.appendChild = function(el){}
             }
 
-            var last_gritter
+            var last_gritter;
             $('#avatar').editable({
                 type: 'image',
                 name: 'avatar',
