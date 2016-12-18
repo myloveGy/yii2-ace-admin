@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
         myTable = new MeTable({
             sTitle: "管理员信息",
             bFileUpload: true,
-            aFileSelector: ["#file1", "#file2"],
+            aFileSelector: ["#file1"],
             sFileUploadUrl: "<?=\yii\helpers\Url::toRoute(['admin/upload'])?>",
             oEditFormParams: {
                 bMultiCols: true,
@@ -89,13 +89,6 @@ $this->params['breadcrumbs'][] = $this->title;
       */
     $(function(){
         myTable.init();
-//
-//        // 文件上传
-//        aceFileInput('#ace_myfile', sUpload, false, {"before_remove":function(){
-//            if ($("#myfile").val()){ $.post(sUpload, {"face":$("#myfile").val()})}
-//            $("#myfile").val('');
-//            return true;
-//        }});
     });
 </script>
 <?php $this->endBlock(); ?>

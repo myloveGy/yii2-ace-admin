@@ -34,11 +34,17 @@ $this->params['breadcrumbs'][] = $this->title;
 <table class="table table-striped table-bordered table-hover" id="showTable"></table>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var sUpload = '<?=Url::toRoute(['user/upload', 'sField' => 'face'])?>',
-        aStatus = <?=Json::encode($status)?>,
+    var aStatus = <?=Json::encode($status)?>,
         aStatusColor = <?=Json::encode($statusColor)?>,
         myTable = new MeTable({
-        sTitle:"用户信息"
+            sTitle:"用户信息",
+            aFileSelector: ["#file1"],
+            sFileUploadUrl: "<?=\yii\helpers\Url::toRoute(['user/upload'])?>",
+            oEditFormParams: {
+                bMultiCols: true,
+                iColsLength: 2,
+                aCols: [2, 4]
+            }
     },{
         "aoColumns":[
 			oCheckBox,
@@ -47,7 +53,9 @@ $this->params['breadcrumbs'][] = $this->title;
 			{"title": "邮箱", "data": "email", "sName": "email", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 255]"}}, "bSortable": false},
             {"title": "密码", "data": "password", "sName": "password", "isHide": true, "edit": {"type": "password", "options": {"rangelength":"[2, 20]"}}, "bSortable": false, "defaultContent":"", "bViews":false},
             {"title": "确认密码", "data": "repassword", "sName": "repassword", "isHide": true, "edit": {"type": "password", "options": {"rangelength":"[2, 20]", "equalTo":"input[name=password]:first"}}, "bSortable": false, "defaultContent":"", "bViews":false},
-            {"title": "头像", "data": "face", "sName": "face", "isHide": true, "edit": {"type": "file", options:{"id":"myfile", "type":"ace_input"}}},
+            {"title": "头像", "data": "face", "sName": "face", "isHide": true,
+                "edit": {"type": "file", options:{"id":"file1", "input-type": "ace_file"}}
+            },
 			{"title": "状态", "data": "status", "sName": "status", "value": aStatus, "edit": {"type": "radio", "default": 10, "options": {"required":true, "number":true}}, "bSortable": false, "createdCell": function(td, data) {
 			    $(td).html(showSpan(aStatus, aStatusColor, data));
             }},
@@ -56,25 +64,22 @@ $this->params['breadcrumbs'][] = $this->title;
 			{"title": "上一次登录时间", "data": "last_time", "sName": "last_time", "createdCell" : dateTimeString},
 			{"title": "上一次登录IP", "data": "last_ip", "sName": "last_ip", "bSortable": false}, 
 			oOperate
-        ],
-
-        // 设置隐藏和排序信息
-        // "order":[[0, "desc"]],
-         "columnDefs":[{"targets":[4, 5, 6], "visible":false}]
+        ]
     });
 
+
     // 显示之前的处理
-    myTable.beforeShow = function(data, isDetail) {
+    myTable.afterShow = function(data, isDetail) {
         // 新增
-        if (this.actionType == 'insert') {
-            $("#ace_myfile").ace_file_input("reset_input");
-        }
+        $("#file1").ace_file_input("reset_input");
+
         // 修改复值
-        if (this.actionType == 'update' && ! empty(data.face)) {
-            $("#ace_myfile").ace_file_input("show_file_list", [data.face]);
+        if (this.actionType == "update" && ! empty(data.face)) {
+            $("#file1").ace_file_input("show_file_list", [data.face]);
         }
         return true;
     };
+
 
     /**
      * 显示的前置和后置操作
