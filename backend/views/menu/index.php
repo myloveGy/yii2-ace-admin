@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
     var aAdmins  = <?=json_encode($this->params['admins'])?>,
         aParents = <?= $parents ?>;
     // 显示上级分类
-    function parentStatus(td, data, rowArr, row, col)
+    function parentStatus(td, data)
     {
         $(td).html(aParents[data] ? aParents[data] : '顶级分类');
     }
@@ -53,11 +53,11 @@ $this->params['breadcrumbs'][] = $this->title;
             {"data": "updated_at", "sName":"updated_at", "title":"修改时间", "createdCell":dateTimeString},
             {"data": "updated_id", "sName":"updated_id", "title":"修改用户", "createdCell":adminToString, "bSortable": false},
             oOperate
-        ],
+        ]
     });
 
     // 保存之后的处理
-    myTable.afterSave = function(data){
+    myTable.afterSave = function(){
         window.location.reload();
         return false;
     };

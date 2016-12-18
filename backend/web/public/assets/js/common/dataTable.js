@@ -122,6 +122,23 @@ var MeTable = (function($) {
 			sSearchHtml:  "",				// 搜索信息
 			sSearchType:  "middle",			// 搜索表单位置
 			sSearchForm:  "#searchForm",	// 搜索表单选择器
+			oEditFormParams: {				// 编辑表单配置
+				bMultiCols: false,          // 是否多列
+                iColsLength: 1,             // 几列
+                aCols: [3, 9],              // label 和 input 栅格化设置
+				sModalClass: "",			// 弹出模块框配置
+				sModalDialogClass: ""
+			},
+            oViewLayerConfig: {
+                type: 1,
+                shade: 0.3,
+                shadeClose: true,
+                maxmin: true,
+                area: ['50%', 'auto']
+            },
+            oViewTable: {                   // 查询详情配置信息
+
+            },
 			bRenderH1: 	  true,				// 是否渲染H1内容
 			bEditTable:   false,			// 是否开启行内编辑
 			oEditTable:   {},				// 行内编辑对象信息
@@ -244,13 +261,17 @@ var MeTable = (function($) {
 		var self       = this,
 			formParams = handleParams(this.formOptions),
 			form 	   = '<form ' + formParams + '><fieldset>',
-			views 	   = '<table class="table table-bordered table-striped table-detail">';
+			views 	   = '<table class="table table-bordered table-striped table-detail">',
+			aOrders = [],
+			aTargets = [];
 
 		// 处理生成表单
 		this.tableOptions.aoColumns.forEach(function(k, v) {
 			if (k.bViews !== false) views += createViewTr(k.title, k.data);				    // 查看详情信息
-			if (k.edit != undefined) form += createForm(k);									// 编辑表单信息
+			if (k.edit != undefined) form += createForm(k, self.options.oEditFormParams);	// 编辑表单信息
 			if (k.search != undefined) self.options.sSearchHtml += createSearchForm(k, v);  // 搜索信息
+			if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
+			if (k.isHide) aTargets.push(v);													// 是否隐藏
 
 			// 判断行内编辑
 			if (k.editTable != undefined) {
@@ -290,11 +311,23 @@ var MeTable = (function($) {
 			}
 		}
 
+        if (self.options.oEditFormParams.bMultiCols && empty(self.options.oEditFormParams.modalClass)) {
+            self.options.oEditFormParams.modalClass = "bs-example-modal-lg";
+            self.options.oEditFormParams.modalDialogClass = "modal-lg";
+        }
+
+        if (self.options.oEditFormParams.bMultiCols && self.options.oEditFormParams.index % self.options.oEditFormParams.iCols != (self.options.oEditFormParams.iCols - 1)) {
+            form += '</div>';
+        }
+
 		// 生成HTML
 		var Modal = createModal({
 			"params": {"id":"myModal"},
 			"html":   form,
-			"bClass": "me-table-save"},
+			"bClass": "me-table-save",
+            "modalClass": self.options.oEditFormParams.modalClass,
+            "modalDialogClass": self.options.oEditFormParams.modalDialogClass
+        },
 		{
 			"params": {"id":"data-info"}, "html":views
 		});
@@ -318,6 +351,20 @@ var MeTable = (function($) {
 				"params": {"id":"data-info-detail"},
 				"html":   views
 			});
+		}
+
+		// 处理表格配置
+		if (aOrders.length > 0) { // 排序
+			this.tableOptions.order = aOrders;
+		}
+
+		// 隐藏字段
+		if (aTargets.length > 0) {
+			if (this.tableOptions.columnDefs) {
+				this.tableOptions.columnDefs.push({"targets":aTargets, "visible":false});
+			} else {
+				this.tableOptions.columnDefs = [{"targets":aTargets, "visible":false}];
+			}
 		}
 
 		// 向页面添加HTML
@@ -386,6 +433,13 @@ var MeTable = (function($) {
 
         // 判断开启列宽拖拽
         if (self.options.bColResize)$(self.options.sTable).colResizable();
+
+		// 文件上传
+        if (self.options.bFileUpload && self.options.aFileSelector.length > 0) {
+            for (var i in self.options.aFileSelector) {
+                aceFileUpload(self.options.aFileSelector[i], self.options.sFileUploadUrl);
+            }
+        }
 	};
 
 	// 表格搜索
@@ -432,15 +486,15 @@ var MeTable = (function($) {
 			viewTable(obj, data, c, row);
 			// 弹出显示
 			this.options.iViewLoading = layer.open({
-			    type:		1,
-			    shade: 		0.3,
-                shadeClose: true,
+			    type:		this.options.oViewLayerConfig.type,
+			    shade: 		this.options.oViewLayerConfig.shade,
+                shadeClose: this.options.oViewLayerConfig.shadeClose,
 			    title: 		t + '详情',
 			    content: 	$(i), 			// 捕获的元素
-			    area:	 	['50%', 'auto'],
+			    area:	 	this.options.oViewLayerConfig.area,
 			    cancel: 	function(index){layer.close(index);},
                 end: 		function(){$('.views-info').html('');self.options.iViewLoading = 0;},
-				maxmin: 	true
+				maxmin: 	this.options.oViewLayerConfig.maxmin
 			});
 
 			// 展开全屏(解决内容过多问题)

@@ -56,15 +56,19 @@ function createSelect(params, data, selected){
 }
 
 // 生成上传文件类型 file
-function createFile(params){
-    var tmp = $.extend({}, params);
-    if (params && params.type && params.type == 'ace_input')
-    {
-        tmp.name = 'UploadForm[' + tmp.name + ']';
-        tmp.id   = 'ace_' + tmp.id;
+function createFile(params) {
+    console.info(params);
+    var html = '';
+    if (params.options && params.options.type) {
+        html = '<input type="file" ' + handleParams(params) + '/>';
+    } else {
+        html = '<input type="hidden" name="' + params.name + '"/>';
+        params["input-name"] = params.name;
+        params.name = 'UploadForm[' + params.name + ']';
+        html += '<input type="file" ' + handleParams(params) + '/>';
     }
 
-    return '<input type="file" ' + handleParams(tmp) + '/><input type="hidden" ' + handleParams(params) + '/>';
+    return html;
 }
 
 // 添加时间天
@@ -169,7 +173,7 @@ function createButtons(data) {
         for(var i in data)
         {
             div1 += ' <button class="btn ' + data[i]['className'] + ' '+  data[i]['cClass'] + ' btn-xs" table-data="' + data[i]['data'] + '"><i class="ace-icon fa ' + data[i]["icon"] + ' bigger-120"></i></button> ';
-            div2 += '<li><a title="' + data[i]['title'] + '" data-rel="tooltip" class="tooltip-info ' + data[i]['cClass'] + '" href="javascript:;" data-original-title="' + data[i]['title'] + '" table-data="' + data[i]['data'] + '"><span class="' + data[i]['sClass'] + '"><i class="ace-icon fa ' + data[i]['icon'] + ' bigger-120"></i></span></a></li>'; 
+            div2 += '<li><a title="' + data[i]['title'] + '" data-rel="tooltip" class="tooltip-info ' + data[i]['cClass'] + '" href="javascript:;" data-original-title="' + data[i]['title'] + '" table-data="' + data[i]['data'] + '"><span class="' + data[i]['sClass'] + '"><i class="ace-icon fa ' + data[i]['icon'] + ' bigger-120"></i></span></a></li>';
         }
     }
 
@@ -177,9 +181,11 @@ function createButtons(data) {
 }
 
 // 生成表单对象
-function createForm(k)
+function createForm(k, oParams)
 {
     var form = '';
+    if (!oParams.index) oParams.index = 0;
+
     // 处理其他参数
     if (k.edit.options == undefined) k.edit.options = {}; // 容错处理
     if (!k.edit.type) k.edit.type = "text";
@@ -189,8 +195,21 @@ function createForm(k)
     if ( k.edit.type == "hidden" ) {
         form += createInput(k.edit.options, 'hidden');
     } else {
-        // 判断类型
-        form += '<div class="form-group">' + Label(k.title, {"class":"col-sm-3 control-label"}) + '<div class="col-sm-9">';
+        // 处理多列
+        if (oParams.iMultiCols > 1 && !oParams.aCols) {
+            oParams.aCols = [];
+            var iLength = Math.ceil(12 / oParams.iMultiCols);
+            oParams.aCols[0] =  Math.floor(iLength * 0.3);
+            oParams.aCols[1] =  iLength - oParams.aCols[0];
+        }
+
+        if (!oParams.bMultiCols || (oParams.iColsLength > 1 && oParams.index % oParams.iColsLength == 0)) {
+            form += '<div class="form-group">';
+        }
+
+
+        form += Label(k.title, {"class": "col-sm-" + oParams.aCols[0] + " control-label"});
+        form += '<div class="col-sm-'+ oParams.aCols[1] + '">';
 
         // 单选选按钮添加样式
         if (k.edit.type == "radio") k.edit.options['class'] = 'ace valid';
@@ -204,7 +223,14 @@ function createForm(k)
         if (k.edit.type == "text") if (!empty(k.value)) k.edit.options["value"] = k.value;
 
         // 使用函数
-        form += window['create' + ucfirst(k.edit.type)](k.edit.options, k.value, k.edit.default) + '</div></div>';
+        form += window['create' + ucfirst(k.edit.type)](k.edit.options, k.value, k.edit.default);
+        form += '</div>';
+
+        if (!oParams.bMultiCols || (oParams.iColsLength > 1 && oParams.index % oParams.iColsLength == (oParams.iColsLength - 1))) {
+            form += '</div>';
+        }
+
+        oParams.index ++;
     }
 
     return form;
@@ -227,8 +253,8 @@ function createSearchForm(k, v) {
 // 生成编辑和查看详细modal
 function createModal(oModal, oViews) {
     return '<div class="isHide" '+ handleParams(oViews['params']) +'> ' + oViews['html'] +  ' </table></div> \
-            <div class="modal fade" '+ handleParams(oModal['params']) +' tabindex="-1" role="dialog" > \
-                <div class="modal-dialog" role="document"> \
+            <div class="modal fade ' + (oModal["modalClass"] ? oModal["modalClass"] : "") + '" '+ handleParams(oModal['params']) +' tabindex="-1" role="dialog" > \
+                <div class="modal-dialog ' + (oModal["modalDialogClass"] ? oModal["modalDialogClass"] : "") + '" role="document"> \
                     <div class="modal-content"> \
                         <div class="modal-header"> \
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> \
@@ -268,11 +294,10 @@ function aceFileInputAjax(file_input, url) {
         files      = file_input.data('ace_input_files'),
         deferred   = new $.Deferred;
     // 没有上传文件
-    if ( !files || files.length == 0 ) { deferred.resolve();return deferred.promise();}
+    if (!files || files.length == 0) { deferred.resolve();return deferred.promise();}
 
     // 数据提交的处理
-    if ( "FormData" in window )
-    {
+    if ("FormData" in window ) {
         formData_object = new FormData();
         // 表单数据
         $.each($form.serializeArray(), function(i, item) {formData_object.append(item.name, item.value);});
@@ -316,40 +341,79 @@ function aceFileInputAjax(file_input, url) {
 
     return deferred;
 }
+function getBase64Image(img) {
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+    return canvas.toDataURL("image/" + ext);
+}
 
-// 文件上传
-function aceFileInput(select, url, fun) {
-    var $input = $(select), ie_timeout = null, objHide = $(select.replace('ace_', '')), conf = {
-        no_file:        '没有选择文件 ...',
-        btn_choose:     '选择',
-        btn_change:     '更换文件',
-        droppable:      false,
-        thumbnail:      false, //| true | large
-        // 允许上传的文件类型
-        allowExt:      ['jpg', 'jpeg', 'png', 'gif'],
-        allowMime:     ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'],
-        maxSize:       200000000,
-        denyExt:       ['exe', 'php'],
-    };
-    if (arguments[3]) conf = $.extend(conf, arguments[3]);
-    if (!fun) fun = function(result) {
-        if (result.errCode == 0) {
-            gAlert("上传文件成功", "上传文件的地址为：" + result.data.sFilePath, "success");
-            objHide.val(result.data.sFilePath)
-        } else {
-            gAlert("上传文件出现错误Error:", result.errMsg);
-            $input.ace_file_input('apply_settings').ace_file_input('reset_input');
+function aceFileUpload(select, sFileUploadUrl) {
+    var $input = $(select),
+        $file = $('input[type=hidden][name=' + $input.attr('input-name') + ']'),
+        allowExt = $input.attr('allowExt') ? $input.attr('allowExt').split(',') : null,      // 允许类型
+        allowMime = $input.attr('allowMime') ? $input.attr('allowMime').split(',') : null,   // Mime 类型
+        maxSize = parseInt($input.attr('maxSize')),         // 允许大小
+        denyExt = $input.attr('denyExt') ? $input.attr('denyExt').split(',') : null,        // 不允许类型
+        ie_timeout = null,
+        aParams = {
+            // 允许上传的文件类型
+            allowExt: allowExt ? allowExt : ['jpg', 'jpeg', 'png', 'gif'],
+            maxSize: maxSize ? maxSize : 200000000,
+            denyExt: denyExt ? denyExt : ['exe', 'php']
+        };
+
+    if (allowMime) aParams["allowMime"] = allowMime;
+    var oOther = {};
+    if ($input.attr('input-type') == 'ace_file') {
+        oOther = {
+            no_file: '没有选择文件 ...',
+            btn_choose: '选择',
+            btn_change: '更换文件',
+            droppable: false,
+            thumbnail: false //| true | large
+        };
+    } else {
+        oOther = {
+            style: 'well',
+            btn_choose: '单击此处删除文件或单击“选择”',
+            btn_change: null,
+            no_icon: 'ace-icon fa fa-cloud-upload',
+            droppable: true,
+            thumbnail: 'small'
+        };
+    }
+
+    aParams = $.extend(aParams, oOther);
+
+    // 删除操作
+    aParams["before_remove"] = function(){
+        if ($file.val()) {
+            $.post(sFileUploadUrl, {"face": $file.val()})
         }
-        // 失败执行
+        $file.val('');
+        return true;
     };
-    $input.ace_file_input(conf).on('change', function() {
-        var deferred = aceFileInputAjax($input, url);
+
+    $input.ace_file_input(aParams).on('change', function() {
+        var deferred = aceFileInputAjax($input, sFileUploadUrl + '?sField='+$input.attr('input-name'));
         // 成功执行
-        deferred.done(fun).fail(function(result) {
+        deferred.done(function(json) {
+            if (json.errCode == 0) {
+                gAlert("上传文件成功", "上传文件的地址为：" + json.data.sFilePath, "success");
+                $file.val(json.data.sFilePath);
+            } else {
+                gAlert("上传文件出现错误Error:", json.errMsg);
+                $input.ace_file_input('apply_settings').ace_file_input('reset_input');
+            }
+        }).fail(function() {
             gAlert("温馨提醒：", "页面没有响应...");
             // 请求完成执行
         }).always(function() {
-            if(ie_timeout) clearTimeout(ie_timeout)
+            if(ie_timeout) clearTimeout(ie_timeout);
             ie_timeout = null;
             $input.ace_file_input('loading', false);
         });
@@ -363,6 +427,7 @@ function aceFileInput(select, url, fun) {
     });
 }
 
+
 // 时间格式化
 Date.prototype.Format=function(fmt){var o={"M+":this.getMonth()+1,"d+":this.getDate(),"h+":this.getHours(),"m+":this.getMinutes(),"s+":this.getSeconds(),"q+":Math.floor((this.getMonth()+3)/3),"S":this.getMilliseconds()};if(/(y+)/.test(fmt)){fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length))}for(var k in o){if(new RegExp("("+k+")").test(fmt)){fmt=fmt.replace(RegExp.$1,(RegExp.$1.length==1)?(o[k]):(("00"+o[k]).substr((""+o[k]).length)))}}return fmt};
 // 根据时间戳返回时间字符串
@@ -372,36 +437,30 @@ function stringTo(type,value){switch(type){case"int":case"int8":case"int16":case
 // 初始化表单信息
 function InitForm(select, data) {
     objForm = $(select).get(0); // 获取表单对象
-    if (objForm != undefined)
-    {
+    if (objForm != undefined) {
         $(objForm).find('input[type=hidden]').val('');                                  // 隐藏按钮充值
         $(objForm).find('input[type=checkbox]').each(function(){$(this).attr('checked', false);if ($(this).get(0)) $(this).get(0).checked = false;});                                                                             // 多选菜单
         objForm.reset();                                                                // 表单重置
-        if (data != undefined)
-        {
-            for (var i in data)
-            {
+        if (data != undefined) {
+            for (var i in data) {
                 // 多语言处理 以及多选配置
-                if (typeof data[i]  ==  'object')
-                {
-                    for (var x in data[i])
-                    {
+                if (typeof data[i]  ==  'object') {
+                    for (var x in data[i]){
                         var key = i + '[' + x + ']';
                         // 对语言
-                        if (objForm[key] != undefined)
+                        if (objForm[key] != undefined) {
                             objForm[key].value = data[i][x];
-                        else {
+                        } else {
                             // 多选按钮
                             if (parseInt(data[i][x]) > 0) {
-                                $('input[type=checkbox][value=' + data[i][x] + ']').attr('checked', true).each(function(){this.checked=true});
+                                $('input[type=checkbox][name=' + i + '\\[\\]][value=' + data[i][x] + ']').attr('checked', true).each(function(){this.checked=true});
                             }
                         }
                     }
                 }
 
                 // 其他除密码的以外的数据
-                if (objForm[i] != undefined && objForm[i].type != "password")
-                {
+                if (objForm[i] != undefined && objForm[i].type != "password") {
                     var obj = $(objForm[i]), tmp = data[i];
                     // 时间处理
                     if (obj.hasClass('time')) tmp = timeFormat(parseInt(tmp), 'yyyy/MM/dd hh:mm:ss');

@@ -152,10 +152,6 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
             },
             oOperate
         ]
-
-        // 设置隐藏和排序信息
-        // "order":[[0, "desc"]],
-        // "columnDefs":[{"targets":[2,3], "visible":false}],
     });
 
 

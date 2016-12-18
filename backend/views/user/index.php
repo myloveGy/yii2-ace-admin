@@ -45,9 +45,9 @@ $this->params['breadcrumbs'][] = $this->title;
 			{"title": "用户ID", "data": "id", "sName": "id", "edit": {"type": "hidden"}},
 			{"title": "用户昵称", "data": "username", "sName": "username", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 255]"}}, "bSortable": false},
 			{"title": "邮箱", "data": "email", "sName": "email", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 255]"}}, "bSortable": false},
-            {"title": "密码", "data": "password", "sName": "password", "edit": {"type": "password", "options": {"rangelength":"[2, 20]"}}, "bSortable": false, "defaultContent":"", "bViews":false},
-            {"title": "确认密码", "data": "repassword", "sName": "repassword", "edit": {"type": "password", "options": {"rangelength":"[2, 20]", "equalTo":"input[name=password]:first"}}, "bSortable": false, "defaultContent":"", "bViews":false},
-            {"title": "头像", "data": "face", "sName": "face", "edit": {"type": "file", options:{"id":"myfile", "type":"ace_input"}}},
+            {"title": "密码", "data": "password", "sName": "password", "isHide": true, "edit": {"type": "password", "options": {"rangelength":"[2, 20]"}}, "bSortable": false, "defaultContent":"", "bViews":false},
+            {"title": "确认密码", "data": "repassword", "sName": "repassword", "isHide": true, "edit": {"type": "password", "options": {"rangelength":"[2, 20]", "equalTo":"input[name=password]:first"}}, "bSortable": false, "defaultContent":"", "bViews":false},
+            {"title": "头像", "data": "face", "sName": "face", "isHide": true, "edit": {"type": "file", options:{"id":"myfile", "type":"ace_input"}}},
 			{"title": "状态", "data": "status", "sName": "status", "value": aStatus, "edit": {"type": "radio", "default": 10, "options": {"required":true, "number":true}}, "bSortable": false, "createdCell": function(td, data) {
 			    $(td).html(showSpan(aStatus, aStatusColor, data));
             }},
@@ -66,9 +66,13 @@ $this->params['breadcrumbs'][] = $this->title;
     // 显示之前的处理
     myTable.beforeShow = function(data, isDetail) {
         // 新增
-        if (this.actionType == 'insert') $("#ace_myfile").ace_file_input("reset_input");
+        if (this.actionType == 'insert') {
+            $("#ace_myfile").ace_file_input("reset_input");
+        }
         // 修改复值
-        if (this.actionType == 'update' && ! empty(data.face)) $("#ace_myfile").ace_file_input("show_file_list", [data.face])
+        if (this.actionType == 'update' && ! empty(data.face)) {
+            $("#ace_myfile").ace_file_input("show_file_list", [data.face]);
+        }
         return true;
     };
 
@@ -86,13 +90,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
      $(function(){
          myTable.init();
-
-         // 文件上传
-         aceFileInput('#ace_myfile', sUpload, false, {"before_remove":function(){
-             if ($("#myfile").val()){ $.post(sUpload, {"face":$("#myfile").val()})}
-             $("#myfile").val('');
-             return true;
-         }});
      });
 </script>
 <?php $this->endBlock(); ?>

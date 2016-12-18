@@ -117,8 +117,8 @@ class Admin extends \common\models\Admin
     public function scenarios()
     {
         return [
-            'default'      => ['username', 'email', 'password', 'repassword', 'status', 'role'],
-            'admin-create' => ['username', 'email', 'password', 'repassword', 'status', 'role'],
+            'default'      => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
+            'admin-create' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
             'admin-update' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face', 'nickname', 'home_url', 'facebook', 'maxim', 'birthday', 'sex', 'age']
         ];
     }

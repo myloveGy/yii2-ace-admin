@@ -35,15 +35,11 @@ $this->params['breadcrumbs'][] = $this->title;
     var myTable = new MeTable({sTitle:"地址信息"},{
         "aoColumns":[
 			// oCheckBox,
-			{"title": "id", "data": "id", "sName": "id", "edit": {"type": "text", "options": {"required":true,"number":true,}}},
+			{"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc", "edit": {"type": "text", "options": {"required":true,"number":true,}}},
 			{"title": "地址名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"rangelength":"[2, 40]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "父类ID", "data": "pid", "sName": "pid", "value": <?=json_encode($parent)?>, "edit": {"type": "text", "options": {"number":true}}, "search": {"type":"select"}},
 			// oOperate
-        ],
-
-        // 设置隐藏和排序信息
-         "order":[[0, "desc"]],
-        // "columnDefs":[{"targets":[2,3], "visible":false}],
+        ]
     });
 
     /**
