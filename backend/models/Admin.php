@@ -117,9 +117,9 @@ class Admin extends \common\models\Admin
     public function scenarios()
     {
         return [
-            'default'      => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
-            'admin-create' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
-            'admin-update' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face', 'nickname', 'home_url', 'facebook', 'maxim', 'birthday', 'sex', 'age']
+            'default' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
+            'create' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
+            'update' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face', 'nickname', 'home_url', 'facebook', 'maxim', 'birthday', 'sex', 'age']
         ];
     }
 
@@ -146,17 +146,6 @@ class Admin extends \common\models\Admin
                 'nickname'   => '真实姓名',
             ]
         );
-    }
-
-    /**
-     * beforeValidate() 验证之前的处理
-     * @return bool
-     */
-    public function beforeValidate()
-    {
-        // 存在请求数据
-        $this->scenario = $this->id == null ? 'admin-create' : 'admin-update';
-        return parent::beforeValidate();
     }
 
     /**

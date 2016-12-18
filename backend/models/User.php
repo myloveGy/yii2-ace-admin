@@ -98,8 +98,8 @@ class User extends \common\models\User
     {
         return [
             'default'     => ['username', 'email', 'password', 'repassword', 'status'],
-            'user-create' => ['username', 'email', 'password', 'repassword', 'status', 'face'],
-            'user-update' => ['username', 'email', 'password', 'repassword', 'status', 'face']
+            'create' => ['username', 'email', 'password', 'repassword', 'status', 'face'],
+            'update' => ['username', 'email', 'password', 'repassword', 'status', 'face']
         ];
     }
 
@@ -124,17 +124,6 @@ class User extends \common\models\User
     }
 
     /**
-     * beforeValidate() 验证之前的处理
-     * @return bool
-     */
-    public function beforeValidate()
-    {
-        // 存在请求数据
-        $this->scenario = $this->id == null ? 'user-create' : 'user-update';
-        return parent::beforeValidate();
-    }
-
-    /**
      * beforeSave() 新增之前的处理
      * @param  bool $insert 是否是新增数据
      * @return bool 处理是否成功
@@ -143,8 +132,7 @@ class User extends \common\models\User
     {
         if (parent::beforeSave($insert)) {
             // 新增记录和修改了密码
-            if ($this->isNewRecord || (!$this->isNewRecord && $this->password))
-            {
+            if ($this->isNewRecord || (!$this->isNewRecord && $this->password)) {
                 $this->setPassword($this->password);
                 $this->generateAuthKey();
                 $this->generatePasswordResetToken();

@@ -186,6 +186,11 @@ class Controller extends \common\controllers\Controller
         $data = Yii::$app->request->post();
         if ($data) {
             $model  = $this->getModel();
+            $arrScenarios = $model->scenarios();
+            if (isset($arrScenarios['create'])) {
+                $model->scenario = 'create';
+            }
+
             $isTrue = $model->load(['params' => $data], 'params');
             if ($isTrue) {
                 $isTrue = $model->save();
@@ -211,6 +216,11 @@ class Controller extends \common\controllers\Controller
             // 接收参数
             $model = $this->findModel($data);
             if ($model) {
+                $arrScenarios = $model->scenarios();
+                if (isset($arrScenarios['update'])) {
+                    $model->scenario = 'update';
+                }
+
                 // 新增数据
                 $this->arrJson['errCode'] = 205;
                 $isTrue = $model->load(['params' => $data], 'params');
