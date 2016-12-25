@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50624
 File Encoding         : 65001
 
-Date: 2016-10-29 23:57:48
+Date: 2016-12-25 20:50:48
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -48,13 +48,13 @@ CREATE TABLE `yii2_admin` (
   KEY `role` (`role`),
   KEY `status` (`status`),
   KEY `created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of yii2_admin
 -- ----------------------------
 INSERT INTO `yii2_admin` VALUES ('1', 'super', 'Super@admin.com', '/public/assets/avatars/5814aefaa93ec.jpg', 'admin', '1', 'gKkLFMdB2pvIXOFNpF_Aeemvdf1j0YUM', '$2y$13$Nuf1mzDRoCMxrWI.rIjENu20QshJG41smdEeHFHxq0qdmS99YytHy', '5vLaPpUS-I-XxJaoGP-GZDk474WdnaK3_1469073015', '1457337222', '1', '1477755832', '1', '1477753505', '127.0.0.1', '湖南省,岳阳市,岳阳县', '24', '学会微笑，学会面对，学会放下，让一切随心，随意，随缘！', '', '1', '', '', '');
-INSERT INTO `yii2_admin` VALUES ('2', 'liujinxing', '821901008@qq.com', '/public/assets/avatars/57957eb2a5ca2.jpg', 'user', '1', 'yz4AxLNDC_33mLQoz31ptePpTCWJOHbk', '$2y$13$OonjJGSZ.QpanoOdZbLbAOsB80UKYcWeXGA/vtNCTM1iMz1TNZR0u', 'Gtl9Z0Wk2CxRwI2IXWiv-SeBeNASmV3c_1469413639', '1469413639', '1', '1469415815', '2', '1469415815', '127.0.0.1', '湖南省,岳阳市,岳阳县', '18', '', '', '1', '', '', '');
+INSERT INTO `yii2_admin` VALUES ('2', 'liujinxing', '821901008@qq.com', '/public/assets/avatars/57957eb2a5ca2.jpg', 'user', '1', 'yz4AxLNDC_33mLQoz31ptePpTCWJOHbk', '$2y$13$OonjJGSZ.QpanoOdZbLbAOsB80UKYcWeXGA/vtNCTM1iMz1TNZR0u', 'Gtl9Z0Wk2CxRwI2IXWiv-SeBeNASmV3c_1469413639', '1469413639', '1', '1482058676', '1', '1469415815', '127.0.0.1', '湖南省,岳阳市,岳阳县', '18', '', '', '1', '', '', '');
 
 -- ----------------------------
 -- Table structure for yii2_arrange
@@ -74,18 +74,11 @@ CREATE TABLE `yii2_arrange` (
   `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
   `updated_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '修改用户',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='日程记录信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='日程记录信息表';
 
 -- ----------------------------
 -- Records of yii2_arrange
 -- ----------------------------
-INSERT INTO `yii2_arrange` VALUES ('1', '这个事件已经处理了123', '这个事件已经处理了', '2', '1', '1', '1474352360', '1474449563', '1474344037', '1', '1474449846', '1');
-INSERT INTO `yii2_arrange` VALUES ('2', '首页问题', '首页处理一些其他问题', '1', '1', '1', '1473782400', '1473868800', '1474353783', '1', '1474445505', '1');
-INSERT INTO `yii2_arrange` VALUES ('3', '手游问题', '首页的一些问题', '1', '1', '1', '1473955200', '1474041600', '1474353822', '1', '1474445822', '1');
-INSERT INTO `yii2_arrange` VALUES ('4', '其他问题', '其他问题', '1', '2', '1', '1473436800', '1473523200', '1474353858', '1', '1474445849', '1');
-INSERT INTO `yii2_arrange` VALUES ('5', '这一天要办的事情好多呵呵', '这一天要办的事情好多呵呵', '0', '0', '1', '1475856000', '1475942400', '1474354086', '1', '1474451481', '1');
-INSERT INTO `yii2_arrange` VALUES ('6', '这个事件已经延期了不要了吧', '这个事件已经延期了', '0', '1', '0', '1474357344', '1474617222', '1474354171', '1', '1474444440', '1');
-INSERT INTO `yii2_arrange` VALUES ('7', '这个事件已经延期了不要了吧', '这个事件已经延期了', '1', '1', '1', '1475107200', '1475164800', '1477754225', '1', '1477754225', '1');
 
 -- ----------------------------
 -- Table structure for yii2_auth_assignment
@@ -156,6 +149,7 @@ INSERT INTO `yii2_auth_item` VALUES ('authority/search', '2', '搜索权限信�
 INSERT INTO `yii2_auth_item` VALUES ('authority/update', '2', '修改权限信息', null, null, '1476085131', '1476085131');
 INSERT INTO `yii2_auth_item` VALUES ('china/create', '2', '创建地址信息', null, null, '1476085132', '1476085132');
 INSERT INTO `yii2_auth_item` VALUES ('china/delete', '2', '删除地址信息', null, null, '1476085132', '1476085132');
+INSERT INTO `yii2_auth_item` VALUES ('china/export', '2', '地址信息导出', null, null, '1482669906', '1482669906');
 INSERT INTO `yii2_auth_item` VALUES ('china/index', '2', '显示地址信息', null, null, '1476085132', '1476085132');
 INSERT INTO `yii2_auth_item` VALUES ('china/search', '2', '搜索地址信息', null, null, '1476085132', '1476085132');
 INSERT INTO `yii2_auth_item` VALUES ('china/update', '2', '修改地址信息', null, null, '1476085132', '1476085132');
@@ -250,6 +244,7 @@ INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/create');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/create');
 INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/delete');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/export');
 INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/index');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/index');
 INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/search');
@@ -3900,7 +3895,7 @@ CREATE TABLE `yii2_menu` (
   `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
   `updated_id` int(11) NOT NULL DEFAULT '0' COMMENT '修改用户',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='导航栏信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='导航栏信息表';
 
 -- ----------------------------
 -- Records of yii2_menu
@@ -3913,3 +3908,21 @@ INSERT INTO `yii2_menu` VALUES ('5', '1', '管理员信息', '', 'admin/index', 
 INSERT INTO `yii2_menu` VALUES ('6', '1', '权限管理', '', 'authority/index', '1', '3', '1468994819', '1', '1469410899', '1');
 INSERT INTO `yii2_menu` VALUES ('7', '0', '地址信息', 'menu-icon fa fa-bank', 'china/index', '1', '3', '1469415343', '2', '1474340794', '1');
 INSERT INTO `yii2_menu` VALUES ('8', '0', '日程管理', 'menu-icon fa fa-calendar', 'arrange/index', '1', '1', '1474340682', '1', '1474340932', '1');
+
+-- ----------------------------
+-- Table structure for yii2_session
+-- ----------------------------
+DROP TABLE IF EXISTS `yii2_session`;
+CREATE TABLE `yii2_session` (
+  `session_id` varchar(100) NOT NULL DEFAULT '' COMMENT 'session_id',
+  `session_data` text COMMENT 'session 保存的值',
+  `session_expire` int(11) NOT NULL COMMENT 'session 创建的时间',
+  PRIMARY KEY (`session_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of yii2_session
+-- ----------------------------
+INSERT INTO `yii2_session` VALUES ('lf7hd64j9heu448o533ijssq13', 'user_51|s:13:\"username:1629\";', '1478362422');
+INSERT INTO `yii2_session` VALUES ('r3v1sh9vareptf1pgdbfmabge1', '', '1478362407');
+INSERT INTO `yii2_session` VALUES ('t7f81mm4gnbnvf7b6kqbjmkbr5', '', '1478398750');
