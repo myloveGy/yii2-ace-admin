@@ -371,7 +371,7 @@ function aceFileUpload(select, sFileUploadUrl) {
         // 错误处理
     }).on('file.error.ace', function(event, info) {
         // 判断错误
-        gAlert('文件上传出现错误：', validateFile(info));
+        layer.msg('文件上传出现错误：' + validateFile(info), {icon: 5});
         event.preventDefault();
     });
 }
@@ -409,7 +409,9 @@ function InitForm(select, data) {
                 if (objForm[i] != undefined && objForm[i].type != "password") {
                     var obj = $(objForm[i]), tmp = data[i];
                     // 时间处理
-                    if (obj.hasClass('time')) tmp = timeFormat(parseInt(tmp), 'yyyy/MM/dd hh:mm:ss');
+                    if (obj.hasClass('time-format')) {
+                        tmp = timeFormat(parseInt(tmp), obj.attr('time-format') ? obj.attr('time-format') : "yyyy-MM-dd hh:mm:ss");
+                    }
                     objForm[i].value = tmp;
                 }
             }
