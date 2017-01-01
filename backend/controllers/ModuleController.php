@@ -269,7 +269,6 @@ HTML;
     {
         $strHtml = $strWhere =  '';
         if ($array) {
-            $strHtml = "\t\t\toCheckBox,\n";
             foreach ($array as $key => $value) {
                 $html = "\t\t\t{\"title\": \"{$value['title']}\", \"data\": \"{$key}\", \"sName\": \"{$key}\", ";
 
@@ -328,14 +327,12 @@ HTML;
 
 <?php \$this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var myTable = new MeTable({sTitle:"{$title}"},{
-        "aoColumns":[
+    var myTable = new MeTable({
+        sTitle: "{$title}"
+    },{
+        "aoColumns": [
 {$strHtml}
         ]
-
-        // 设置隐藏和排序信息
-        // "order":[[0, "desc"]],
-        // "columnDefs":[{"targets":[2,3], "visible":false}],
     });
 
     /**
