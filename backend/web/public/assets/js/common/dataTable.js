@@ -83,7 +83,7 @@ var MeTable = (function() {
             // "processing": true,				    // 是否使用加载进度条
             "sPaginationType":  "full_numbers",     // 分页样式
             "oLanguage":        oTableLanguage,		// 语言配置
-            "order":            [[1, "desc"]],      // 默认排序
+            "order":            [[1, "desc"]]       // 默认排序
 		};
 
         var self = this;
@@ -100,7 +100,9 @@ var MeTable = (function() {
 				"insert": 	 "create",
 				"update": 	 "update",
 				"delete": 	 "delete",
-				"deleteAll": "delete-all"
+				"deleteAll": "delete-all",
+                "export": "export", // 导出
+                "upload": "upload"  // 下载
 			},
 			aParams:	  null,				// 请求携带参数
 			sExportUrl:   "export",         // 数据导出地址
@@ -120,9 +122,6 @@ var MeTable = (function() {
                 shadeClose: true,
                 maxmin: true,
                 area: ['50%', 'auto']
-            },
-            oViewTable: {                   // 查询详情配置信息
-
             },
 			bRenderH1: 	  true,				// 是否渲染H1内容
 			bEditTable:   false,			// 是否开启行内编辑
@@ -198,9 +197,7 @@ var MeTable = (function() {
 				sActionUrl: 	{
 					"insert": "create", // 创建
 					"update": "update",	// 修改
-					"delete": "delete", // 删除
-					"export": "export", // 导出
-					"upload": "upload"  // 下载
+					"delete": "delete" // 删除
 				},
 				sClickSelect:  	"td.details-control",
 				oTableOptions: 	{
@@ -392,7 +389,7 @@ var MeTable = (function() {
 		// 判断是否开启详情处理
 		if (self.bHandleDetails) {
 			// 初始化详情表格
-			if (this.bHandleDetails) this.details = $(this.oDetails.sTable).DataTable(this.oDetails.oTableOptions)
+			if (this.bHandleDetails) this.details = $(this.oDetails.sTable).DataTable(this.oDetails.oTableOptions);
 			// 新增、查看、编辑、删除
 			$('.me-table-insert-detail').click(function(evt){evt.preventDefault();self.insert(true);});
 			$(document).on('click', '.me-table-view-detail', function(evt){evt.preventDefault();self.view($(this).attr('table-data'), true)});

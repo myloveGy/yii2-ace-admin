@@ -39,7 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 bMultiCols: true,
                 iColsLength: 2,
                 aCols: [2, 4]
-            }
+            },
+//            bColResize: true
         },{
         "aoColumns":[
             oCheckBox,
@@ -48,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			{"title": "密码", "data": "password", "sName": "password", "isHide": true, "edit": {"type": "password", "options": {"rangelength":"[2, 20]"}}, "bSortable": false, "defaultContent":"", "bViews":false},
 			{"title": "确认密码", "data": "repassword", "sName": "repassword", "isHide": true, "edit": {"type": "password", "options": {"rangelength":"[2, 20]", "equalTo":"input[name=password]:first"}}, "bSortable": false, "defaultContent":"", "bViews":false},
 			{"title": "头像", "data": "face", "sName": "face", "isHide": true,
-                "edit": {"type": "file", options:{"id":"file1", "input-type": "ace_file"}}
+                "edit": {"type": "file", "options": {"id":"file1", "input-name": "face", "input-type": "ace_file", "file-name": "UploadForm[face]"}}
 			},
 			{"title": "邮箱", "data": "email", "sName": "email", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 255]", "email": true}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "角色", "data": "role", "sName": "role", "value": aRoles, "edit": {"type": "select", "options": {"required":true}}, "bSortable": false},

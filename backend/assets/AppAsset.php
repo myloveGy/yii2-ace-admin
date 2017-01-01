@@ -19,8 +19,6 @@ class AppAsset extends AssetBundle
         'css/bootstrap.min.css',
         'css/font-awesome.min.css',
         'css/ace-fonts.css',
-        // dataTables
-        'css/jquery.gritter.css',
         'css/bootstrap-editable.css',
     ];
 
@@ -32,7 +30,6 @@ class AppAsset extends AssetBundle
         // dataTables
         'js/common/base.js',
         'js/common/dataTable.js',
-        'js/jquery.gritter.min.js',
         'js/x-editable/bootstrap-editable.min.js',
         'js/x-editable/ace-editable.min.js',
         'js/jquery.dataTables.min.js',
@@ -40,7 +37,6 @@ class AppAsset extends AssetBundle
         'js/jquery.validate.min.js',
         'js/validate.message.js',
         'js/layer/layer.js',
-        'js/bootbox.min.js',
     ];
 
     // 加载选项
