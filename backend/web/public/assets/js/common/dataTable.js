@@ -60,6 +60,7 @@ var MeTable = (function() {
 			sSearchHtml:  "",				// 搜索信息
 			sSearchType:  "middle",			// 搜索表单位置
 			sSearchForm:  "#searchForm",	// 搜索表单选择器
+            aFileSelector: [],				// 上传文件选择器
 			oEditFormParams: {				// 编辑表单配置
 				bMultiCols: false,          // 是否多列
                 iColsLength: 1,             // 几列
@@ -424,12 +425,12 @@ var MeTable = (function() {
 		}
 
         // 判断开启列宽拖拽
-        if (self.options.bColResize)$(self.options.sTable).colResizable();
+        if (self.options.bColResize) $(self.options.sTable).colResizable();
 
 		// 文件上传
-        if (self.options.bFileUpload && self.options.aFileSelector.length > 0) {
+        if (empty(self.options.aFileSelector) && self.options.aFileSelector.length > 0) {
             for (var i in self.options.aFileSelector) {
-                aceFileUpload(self.options.aFileSelector[i], self.options.sFileUploadUrl);
+                aceFileUpload(self.options.aFileSelector[i], self.options.sBaseUrl + self.options.aActionUrl.upload);
             }
         }
 	};
@@ -629,7 +630,7 @@ var MeTable = (function() {
     // 数据导出
     MeTable.prototype.export = function(bAll) {
         var self = this,
-            html = '<form action="' + self.options.sExportUrl + '" target="_blank" method="POST" class="me-export" style="display:none">';
+            html = '<form action="' + self.options.sBaseUrl + self.options.aActionUrl.export + '" target="_blank" method="POST" class="me-export" style="display:none">';
         html += '<input type="hidden" name="iSize" value="' + (bAll ? 0 : $('select[name=' + self.options.sTable.replace('#', '') + '_length]').val()) + '"/>';
         html += '<input type="hidden" name="sTitle" value="' + self.options.sTitle + '"/>';
 		html += '<input type="hidden" name="_csrf" value="' + $('meta[name=csrf-token]').attr('content') + '"/>';

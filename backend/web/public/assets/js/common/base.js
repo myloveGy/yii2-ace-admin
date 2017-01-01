@@ -211,6 +211,17 @@ function handleMenuActive(strUrl)
 {
     $('ul.nav-list a[href=' + strUrl + ']').closest('li').addClass('active').parentsUntil('ul.nav-list').addClass('active open');
 }
+// 状态信息
+function statusToString(td, data) {$(td).html('<span class="label label-' + (data == 1 ? 'success">启用' : 'warning">禁用') + '</span>');}
+// 时间戳列，值转换
+function dateTimeString(td, cellData) {$(td).html(timeFormat(cellData, 'yyyy-MM-dd hh:mm:ss'));}
+// 用户显示
+function adminToString(td, data, rowArr, row, col) {$(td).html(aAdmins[data]);}
+// 显示标签
+function showSpan(aData, aColorData, iVal, sDefaultClass) {
+    if (sDefaultClass == undefined) sDefaultClass = 'label label-sm ';
+    return '<span class="' + sDefaultClass + ' ' + (aColorData[iVal] ? aColorData[iVal] : '') + '"> ' + (aData[iVal] ? aData[iVal] : iVal ) + ' </span>';
+}
 
 // 时间格式化
 Date.prototype.Format=function(fmt){var o={"M+":this.getMonth()+1,"d+":this.getDate(),"h+":this.getHours(),"m+":this.getMinutes(),"s+":this.getSeconds(),"q+":Math.floor((this.getMonth()+3)/3),"S":this.getMilliseconds()};if(/(y+)/.test(fmt)){fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length))}for(var k in o){if(new RegExp("("+k+")").test(fmt)){fmt=fmt.replace(RegExp.$1,(RegExp.$1.length==1)?(o[k]):(("00"+o[k]).substr((""+o[k]).length)))}}return fmt};
@@ -436,16 +447,4 @@ function createForm(k, oParams) {
     }
 
     return form;
-}
-
-// 状态信息
-function statusToString(td, data) {$(td).html('<span class="label label-' + (data == 1 ? 'success">启用' : 'warning">禁用') + '</span>');}
-// 时间戳列，值转换
-function dateTimeString(td, cellData) {$(td).html(timeFormat(cellData, 'yyyy-MM-dd hh:mm:ss'));}
-// 用户显示
-function adminToString(td, data, rowArr, row, col) {$(td).html(aAdmins[data]);}
-// 显示标签
-function showSpan(aData, aColorData, iVal, sDefaultClass) {
-    if (sDefaultClass == undefined) sDefaultClass = 'label label-sm ';
-    return '<span class="' + sDefaultClass + ' ' + (aColorData[iVal] ? aColorData[iVal] : '') + '"> ' + (aData[iVal] ? aData[iVal] : iVal ) + ' </span>';
 }

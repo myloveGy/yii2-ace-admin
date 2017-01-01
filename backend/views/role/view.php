@@ -167,28 +167,6 @@ $this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js');
             e.stopPropagation();
         });
 
-        $('[data-rel="tooltip"]').tooltip();
-
-        // 拖动控件
-        $('.widget-container-col').sortable({
-            connectWith: '.widget-container-col',
-            items:'> .widget-box',
-            handle: ace.vars['touch'] ? '.widget-header' : false,
-            cancel: '.fullscreen',
-            opacity:0.8,
-            revert:true,
-            forceHelperSize:true,
-            placeholder: 'widget-placeholder',
-            forcePlaceholderSize:true,
-            tolerance:'pointer',
-            start: function(event, ui) {
-                ui.item.parent().css({'min-height':ui.item.height()})
-            },
-            update: function(event, ui) {
-                ui.item.parent({'min-height':''})
-            }
-        });
-
         // 导航栏样式装换
         handleMenuActive('\\/role\\/index');
     });

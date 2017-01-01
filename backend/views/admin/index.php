@@ -32,14 +32,12 @@ $this->params['breadcrumbs'][] = $this->title;
         aRoles  = <?=json_encode($roles)?>,
         myTable = new MeTable({
             sTitle: "管理员信息",
-            bFileUpload: true,
             aFileSelector: ["#file1"],
-            sFileUploadUrl: "<?=\yii\helpers\Url::toRoute(['admin/upload'])?>",
             oEditFormParams: {
                 bMultiCols: true,
                 iColsLength: 2,
                 aCols: [2, 4]
-            },
+            }
 //            bColResize: true
         },{
         "aoColumns":[
