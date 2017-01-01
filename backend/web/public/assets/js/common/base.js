@@ -19,7 +19,9 @@ function ucfirst(str){return str.substr(0, 1).toUpperCase() + str.substr(1)}
 // 连接参数为字符串
 function handleParams(params, prefix){var other=""; prefix = prefix ? prefix : '';if(params!=undefined&&typeof params=="object"){for(var i in params){other+=" "+i+'="'+prefix + params[i]+'" '}}return other}
 // 生成label
-function Label(content,params){return"<label "+handleParams(params)+"> "+content+" </label>"}
+function Label(content,params){
+    return "<label "+handleParams(params)+"> "+content+" </label>"
+}
 // 生成Input
 function createInput(params, type){return'<input type="'+type+'" '+handleParams(params)+" />"}
 // 生成密码
@@ -31,7 +33,8 @@ function createTextarea(params){if(empty(params)){params={"class":" form-control
 function createDiv(params){return"<div "+handleParams(params)+"></div>"}
 // 生成radio
 function createRadio(params, data, checked){
-    var html="",params=handleParams(params);
+    var html="";
+    params=handleParams(params);
     if(data!=undefined&&typeof data=="object"){
         for(var i in data){
             var check = checked == i ? ' checked="checked" ':"";
@@ -43,7 +46,8 @@ function createRadio(params, data, checked){
 
 // 生成select
 function createSelect(params, data, selected){
-    var html = "", params = handleParams(params);
+    var html = "";
+    params = handleParams(params);
     if(data != undefined && typeof data == "object") {
         html += "<select "+params+">";
         for(var i in data){
@@ -57,7 +61,6 @@ function createSelect(params, data, selected){
 
 // 生成上传文件类型 file
 function createFile(params) {
-    console.info(params);
     var html = '';
     if (params.options && params.options.type) {
         html = '<input type="file" ' + handleParams(params) + '/>';
@@ -82,7 +85,7 @@ function createDate(params) {
 // 添加时间分秒
 function createTime(params) {
     return '<div class="input-group bootstrap-timepicker"> \
-        <input type="text" class="form-control time-picker me-time" ' + handleParams(params) + '/> \
+        <input type="text" class="form-control time-picker" ' + handleParams(params) + '/> \
         <span class="input-group-addon"><i class="fa fa-clock-o bigger-110"></i></span> \
         </div>';
 }
@@ -90,7 +93,7 @@ function createTime(params) {
 // 添加时间
 function createDatetime(params) {
     return '<div class="input-group bootstrap-datetimepicker"> \
-        <input type="text" class="form-control datetime-picker me-datetime" ' + handleParams(params) + '/> \
+        <input type="text" class="form-control datetime-picker" ' + handleParams(params) + '/> \
         <span class="input-group-addon"><i class="fa fa-clock-o bigger-110"></i></span> \
         </div>';
 }
@@ -112,50 +115,16 @@ function createDaterange(params) {
         </div>';
 }
 
-// 生成多语言配置信息
-function createLang(obj)
-{
-    var html = '<div class="col-sm-12 m-pl-0"><div class="tabbable">', mli = '', mDiv = '';
-    if (language)
-    {
-        obj['class'] = 'form-control';
-        var n = obj.name, m = 1;
-        for (var i in language)
-        {
-            obj.name = n;
-            obj.name += '[' + i + ']';
-            var params = handleParams(obj), mid = n + m, input = obj.type == undefined ? "<textarea " + params + "></textarea>" : "<input type=\"text\" "+ params +"/>";
-            mli += '<li class="' + (m == 1 ? 'active' : '') + '">\
-                    <a href="#' + mid + '" data-toggle="tab">' + language[i] + '</a>\
-                </li>';
-            mDiv += '<div class="tab-pane ' + (m == 1 ? 'active' : '') + '" id="'+ mid + '">\
-                    ' + input + '\
-                </div>';
-            m ++;
-        }
-    }
-
-    html += '<ul class="nav nav-tabs padding-12 tab-color-blue background-blue">\
-            ' + mli + '\
-            </ul>\
-            <div class="tab-content">\
-            ' + mDiv + '\
-            </div>\
-        </div></div>';
-
-    return html;
-}
-
 // 多选按钮 checkbox
 function createCheckbox(params, data, checked, arr, isHave)
 {
     if (arr == undefined) arr = 'col-xs-6';
-    var html = '', params = handleParams(params);
-    if (data != undefined && typeof data=="object")
-    {
-        if (isHave == undefined) html += '<div class="checkbox col-xs-12"><label><input type="checkbox" class="ace checkbox-all" /><span class="lbl"> 选择全部 </span></label></div>';
-        for (var i in data)
-        {
+    var html = '';
+    if (data != undefined && typeof data=="object") {
+        if (isHave == undefined) {
+            html += '<div class="checkbox col-xs-12"><label><input type="checkbox" class="ace checkbox-all" /><span class="lbl"> 选择全部 </span></label></div>';
+        }
+        for (var i in data) {
             html += '<div class="checkbox ' + arr + '"><label><input type="checkbox" ' + params + ' value="' + i + '" /><span class="lbl"> ' + data[i] + ' </span></label></div>';
         }
     }
@@ -168,10 +137,8 @@ function createButtons(data) {
     var div1   = '<div class="hidden-sm hidden-xs btn-group">',
         div2   = '<div class="hidden-md hidden-lg"><div class="inline position-relative"><button data-position="auto" data-toggle="dropdown" class="btn btn-minier btn-primary dropdown-toggle"><i class="ace-icon fa fa-cog icon-only bigger-110"></i></button><ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">';
     // 添加按钮信息
-    if(data != undefined && typeof data == "object")
-    {
-        for(var i in data)
-        {
+    if(data != undefined && typeof data == "object") {
+        for(var i in data) {
             div1 += ' <button class="btn ' + data[i]['className'] + ' '+  data[i]['cClass'] + ' btn-xs" table-data="' + data[i]['data'] + '"><i class="ace-icon fa ' + data[i]["icon"] + ' bigger-120"></i></button> ';
             div2 += '<li><a title="' + data[i]['title'] + '" data-rel="tooltip" class="tooltip-info ' + data[i]['cClass'] + '" href="javascript:;" data-original-title="' + data[i]['title'] + '" table-data="' + data[i]['data'] + '"><span class="' + data[i]['sClass'] + '"><i class="ace-icon fa ' + data[i]['icon'] + ' bigger-120"></i></span></a></li>';
         }
@@ -181,11 +148,9 @@ function createButtons(data) {
 }
 
 // 生成表单对象
-function createForm(k, oParams)
-{
+function createForm(k, oParams) {
     var form = '';
     if (!oParams.index) oParams.index = 0;
-
     // 处理其他参数
     if (k.edit.options == undefined) k.edit.options = {}; // 容错处理
     if (!k.edit.type) k.edit.type = "text";
@@ -246,7 +211,7 @@ function createSearchForm(k, v) {
     k.search.options = $.extend({"name":k.sName, "vid":v, "class":"me-search"}, k.search.options);
     if (k.search.type == "select") {k.value["All"] = "全部";}
     var html = window['create' + ucfirst(k.search.type)](k.search.options, k.value, "All");
-    if (k.search.type == "select") delete k.value["All"]
+    if (k.search.type == "select") delete k.value["All"];
     return Label(k.title + " : " + html) + ' ';
 }
 
@@ -268,12 +233,6 @@ function createModal(oModal, oViews) {
                     </div> \
                 </div> \
             </div>';
-}
-
-// 提示信息
-function gAlert(sTitle, sMessage, className, iTime) {
-    className = className ? className : "warning"; iTime = iTime ? iTime : 1500; // 默认值
-    return $.gritter.add({title: sTitle,text: sMessage,class_name: 'gritter-' + className + ' gritter-center',time: iTime});
 }
 
 // 上传错误信息处理
@@ -341,15 +300,6 @@ function aceFileInputAjax(file_input, url) {
 
     return deferred;
 }
-function getBase64Image(img) {
-    var canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, img.width, img.height);
-    var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
-    return canvas.toDataURL("image/" + ext);
-}
 
 function aceFileUpload(select, sFileUploadUrl) {
     var $input = $(select),
@@ -403,15 +353,14 @@ function aceFileUpload(select, sFileUploadUrl) {
         // 成功执行
         deferred.done(function(json) {
             if (json.errCode == 0) {
-                gAlert("上传文件成功", "上传文件的地址为：" + json.data.sFilePath, "success");
+                layer.msg("上传文件的地址为：" + json.data.sFilePath, {icon: 6});
                 $file.val(json.data.sFilePath);
             } else {
-                gAlert("上传文件出现错误Error:", json.errMsg);
+                layer.msg("上传文件出现错误Error:", json.errMsg, {icon: 5});
                 $input.ace_file_input('apply_settings').ace_file_input('reset_input');
             }
         }).fail(function() {
-            gAlert("温馨提醒：", "页面没有响应...");
-            // 请求完成执行
+            ajaxFail();
         }).always(function() {
             if(ie_timeout) clearTimeout(ie_timeout);
             ie_timeout = null;
@@ -427,13 +376,10 @@ function aceFileUpload(select, sFileUploadUrl) {
     });
 }
 
-
 // 时间格式化
 Date.prototype.Format=function(fmt){var o={"M+":this.getMonth()+1,"d+":this.getDate(),"h+":this.getHours(),"m+":this.getMinutes(),"s+":this.getSeconds(),"q+":Math.floor((this.getMonth()+3)/3),"S":this.getMilliseconds()};if(/(y+)/.test(fmt)){fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length))}for(var k in o){if(new RegExp("("+k+")").test(fmt)){fmt=fmt.replace(RegExp.$1,(RegExp.$1.length==1)?(o[k]):(("00"+o[k]).substr((""+o[k]).length)))}}return fmt};
 // 根据时间戳返回时间字符串
 function timeFormat(time,str){if(empty(str)){str="yyyy-MM-dd"}var date=new Date(time*1000);return date.Format(str)}
-// 值的转换
-function stringTo(type,value){switch(type){case"int":case"int8":case"int16":case"int32":case"int64":case"uint":case"uint8":case"uint16":case"uint32":case"uint64":return parseInt(value);case"bool":return value==="true"||value===true||value===1||value=="1";case"float32":case"float64":}return value};
 // 初始化表单信息
 function InitForm(select, data) {
     objForm = $(select).get(0); // 获取表单对象

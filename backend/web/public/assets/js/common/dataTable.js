@@ -1,24 +1,9 @@
 // 状态信息
 function statusToString(td, data) {$(td).html('<span class="label label-' + (data == 1 ? 'success">启用' : 'warning">禁用') + '</span>');}
-
 // 时间戳列，值转换
 function dateTimeString(td, cellData) {$(td).html(timeFormat(cellData, 'yyyy-MM-dd hh:mm:ss'));}
-
-// 推荐信息
-function recommendToString(td, data) {$(td).html('<span class="label label-' + (data == 1 ? 'success">推荐' : 'warning">不推荐') + '</span>');}
-
 // 用户显示
 function adminToString(td, data, rowArr, row, col) {$(td).html(aAdmins[data]);}
-
-// 图片显示
-function stringToImage(td, data, rowdatas, row)
-{
-    if ( ! empty(data)) {
-        var alt = empty(rowdatas) ? '图片详情信息' : rowdatas.Title;
-        $(td).html('<img width="100px" layer-src="' + data + '" src="' + data + '" alt="' + alt + '" onclick="myTable.seeImage(' + row + ');" />')
-    }
-}
-
 // 显示标签
 function showSpan(aData, aColorData, iVal, sDefaultClass) {
 	if (sDefaultClass == undefined) sDefaultClass = 'label label-sm ';
@@ -80,7 +65,7 @@ var oTableLanguage = {
  * User: liujx
  * Date: 2016-07-21
  */
-var MeTable = (function($) {
+var MeTable = (function() {
 	// 构造函数初始化配置
 	function MeTable(options, tableOptions, detailOptions) {
 		// 表格信息配置
@@ -159,8 +144,7 @@ var MeTable = (function($) {
 
             // 添加查询条件
             var data = $(self.options.sSearchForm).serializeArray();
-            for (var i in data)
-            {
+            for (var i in data) {
                 if (empty(data[i]["value"]) || data[i]["value"] == "All") continue;
                 aoData.push({"name":"params[" + data[i]['name'] + "]", "value":data[i]["value"]});
             }
@@ -212,9 +196,11 @@ var MeTable = (function($) {
 				sFormId:  		"#myDetailForm",
 				sBaseUrl:	  	self.options.sBaseUrl, // 详情编辑的统一前缀
 				sActionUrl: 	{
-					"insert": "create",
-					"update": "update",
-					"delete": "delete"
+					"insert": "create", // 创建
+					"update": "update",	// 修改
+					"delete": "delete", // 删除
+					"export": "export", // 导出
+					"upload": "upload"  // 下载
 				},
 				sClickSelect:  	"td.details-control",
 				oTableOptions: 	{
@@ -542,25 +528,23 @@ var MeTable = (function($) {
         $(this.options.sTable + " tbody input:checkbox:checked").each(function(){data.push($(this).val());});
 
         // 数据为空提醒
-        if (data.length < 1)  return bootbox.alert({title:"温馨提醒",message:"您没有选择需要删除的数据 ! "});
+        if (data.length < 1)  {
+        	layer.msg('您没有选择需要删除的数据 !', {icon:5});
+        	return false;
+        }
 
-        // 确认操作提醒
-        bootbox.dialog({
-            title:"温馨提醒",
-            size:"small",
-            message:'<p style="padding-left:15px; color:red">确定需要删除这' + data.length + '条数据吗?</p>',
-            buttons:{
-                success:{
-                    label:'<span class="ui-button-text"><i class="ace-icon fa fa-trash-o bigger-110"></i> 确定删除 </span>',
-                    className:"btn btn-danger",
-                    callback:function() {self.save({"ids":data.join(',')});}
-                },
-                cell:{
-                    label:"取消",
-                    className:"btn-default",
-                    callback:function(){layer.msg("您取消了删除操作！");}
-                }
-            }
+        // 询问框
+        layer.confirm('您确定需要删除这' + data.length + '条数据吗?', {
+            title: '确认操作',
+            btn: ['确定','取消'],
+            shift: 4,
+            icon: 0
+            // 确认删除
+        }, function(){
+            self.save({"ids":data.join(',')});
+            // 取消删除
+        }, function(){
+        	layer.msg('您取消了删除操作！', {time:800});
         });
 	};
 
@@ -665,7 +649,6 @@ var MeTable = (function($) {
 								frameborder="0" width="0" height="0" src="about:blank"\
 								style="position:absolute; z-index:-1; visibility: hidden;"></iframe>')
                 .insertAfter($form);
-
         $form.append('<input type="hidden" name="temporary-iframe-id" value="'+temporary_iframe_id+'" />');
         temp_iframe.data('deferrer' , deferred);
         $form.attr({
@@ -678,24 +661,20 @@ var MeTable = (function($) {
         var ie_timeout = setTimeout(function(){
             ie_timeout = null;
             deferred.reject($(document.getElementById(temporary_iframe_id).contentDocument).text());
-            //temp_iframe.attr('src', 'about:blank').remove();
             $('.me-export').remove();
         } , 500);
 
         deferred
         .fail(function(result) {
-            if (result)
-            {
+            if (result) {
                 try {
                     result = $.parseJSON(result);
-                    gAlert("温馨提醒：", result.errMsg, result.errCode == 0 ? 'success' : "warning");
+                    layer.msg(result.errMsg, {icon: result.errCode == 0 ? 6 : 5});
                 } catch (e) {
-                    gAlert("温馨提醒：", '服务器没有响应...');
+                	layer.msg("服务器没有响应...");
                 }
-            }
-            else
-            {
-                gAlert('温馨提醒：', '数据正在导出, 请稍候...', 'success');
+            } else {
+            	layer.msg('数据正在导出, 请稍候...', {icon: 6});
             }
 
         })
@@ -703,4 +682,4 @@ var MeTable = (function($) {
         deferred.promise();
     };
 	return MeTable;
-})($);
+})();
