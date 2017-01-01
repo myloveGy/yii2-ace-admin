@@ -32,13 +32,17 @@ $this->params['breadcrumbs'][] = $this->title;
 </table>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var myTable = new MeTable({sTitle:"地址信息"},{
+    var myTable = new MeTable({
+        sTitle: "地址信息",
+        isCheckbox: false,
+        oOperation: {
+            isOpen: false
+        }
+    },{
         "aoColumns":[
-			// oCheckBox,
 			{"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc", "edit": {"type": "text", "options": {"required":true,"number":true,}}},
 			{"title": "地址名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"rangelength":"[2, 40]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "父类ID", "data": "pid", "sName": "pid", "value": <?=json_encode($parent)?>, "edit": {"type": "text", "options": {"number":true}}, "search": {"type":"select"}},
-			// oOperate
         ]
     });
 

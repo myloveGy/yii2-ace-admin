@@ -35,12 +35,10 @@ $this->params['breadcrumbs'][] = $this->title;
         sTitle: "权限信息"
     },{
         "aoColumns":[
-			oCheckBox,
             {"title": "权限名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "说明描述", "data": "description", "sName": "description", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell": dateTimeString, "defaultOrder": "desc"},
-			{"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": dateTimeString},
-			oOperate
+			{"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": dateTimeString}
         ]
     });
 

@@ -53,7 +53,6 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
         bEditTable: true
     }, {
         "aoColumns": [
-            oCheckBox,
             {
                 "title": "id ",
                 "data": "id",
@@ -149,8 +148,7 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                 "sName": "updated_id",
                 "bSortable": false,
                 "createdCell": adminToString
-            },
-            oOperate
+            }
         ]
     });
 

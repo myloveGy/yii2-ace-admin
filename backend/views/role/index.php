@@ -39,10 +39,12 @@ $this->params['breadcrumbs'][] = $this->title;
     }
 
     var myTable = new MeTable({
-        sTitle:   "角色信息"
+        sTitle:   "角色信息",
+        oOperation: {
+            isOpen: false
+        }
     },{
         "aoColumns":[
-			oCheckBox,
 			{"title": "角色名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "说明描述", "data": "description", "sName": "description", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 255]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "创建时间", "data": "created_at", "sName": "created_at", "defaultOrder": "desc", "createdCell" : dateTimeString},

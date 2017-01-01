@@ -1,64 +1,3 @@
-// 状态信息
-function statusToString(td, data) {$(td).html('<span class="label label-' + (data == 1 ? 'success">启用' : 'warning">禁用') + '</span>');}
-// 时间戳列，值转换
-function dateTimeString(td, cellData) {$(td).html(timeFormat(cellData, 'yyyy-MM-dd hh:mm:ss'));}
-// 用户显示
-function adminToString(td, data, rowArr, row, col) {$(td).html(aAdmins[data]);}
-// 显示标签
-function showSpan(aData, aColorData, iVal, sDefaultClass) {
-	if (sDefaultClass == undefined) sDefaultClass = 'label label-sm ';
-	return '<span class="' + sDefaultClass + ' ' + (aColorData[iVal] ? aColorData[iVal] : '') + '"> ' + (aData[iVal] ? aData[iVal] : iVal ) + ' </span>';
-}
-
-// 设置表单信息
-function setOperate(td, data, rowArr, row, col)
-{
-	$(td).html(createButtons([
-		{"data":row, "title":"查看", "className":"btn-success", "cClass":"me-table-view",  "icon":"fa-search-plus",  "sClass":"blue"},
-		{"data":row, "title":"编辑", "className":"btn-info", "cClass":"me-table-edit", "icon":"fa-pencil-square-o",  "sClass":"green"},
-		{"data":row, "title":"删除", "className":"btn-danger", "cClass":"me-table-del", "icon":"fa-trash-o",  "sClass":"red"}
-	]));
-}
-
-// 多选按钮信息
-var oCheckBox = {
-		"data": 	 null,
-		"bSortable": false,
-		"class": 	 "center",
-		"title": 	 '<label class="position-relative"><input type="checkbox" class="ace" /><span class="lbl"></span></label>',
-        "bViews":    false,
-		"render": 	 function(data){
-			return '<label class="position-relative"><input type="checkbox" value="' + data["id"] + '" class="ace" /><span class="lbl"></span></label>';
-        }
-    };
-
-// 默认操作选项
-var oOperate = {"data": null, "title":"操作", "bSortable":false, "width":"120px", "createdCell":setOperate};
-var oOperateDetails = {"data":null, "title":"操作", "bSortable":false, "createdCell":function(td, data, rowArr, row, col){
-	$(td).html(createButtons([
-		{"data":row, "title":"查看", "className":"btn-success", "cClass":"me-table-view-detail",  "icon":"fa-search-plus",  "sClass":"blue"},
-		{"data":row, "title":"编辑", "className":"btn-info", "cClass":"me-table-edit-detail", "icon":"fa-pencil-square-o",  "sClass":"green"},
-		{"data":row, "title":"删除", "className":"btn-danger", "cClass":"me-table-del-detail", "icon":"fa-trash-o",  "sClass":"red"}
-	]));
-}};
-
-var oTableLanguage = {
-	// 显示
-	"sLengthMenu": 	 "每页 _MENU_ 条记录",
-	"sZeroRecords":  "没有找到记录",
-	"sInfo": 		 "显示 _START_ 到 _END_ 共有 _TOTAL_ 条数据",
-	"sInfoEmpty": 	 "无记录",
-	"sInfoFiltered": "(从 _MAX_ 条记录过滤)",
-	"sSearch": 		"搜索：",
-	// 分页
-	"oPaginate": {
-		"sFirst": 	 "首页",
-		"sPrevious": "上一页",
-		"sNext": 	 "下一页",
-		"sLast": 	 "尾页"
-	}
-};
-
 /**
  * MeTable
  * Desc: dataTables 表格操作信息
@@ -71,7 +10,7 @@ var MeTable = (function() {
 		// 表格信息配置
 		this.tableOptions = {
 			// "fnServerData": fnServerData,		// 获取数据的处理函数
-			"sAjaxSource":      "search",			// 获取数据地址
+			// "sAjaxSource":      "search",			// 获取数据地址
 			"bLengthChange":    true, 				// 是否可以调整分页
 			"bAutoWidth":       false,           	// 是否自动计算列宽
             "bPaginate":        true,			    // 是否使用分页
@@ -82,7 +21,7 @@ var MeTable = (function() {
             "bDestroy":         true,
             // "processing": true,				    // 是否使用加载进度条
             "sPaginationType":  "full_numbers",     // 分页样式
-            "oLanguage":        oTableLanguage,		// 语言配置
+            // "oLanguage":        oTableLanguage,	// 语言配置
             "order":            [[1, "desc"]]       // 默认排序
 		};
 
@@ -97,12 +36,24 @@ var MeTable = (function() {
 			sMethod:	  "POST",			// 查询数据的请求方式,
 			sBaseUrl:	  "",				// 编辑的统一路由地址前缀
 			aActionUrl:	  {					// 编辑数据提交URL 请求地址
-				"insert": 	 "create",
-				"update": 	 "update",
-				"delete": 	 "delete",
-				"deleteAll": "delete-all",
-                "export": "export", // 导出
-                "upload": "upload"  // 下载
+				"search": "search",			// 查询
+				"insert": 	 "create",		// 创建
+				"update": 	 "update",		// 修改
+				"delete": 	 "delete",		// 删除
+				"deleteAll": "delete-all",  // 删除全部
+                "export": "export", 		// 导出
+                "upload": "upload"  		// 下载
+			},
+			isCheckbox:   true,				// 需要多选框
+			oOperation: {
+				isOpen: true,
+				width: "120px",
+				title: "操作",
+				buttons: [
+					{"title": "查看", "className": "btn-success", "cClass":"me-table-view",  "icon":"fa-search-plus",  "sClass":"blue"},
+					{"title": "编辑", "className": "btn-info", "cClass":"me-table-edit", "icon":"fa-pencil-square-o",  "sClass":"green"},
+					{"title": "删除", "className": "btn-danger", "cClass":"me-table-del", "icon":"fa-trash-o",  "sClass":"red"}
+				]
 			},
 			aParams:	  null,				// 请求携带参数
 			sExportUrl:   "export",         // 数据导出地址
@@ -131,12 +82,29 @@ var MeTable = (function() {
 			iViewLoading: 0, 				// 详情加载Loading
 			iLoading:     0, 				// 页面加载Loading
 			bViewFull: 	  false,			// 详情打开的方式 1 2 打开全屏
-            bColResize:   false             // 是否运行列宽拖拽
+            bColResize:   false,             // 是否运行列宽拖拽
+			oLanguage: {
+				dataTables: {
+                    // 显示
+                    "sLengthMenu": 	 "每页 _MENU_ 条记录",
+                    "sZeroRecords":  "没有找到记录",
+                    "sInfo": 		 "显示 _START_ 到 _END_ 共有 _TOTAL_ 条数据",
+                    "sInfoEmpty": 	 "无记录",
+                    "sInfoFiltered": "(从 _MAX_ 条记录过滤)",
+                    "sSearch": 		"搜索：",
+                    // 分页
+                    "oPaginate": {
+                        "sFirst": 	 "首页",
+                        "sPrevious": "上一页",
+                        "sNext": 	 "下一页",
+                        "sLast": 	 "尾页"
+                    }
+                }
+			}
 		};
 
         // 服务器数据处理
-        this.tableOptions.fnServerData = function (sSource, aoData, fnCallback)
-        {
+        this.tableOptions.fnServerData = function (sSource, aoData, fnCallback) {
             self.options.iLoading = layer.load();
             var attributes = aoData[2].value.split(","),
             	mSort 	   = (attributes.length + 1) * 5 + 2;
@@ -166,6 +134,12 @@ var MeTable = (function() {
             }).fail(ajaxFail);
         };
 
+        // 对象配置重写
+        options.oEditFormParams = $.extend(this.options.oEditFormParams, options.oEditFormParams);
+        options.aActionUrl = $.extend(this.options.aActionUrl, options.aActionUrl);
+        options.oOperation = $.extend(this.options.oOperation, options.oOperation);
+
+
 		// 配置信息修改和继承
 		this.tableOptions = $.extend(this.tableOptions, tableOptions);
 		this.options 	  = $.extend(this.options, options);
@@ -177,6 +151,42 @@ var MeTable = (function() {
 			"action": "update"
 		}, this.options.formOptions);
 
+		// 查询数据地址
+        if (empty(this.tableOptions.sAjaxSource)) {
+        	this.tableOptions.sAjaxSource = this.options.sBaseUrl + this.options.aActionUrl.search;
+        }
+
+		// 判断添加数据(多选)
+		if (this.options.isCheckbox) {
+			this.tableOptions.aoColumns.unshift({
+                "data": 	 null,
+                "bSortable": false,
+                "class": 	 "center",
+                "title": 	 '<label class="position-relative"><input type="checkbox" class="ace" /><span class="lbl"></span></label>',
+                "bViews":    false,
+                "render": 	 function(data){
+                    return '<label class="position-relative"><input type="checkbox" value="' + data["id"] + '" class="ace" /><span class="lbl"></span></label>';
+                }
+            })
+		}
+
+		// 语言配置
+		this.tableOptions.oLanguage = this.options.oLanguage.dataTables;
+
+		// 判断添加数据(操作选项)
+		if (this.options.oOperation.isOpen) {
+            this.tableOptions.aoColumns.push({
+                "data": 	 null,
+                "bSortable": false,
+                "title": this.options.oOperation.title,
+				"width": this.options.oOperation.width,
+                "createdCell": function(td, data, rowArr, row, col) {
+                    $(td).html(createButtons(row, self.options.oOperation.buttons));
+                }
+            })
+		}
+
+
 		// 操作类型
 		this.actionType     = "";	  // 默认没有类型
 		this.bHandleDetails = false;  // 默认没有开启详情处理
@@ -184,8 +194,7 @@ var MeTable = (function() {
 		this.bDetail  		= false;
 
 		// 详情配置的处理
-		if (detailOptions != undefined && typeof detailOptions == "object")
-		{
+		if (detailOptions != undefined && typeof detailOptions == "object") {
 			this.bHandleDetails = true;
 			this.oDetailParams  = null;
 			this.oDetailObject  = null;
@@ -230,7 +239,7 @@ var MeTable = (function() {
 					},		// 获取数据的处理函数
 					"searching": 	 false,				// 搜索
 					"ordering":  	 false,			 	// 排序
-					"oLanguage": 	 oTableLanguage		// 语言配置
+					"oLanguage": 	 self.options.oLanguage.dataTables		// 语言配置
 				}
 			};
 

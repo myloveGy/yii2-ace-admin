@@ -39,7 +39,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     var myTable = new MeTable({sTitle: "导航栏目信息", bColResize:false},{
         "aoColumns":[
-            oCheckBox,
             {"data": "id", "sName":"id", "title": "Id",  "edit":{"type":"hidden"}, "search":{"type":"text"}},
             {"data": "pid", "sName":"pid", "title": "上级分类", "value": aParents,  "edit":{"type":"select", "options":{"number":1}}, "createdCell": parentStatus},
             {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"options":{"required":1, "rangelength":"[2, 50]"}}, "search":{"type":"text"}, "bSortable": false},
@@ -52,7 +51,6 @@ $this->params['breadcrumbs'][] = $this->title;
             {"data": "created_id", "sName":"created_id", "title":"创建用户", "createdCell":adminToString, "bSortable": false},
             {"data": "updated_at", "sName":"updated_at", "title":"修改时间", "createdCell":dateTimeString},
             {"data": "updated_id", "sName":"updated_id", "title":"修改用户", "createdCell":adminToString, "bSortable": false},
-            oOperate
         ]
     });
 

@@ -43,7 +43,6 @@ $this->params['breadcrumbs'][] = $this->title;
 //            bColResize: true
         },{
         "aoColumns":[
-            oCheckBox,
 			{"title": "管理员ID", "data": "id", "sName": "id", "edit": {"type": "hidden"}, "search": {"type": "text"}, "defaultOrder": "desc"},
 			{"title": "管理员账号", "data": "username", "sName": "username", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 255]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "密码", "data": "password", "sName": "password", "isHide": true, "edit": {"type": "password", "options": {"rangelength":"[2, 20]"}}, "bSortable": false, "defaultContent":"", "bViews":false},
@@ -60,7 +59,6 @@ $this->params['breadcrumbs'][] = $this->title;
 			{"title": "创建用户", "data": "created_id", "sName": "created_id", "bSortable": false, "createdCell": adminToString},
 			{"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell" : dateTimeString},
 			{"title": "修改用户", "data": "updated_id", "sName": "updated_id", "bSortable": false, "createdCell": adminToString},
-			oOperate
         ]
     });
 
