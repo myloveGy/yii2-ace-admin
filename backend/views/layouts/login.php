@@ -1,7 +1,6 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: liujinxing
  * Date: 2016/7/18
  * Time: 19:17
  */

@@ -36,7 +36,7 @@ class Controller extends \common\controllers\Controller
         // 主控制器验证
         if (parent::beforeAction($action)) {
             // 验证权限
-            if( ! Yii::$app->user->can($action->controller->id . '/' . $action->id) && Yii::$app->getErrorHandler()->exception === null) {
+            if(!Yii::$app->user->can($action->controller->id . '/' . $action->id) && Yii::$app->getErrorHandler()->exception === null) {
                 // 没有权限AJAX返回
                 if (Yii::$app->request->isAjax)
                     exit(Json::encode(['errCode' => 216, 'errMsg' => '对不起，您现在还没获得该操作的权限!', 'data' => []]));
@@ -45,20 +45,11 @@ class Controller extends \common\controllers\Controller
             }
 
             // 处理提前获取数据
-            if ( ! in_array($action->id, ['insert', 'update', 'delete'])) {
-                // 获取用户导航栏信息
-                $menus = Menu::getUserMenus(Yii::$app->user->id);
-                if ($menus) {
-                    // 查询后台管理员信息
-                    $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
-                    // 注入变量信息
-                    Yii::$app->view->params['menus']  = $menus;
-                    Yii::$app->view->params['admins'] = $this->admins;
-                    Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
-                } else {
-                    // 没有权限
-                    throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
-                }
+            if (!in_array($action->id, ['insert', 'update', 'delete'])) {
+                $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
+                // 注入变量信息
+                Yii::$app->view->params['admins'] = $this->admins;
+                Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
             }
 
             return true;

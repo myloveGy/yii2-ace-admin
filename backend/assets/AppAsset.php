@@ -38,12 +38,12 @@ class AppAsset extends AssetBundle
     public static function registerCommon($view)
     {
         $options = ['depends' => 'backend\assets\AppAsset'];
-        $view->registerCssFile(self::$assetsUrl.'css/bootstrap-editable.css', $options);
+//        $view->registerCssFile(self::$assetsUrl.'css/bootstrap-editable.css', $options);
         $arrJsResource = [
             'js/common/base.js',
             'js/common/dataTable.js',
-            'js/x-editable/bootstrap-editable.min.js',
-            'js/x-editable/ace-editable.min.js',
+//            'js/x-editable/bootstrap-editable.min.js',
+//            'js/x-editable/ace-editable.min.js',
             'js/jquery.dataTables.min.js',
             'js/jquery.dataTables.bootstrap.js',
             'js/jquery.validate.min.js',
