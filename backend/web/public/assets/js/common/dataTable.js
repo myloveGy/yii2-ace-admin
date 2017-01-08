@@ -428,8 +428,9 @@ var MeTable = (function() {
         if (self.options.bColResize) $(self.options.sTable).colResizable();
 
 		// 文件上传
-        if (empty(self.options.aFileSelector) && self.options.aFileSelector.length > 0) {
+        if (!empty(self.options.aFileSelector) && self.options.aFileSelector.length > 0) {
             for (var i in self.options.aFileSelector) {
+            	console.info(self.options.aFileSelector[i]);
                 aceFileUpload(self.options.aFileSelector[i], self.options.sBaseUrl + self.options.aActionUrl.upload);
             }
         }

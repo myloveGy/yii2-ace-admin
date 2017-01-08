@@ -1,17 +1,22 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: liujinxing
  * Date: 2016/7/21
  * Time: 18:29
  */
-$this->title = '管理员个人信息';
-$this->params['breadcrumbs'][] = $this->title;
+
 use backend\assets\AppAsset;
+
 AppAsset::loadTimeJavascript($this, 'datetime');
+$this->title = '管理员个人信息';
+
+
+$this->registerCssFile('@web/public/assets/css/bootstrap-editable.css', ['depends' => 'backend\assets\AppAsset']);
 $this->registerCssFile('@web/public/assets/css/jquery-ui.custom.min.css', ['depends' => 'backend\assets\AppAsset']);
 $this->registerCssFile('@web/public/assets/css/select2.css', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jquery-ui.custom.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/x-editable/bootstrap-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.spinner.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/select2.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jquery.easypiechart.min.js', ['depends' => 'backend\assets\AppAsset']);
@@ -146,7 +151,7 @@ $this->registerJsFile('@web/public/assets/js/jquery.maskedinput.min.js', ['depen
                 }
                 else
                 {
-                    deferred = new $.Deferred
+                    deferred = new $.Deferred;
                     var temporary_iframe_id = 'temporary-iframe-'+(new Date()).getTime()+'-'+(parseInt(Math.random()*1000));
                     var temp_iframe =
                         $('<iframe id="'+temporary_iframe_id+'" name="'+temporary_iframe_id+'" \
