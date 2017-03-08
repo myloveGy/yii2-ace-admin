@@ -7,12 +7,12 @@
 var MeTable = (function() {
 	// 构造函数初始化配置
 	function MeTable(options, tableOptions, detailOptions) {
-		// 表格信息配置
-		this.tableOptions = {
-			// "fnServerData": fnServerData,		// 获取数据的处理函数
-			// "sAjaxSource":      "search",			// 获取数据地址
-			"bLengthChange":    true, 				// 是否可以调整分页
-			"bAutoWidth":       false,           	// 是否自动计算列宽
+        // 表格信息配置
+        this.tableOptions = {
+            // "fnServerData": fnServerData,		// 获取数据的处理函数
+            // "sAjaxSource":      "search",			// 获取数据地址
+            "bLengthChange":    true, 				// 是否可以调整分页
+            "bAutoWidth":       false,           	// 是否自动计算列宽
             "bPaginate":        true,			    // 是否使用分页
             "iDisplayStart":    0,
             "iDisplayLength":   10,
@@ -23,51 +23,40 @@ var MeTable = (function() {
             "sPaginationType":  "full_numbers",     // 分页样式
             // "oLanguage":        oTableLanguage,	// 语言配置
             "order":            [[1, "desc"]]       // 默认排序
-		};
+        };
 
-        var self = this;
-
-		// 自定义信息配置
-		this.options = {
-			sModal: 	  "#myModal", 		// 编辑Modal选择器
-			sTitle: 	  "",				// 表格的标题
-			sTable: 	  "#showTable", 	// 显示表格选择器
-			sFormId:  	  "#editForm",		// 编辑表单选择器
-			sMethod:	  "POST",			// 查询数据的请求方式,
-			sBaseUrl:	  "",				// 编辑的统一路由地址前缀
-			aActionUrl:	  {					// 编辑数据提交URL 请求地址
-				"search": "search",			// 查询
-				"insert": 	 "create",		// 创建
-				"update": 	 "update",		// 修改
-				"delete": 	 "delete",		// 删除
-				"deleteAll": "delete-all",  // 删除全部
+        // 自定义信息配置
+        this.options = {
+            sModal: 	  "#myModal", 		// 编辑Modal选择器
+            sTitle: 	  "",				// 表格的标题
+            sTable: 	  "#showTable", 	// 显示表格选择器
+            sFormId:  	  "#editForm",		// 编辑表单选择器
+            sMethod:	  "POST",			// 查询数据的请求方式,
+            sBaseUrl:	  "",				// 编辑的统一路由地址前缀
+            aActionUrl:	  {					// 编辑数据提交URL 请求地址
+                "search": "search",			// 查询
+                "insert": "create",			// 创建
+                "update": "update",			// 修改
+                "delete": "delete",			// 删除
+                "deleteAll": "delete-all",  // 删除全部
                 "export": "export", 		// 导出
-                "upload": "upload"  		// 下载
-			},
-			isCheckbox:   true,				// 需要多选框
-			oOperation: {
-				isOpen: true,
-				width: "120px",
-				title: "操作",
-				buttons: [
-					{"title": "查看", "className": "btn-success", "cClass":"me-table-view",  "icon":"fa-search-plus",  "sClass":"blue"},
-					{"title": "编辑", "className": "btn-info", "cClass":"me-table-edit", "icon":"fa-pencil-square-o",  "sClass":"green"},
-					{"title": "删除", "className": "btn-danger", "cClass":"me-table-del", "icon":"fa-trash-o",  "sClass":"red"}
-				]
-			},
-			aParams:	  null,				// 请求携带参数
-			sExportUrl:   "export",         // 数据导出地址
-			sSearchHtml:  "",				// 搜索信息
-			sSearchType:  "middle",			// 搜索表单位置
-			sSearchForm:  "#searchForm",	// 搜索表单选择器
+                "upload": "upload",  		// 下载
+                "inline": "editable" 		// 行内编辑
+            },
+            isCheckbox:   true,				// 需要多选框
+            aParams:	  null,				// 请求携带参数
+            sExportUrl:   "export",         // 数据导出地址
+            sSearchHtml:  "",				// 搜索信息
+            sSearchType:  "middle",			// 搜索表单位置
+            sSearchForm:  "#searchForm",	// 搜索表单选择器
             aFileSelector: [],				// 上传文件选择器
-			oEditFormParams: {				// 编辑表单配置
-				bMultiCols: false,          // 是否多列
+            oEditFormParams: {				// 编辑表单配置
+                bMultiCols: false,          // 是否多列
                 iColsLength: 1,             // 几列
                 aCols: [3, 9],              // label 和 input 栅格化设置
-				sModalClass: "",			// 弹出模块框配置
-				sModalDialogClass: ""
-			},
+                sModalClass: "",			// 弹出模块框配置
+                sModalDialogClass: ""
+            },
             oViewLayerConfig: {
                 type: 1,
                 shade: 0.3,
@@ -75,38 +64,95 @@ var MeTable = (function() {
                 maxmin: true,
                 area: ['50%', 'auto']
             },
-			bRenderH1: 	  true,				// 是否渲染H1内容
-			bEditTable:   false,			// 是否开启行内编辑
-			oEditTable:   {},				// 行内编辑对象信息
-			sEditUrl:	  "editable",	    // 行内编辑请求地址
-			sEditPk: 	  "id",				// 行内编辑pk索引值
-			iViewLoading: 0, 				// 详情加载Loading
-			iLoading:     0, 				// 页面加载Loading
-			bViewFull: 	  false,			// 详情打开的方式 1 2 打开全屏
-            bColResize:   false,             // 是否运行列宽拖拽
-			oLanguage: {
+            bRenderH1: 	  true,				// 是否渲染H1内容
+            bEditTable:   false,			// 是否开启行内编辑
+            oEditTable:   {},				// 行内编辑对象信息
+            sEditPk: 	  "id",				// 行内编辑pk索引值
+            iViewLoading: 0, 				// 详情加载Loading
+            iLoading:     0, 				// 页面加载Loading
+            bViewFull: 	  false,			// 详情打开的方式 1 2 打开全屏
+            bColResize:   false,            // 是否运行列宽拖拽
+            oLanguage: {
+				// 我的信息
+				meTables: {
+					"oOperation": {
+						"sTitle": "操作",
+						"sView": "查看",
+						"sEdit": "编辑",
+						"sDelete": "删除"
+					},
+
+					"sInfo": "详情",
+					"sInsert": "新增",
+					"sEdit": "编辑",
+					"sExport": "数据正在导出, 请稍候...",
+					"sAppearError": "出现错误",
+					"sServerErrorMessage": "服务器繁忙,请稍候再试...",
+					"oDelete": {
+						"determine": "确定",
+						"cancel": "取消",
+						"confirm": "您确定需要删除这_LENGTH_条数据吗?",
+						"confirmOperation": "确认操作",
+						"cancelOperation": "您取消了删除操作!",
+						"noSelect": "没有选择需要删除的数据"
+					},
+
+					"operationError": "操作有误"
+				},
+
+				// dataTables 表格
 				dataTables: {
-                    // 显示
-                    "sLengthMenu": 	 "每页 _MENU_ 条记录",
-                    "sZeroRecords":  "没有找到记录",
-                    "sInfo": 		 "显示 _START_ 到 _END_ 共有 _TOTAL_ 条数据",
-                    "sInfoEmpty": 	 "无记录",
-                    "sInfoFiltered": "(从 _MAX_ 条记录过滤)",
-                    "sSearch": 		"搜索：",
-                    // 分页
-                    "oPaginate": {
-                        "sFirst": 	 "首页",
-                        "sPrevious": "上一页",
-                        "sNext": 	 "下一页",
-                        "sLast": 	 "尾页"
-                    }
-                }
-			}
+					// 显示
+					"sLengthMenu": 	 "每页 _MENU_ 条记录",
+					"sZeroRecords":  "没有找到记录",
+					"sInfo": 		 "显示 _START_ 到 _END_ 共有 _TOTAL_ 条数据",
+					"sInfoEmpty": 	 "无记录",
+					"sInfoFiltered": "(从 _MAX_ 条记录过滤)",
+					"sSearch": 		"搜索：",
+					// 分页
+					"oPaginate": {
+						"sFirst": 	 "首页",
+						"sPrevious": "上一页",
+						"sNext": 	 "下一页",
+						"sLast": 	 "尾页"
+					}
+				}
+            }
+        };
+
+        // 语言
+        this.language = options.oLanguage ? options.oLanguage : this.options.oLanguage;
+        var self = this;
+
+        this.options.oOperation = {
+            isOpen: true,
+                width: "120px",
+                title: self.language.meTables.oOperation.sTitle,
+                buttons: [
+                {"title": self.language.meTables.oOperation.sView, "className": "btn-success", "cClass":"me-table-view",  "icon":"fa-search-plus",  "sClass":"blue"},
+                {"title": self.language.meTables.oOperation.sEdit, "className": "btn-info", "cClass":"me-table-edit", "icon":"fa-pencil-square-o",  "sClass":"green"},
+                {"title": self.language.meTables.oOperation.sDelete, "className": "btn-danger", "cClass":"me-table-del", "icon":"fa-trash-o",  "sClass":"red"}
+            ]
+        };
+
+        // 关闭Layer.load()
+		this.closeLoading = function(){
+			layer.close(self.options.iLoading);
+		};
+
+		// AJAX 错误处理
+		this.ajaxFail = function(err) {
+            layer.msg(self.language.meTables.sServerErrorMessage, {time:1000, icon:2});
+		};
+
+		// ajax deferred
+		this.ajaxDeferred = function(obj) {
+            self.options.iLoading = layer.load();
+			return $.ajax(obj).always(self.closeLoading).fail(self.ajaxFail);
 		};
 
         // 服务器数据处理
         this.tableOptions.fnServerData = function (sSource, aoData, fnCallback) {
-            self.options.iLoading = layer.load();
             var attributes = aoData[2].value.split(","),
             	mSort 	   = (attributes.length + 1) * 5 + 2;
 
@@ -121,25 +167,22 @@ var MeTable = (function() {
             if (aoData[mSort].value != undefined && aoData[mSort].value != "") aoData.push({"name":'params[orderBy]', "value": attributes[parseInt(aoData[mSort].value)]});
 
             // ajax请求
-            $.ajax({
+            self.ajaxDeferred({
                 url: sSource,
                 data: aoData,
                 type: self.options.sMethod,
                 dataType: 'json'
-            }).always(function(){
-                layer.close(self.options.iLoading);
             }).done(function(data){
-                if (data.errCode != 0) return layer.msg('出现错误:' + data.errMsg, {time:2000, icon:5});
+                if (data.errCode != 0) return layer.msg(self.language.sAppearError + data.errMsg, {time:2000, icon:5});
                 $.fn.dataTable.defaults['bFilter'] = true;
                 fnCallback(data.data);
-            }).fail(ajaxFail);
+            });
         };
 
         // 对象配置重写
         options.oEditFormParams = $.extend(this.options.oEditFormParams, options.oEditFormParams);
         options.aActionUrl = $.extend(this.options.aActionUrl, options.aActionUrl);
         options.oOperation = $.extend(this.options.oOperation, options.oOperation);
-
 
 		// 配置信息修改和继承
 		this.tableOptions = $.extend(this.tableOptions, tableOptions);
@@ -172,7 +215,7 @@ var MeTable = (function() {
 		}
 
 		// 语言配置
-		this.tableOptions.oLanguage = this.options.oLanguage.dataTables;
+		this.tableOptions.oLanguage = this.language.dataTables;
 
 		// 判断添加数据(操作选项)
 		if (this.options.oOperation.isOpen) {
@@ -217,30 +260,28 @@ var MeTable = (function() {
 					"bAutoWidth": 	 false,
 					"sAjaxSource":	"view",
 					"fnServerData": function(sSource, aoData, fnCallback) {
-						if (self.oDetailParams)
-						{
-							self.options.iLoading = layer.load()
+						if (self.oDetailParams) {
 							for (var i in self.oDetailParams) aoData.push({name:i, value:self.oDetailParams[i]})
 							// ajax请求
-							$.ajax({
+                            self.ajaxDeferred({
 								url: sSource,
 								data: aoData,
 								type: 'post',
 								dataType: 'json'
-							}).always(function(){
-								layer.close(self.options.iLoading);
 							}).done(function(data){
-								if (data.errCode != 0) return layer.msg('出现错误:' + data.errMsg, {time:2000, icon:5});
+								if (data.errCode != 0) {
+                                    return layer.msg(self.language.meTables.sAppearError + data.errMsg, {time:2000, icon:5});
+								}
 								$.fn.dataTable.defaults['bFilter'] = true;
 								fnCallback(data.data);
 								if (self.oDetailObject) self.oDetailObject.child(function(){return $('#detailTable').parent().html();}).show()
-							}).fail(ajaxFail);
+							});
 						}
 
 					},		// 获取数据的处理函数
 					"searching": 	 false,				// 搜索
 					"ordering":  	 false,			 	// 排序
-					"oLanguage": 	 self.options.oLanguage.dataTables		// 语言配置
+					"oLanguage": 	 self.options.oLanguage[this.options.sDefaultLanguage].dataTables		// 语言配置
 				}
 			};
 
@@ -270,14 +311,16 @@ var MeTable = (function() {
 			if (k.editTable != undefined) {
 				// 默认修改参数
 				self.options.oEditTable[k.sName] = {
-					name:    k.sName,
-					type:    k.edit.type == "radio" ? "select" : k.edit.type,
-					source:  k.value,
-					send:    "always",
-					url:     self.options.sEditUrl,
-					title:   k.title,
-					success: function(response) {if (response.errCode != 0) return response.errMsg;},
-					error:   function(){$.gritter.add({title:'温馨提醒',text:'服务器没有响应',class_name:'gritter-warning gritter-center',time:800,});}
+					name: k.sName,
+					type: k.edit.type == "radio" ? "select" : k.edit.type,
+					source: k.value,
+					send: "always",
+					url: self.options.aActionUrl.inline,
+					title: k.title,
+					success: function(response) {
+                        if (response.errCode != 0) return response.errMsg;
+					},
+					error: self.ajaxFail
 				};
 
 				// 继承修改配置参数
@@ -298,6 +341,7 @@ var MeTable = (function() {
 							mv['value'] = data[key];
 							mv['pk']    = data[self.options.sEditPk];
 						}
+
 						$(this).editable($.extend(self.options.oEditTable[key], mv))
 					});
 				}
@@ -430,7 +474,6 @@ var MeTable = (function() {
 		// 文件上传
         if (!empty(self.options.aFileSelector) && self.options.aFileSelector.length > 0) {
             for (var i in self.options.aFileSelector) {
-            	console.info(self.options.aFileSelector[i]);
                 aceFileUpload(self.options.aFileSelector[i], self.options.sBaseUrl + self.options.aActionUrl.upload);
             }
         }
@@ -454,7 +497,7 @@ var MeTable = (function() {
 			f = this.oDetails.sFormId;
 			m = this.oDetails.sModal;
 		} else {
-			$(m).find('h4').html(this.options.sTitle + (this.actionType == "insert" ? "新增" : "编辑"));
+			$(m).find('h4').html(this.options.sTitle + (this.actionType == "insert" ? this.language.meTables.sInsert : this.language.meTables.sEdit));
 		}
 
 		InitForm(f, data);					// 初始化表单
@@ -483,7 +526,7 @@ var MeTable = (function() {
 			    type:		this.options.oViewLayerConfig.type,
 			    shade: 		this.options.oViewLayerConfig.shade,
                 shadeClose: this.options.oViewLayerConfig.shadeClose,
-			    title: 		t + '详情',
+			    title: 		t + self.language.meTables.sInfo,
 			    content: 	$(i), 			// 捕获的元素
 			    area:	 	this.options.oViewLayerConfig.area,
 			    cancel: 	function(index){layer.close(index);},
@@ -512,19 +555,21 @@ var MeTable = (function() {
 	// 删除数据
 	MeTable.prototype.delete = function(row, isDetail) {
 		var self = this;			// 对象
-		this.actionType ="delete";	// 操作类型
+		this.actionType = "delete";	// 操作类型
 
 		// 询问框
-		layer.confirm('您确定需要删除这条数据吗?', {
-			title: '确认操作',
-			btn: ['确定','取消'],
+		layer.confirm(self.language.meTables.oDelete.confirm.replace("_LENGTH_", ""), {
+			title: self.language.meTables.oDelete.confirmOperation,
+			btn: [self.language.meTables.oDelete.determine, self.language.meTables.oDelete.cancel],
 			shift: 4,
 			icon: 0
 			// 确认删除
 		}, function(){
 			self.save(isDetail ? self.details.data()[row] : self.table.data()[row]);
 			// 取消删除
-		}, function(){layer.msg('您取消了删除操作！', {time:800});});
+		}, function(){
+			layer.msg(self.language.meTables.oDelete.cancelOperation, {time:800});
+		});
 	};
 
 	// 删除全部数据
@@ -537,14 +582,14 @@ var MeTable = (function() {
 
         // 数据为空提醒
         if (data.length < 1)  {
-        	layer.msg('您没有选择需要删除的数据 !', {icon:5});
+        	layer.msg(self.language.meTables.oDelete.noSelect, {icon:5});
         	return false;
         }
 
         // 询问框
-        layer.confirm('您确定需要删除这' + data.length + '条数据吗?', {
-            title: '确认操作',
-            btn: ['确定','取消'],
+        layer.confirm(self.language.meTables.oDelete.confirm.replace("_LENGTH_", data.length), {
+            title: self.language.meTables.oDelete.confirmOperation,
+            btn: [self.language.meTables.oDelete.determine, self.language.meTables.oDelete.cancel],
             shift: 4,
             icon: 0
             // 确认删除
@@ -552,7 +597,7 @@ var MeTable = (function() {
             self.save({"ids":data.join(',')});
             // 取消删除
         }, function(){
-        	layer.msg('您取消了删除操作！', {time:800});
+            layer.msg(self.language.meTables.oDelete.cancelOperation, {time:800});
         });
 	};
 
@@ -596,15 +641,12 @@ var MeTable = (function() {
 			if (data) {
 				// 执行之前的数据处理
 				if (typeof self.beforeSave != 'function' || self.beforeSave(data)) {
-					self.options.iLoading = layer.load();
 					// ajax提交数据
-					$.ajax({
+                    self.ajaxDeferred({
 						url:      sBaseUrl,
 						type:     'POST',
 						data:     data,
 						dataType: 'json'
-					}).always(function(){
-						layer.close(self.options.iLoading);
 					}).done(function(json){
 						layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
 						// 判断操作成功
@@ -616,15 +658,14 @@ var MeTable = (function() {
 								self.actionType = "";
 							}
 						}
-					}).fail(ajaxFail);
-
+					});
 					return false;
 				}
 
 			}
 		}
 
-		layer.msg('操作有误');
+		layer.msg(self.language.meTables.operationError);
 		return false;
 	};
 
@@ -679,10 +720,10 @@ var MeTable = (function() {
                     result = $.parseJSON(result);
                     layer.msg(result.errMsg, {icon: result.errCode == 0 ? 6 : 5});
                 } catch (e) {
-                	layer.msg("服务器没有响应...");
+                	self.ajaxFail();
                 }
             } else {
-            	layer.msg('数据正在导出, 请稍候...', {icon: 6});
+            	layer.msg(self.language.meTables.sExport, {icon: 6});
             }
 
         })

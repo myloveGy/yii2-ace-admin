@@ -7,12 +7,15 @@ AppAsset::loadTimeJavascript($this, 'datetime');
 $this->title = '管理员日程安排';
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/public/assets/css/jquery-ui.custom.min.css', ['depends' => 'backend\assets\AppAsset']);
+$this->registerCssFile('@web/public/assets/css/bootstrap-editable.css', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jquery-ui.custom.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jquery.ui.touch-punch.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/markdown/markdown.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/markdown/bootstrap-markdown.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jquery.hotkeys.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/x-editable/bootstrap-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
 <!--前面导航信息-->
 <p>
@@ -41,11 +44,11 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
 <table class="table table-striped table-bordered table-hover" id="showTable"></table>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var aAdmins = <?=json_encode($this->params['admins'])?>,
-        aStatus = <?=json_encode($status)?>,
-        aTimeStatus = <?=json_encode($timeStatus)?>,
-        aColors = <?=json_encode($statusColors)?>,
-        aTimeColors = <?=json_encode($timeColors)?>;
+    var aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
+        aStatus = <?=\yii\helpers\Json::encode($status)?>,
+        aTimeStatus = <?=\yii\helpers\Json::encode($timeStatus)?>,
+        aColors = <?=\yii\helpers\Json::encode($statusColors)?>,
+        aTimeColors = <?=\yii\helpers\Json::encode($timeColors)?>;
     aAdmins['0'] = '待定';
 
     var myTable = new MeTable({
@@ -102,11 +105,7 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                 "edit": {"type": "radio", "default": 0, "options": {"required": true, "number": true}},
                 "search": {"type": "select"},
                 "bSortable": false,
-                "editTable": {
-                    validate: function (x) {
-                        if (x.length > 100 || x.length < 2) return "长度必须为2到50字符";
-                    }
-                },
+                "editTable": {},
                 "createdCell": function (td, data, rowArr, row, col) {
                     $(td).html(showSpan(aStatus, aColors, data));
                 }

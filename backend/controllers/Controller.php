@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use Yii;
 
-use backend\models\Menu;
 use backend\models\Admin;
 use common\models\UploadForm;
 use yii\helpers\Json;
@@ -288,7 +287,11 @@ class Controller extends \common\controllers\Controller
                 if ($model) {
                     $model->$strAttr = $mixValue;
                     $this->arrJson['errCode'] = 206;
-                    if ($model->save()) $this->handleJson($model);
+                    if ($model->save()) {
+                        $this->handleJson($model);
+                    } else {
+                        $this->arrJson['errMsg'] = $model->getErrorString();
+                    }
                 }
             }
         }

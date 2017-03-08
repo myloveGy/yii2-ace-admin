@@ -90,8 +90,8 @@ class Arrange extends AdminModel
     public static function getStatus($intStatus = null)
     {
         $arrReturn = [
-            self::STATUS_PENDING  => '待处理',
             self::STATUS_DELEGATE => '委派处理',
+            self::STATUS_PENDING  => '待处理',
             self::STATUS_COMPLETE => '处理完成',
             self::STATUS_DEFER    => '延期处理'
         ];
