@@ -151,7 +151,6 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
         ]
     });
 
-
     /**
      * 显示的前置和后置操作
      * myTable.beforeShow(object data, bool isDetail) return true 前置
