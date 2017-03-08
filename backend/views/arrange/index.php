@@ -181,7 +181,7 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
         myTable.init();
 
         // 时间选项
-        $('.me-datetime').datetimepicker({
+        $('.datetime-picker').datetimepicker({
             format: 'YYYY-MM-DD H:mm:s'
         });
 
