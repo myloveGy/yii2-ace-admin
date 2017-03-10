@@ -150,8 +150,23 @@ function createButtons(index, data) {
 }
 
 // 生成查看详情的Table
-function createViewTr(title, data) {
-    return '<tr><td width="25%">' + title + '</td><td class="views-info data-info-' + data + '"></td></tr>'
+function createViewTr(title, data, iKey,  aParams) {
+    var html = '';
+    if (aParams.bMultiCols) {
+        if (aParams.iColsLength > 1 && iKey % aParams.iColsLength == 0) {
+            html += '<tr>';
+        }
+
+        html += '<td width="25%">' + title + '</td><td class="views-info data-info-' + data + '"></td>';
+
+        if (aParams.iColsLength > 1 && iKey % aParams.iColsLength == (aParams.iColsLength - 1)) {
+            html += '</tr>';
+        }
+    } else {
+        html += '<tr><td width="25%">' + title + '</td><td class="views-info data-info-' + data + '"></td></tr>';
+    }
+
+    return html;
 }
 
 // 生成查表单信息

@@ -54,6 +54,17 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
     var myTable = new MeTable({
         sTitle: "管理员日程安排",
         bEditTable: true
+//        oEditFormParams: {				// 编辑表单配置
+//            bMultiCols: true,          // 是否多列
+//            iColsLength: 2,             // 几列
+//            aCols: [2, 4],              // label 和 input 栅格化设置
+//            sModalClass: "",			// 弹出模块框配置
+//            sModalDialogClass: ""		// 弹出模块的class
+//        },
+//        oViewTable: {                   // 查看详情配置信息
+//            bMultiCols: true,
+//            iColsLength: 2
+//        }
     }, {
         "aoColumns": [
             {

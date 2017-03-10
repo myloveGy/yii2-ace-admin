@@ -55,7 +55,7 @@ var MeTable = (function() {
                 iColsLength: 1,             // 几列
                 aCols: [3, 9],              // label 和 input 栅格化设置
                 sModalClass: "",			// 弹出模块框配置
-                sModalDialogClass: ""
+                sModalDialogClass: ""		// 弹出模块的class
             },
             oViewLayerConfig: {
                 type: 1,
@@ -63,6 +63,10 @@ var MeTable = (function() {
                 shadeClose: true,
                 maxmin: true,
                 area: ['50%', 'auto']
+            },
+            oViewTable: {                   // 查看详情配置信息
+                bMultiCols: false,
+                iColsLength: 1
             },
             bRenderH1: 	  true,				// 是否渲染H1内容
             bEditTable:   false,			// 是否开启行内编辑
@@ -72,6 +76,7 @@ var MeTable = (function() {
             iLoading:     0, 				// 页面加载Loading
             bViewFull: 	  false,			// 详情打开的方式 1 2 打开全屏
             bColResize:   false,            // 是否运行列宽拖拽
+
             oLanguage: {
 				// 我的信息
 				meTables: {
@@ -301,7 +306,7 @@ var MeTable = (function() {
 
 		// 处理生成表单
 		this.tableOptions.aoColumns.forEach(function(k, v) {
-			if (k.bViews !== false) views += createViewTr(k.title, k.data);				    // 查看详情信息
+            if (k.bViews !== false) views += createViewTr(k.title, k.data, v, self.options.oViewTable);// 查看详情信息
 			if (k.edit != undefined) form += createForm(k, self.options.oEditFormParams);	// 编辑表单信息
 			if (k.search != undefined) self.options.sSearchHtml += createSearchForm(k, v);  // 搜索信息
 			if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
@@ -418,7 +423,8 @@ var MeTable = (function() {
         // 判断初始化处理(搜索添加位置)
         if (this.options.sSearchType == 'middle') {
             $('#showTable_filter').html('<form action="post" id="searchForm">' + self.options.sSearchHtml + '</form>');
-            $('.me-search').on('keyup change', function () { self.table.draw();}); 						// 搜索事件
+            $('input.me-search').on('blur', function () { self.table.draw();}); 						// 搜索事件
+            $('select.me-search').on('change', function () { self.table.draw();}); 						// 搜索事件
             $('#showTable_wrapper div.row div.col-xs-6:first').removeClass('col-xs-6').addClass('col-xs-2').next().removeClass('col-xs-6').addClass('col-xs-10');	// 处理搜索信息
         } else {
             // 添加搜索表单信息
