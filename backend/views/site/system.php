@@ -110,6 +110,5 @@ $this->title = 'Yii2 Admin 登录信息';
 <?php $this->beginBlock('javascript'); ?>
 <script>
 
-console.info($, mt, mt());
 </script>
 <?php $this->endBlock(); ?>
