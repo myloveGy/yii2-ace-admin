@@ -42,6 +42,7 @@ class AppAsset extends AssetBundle
         $arrJsResource = [
             'js/common/base.js',
             'js/common/dataTable.js',
+            'js/common/meTables.js',
 //            'js/x-editable/bootstrap-editable.min.js',
 //            'js/x-editable/ace-editable.min.js',
             'js/jquery.dataTables.min.js',

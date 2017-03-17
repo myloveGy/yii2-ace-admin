@@ -4,6 +4,8 @@
  * User: liujx
  * Date: 2016-07-21
  */
+
+
 var MeTable = (function() {
 	// 构造函数初始化配置
 	function MeTable(options, tableOptions, detailOptions) {

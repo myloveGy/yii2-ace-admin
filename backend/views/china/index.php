@@ -3,6 +3,7 @@
 // 定义标题和面包屑信息
 $this->title = '地址信息';
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
 <!--前面导航信息-->
 <p>
@@ -28,8 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </button>
 </p>
 <!--表格数据-->
-<table class="table table-striped table-bordered table-hover" id="showTable">
-</table>
+<table class="table table-striped table-bordered table-hover" id="showTable"></table>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var myTable = new MeTable({
@@ -37,7 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
         isCheckbox: false,
         oOperation: {
             isOpen: false
-        }
+        },
+        bColResize: true
     },{
         "aoColumns":[
 			{"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc", "edit": {"type": "text", "options": {"required":true,"number":true,}}},

@@ -106,18 +106,10 @@ $this->title = 'Yii2 Admin 登录信息';
         </div>
         <div class="hr hr16 dotted"></div>
     </div>
-
-    <div class="col-xs-12 col-sm-12">
-        <h4 class="red">
-            <span class="middle"><i class="fa fa-exclamation-triangle light-red bigger-110" aria-hidden="true"></i></span>
-            警告信息
-        </h4>
-        <div class="profile-user-info">
-            <div class="profile-info-row">
-                <div class="profile-info-value red">
-                    <span>禁止把源码给予（或出售）第三方，会失去售后和永久更新; 如果您的网站出现问题，请记住您的操作，方便技术处理; 有任何技术或运营问题，请及时联系在线客服或是售后服务</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+<?php $this->beginBlock('javascript'); ?>
+<script>
+
+console.info($, mt, mt());
+</script>
+<?php $this->endBlock(); ?>

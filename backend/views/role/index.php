@@ -26,7 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
 </p>
 <!--表格数据-->
 <table class="table table-striped table-bordered table-hover" id="showTable"></table>
-<?php $this->beginBlock('javascript') ?>
+<?php $this->beginBlock('javascript');?>
+<script src="/public/assets/js/dataTables.colResize.js"></script>
 <script type="text/javascript">
     // 设置表单信息
     function setOperate(td, data, rowArr, row, col)
@@ -42,8 +43,14 @@ $this->params['breadcrumbs'][] = $this->title;
         sTitle:   "角色信息",
         oOperation: {
             isOpen: false
-        }
+        },
+//        bColResize: true
     },{
+//        bServerSide: false,
+        "dom": 'Zlfrtip',
+//        "colResize": {
+//            "rtl": true
+//        },
         "aoColumns":[
 			{"title": "角色名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
 			{"title": "说明描述", "data": "description", "sName": "description", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 255]"}}, "search": {"type": "text"}, "bSortable": false},
@@ -61,6 +68,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     $(function(){
         myTable.init();
+        $("#showTable").on('column-sizing.dt', function(e, settings){
+            e.preventDefault();
+            console.info(2, e, settings);
+           return false;
+        });
+        $("#showTable").on('column-resize', function(e, steting){
+            console.info(1);
+            return false;
+        });
     })
 </script>
 <?php $this->endBlock(); ?>
