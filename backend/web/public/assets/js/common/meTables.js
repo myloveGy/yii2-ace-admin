@@ -12,7 +12,7 @@
 
         // 初始化配置信息
         init: function (options) {
-            this.options = meTables.extends(this.options, options);
+            this.options = meTables.extend(this.options, options);
             return this;
         },
 
@@ -93,6 +93,56 @@
                 editable: "editable",
                 deleteAll: "deleteAll"
             }
+        },
+
+        // 语言配置
+        language: {
+            "zh-cn": {
+                // 我的信息
+                meTables: {
+                    "oOperation": {
+                        "sTitle": "操作",
+                        "sView": "查看",
+                        "sEdit": "编辑",
+                        "sDelete": "删除"
+                    },
+
+                    "sInfo": "详情",
+                    "sInsert": "新增",
+                    "sEdit": "编辑",
+                    "sExport": "数据正在导出, 请稍候...",
+                    "sAppearError": "出现错误",
+                    "sServerErrorMessage": "服务器繁忙,请稍候再试...",
+                    "oDelete": {
+                        "determine": "确定",
+                        "cancel": "取消",
+                        "confirm": "您确定需要删除这_LENGTH_条数据吗?",
+                        "confirmOperation": "确认操作",
+                        "cancelOperation": "您取消了删除操作!",
+                        "noSelect": "没有选择需要删除的数据"
+                    },
+
+                    "operationError": "操作有误"
+                },
+
+                // dataTables 表格
+                dataTables: {
+                    // 显示
+                    "sLengthMenu": 	 "每页 _MENU_ 条记录",
+                    "sZeroRecords":  "没有找到记录",
+                    "sInfo": 		 "显示 _START_ 到 _END_ 共有 _TOTAL_ 条数据",
+                    "sInfoEmpty": 	 "无记录",
+                    "sInfoFiltered": "(从 _MAX_ 条记录过滤)",
+                    "sSearch": 		"搜索：",
+                    // 分页
+                    "oPaginate": {
+                        "sFirst": 	 "首页",
+                        "sPrevious": "上一页",
+                        "sNext": 	 "下一页",
+                        "sLast": 	 "尾页"
+                    }
+                }
+            }
         }
     });
 
@@ -105,7 +155,7 @@
             return $.ajax(params).always(function () {
                 layer.close(mixLoading);
             }).fail(function () {
-                layer.msg("123love lllllllllll", {icon: 5});
+                layer.msg("", {icon: 5});
             });
         },
 
