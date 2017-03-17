@@ -141,11 +141,10 @@
 
                 other += " ";
             }
-            return other;
-        },
-    });
 
-    meTables.fn.extends = meTables.extends;
+            return other;
+        }
+    });
 
     window.meTables = window.metables = window.mt = meTables;
 
