@@ -2,17 +2,18 @@
  * Created by liujinxing on 2017/3/14.
  */
 
-(function(window) {
-    var meTables = function (options) {
-        return new meTables.fn.init(options);
-    };
+(function(window, $) {
+    var other, html, mixLoading = null,
+        meTables = function (options) {
+            return new meTables.fn.init(options);
+        };
 
     meTables.fn = meTables.prototype = {
         constructor: meTables,
 
         // 初始化配置信息
         init: function (options) {
-            this.options = meTables.extend(this.options, options);
+            if (options !== undefined) this.extend({options: options});
             return this;
         },
 
@@ -44,6 +45,17 @@
         // 获取连接地址
         getUrl: function (strType) {
             return this.options.urlPrefix + this.options.url[strType] + this.options.urlSuffix;
+        },
+
+        // 获取语言配置信息
+        getLanguage: function() {
+            if (arguments.length > 1 && this.language[this.options.language][arguments[0]]) {
+                return arguments[1] == "*" ?
+                    this.language[this.options.language][arguments[0]] :
+                    this.language[this.options.language][arguments[0]][arguments[1]];
+            }
+
+            return this.language[this.options.language].meTables[arguments[0]];
         }
     };
 
@@ -112,7 +124,7 @@
                     "sEdit": "编辑",
                     "sExport": "数据正在导出, 请稍候...",
                     "sAppearError": "出现错误",
-                    "sServerErrorMessage": "服务器繁忙,请稍候再试...",
+                    "sServerError": "服务器繁忙,请稍候再试...",
                     "oDelete": {
                         "determine": "确定",
                         "cancel": "取消",
@@ -146,8 +158,6 @@
         }
     });
 
-    var mixLoading = null;
-
     meTables.extend({
         // 扩展AJAX
         ajax: function (params) {
@@ -155,7 +165,7 @@
             return $.ajax(params).always(function () {
                 layer.close(mixLoading);
             }).fail(function () {
-                layer.msg("", {icon: 5});
+                layer.msg(meTables().getLanguage("sServerError"), {icon: 5});
             });
         },
 
@@ -182,9 +192,9 @@
 
         // 处理参数
         handleParams: function (params, prefix) {
-            var other = "";
-            prefix = prefix ? prefix : '';
+            other = "";
             if (params != undefined && typeof params == "object") {
+                prefix = prefix ? prefix : '';
                 for (var i in params) {
                     other += " " + i + '="' + prefix + params[i] + '"'
                 }
@@ -193,10 +203,69 @@
             }
 
             return other;
+        },
+
+        inputCreate: function(params) {
+            if (!params.type) params.type = "text";
+            return "<input" + this.handleParams(params) + "/>";
+        },
+
+        passwordCreate: function(params) {
+            params.type = "password";
+            return this.inputCreate(params);
+        },
+
+        radioCreate: function(params, label) {
+            html = "";
+            if (params.value) {
+                params.type = "radio";
+                var v = params.value;
+                for (var i in v) {
+                    params.value = i;
+                    html += "<label" + this.handleParams(label) + ">" + this.inputCreate(params) + " " + v[i] + " </label>";
+                }
+            }
+
+            return html;
+        },
+
+        checkboxCreate: function(params, label) {
+            html = "";
+            if (params.value) {
+                params.type = "checkbox";
+                var v = params.value;
+                for (var i in v) {
+                    params.value = i;
+                    html += "<label" + this.handleParams(label) + ">" + this.inputCreate(params) + " " + v[i] + " </label>";
+                }
+            }
+
+            return html;
+        },
+
+        selectCreate: function(params, options) {
+            html = "";
+            if (params.value) {
+                var v = params.value;
+                delete params.value;
+                html += "<select " + this.handleParams(params) + ">";
+                for (var i in v) {
+                    html += "<option value=\""+ i +"\"" + this.handleParams(options) + "> " + v[i] + " </option>"
+                }
+            }
+
+            return html;
+        },
+
+        textareaCreate: function(params) {
+            html = params.value + "</textarea>";
+            delete params.value;
+            console.info(html);
+            return "<textarea" + this.handleParams(params) + ">" + html;
         }
     });
 
     window.meTables = window.metables = window.mt = meTables;
 
     return meTables;
-})(window);
+})(window, jQuery);

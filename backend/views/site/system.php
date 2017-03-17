@@ -107,11 +107,11 @@ $this->title = 'Yii2 Admin 登录信息';
         <div class="hr hr16 dotted"></div>
     </div>
 </div>
+<div id="test">
+
+</div>
 <?php $this->beginBlock('javascript'); ?>
 <script>
-    var tables = mt({
-        title: 123
-    });
-    console.info(mt, mt.inArray(1, [2, 4, 1]));
+
 </script>
 <?php $this->endBlock(); ?>
