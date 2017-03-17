@@ -28,8 +28,7 @@
 
         // 数据修改
         update: function () {
-            console.info(this.options);
-            return this;
+
         },
 
         // 数据删除
@@ -51,7 +50,7 @@
     meTables.fn.init.prototype = meTables.fn;
 
     meTables.extend = meTables.fn.extend = function () {
-        var copy, name, options,
+        var name, options,
             target = arguments[0] || {},
             i = 1,
             length = arguments.length;
@@ -69,18 +68,9 @@
 
                     if (typeof target[name] == "object") {
                         target[name] = this.extend(target[name], options[name]);
-                    } else {
+                    } else if (options[name] !== undefined) {
                         target[name] = options[name];
                     }
-
-                    // copy = options[name];
-                    // if (target === copy) {
-                    //     continue;
-                    // }
-                    //
-                    // if (copy !== undefined) {
-                    //     target[name] = copy;
-                    // }
                 }
             }
         }
@@ -152,33 +142,6 @@
             }
             return other;
         },
-
-        // 继承对象信息
-        extends: function () {
-            var target = arguments[0] || {}, length = arguments.length, i = 1, params, name;
-            if (length >= 2) {
-                for (; i < length; i++) {
-
-                    if (this.empty(params = arguments[i])) {
-                        continue;
-                    }
-
-                    for (name in params) {
-                        if (params[name] === target[name]) {
-                            continue;
-                        }
-
-                        if (typeof target[name] == "object") {
-                            target[name] = this.extends(target[name], params[name]);
-                        } else {
-                            target[name] = params[name];
-                        }
-                    }
-                }
-            }
-
-            return target;
-        }
     });
 
     meTables.fn.extends = meTables.extends;
