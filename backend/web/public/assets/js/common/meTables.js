@@ -78,6 +78,7 @@
         return target;
     };
 
+    // 设置默认配置信息
     meTables.fn.extend({
         options: {
             // 关于地址配置信息
