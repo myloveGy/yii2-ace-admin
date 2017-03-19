@@ -46,7 +46,6 @@ var MeTable = (function() {
                 "inline": "editable" 		// 行内编辑
             },
             isCheckbox:   true,				// 需要多选框
-            aParams:	  null,				// 请求携带参数
             sExportUrl:   "export",         // 数据导出地址
             sSearchHtml:  "",				// 搜索信息
             sSearchType:  "middle",			// 搜索表单位置

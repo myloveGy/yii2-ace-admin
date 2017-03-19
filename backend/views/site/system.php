@@ -1,6 +1,7 @@
 <?php
 $this->title = 'Yii2 Admin 登录信息';
 ?>
+<table class="table table-striped table-bordered table-hover" id="show-table"></table>
 <div class="row">
     <div class="col-xs-12 col-sm-12">
         <h4 class="blue">
@@ -107,11 +108,37 @@ $this->title = 'Yii2 Admin 登录信息';
         <div class="hr hr16 dotted"></div>
     </div>
 </div>
+
 <div id="test">
 
 </div>
 <?php $this->beginBlock('javascript'); ?>
 <script>
+    var m = meTables({
+        title: 123,
+        url: {
+            "search": "<?=\yii\helpers\Url::toRoute('menu/search')?>"
+        },
+        params: {
+            "type": 1,
+            "love": "gongyan"
+        },
+        table: {
+            "aoColumns":[
+                {"data": "id", "sName":"id", "title": "Id", "edit":{"type":"hidden"}, "search":{"type":"text"}, "defaultOrder": "desc"},
+                {"data": "pid", "sName":"pid", "title": "上级分类"},
+                {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"options":{"required":1, "rangelength":"[2, 50]"}}, "search":{"type":"text"}, "bSortable": false},
+                {"data": "icons", "sName":"icons", "title":"图标", "edit":{"options":{"rangelength":"[2, 50]"}}, "bSortable": false}
+            ]
+        }
+    });
 
+    $(function(){
+        m.init();
+    });
+//    console.info(mt, meTables);
+
+
+    console.info(mt.inArray(1, [1, 2, 3, 4]));
 </script>
 <?php $this->endBlock(); ?>
