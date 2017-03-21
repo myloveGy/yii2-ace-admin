@@ -94,7 +94,7 @@
             return this;
         },
 
-        // 执行操作
+        // 初始化整个 meTables
         init: function () {
             this.action = "init";
             this.table = $(this.options.sTable).DataTable(this.options.table);	// 初始化主要表格
@@ -123,11 +123,151 @@
         // 数据删除
         delete: function() {
             this.action = "delete";
+            // 询问框
+            layer.confirm(this.getLanguage("oDelete").confirm.replace("_LENGTH_", ""), {
+                title: self.language.meTables.oDelete.confirmOperation,
+                btn: [self.language.meTables.oDelete.determine, self.language.meTables.oDelete.cancel],
+                shift: 4,
+                icon: 0
+                // 确认删除
+            }, function(){
+                self.save(isDetail ? self.details.data()[row] : self.table.data()[row]);
+                // 取消删除
+            }, function(){
+                layer.msg(self.language.meTables.oDelete.cancelOperation, {time:800});
+            });
         },
 
         // 删除全部数据
         deleteAll: function() {
             this.action = "deleteAll";
+            var self = this;
+            // 数据添加
+            $(this.options.sTable + " tbody input:checkbox:checked").each(function(){data.push($(this).val());});
+
+            // 数据为空提醒
+            if (data.length < 1)  {
+                layer.msg(self.getLanguage("oDelete").noSelect, {icon:5});
+                return false;
+            }
+
+            // 询问框
+            layer.confirm(this.getLanguage("oDelete").confirm.replace("_LENGTH_", data.length), {
+                title: self.getLanguage("oDelete").confirmOperation,
+                btn: [self.getLanguage("oDelete").determine, self.getLanguage("oDelete").cancel],
+                shift: 4,
+                icon: 0
+                // 确认删除
+            }, function(){
+                self.save({"ids":data.join(',')});
+                // 取消删除
+            }, function(){
+                layer.msg(self.getLanguage("oDelete").cancelOperation, {time:800});
+            });
+        },
+
+        // 查看详情
+        detail: function(){
+            var self = this,
+                data = this.table.data()[row],
+                obj = this.tableOptions.aoColumns,
+                t = self.options.sTitle,
+                c = '.data-info-',
+                i = "#data-info";
+            if (isDetail) {
+                data = this.details.data()[row];
+                obj  = this.oDetails.oTableOptions.aoColumns;
+                t = '';
+                c += 'detail-';
+                i = "#data-info-detail";
+            }
+            // 处理的数据
+            if (data != undefined)
+            {
+                viewTable(obj, data, c, row);
+                // 弹出显示
+                this.options.iViewLoading = layer.open({
+                    type:		this.options.oViewLayerConfig.type,
+                    shade: 		this.options.oViewLayerConfig.shade,
+                    shadeClose: this.options.oViewLayerConfig.shadeClose,
+                    title: 		t + self.getLanguange("sInfo"),
+                    content: 	$(i), 			// 捕获的元素
+                    area:	 	this.options.oViewLayerConfig.area,
+                    cancel: 	function(index){layer.close(index);},
+                    end: 		function(){$('.views-info').html('');self.options.iViewLoading = 0;},
+                    maxmin: 	this.options.oViewLayerConfig.maxmin
+                });
+
+                // 展开全屏(解决内容过多问题)
+                if (this.options.bViewFull) layer.full(this.options.iViewLoading)
+            }
+        },
+
+        save: function(data) {
+            // 初始化判断和数据处理
+            if (meTables.inArray(this.actionType, ["insert", "update", "delete", "deleteAll"])) {
+                // 初始化数据
+                var self     = this,
+                    sFormId  = this.options.sFormId,
+                    sBaseUrl = self.options.sBaseUrl + self.options.aActionUrl[self.actionType],
+                    sModal   = self.options.sModal;
+                // 详情处理
+                if (this.bDetail) {
+                    sFormId  = self.oDetails.sFormId;
+                    sBaseUrl = self.oDetails.sBaseUrl + self.oDetails.aActionUrl[self.actionType];
+                    sModal   = self.oDetails.sModal;
+                }
+
+                // 新增和修改验证数据、数据的处理
+                if (meTables.inArray(this.actionType, ["insert", "update"])) {
+                    if ($(sFormId).validate({
+                            errorElement: 'div',
+                            errorClass: 'help-block',
+                            focusInvalid: false,
+                            highlight: function (e) {
+                                $(e).closest('.form-group').removeClass('has-info').addClass('has-error');
+                            },
+                            success: function (e) {
+                                $(e).closest('.form-group').removeClass('has-error');//.addClass('has-info');
+                                $(e).remove();
+                            }
+                        }).form()) {
+                        data = $(sFormId).serializeArray();
+                    } else {
+                        return false;
+                    }
+                }
+
+                // 数据验证
+                if (data) {
+                    // 执行之前的数据处理
+                    if (typeof self.beforeSave != 'function' || self.beforeSave(data)) {
+                        // ajax提交数据
+                        meTables.ajax({
+                            url:      sBaseUrl,
+                            type:     'POST',
+                            data:     data,
+                            dataType: 'json'
+                        }).done(function(json){
+                            layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
+                            // 判断操作成功
+                            if (json.errCode == 0) {
+                                // 执行之后的数据处理
+                                if (typeof self.afterSave != 'function' || self.afterSave(json.data)) {
+                                    self.table.draw(false);
+                                    if (self.actionType !== "delete") $(sModal).modal('hide');
+                                    self.actionType = "";
+                                }
+                            }
+                        });
+
+                        return false;
+                    }
+                }
+            }
+
+            layer.msg(self.language.meTables.operationError);
+            return false;
         },
 
         // 数据导出
@@ -140,7 +280,9 @@
 
             // 添加字段信息
             this.options.table.aoColumns.forEach(function(k, v){
-                if (k.data != null && (k.isExport == undefined)) html += '<input type="hidden" name="aFields[' + k.data + ']" value="' + k.title + '"/>';
+                if (k.data != null && (k.isExport == undefined)) {
+                    html += '<input type="hidden" name="aFields[' + k.data + ']" value="' + k.title + '"/>';
+                }
             });
 
             // 添加查询条件
@@ -151,8 +293,7 @@
             }
 
             // 表单提交
-            var $form    = $(html);
-            $('body').append($form);
+            var $form = $(html);
             var deferred = new $.Deferred,
                 temporary_iframe_id = 'temporary-iframe-'+(new Date()).getTime()+'-'+(parseInt(Math.random()*1000)),
                 temp_iframe = $('<iframe id="'+temporary_iframe_id+'" name="'+temporary_iframe_id+'" \
@@ -174,27 +315,141 @@
                 $('.me-export').remove();
             } , 500);
 
-            deferred
-                .fail(function(result) {
-                    if (result) {
-                        try {
-                            result = $.parseJSON(result);
-                            layer.msg(result.errMsg, {icon: result.errCode == 0 ? 6 : 5});
-                        } catch (e) {
-                            self.ajaxFail();
-                        }
-                    } else {
-                        layer.msg(self.language.meTables.sExport, {icon: 6});
+            deferred.fail(function(result) {
+                if (result) {
+                    try {
+                        result = $.parseJSON(result);
+                        layer.msg(result.errMsg, {icon: result.errCode == 0 ? 6 : 5});
+                    } catch (e) {
+                        layer.msg(self.getLanguage("sServerError"), {icon: 5});
                     }
-
-                })
-                .always(function() {clearTimeout(ie_timeout);});
+                } else {
+                    layer.msg(self.getLanguage("sExport"), {icon: 6});
+                }
+            }).always(function() {clearTimeout(ie_timeout);});
             deferred.promise();
         },
 
         // 获取连接地址
         getUrl: function (strType) {
             return this.options.urlPrefix + this.options.url[strType] + this.options.urlSuffix;
+        },
+
+        // 初始化页面渲染
+        initRender: function() {
+            var self       = this,
+                form 	   = '<form ' + meTables.handleParams(this.options.form) + '><fieldset>',
+                views 	   = '<table class="table table-bordered table-striped table-detail">',
+                aOrders = [],
+                aTargets = [];
+
+            // 处理生成表单
+            this.tableOptions.aoColumns.forEach(function(k, v) {
+                if (k.bViews !== false) views += createViewTr(k.title, k.data, v, self.options.oViewTable);// 查看详情信息
+                if (k.edit != undefined) form += createForm(k, self.options.oEditFormParams);	// 编辑表单信息
+                if (k.search != undefined) self.options.sSearchHtml += createSearchForm(k, v);  // 搜索信息
+                if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
+                if (k.isHide) aTargets.push(v);													// 是否隐藏
+
+                // 判断行内编辑
+                if (k.editTable != undefined) {
+                    // 默认修改参数
+                    self.options.oEditTable[k.sName] = {
+                        name: k.sName,
+                        type: k.edit.type == "radio" ? "select" : k.edit.type,
+                        source: k.value,
+                        send: "always",
+                        url: self.options.aActionUrl.inline,
+                        title: k.title,
+                        success: function(response) {
+                            if (response.errCode != 0) return response.errMsg;
+                        },
+                        error: self.ajaxFail
+                    };
+
+                    // 继承修改配置参数
+                    self.options.oEditTable[k.sName] = $.extend(self.options.oEditTable[k.sName], k.editTable);
+                    k["class"] = "my-edit edit-" + k.sName;
+                }
+            });
+
+            // 判断添加行内编辑信息
+            if (self.options.bEditTable)
+            {
+                self.tableOptions["fnDrawCallback"] = function() {
+                    for (var key in self.options.oEditTable) {
+                        $(self.options.sTable + " tbody tr td.edit-" + key).each(function(){
+                            var data = self.table.row($(this).closest('tr')).data(), mv = {};
+                            // 判断存在重新赋值
+                            if (data){
+                                mv['value'] = data[key];
+                                mv['pk']    = data[self.options.sEditPk];
+                            }
+
+                            $(this).editable($.extend(self.options.oEditTable[key], mv))
+                        });
+                    }
+                }
+            }
+
+            if (self.options.oEditFormParams.bMultiCols && empty(self.options.oEditFormParams.modalClass)) {
+                self.options.oEditFormParams.modalClass = "bs-example-modal-lg";
+                self.options.oEditFormParams.modalDialogClass = "modal-lg";
+            }
+
+            if (self.options.oEditFormParams.bMultiCols && self.options.oEditFormParams.index % self.options.oEditFormParams.iCols != (self.options.oEditFormParams.iCols - 1)) {
+                form += '</div>';
+            }
+
+            // 生成HTML
+            var Modal = createModal({
+                    "params": {"id":"myModal"},
+                    "html":   form,
+                    "bClass": "me-table-save",
+                    "modalClass": self.options.oEditFormParams.modalClass,
+                    "modalDialogClass": self.options.oEditFormParams.modalDialogClass
+                },
+                {
+                    "params": {"id":"data-info"}, "html":views
+                });
+
+            // 处理详情编辑信息
+            if (this.bHandleDetails) {
+                form  = '<form id="myDetailForm" class="form-horizontal" action="' + this.oDetails.sBaseUrl + '" name="myDetailForm" method="post" enctype="multipart/form-data"><fieldset>';
+                views = '<table class="table table-bordered table-striped table-detail">';
+                // 处理生成表单
+                this.oDetails.oTableOptions.aoColumns.forEach(function(k) {
+                    views += createViewTr(k.title, 'detail-' + k.data);// 查看详情信息
+                    if (k.edit != undefined) form += createForm(k);		// 编辑表单信息
+                });
+
+                // 添加详情输入框
+                Modal += createModal({
+                        "params": {"id":"myDetailModal"},
+                        "html":	  form,
+                        "bClass": "me-table-save"},
+                    {
+                        "params": {"id":"data-info-detail"},
+                        "html":   views
+                    });
+            }
+
+            // 处理表格配置
+            if (aOrders.length > 0) { // 排序
+                this.tableOptions.order = aOrders;
+            }
+
+            // 隐藏字段
+            if (aTargets.length > 0) {
+                if (this.tableOptions.columnDefs) {
+                    this.tableOptions.columnDefs.push({"targets":aTargets, "visible":false});
+                } else {
+                    this.tableOptions.columnDefs = [{"targets":aTargets, "visible":false}];
+                }
+            }
+
+            // 向页面添加HTML
+            $("body").append(Modal);
         },
 
         // 获取语言配置信息
@@ -476,6 +731,13 @@
                     "ordering": false			 	// 排序
                 }
             }
+        },
+
+        // 数据信息
+        data: {
+            sSearchForm: "", // 搜索表单
+            sUpdateModel: "",// 编辑表单Model
+            sInfoTable: ""   // 查看Table
         },
 
         // 语言配置
