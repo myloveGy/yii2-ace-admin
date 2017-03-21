@@ -20,6 +20,7 @@
 
             // 先处理表格的回调函数
             var self = this;
+            $.fn.dataTable.defaults['bFilter'] = true;
             this.options.table.fnServerData = function(sSource, aoData, fnCallback) {
                 var attributes = aoData[2].value.split(","),
                     mSort 	   = (attributes.length + 1) * 5 + 2;
@@ -52,7 +53,6 @@
                         });
                     }
 
-                    $.fn.dataTable.defaults['bFilter'] = true;
                     fnCallback(data.data);
                 });
             };
@@ -72,8 +72,8 @@
                         meTables.ajax({
                             url: sSource,
                             data: aoData,
-                            type: 'post',
-                            dataType: 'json'
+                            type: "post",
+                            dataType: "json"
                         }).done(function (data) {
                             if (data.errCode != 0) {
                                 return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
@@ -81,7 +81,7 @@
                                     icon: 5
                                 });
                             }
-                            $.fn.dataTable.defaults['bFilter'] = true;
+
                             fnCallback(data.data);
                             if (self.options.details.tableObject) self.options.details.tableObject.child(function () {
                                 return $(self.options.details.sTable).parent().html();
@@ -95,9 +95,76 @@
         },
 
         // 初始化整个 meTables
-        init: function () {
+        init: function (params) {
             this.action = "init";
             this.table = $(this.options.sTable).DataTable(this.options.table);	// 初始化主要表格
+
+            var self = this;this.CreateForm();
+
+            // 判断初始化处理(搜索添加位置)
+            if (this.options.sSearchType == 'middle') {
+                $('#showTable_filter').html('<form action="post" id="searchForm">' + self.options.sSearchHtml + '</form>');
+                $('input.me-search').on('blur', function () { self.table.draw();}); 						// 搜索事件
+                $('select.me-search').on('change', function () { self.table.draw();}); 						// 搜索事件
+                $('#showTable_wrapper div.row div.col-xs-6:first').removeClass('col-xs-6').addClass('col-xs-2').next().removeClass('col-xs-6').addClass('col-xs-10');	// 处理搜索信息
+            } else {
+                // 添加搜索表单信息
+                $(this.options.sSearchForm).append(self.options.sSearchHtml);
+            }
+
+            // 新增、修改、删除、查看、删除全部、保存、刷新、导出
+            $('.me-table-insert').click(function(evt){evt.preventDefault();self.create();});
+            $(document).on('click', '.me-table-edit', function(evt){evt.preventDefault();self.update($(this).attr('table-data'))});
+            $(document).on('click', '.me-table-del', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'))});
+            $(document).on('click', '.me-table-view', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'))});
+            $('.me-table-delete').click(function(evt){evt.preventDefault();self.deleteAll();});
+            $('.me-table-save').click(function(evt){evt.preventDefault();self.save();});
+            $('.me-table-reload').click(function(evt){evt.preventDefault();self.search();});
+            $('.me-table-export').click(function(evt){evt.preventDefault();self.export();});
+
+            // 行选择
+            $(document).on('click', self.options.sTable + ' th input:checkbox' , function(){
+                var that = this;$(this).closest('table').find('tr > td:first-child input:checkbox').each(function(){this.checked = that.checked;$(this).closest('tr').toggleClass('selected');});
+            });
+
+            // 判断是否开启详情处理
+            if (self.bHandleDetails) {
+                // 初始化详情表格
+                if (this.bHandleDetails) this.details = $(this.oDetails.sTable).DataTable(this.oDetails.oTableOptions);
+                // 新增、查看、编辑、删除
+                $('.me-table-insert-detail').click(function(evt){evt.preventDefault();self.create(true);});
+                $(document).on('click', '.me-table-view-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-edit-detail', function(evt){evt.preventDefault();self.update($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-del-detail', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'), true)});
+                // 详情选择
+                $(self.options.sTable + ' tbody').on('click', self.oDetails.sClickSelect, function(){
+                    var tr = $(this).closest('tr'),row = self.table.row(tr);
+                    // 处理已经打开的
+                    tr.siblings(tr).each(function(){ if (self.table.row($(this)).child.isShown()) self.table.row($(this)).child.hide();$(this).removeClass('shown');});
+                    // 判断处理
+                    if (row.child.isShown()){row.child.hide();tr.removeClass('shown');}else{self.oDetailParams = row.data();self.oDetailObject = row;self.details.draw();tr.addClass('shown');}
+                });
+            }
+
+            // 判断开启editTable
+            if (self.options.bEditTable) {
+                $.fn.editable.defaults.mode = 'inline';
+                $.fn.editableform.loading = "<div class='editableform-loading'><i class='ace-icon fa fa-spinner fa-spin fa-2x light-blue'></i></div>";
+                $.fn.editableform.buttons = '<button type="submit" class="btn btn-info editable-submit"><i class="ace-icon fa fa-check"></i></button>'+
+                    '<button type="button" class="btn editable-cancel"><i class="ace-icon fa fa-times"></i></button>';
+                $.fn.editable.defaults.ajaxOptions = {type: "POST", dataType:'json'};
+            }
+
+            // 判断开启列宽拖拽
+            if (self.options.bColResize) $(self.options.sTable).colResizable();
+
+            // 文件上传
+            if (!empty(self.options.aFileSelector) && self.options.aFileSelector.length > 0) {
+                for (var i in self.options.aFileSelector) {
+                    aceFileUpload(self.options.aFileSelector[i], self.options.sBaseUrl + self.options.aActionUrl.upload);
+                }
+            }
+
             return this;
         },
 
@@ -111,13 +178,13 @@
         // 数据新增
         create: function(){
             this.action = "create";
-
+            this.initForm(undefined, isDetail);
         },
 
         // 数据修改
         update: function () {
             this.action = "update";
-            return this;
+            this.initForm(isDetail ? this.details.data()[row] : this.table.data()[row], isDetail);
         },
 
         // 数据删除
@@ -125,8 +192,8 @@
             this.action = "delete";
             // 询问框
             layer.confirm(this.getLanguage("oDelete").confirm.replace("_LENGTH_", ""), {
-                title: self.language.meTables.oDelete.confirmOperation,
-                btn: [self.language.meTables.oDelete.determine, self.language.meTables.oDelete.cancel],
+                title: self.getLanguage("oDelete").confirmOperation,
+                btn: [self.getLanguage("oDelete").determine, self.getLanguage("oDelete").cancel],
                 shift: 4,
                 icon: 0
                 // 确认删除
@@ -134,7 +201,7 @@
                 self.save(isDetail ? self.details.data()[row] : self.table.data()[row]);
                 // 取消删除
             }, function(){
-                layer.msg(self.language.meTables.oDelete.cancelOperation, {time:800});
+                layer.msg(self.getLanguage("oDelete").cancelOperation, {time:800});
             });
         },
 
@@ -452,6 +519,29 @@
             $("body").append(Modal);
         },
 
+        // 初始化表单信息
+        initForm: function() {
+            this.bDetail = isDetail;
+            // 显示之前的处理
+            if (typeof this.beforeShow == 'function' && ! this.beforeShow(data, isDetail)) return false;
+            layer.close(mixLoading);
+            // 确定操作的表单和模型
+            var f = this.options.sFormId, m = this.options.sModal;
+
+            // 是否操作详情信息
+            if (isDetail) {
+                f = this.oDetails.sFormId;
+                m = this.oDetails.sModal;
+            } else {
+                $(m).find('h4').html(this.options.sTitle + (this.action == "create" ? this.getLanguage("sInsert") : this.getLanguage("sEdit")));
+            }
+
+            meTables.InitForm(f, data);					// 初始化表单
+            // 显示之后的处理
+            if (typeof this.afterShow == 'function' && ! this.afterShow(data, isDetail)) return false;
+            $(m).modal({backdrop: "static"});   // 弹出信息
+        },
+
         // 获取语言配置信息
         getLanguage: function() {
             if (arguments.length > 1 && this.language[this.options.language][arguments[0]]) {
@@ -541,6 +631,10 @@
             return value === undefined || value === "" || value === null;
         },
 
+        isObject: function(value) {
+            return typeof value == "object";
+        },
+
         // 处理参数
         handleParams: function (params, prefix) {
             other = "";
@@ -556,13 +650,13 @@
             return other;
         },
 
+        labelCreate: function(content, params) {
+            return "<label" + this.handleParams(params) + "> " + content + " </label>";
+        },
+
         inputCreate: function(params) {
             if (!params.type) params.type = "text";
             return "<input" + this.handleParams(params) + "/>";
-        },
-
-        iFrameRequest: function() {
-
         },
 
         passwordCreate: function(params) {
@@ -570,53 +664,213 @@
             return this.inputCreate(params);
         },
 
-        radioCreate: function(params, label) {
-            html = "";
-            if (params.value) {
-                params.type = "radio";
-                var v = params.value;
-                for (var i in v) {
-                    params.value = i;
-                    html += "<label" + this.handleParams(label) + ">" + this.inputCreate(params) + " " + v[i] + " </label>";
-                }
-            }
-
-            return html;
+        fileCreate: function(params) {
+            html = '<input type="hidden" name="' + params.name + '"/>';
+            params["id"] = params["id"] ? "file-input-" + params["id"] : "file-input-" + params.name;
+            if (params.fileName) params.name = params.fileName;
+            params.type = file;
+            return html + this.inputCreate(params);
         },
 
-        checkboxCreate: function(params, label) {
+        radioCreate: function(params) {
             html = "";
-            if (params.value) {
-                params.type = "checkbox";
-                var v = params.value;
-                for (var i in v) {
-                    params.value = i;
-                    html += "<label" + this.handleParams(label) + ">" + this.inputCreate(params) + " " + v[i] + " </label>";
-                }
-            }
-
-            return html;
-        },
-
-        selectCreate: function(params, options) {
-            html = "";
-            if (params.value) {
-                var v = params.value;
+            if (params.value && this.isObject(params.value)) {
+                params['class'] = "ace valid";
+                var d = params.value, c = params.default;
                 delete params.value;
-                html += "<select " + this.handleParams(params) + ">";
-                for (var i in v) {
-                    html += "<option value=\""+ i +"\"" + this.handleParams(options) + "> " + v[i] + " </option>"
+                params = this.handleParams(params);
+                for (i in d) {
+                    html += '<label class="line-height-1 blue"> ' +
+                        '<input type="radio" ' + params + (c == i ? ' checked="checked" ' : "") + ' value="' + i +'"  /> ' +
+                        '<span class="lbl"> '+d[i]+" </span> " +
+                        "</label>　 "
                 }
             }
 
             return html;
+        },
+
+        checkboxCreate: function(params) {
+            html = '';
+            if (params.value && this.isObject(params.value)) {
+                var d = params.value, o = params.all, c = params.divClass ? params.divClass : "col-xs-6";
+                delete params.value;
+                delete params.all;
+                delete params.divClass;
+                params["class"] = "ace m-checkbox";
+                params = handleParams(params);
+                if (o) {
+                    html += '<div class="checkbox col-xs-12">' +
+                            '<label>' +
+                                '<input type="checkbox" class="ace checkbox-all" />' +
+                                '<span class="lbl"> 选择全部 </span>' +
+                            '</label>' +
+                        '</div>';
+                }
+                for (i in d) {
+                    html += '<div class="checkbox ' + c + '">' +
+                            '<label>' +
+                                '<input type="checkbox" ' + params + ' value="' + i + '" />' +
+                                '<span class="lbl"> ' + d[i] + ' </span>' +
+                            '</label>' +
+                        '</div>';
+                }
+            }
+
+            return html;
+        },
+
+        selectCreate: function(params) {
+            html = "";
+            if (params.value && this.isObject(params.value)) {
+                var d = params.value, c = params.default;
+
+                delete params.value;
+                delete params.default;
+
+                html += "<select " + this.handleParams(params) + ">";
+                for (i in data){
+                    html += '<option value="' + i + '" ' + (i == c ? ' selected="selected" ' : "") + " >" + d[i] + "</option>";
+                }
+
+                html += "</select>";
+            }
+
+            return html
         },
 
         textareaCreate: function(params) {
+            if (!params["class"]) params["class"] = "form-control";
+            if (!params["rows"]) params["rows"] = 5;
             html = params.value + "</textarea>";
             delete params.value;
-            console.info(html);
             return "<textarea" + this.handleParams(params) + ">" + html;
+        },
+
+        formCreate: function(k, oParams) {
+            var form = '';
+            if (!oParams.index) oParams.index = 0;
+
+            // 处理其他参数
+            if (!k.edit.type) k.edit.type = "text";
+            if (!k.edit.name) k.edit.name = k.sName;
+
+            if (k.edit.type == "hidden" ) {
+                form += this.inputCreate(k.edit);
+            } else {
+                k.edit["class"] = "form-control " + (k.edit["class"] ? k.edit["class"] : "");
+                // 处理多列
+                if (oParams.iMultiCols > 1 && !oParams.aCols) {
+                    oParams.aCols = [];
+                    var iLength = Math.ceil(12 / oParams.iMultiCols);
+                    oParams.aCols[0] =  Math.floor(iLength * 0.3);
+                    oParams.aCols[1] =  iLength - oParams.aCols[0];
+                }
+
+                if (!oParams.bMultiCols || (oParams.iColsLength > 1 && oParams.index % oParams.iColsLength == 0)) {
+                    form += '<div class="form-group">';
+                }
+
+                form += this.labelCreate(k.title, {"class": "col-sm-" + oParams.aCols[0] + " control-label"});
+                form += '<div class="col-sm-'+ oParams.aCols[1] + '">';
+
+                // 使用函数
+                try {
+                    form += this[k.edit.type + "Create"](k.edit);
+                } catch (e) {
+                    console.info(e);
+                    form += this["inputCreate"](k.edit);
+                }
+
+                form += '</div>';
+
+                if (!oParams.bMultiCols || (oParams.iColsLength > 1 && oParams.index % oParams.iColsLength == (oParams.iColsLength - 1))) {
+                    form += '</div>';
+                }
+
+                oParams.index ++;
+            }
+
+            return form;
+        },
+
+        // 初始化表单信息
+        initForm: function(select, data) {
+            var $fm = $(select);
+            objForm = $fm.get(0); // 获取表单对象
+            if (objForm != undefined) {
+                $fm.find('input[type=hidden]').val('');                                  // 隐藏按钮充值
+                $fm.find('input[type=checkbox]').each(function(){$(this).attr('checked', false);if ($(this).get(0)) $(this).get(0).checked = false;});                                                                             // 多选菜单
+                objForm.reset();                                                                // 表单重置
+                if (data != undefined) {
+                    for (var i in data) {
+                        // 多语言处理 以及多选配置
+                        if (typeof data[i]  ==  'object') {
+                            for (var x in data[i]){
+                                var key = i + '[' + x + ']';
+                                // 对语言
+                                if (objForm[key] != undefined) {
+                                    objForm[key].value = data[i][x];
+                                } else {
+                                    // 多选按钮
+                                    if (parseInt(data[i][x]) > 0) {
+                                        $('input[type=checkbox][name=' + i + '\\[\\]][value=' + data[i][x] + ']').attr('checked', true).each(function(){this.checked=true});
+                                    }
+                                }
+                            }
+                        }
+
+                        // 其他除密码的以外的数据
+                        if (objForm[i] != undefined && objForm[i].type != "password") {
+                            var obj = $(objForm[i]), tmp = data[i];
+                            // 时间处理
+                            if (obj.hasClass('time-format')) {
+                                tmp = timeFormat(parseInt(tmp), obj.attr('time-format') ? obj.attr('time-format') : "yyyy-MM-dd hh:mm:ss");
+                            }
+                            objForm[i].value = tmp;
+                        }
+                    }
+                }
+            }
+        },
+
+        dateCreate: function (params) {
+            return '<div class="input-group bootstrap-datepicker"> \
+                <input class="form-control date-picker me-date"  type="text" ' + this.handleParams(params) + '/> \
+                <span class="input-group-addon"><i class="fa fa-calendar bigger-110"></i></span> \
+                </div>';
+        },
+
+        timeCreate: function (params) {
+            return '<div class="input-group bootstrap-timepicker"> \
+                <input type="text" class="form-control time-picker" ' + this.handleParams(params) + '/> \
+                <span class="input-group-addon"><i class="fa fa-clock-o bigger-110"></i></span> \
+                </div>';
+        },
+
+        // 添加时间
+        dateTimeCreate: function (params) {
+            return '<div class="input-group bootstrap-datetimepicker"> \
+                <input type="text" class="form-control datetime-picker" ' + this.handleParams(params) + '/> \
+                <span class="input-group-addon"><i class="fa fa-clock-o bigger-110"></i></span> \
+                </div>';
+        },
+
+        // 时间段
+        timeRangeCreate: function (params) {
+            return '<div class="input-daterange input-group"> \
+                <input type="text" class="input-sm form-control" name="start" /> \
+                <span class="input-group-addon"><i class="fa fa-exchange"></i></span> \
+                <input type="text" class="input-sm form-control" name="end" /> \
+            </div>';
+        },
+
+        // 添加时间段
+        dateRangeCreate: function (params) {
+            return '<div class="input-group"> \
+                <span class="input-group-addon"><i class="fa fa-calendar bigger-110"></i></span> \
+                <input class="form-control daterange-picker me-daterange" type="text" ' + this.handleParams(params) + ' /> \
+            </div>';
         }
     });
 
