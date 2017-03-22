@@ -99,7 +99,7 @@
             this.action = "init";
             this.table = $(this.options.sTable).DataTable(this.options.table);	// 初始化主要表格
 
-            var self = this;this.CreateForm();
+            var self = this;this.initRender();
 
             // 判断初始化处理(搜索添加位置)
             if (this.options.sSearchType == 'middle') {
@@ -113,10 +113,10 @@
             }
 
             // 新增、修改、删除、查看、删除全部、保存、刷新、导出
-            $('.me-table-insert').click(function(evt){evt.preventDefault();self.create();});
-            $(document).on('click', '.me-table-edit', function(evt){evt.preventDefault();self.update($(this).attr('table-data'))});
-            $(document).on('click', '.me-table-del', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'))});
-            $(document).on('click', '.me-table-view', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'))});
+            $('.me-table-create').click(function(evt){evt.preventDefault();self.create();});
+            $(document).on('click', '.me-table-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'))});
+            $(document).on('click', '.me-table-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'))});
+            $(document).on('click', '.me-table-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'))});
             $('.me-table-delete').click(function(evt){evt.preventDefault();self.deleteAll();});
             $('.me-table-save').click(function(evt){evt.preventDefault();self.save();});
             $('.me-table-reload').click(function(evt){evt.preventDefault();self.search();});
@@ -132,10 +132,10 @@
                 // 初始化详情表格
                 if (this.bHandleDetails) this.details = $(this.oDetails.sTable).DataTable(this.oDetails.oTableOptions);
                 // 新增、查看、编辑、删除
-                $('.me-table-insert-detail').click(function(evt){evt.preventDefault();self.create(true);});
-                $(document).on('click', '.me-table-view-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'), true)});
-                $(document).on('click', '.me-table-edit-detail', function(evt){evt.preventDefault();self.update($(this).attr('table-data'), true)});
-                $(document).on('click', '.me-table-del-detail', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'), true)});
+                $('.me-table-details-create').click(function(evt){evt.preventDefault();self.create(true);});
+                $(document).on('click', '.me-table-details-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-details-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-details-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'), true)});
                 // 详情选择
                 $(self.options.sTable + ' tbody').on('click', self.oDetails.sClickSelect, function(){
                     var tr = $(this).closest('tr'),row = self.table.row(tr);
@@ -411,9 +411,9 @@
                 aTargets = [];
 
             // 处理生成表单
-            this.tableOptions.aoColumns.forEach(function(k, v) {
+            this.options.table.aoColumns.forEach(function(k, v) {
                 if (k.bViews !== false) views += createViewTr(k.title, k.data, v, self.options.oViewTable);// 查看详情信息
-                if (k.edit != undefined) form += createForm(k, self.options.oEditFormParams);	// 编辑表单信息
+                if (k.edit != undefined) form += meTables.formCreate(k, self.options.editFormParams);	// 编辑表单信息
                 if (k.search != undefined) self.options.sSearchHtml += createSearchForm(k, v);  // 搜索信息
                 if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
                 if (k.isHide) aTargets.push(v);													// 是否隐藏
@@ -459,22 +459,22 @@
                 }
             }
 
-            if (self.options.oEditFormParams.bMultiCols && empty(self.options.oEditFormParams.modalClass)) {
-                self.options.oEditFormParams.modalClass = "bs-example-modal-lg";
-                self.options.oEditFormParams.modalDialogClass = "modal-lg";
+            if (self.options.editFormParams.bMultiCols && meTables.empty(self.options.editFormParams.modalClass)) {
+                self.options.editFormParams.modalClass = "bs-example-modal-lg";
+                self.options.editFormParams.modalDialogClass = "modal-lg";
             }
 
-            if (self.options.oEditFormParams.bMultiCols && self.options.oEditFormParams.index % self.options.oEditFormParams.iCols != (self.options.oEditFormParams.iCols - 1)) {
+            if (self.options.editFormParams.bMultiCols && self.options.editFormParams.index % self.options.editFormParams.iCols != (self.options.editFormParams.iCols - 1)) {
                 form += '</div>';
             }
 
             // 生成HTML
-            var Modal = createModal({
-                    "params": {"id":"myModal"},
+            this.data.sUpdateModel = createModal({
+                    "params": {"id": self.options.sModel},
                     "html":   form,
                     "bClass": "me-table-save",
-                    "modalClass": self.options.oEditFormParams.modalClass,
-                    "modalDialogClass": self.options.oEditFormParams.modalDialogClass
+                    "modalClass": self.options.editFormParams.modalClass,
+                    "modalDialogClass": self.options.editFormParams.modalDialogClass
                 },
                 {
                     "params": {"id":"data-info"}, "html":views
@@ -492,7 +492,7 @@
 
                 // 添加详情输入框
                 Modal += createModal({
-                        "params": {"id":"myDetailModal"},
+                        "params": {"id": self.options.sModel},
                         "html":	  form,
                         "bClass": "me-table-save"},
                     {
@@ -501,35 +501,36 @@
                     });
             }
 
-            // 处理表格配置
-            if (aOrders.length > 0) { // 排序
-                this.tableOptions.order = aOrders;
+            // 添加处理表格排序配置
+            if (aOrders.length > 0) {
+                this.options.table.order = aOrders;
             }
 
-            // 隐藏字段
+            // 添加处理表格隐藏字段
             if (aTargets.length > 0) {
-                if (this.tableOptions.columnDefs) {
-                    this.tableOptions.columnDefs.push({"targets":aTargets, "visible":false});
+                if (this.options.table.columnDefs) {
+                    this.options.table.columnDefs.push({"targets": aTargets, "visible": false});
                 } else {
-                    this.tableOptions.columnDefs = [{"targets":aTargets, "visible":false}];
+                    this.options.table.columnDefs = [{"targets": aTargets, "visible": false}];
                 }
             }
 
             // 向页面添加HTML
-            $("body").append(Modal);
+            $("body").append(this.data.sUpdateModel);
         },
 
         // 初始化表单信息
-        initForm: function() {
-            this.bDetail = isDetail;
-            // 显示之前的处理
-            if (typeof this.beforeShow == 'function' && ! this.beforeShow(data, isDetail)) return false;
+        initForm: function(data, detail) {
             layer.close(mixLoading);
+
+            // 显示之前的处理
+            if (typeof this.beforeShow == 'function' && ! this.beforeShow(data, detail)) return false;
+
             // 确定操作的表单和模型
             var f = this.options.sFormId, m = this.options.sModal;
 
             // 是否操作详情信息
-            if (isDetail) {
+            if (detail) {
                 f = this.oDetails.sFormId;
                 m = this.oDetails.sModal;
             } else {
@@ -659,6 +660,10 @@
             return "<input" + this.handleParams(params) + "/>";
         },
 
+        textCreate: function(params) {
+            return this.inputCreate(params);
+        },
+
         passwordCreate: function(params) {
             params.type = "password";
             return this.inputCreate(params);
@@ -702,7 +707,7 @@
                 if (o) {
                     html += '<div class="checkbox col-xs-12">' +
                             '<label>' +
-                                '<input type="checkbox" class="ace checkbox-all" />' +
+                                '<input type="checkbox" class="ace checkbox-all" onclick="var isChecked = $(this).prop(\'checked\');$(this).parent().parent().parent().find(\'input[type=checkbox]\').prop(\'checked\', isChecked);" />' +
                                 '<span class="lbl"> 选择全部 </span>' +
                             '</label>' +
                         '</div>';
@@ -749,6 +754,7 @@
 
         formCreate: function(k, oParams) {
             var form = '';
+            console.info(oParams);
             if (!oParams.index) oParams.index = 0;
 
             // 处理其他参数
@@ -775,6 +781,7 @@
                 form += '<div class="col-sm-'+ oParams.aCols[1] + '">';
 
                 // 使用函数
+                console.info(k.edit.type);
                 try {
                     form += this[k.edit.type + "Create"](k.edit);
                 } catch (e) {
@@ -894,13 +901,12 @@
             // 编辑表单信息
             form: {
                 "method": "post",
-                "id": "edit-form",
                 "class":  "form-horizontal",
                 "name":   "edit-form"
             },
 
             // 表单编辑其他信息
-            editFormOther: {				// 编辑表单配置
+            editFormParams: {				// 编辑表单配置
                 bMultiCols: false,          // 是否多列
                 iColsLength: 1,             // 几列
                 aCols: [3, 9],              // label 和 input 栅格化设置

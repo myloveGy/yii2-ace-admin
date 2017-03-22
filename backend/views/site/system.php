@@ -1,6 +1,24 @@
 <?php
 $this->title = 'Yii2 Admin 登录信息';
 ?>
+<p>
+    <button class="btn btn-white btn-success btn-bold me-table-create">
+        <i class="ace-icon fa fa-plus bigger-120 blue"></i>
+        添加
+    </button>
+    <button class="btn btn-white btn-warning btn-bold me-table-delete">
+        <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
+        删除
+    </button>
+    <button class="btn btn-white btn-info btn-bold me-hide">
+        <i class="ace-icon fa  fa-external-link bigger-120 orange"></i>
+        隐藏
+    </button>
+    <button class="btn btn-white btn-primary btn-bold orange2 me-table-reload">
+        <i class="ace-icon fa fa-refresh bigger-120 orange"></i>
+        刷新
+    </button>
+</p>
 <table class="table table-striped table-bordered table-hover" id="show-table"></table>
 <div class="row">
     <div class="col-xs-12 col-sm-12">
@@ -127,8 +145,8 @@ $this->title = 'Yii2 Admin 登录信息';
             "aoColumns":[
                 {"data": "id", "sName":"id", "title": "Id", "edit":{"type":"hidden"}, "search":{"type":"text"}, "defaultOrder": "desc"},
                 {"data": "pid", "sName":"pid", "title": "上级分类"},
-                {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"options":{"required":1, "rangelength":"[2, 50]"}}, "search":{"type":"text"}, "bSortable": false},
-                {"data": "icons", "sName":"icons", "title":"图标", "edit":{"options":{"rangelength":"[2, 50]"}}, "bSortable": false}
+                {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
+                {"data": "icons", "sName":"icons", "title":"图标", "edit":{"rangelength":"[2, 50]"}, "bSortable": false}
             ]
         }
     });
