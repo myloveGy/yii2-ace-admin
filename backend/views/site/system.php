@@ -6,7 +6,7 @@ $this->title = 'Yii2 Admin 登录信息';
         <i class="ace-icon fa fa-plus bigger-120 blue"></i>
         添加
     </button>
-    <button class="btn btn-white btn-warning btn-bold me-table-delete">
+    <button class="btn btn-white btn-warning btn-bold me-table-delete-all">
         <i class="ace-icon fa fa-trash-o bigger-120 orange"></i>
         删除
     </button>
@@ -20,6 +20,9 @@ $this->title = 'Yii2 Admin 登录信息';
     </button>
 </p>
 <table class="table table-striped table-bordered table-hover" id="show-table"></table>
+<div class="col-xs-12 hidden">
+    <table id="child-table" class="table table-striped table-bordered table-hover"></table>
+</div>
 <div class="row">
     <div class="col-xs-12 col-sm-12">
         <h4 class="blue">
@@ -133,30 +136,40 @@ $this->title = 'Yii2 Admin 登录信息';
 <?php $this->beginBlock('javascript'); ?>
 <script>
     var m = meTables({
-        title: 123,
+        title: "导航栏目信息",
         url: {
-            "search": "<?=\yii\helpers\Url::toRoute('menu/search')?>"
+            "search": "<?=\yii\helpers\Url::toRoute('china/search')?>"
         },
         params: {
-            "type": 1,
-            "love": "gongyan"
+            "pid": 0
         },
         table: {
             "aoColumns":[
-                {"data": "id", "sName":"id", "title": "Id", "edit":{"type":"hidden"}, "search":{"type":"text"}, "defaultOrder": "desc"},
-                {"data": "pid", "sName":"pid", "title": "上级分类"},
-                {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
-                {"data": "icons", "sName":"icons", "title":"图标", "edit":{"rangelength":"[2, 50]"}, "bSortable": false}
+                {"createdCell": function(td, data) {
+                    $(td).html(data + '<b class="arrow fa fa-angle-down pull-right"></b>');
+                }, "data": "id", "sName": "id", "class": "child-control", "title": "Id", "edit":{"type":"hidden"}, "search":{"type":"text"}, "defaultOrder": "desc"},
+                {"data": "pid", "sName": "pid", "title": "上级分类"},
+                {"data": "name", "sName": "name", "title":"名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
             ]
+        },
+        bChildTables: true,
+        childTables: {
+            url: {
+                "search": "<?=\yii\helpers\Url::toRoute('china/child')?>"
+            },
+            table: {
+                "aoColumns":[
+                    {"data": "id", "sName": "id", "title": "Id", "edit":{"type":"hidden"}, "search":{"type":"text"}, "defaultOrder": "desc"},
+                    {"data": "pid", "sName": "pid", "title": "上级分类"},
+                    {"data": "name", "sName": "name", "title":"名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
+                    meTables.fn.options.childTables.operations
+                ]
+            }
         }
     });
 
     $(function(){
         m.init();
     });
-//    console.info(mt, meTables);
-
-
-    console.info(mt.inArray(1, [1, 2, 3, 4]));
 </script>
 <?php $this->endBlock(); ?>

@@ -20,6 +20,20 @@
 
             // 先处理表格的回调函数
             var self = this;
+
+            // 操作按钮选项
+            this.options.operations =  {
+                isOpen: true,
+                width: "120px",
+                title: self.getLanguage("oOperation").sTitle,
+                defaultContent: "",
+                buttons: [
+                    {"title": self.getLanguage("oOperation").sView, "className": "btn-success", "cClass":"me-table-detail",  "icon":"fa-search-plus",  "sClass":"blue"},
+                    {"title": self.getLanguage("oOperation").sEdit, "className": "btn-info", "cClass":"me-table-update", "icon":"fa-pencil-square-o",  "sClass":"green"},
+                    {"title": self.getLanguage("oOperation").sDelete, "className": "btn-danger", "cClass":"me-table-delete", "icon":"fa-trash-o",  "sClass":"red"}
+                ]
+            };
+
             $.fn.dataTable.defaults['bFilter'] = true;
             this.options.table.fnServerData = function(sSource, aoData, fnCallback) {
                 var attributes = aoData[2].value.split(","),
@@ -61,32 +75,66 @@
             if (options !== undefined) this.extend({options: options});
             this.options.table.oLanguage = this.getLanguage("dataTables", "*");
             this.options.table.sAjaxSource = this.getUrl("search");
+            this.options.form["id"] = this.options.sFormId.replace("#", "");
 
-            // 详情信息
-            if (this.options.bDetail) {
-                this.options.details.table.oLanguage = this.options.table.oLanguage;
-                if (this.options.details.table.fnServerData == undefined) {
-                    this.options.details.table.fnServerData = function(sSource, aoData, fnCallback) {
-                        self.push(aoData, self.options.details.params);
-                        // ajax请求
-                        meTables.ajax({
-                            url: sSource,
-                            data: aoData,
-                            type: "post",
-                            dataType: "json"
-                        }).done(function (data) {
-                            if (data.errCode != 0) {
-                                return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
-                                    time: 2000,
-                                    icon: 5
-                                });
-                            }
+            // 判断添加数据(多选)
+            if (this.options.bCheckbox) {
+                this.options.table.aoColumns.unshift({
+                    "data": 	 null,
+                    "bSortable": false,
+                    "class": 	 "center",
+                    "title": 	 '<label class="position-relative"><input type="checkbox" class="ace" /><span class="lbl"></span></label>',
+                    "bViews":    false,
+                    "render": 	 function(data){
+                        return '<label class="position-relative"><input type="checkbox" value="' + data[self.options.pk] + '" class="ace" /><span class="lbl"></span></label>';
+                    }
+                })
+            }
 
-                            fnCallback(data.data);
-                            if (self.options.details.tableObject) self.options.details.tableObject.child(function () {
-                                return $(self.options.details.sTable).parent().html();
-                            }).show();
-                        });
+            // 判断添加数据(操作选项)
+            if (this.options.operations.isOpen) {
+                this.options.table.aoColumns.push({
+                    "data": 	 null,
+                    "bSortable": false,
+                    "title": this.options.operations.title,
+                    "width": this.options.operations.width,
+                    "createdCell": function(td, data, rowArr, row, col) {
+                        $(td).html(meTables.buttonsCreate(row, self.options.operations.buttons));
+                    }
+                })
+            }
+
+            // 处理子类信息
+            if (this.options.bChildTables) {
+                this.options.childTables.table.oLanguage = this.options.table.oLanguage;
+                if (!this.options.childTables.table.sAjaxSource) this.options.childTables.table.sAjaxSource = this.options.childTables.url.search;
+                if (this.options.childTables.table.fnServerData == undefined) {
+                    this.options.childTables.table.fnServerData = function(sSource, aoData, fnCallback) {
+                        if (self.data.childParams) {
+
+                            self.push(aoData, self.data.childParams);
+                            self.push(aoData, self.options.childTables.params);
+
+                            // ajax请求
+                            meTables.ajax({
+                                url: sSource,
+                                data: aoData,
+                                type: "post",
+                                dataType: "json"
+                            }).done(function (data) {
+                                if (data.errCode != 0) {
+                                    return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
+                                        time: 2000,
+                                        icon: 5
+                                    });
+                                }
+
+                                fnCallback(data.data);
+                                if (self.data.childObject) self.data.childObject.child(function () {
+                                    return $(self.options.childTables.sTable).parent().html();
+                                }).show();
+                            });
+                        }
                     }
                 }
             }
@@ -96,14 +144,16 @@
 
         // 初始化整个 meTables
         init: function (params) {
-            this.action = "init";
-            this.table = $(this.options.sTable).DataTable(this.options.table);	// 初始化主要表格
 
-            var self = this;this.initRender();
+            var self = this;
+            this.action = "init";
+            this.initRender();
+
+            this.table = $(this.options.sTable).DataTable(this.options.table);	// 初始化主要表格
 
             // 判断初始化处理(搜索添加位置)
             if (this.options.sSearchType == 'middle') {
-                $('#showTable_filter').html('<form action="post" id="searchForm">' + self.options.sSearchHtml + '</form>');
+                $('#showTable_filter').html('<form action="post" id="' + this.options.sSearchForm.replace("#", "") + '">' + self.options.sSearchHtml + '</form>');
                 $('input.me-search').on('blur', function () { self.table.draw();}); 						// 搜索事件
                 $('select.me-search').on('change', function () { self.table.draw();}); 						// 搜索事件
                 $('#showTable_wrapper div.row div.col-xs-6:first').removeClass('col-xs-6').addClass('col-xs-2').next().removeClass('col-xs-6').addClass('col-xs-10');	// 处理搜索信息
@@ -117,32 +167,51 @@
             $(document).on('click', '.me-table-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'))});
             $(document).on('click', '.me-table-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'))});
             $(document).on('click', '.me-table-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'))});
-            $('.me-table-delete').click(function(evt){evt.preventDefault();self.deleteAll();});
+            $('.me-table-delete-all').click(function(evt){evt.preventDefault();self.deleteAll();});
             $('.me-table-save').click(function(evt){evt.preventDefault();self.save();});
             $('.me-table-reload').click(function(evt){evt.preventDefault();self.search();});
             $('.me-table-export').click(function(evt){evt.preventDefault();self.export();});
 
             // 行选择
             $(document).on('click', self.options.sTable + ' th input:checkbox' , function(){
-                var that = this;$(this).closest('table').find('tr > td:first-child input:checkbox').each(function(){this.checked = that.checked;$(this).closest('tr').toggleClass('selected');});
+                var that = this;
+                $(this).closest('table').find('tr > td:first-child input:checkbox').each(function(){
+                    this.checked = that.checked;$(this).closest('tr').toggleClass('selected');
+                });
             });
 
-            // 判断是否开启详情处理
-            if (self.bHandleDetails) {
+            // 判断是否开启子类处理
+            if (self.options.bChildTables) {
+
                 // 初始化详情表格
-                if (this.bHandleDetails) this.details = $(this.oDetails.sTable).DataTable(this.oDetails.oTableOptions);
+                this.childTable = $(this.options.childTables.sTable).DataTable(this.options.childTables.table);
                 // 新增、查看、编辑、删除
-                $('.me-table-details-create').click(function(evt){evt.preventDefault();self.create(true);});
-                $(document).on('click', '.me-table-details-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'), true)});
-                $(document).on('click', '.me-table-details-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'), true)});
-                $(document).on('click', '.me-table-details-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'), true)});
+                $('.me-table-child-create').click(function(evt){evt.preventDefault();self.create(true);});
+                $(document).on('click', '.me-table-child-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-child-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-child-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'), true)});
+
                 // 详情选择
-                $(self.options.sTable + ' tbody').on('click', self.oDetails.sClickSelect, function(){
+                $(self.options.sTable + ' tbody').on('click', self.options.childTables.sClickSelect, function(){
                     var tr = $(this).closest('tr'),row = self.table.row(tr);
+                    console.info(tr, row);
                     // 处理已经打开的
-                    tr.siblings(tr).each(function(){ if (self.table.row($(this)).child.isShown()) self.table.row($(this)).child.hide();$(this).removeClass('shown');});
+                    tr.siblings(tr).each(function(){
+                        if (self.table.row($(this)).child.isShown()) {
+                            self.table.row($(this)).child.hide();$(this).removeClass('shown');
+                        }
+                    });
+
                     // 判断处理
-                    if (row.child.isShown()){row.child.hide();tr.removeClass('shown');}else{self.oDetailParams = row.data();self.oDetailObject = row;self.details.draw();tr.addClass('shown');}
+                    if (row.child.isShown()) {
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    } else {
+                        self.data.childParams = row.data();
+                        self.data.childObject = row;
+                        self.childTable.draw();
+                        tr.addClass('shown');
+                    }
                 });
             }
 
@@ -156,14 +225,17 @@
             }
 
             // 判断开启列宽拖拽
-            if (self.options.bColResize) $(self.options.sTable).colResizable();
+            // if (self.options.bColResize) $(self.options.sTable).colResizable();
 
             // 文件上传
-            if (!empty(self.options.aFileSelector) && self.options.aFileSelector.length > 0) {
+            if (!meTables.empty(self.options.aFileSelector) && self.options.aFileSelector.length > 0) {
                 for (var i in self.options.aFileSelector) {
-                    aceFileUpload(self.options.aFileSelector[i], self.options.sBaseUrl + self.options.aActionUrl.upload);
+                    aceFileUpload(self.options.aFileSelector[i], self.getUrl("upload"));
                 }
             }
+
+            // 执行处理
+            if (typeof params === "function") params();
 
             return this;
         },
@@ -176,19 +248,20 @@
         },
 
         // 数据新增
-        create: function(){
+        create: function(child){
             this.action = "create";
-            this.initForm(undefined, isDetail);
+            this.initForm(null, child);
         },
 
         // 数据修改
-        update: function () {
+        update: function (row, child) {
             this.action = "update";
-            this.initForm(isDetail ? this.details.data()[row] : this.table.data()[row], isDetail);
+            this.initForm(this.getData(row, child), child);
         },
 
         // 数据删除
-        delete: function() {
+        delete: function(row, child) {
+            var self = this;
             this.action = "delete";
             // 询问框
             layer.confirm(this.getLanguage("oDelete").confirm.replace("_LENGTH_", ""), {
@@ -198,24 +271,24 @@
                 icon: 0
                 // 确认删除
             }, function(){
-                self.save(isDetail ? self.details.data()[row] : self.table.data()[row]);
+                self.save(self.getData(row, child));
                 // 取消删除
             }, function(){
                 layer.msg(self.getLanguage("oDelete").cancelOperation, {time:800});
             });
+
         },
 
         // 删除全部数据
         deleteAll: function() {
             this.action = "deleteAll";
-            var self = this;
+            var self = this, data = [];
             // 数据添加
             $(this.options.sTable + " tbody input:checkbox:checked").each(function(){data.push($(this).val());});
 
             // 数据为空提醒
             if (data.length < 1)  {
-                layer.msg(self.getLanguage("oDelete").noSelect, {icon:5});
-                return false;
+                return layer.msg(self.getLanguage("oDelete").noSelect, {icon:5});
             }
 
             // 询问框
@@ -227,6 +300,7 @@
                 // 确认删除
             }, function(){
                 self.save({"ids":data.join(',')});
+                $(self.options.sTable + " input:checkbox:checked").prop("checked", false);
                 // 取消删除
             }, function(){
                 layer.msg(self.getLanguage("oDelete").cancelOperation, {time:800});
@@ -234,75 +308,63 @@
         },
 
         // 查看详情
-        detail: function(){
+        detail: function(row, child){
+            if (this.options.oLoading) return false;
             var self = this,
                 data = this.table.data()[row],
-                obj = this.tableOptions.aoColumns,
-                t = self.options.sTitle,
-                c = '.data-info-',
-                i = "#data-info";
-            if (isDetail) {
-                data = this.details.data()[row];
-                obj  = this.oDetails.oTableOptions.aoColumns;
+                obj = this.options.table.aoColumns,
+                t = self.options.title,
+                c = '.data-detail',
+                i = "#data-detail";
+            if (child) {
+                t += self.getLanguage("sInfo");
+                data = this.childTable.data()[row];
+                obj  = this.childTables.table.aoColumns;
                 t = '';
-                c += 'detail-';
-                i = "#data-info-detail";
+                c += '-child';
+                i += "-child";
             }
+
             // 处理的数据
-            if (data != undefined)
-            {
+            if (data != undefined) {
                 viewTable(obj, data, c, row);
                 // 弹出显示
-                this.options.iViewLoading = layer.open({
-                    type:		this.options.oViewLayerConfig.type,
-                    shade: 		this.options.oViewLayerConfig.shade,
-                    shadeClose: this.options.oViewLayerConfig.shadeClose,
-                    title: 		t + self.getLanguange("sInfo"),
-                    content: 	$(i), 			// 捕获的元素
-                    area:	 	this.options.oViewLayerConfig.area,
-                    cancel: 	function(index){layer.close(index);},
-                    end: 		function(){$('.views-info').html('');self.options.iViewLoading = 0;},
-                    maxmin: 	this.options.oViewLayerConfig.maxmin
+                this.options.oLoading = layer.open({
+                    type: this.options.oViewConfig.type,
+                    shade: this.options.oViewConfig.shade,
+                    shadeClose: this.options.oViewConfig.shadeClose,
+                    title: t + self.getLanguage("sInfo"),
+                    content: $(i), 			// 捕获的元素
+                    area: this.options.oViewConfig.area,
+                    cancel: function(index) {
+                        layer.close(index);
+                    },
+                    end: function(){
+                        $('.views-info').html('');
+                        self.options.oLoading = null;
+                    },
+                    maxmin: this.options.oViewConfig.maxmin
                 });
 
                 // 展开全屏(解决内容过多问题)
-                if (this.options.bViewFull) layer.full(this.options.iViewLoading)
+                if (this.options.bViewFull) layer.full(this.options.oLoading);
             }
         },
 
         save: function(data) {
-            // 初始化判断和数据处理
-            if (meTables.inArray(this.actionType, ["insert", "update", "delete", "deleteAll"])) {
-                // 初始化数据
-                var self     = this,
-                    sFormId  = this.options.sFormId,
-                    sBaseUrl = self.options.sBaseUrl + self.options.aActionUrl[self.actionType],
-                    sModal   = self.options.sModal;
-                // 详情处理
-                if (this.bDetail) {
-                    sFormId  = self.oDetails.sFormId;
-                    sBaseUrl = self.oDetails.sBaseUrl + self.oDetails.aActionUrl[self.actionType];
-                    sModal   = self.oDetails.sModal;
-                }
-
+            var self = this;
+            if (meTables.inArray(this.action, ["create", "update", "delete", "deleteAll"])) {
                 // 新增和修改验证数据、数据的处理
-                if (meTables.inArray(this.actionType, ["insert", "update"])) {
-                    if ($(sFormId).validate({
-                            errorElement: 'div',
-                            errorClass: 'help-block',
-                            focusInvalid: false,
-                            highlight: function (e) {
-                                $(e).closest('.form-group').removeClass('has-info').addClass('has-error');
-                            },
-                            success: function (e) {
-                                $(e).closest('.form-group').removeClass('has-error');//.addClass('has-info');
-                                $(e).remove();
-                            }
-                        }).form()) {
-                        data = $(sFormId).serializeArray();
+                if (meTables.inArray(this.action, ["create", "update"])) {
+                    console.info(this.options.sFormId, self.options.formValidate);
+                    if ($(this.options.sFormId).validate(self.options.formValidate).form()) {
+                        data = $(this.options.sFormId).serializeArray();
+                        data.push({"name": "actionType", "value": self.action});
                     } else {
                         return false;
                     }
+                } else {
+                    data["actionType"] = self.action;
                 }
 
                 // 数据验证
@@ -311,10 +373,10 @@
                     if (typeof self.beforeSave != 'function' || self.beforeSave(data)) {
                         // ajax提交数据
                         meTables.ajax({
-                            url:      sBaseUrl,
-                            type:     'POST',
-                            data:     data,
-                            dataType: 'json'
+                            url: self.getUrl(this.action),
+                            type: "POST",
+                            data: data,
+                            dataType: "json"
                         }).done(function(json){
                             layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
                             // 判断操作成功
@@ -322,23 +384,22 @@
                                 // 执行之后的数据处理
                                 if (typeof self.afterSave != 'function' || self.afterSave(json.data)) {
                                     self.table.draw(false);
-                                    if (self.actionType !== "delete") $(sModal).modal('hide');
-                                    self.actionType = "";
+                                    if (self.action !== "delete") $(self.options.sModal).modal('hide');
+                                    self.action = "save";
                                 }
                             }
                         });
-
-                        return false;
                     }
                 }
+            } else {
+                layer.msg(self.getLanguage("operationError"));
             }
 
-            layer.msg(self.language.meTables.operationError);
             return false;
         },
 
         // 数据导出
-        export: function(){
+        export: function() {
             this.action = "export";
             var self = this,
                 html = '<form action="' + this.getUrl("export") + '" target="_blank" method="POST" class="me-export" style="display:none">';
@@ -431,7 +492,10 @@
                         success: function(response) {
                             if (response.errCode != 0) return response.errMsg;
                         },
-                        error: self.ajaxFail
+                        error: function(e) {
+                            console.info(e);
+                            layer.msg(self.getLanguage("sServerError"), {icon: 5});
+                        }
                     };
 
                     // 继承修改配置参数
@@ -470,19 +534,19 @@
 
             // 生成HTML
             this.data.sUpdateModel = createModal({
-                    "params": {"id": self.options.sModel},
+                    "params": {"id": self.options.sModal.replace("#", "")},
                     "html":   form,
                     "bClass": "me-table-save",
                     "modalClass": self.options.editFormParams.modalClass,
                     "modalDialogClass": self.options.editFormParams.modalDialogClass
                 },
                 {
-                    "params": {"id":"data-info"}, "html":views
+                    "params": {"id":"data-detail"}, "html":views
                 });
 
             // 处理详情编辑信息
-            if (this.bHandleDetails) {
-                form  = '<form id="myDetailForm" class="form-horizontal" action="' + this.oDetails.sBaseUrl + '" name="myDetailForm" method="post" enctype="multipart/form-data"><fieldset>';
+            if (this.bChildTabls) {
+                form  = '<form id="myDetailForm" class="form-horizontal" action="' + this.getUrl("update") + '" name="myDetailForm" method="post" enctype="multipart/form-data"><fieldset>';
                 views = '<table class="table table-bordered table-striped table-detail">';
                 // 处理生成表单
                 this.oDetails.oTableOptions.aoColumns.forEach(function(k) {
@@ -492,11 +556,11 @@
 
                 // 添加详情输入框
                 Modal += createModal({
-                        "params": {"id": self.options.sModel},
+                        "params": {"id": self.options.childTables.sModel.replace("#", "")},
                         "html":	  form,
                         "bClass": "me-table-save"},
                     {
-                        "params": {"id":"data-info-detail"},
+                        "params": {"id":"data-detail-child"},
                         "html":   views
                     });
             }
@@ -520,27 +584,33 @@
         },
 
         // 初始化表单信息
-        initForm: function(data, detail) {
-            layer.close(mixLoading);
-
+        initForm: function(data, child) {
+            layer.close(this.options.oLoading);
             // 显示之前的处理
-            if (typeof this.beforeShow == 'function' && ! this.beforeShow(data, detail)) return false;
+            if (typeof this.beforeShowChild == 'function' && ! this.beforeShowChild(data, child)) return false;
 
             // 确定操作的表单和模型
-            var f = this.options.sFormId, m = this.options.sModal;
+            var f = this.options.sFormId, m = this.options.sModal, t = this.options.title;
 
             // 是否操作详情信息
-            if (detail) {
-                f = this.oDetails.sFormId;
-                m = this.oDetails.sModal;
-            } else {
-                $(m).find('h4').html(this.options.sTitle + (this.action == "create" ? this.getLanguage("sInsert") : this.getLanguage("sEdit")));
+            if (child) {
+                f = this.childTables.sFormId;
+                m = this.childTables.sModal;
+                t += this.getLanguage("sInfo");
             }
 
-            meTables.InitForm(f, data);					// 初始化表单
+            $(m).find('h4').html(t + this.getLanguage(this.action == "insert" ? "sInsert": "sEdit"));
+            meTables.initForm(f, data);
+
             // 显示之后的处理
-            if (typeof this.afterShow == 'function' && ! this.afterShow(data, isDetail)) return false;
+            if (typeof this.afterShow == 'function' && ! this.afterShow(data, child)) return false;
+
             $(m).modal({backdrop: "static"});   // 弹出信息
+        },
+
+        // 获取每行数据
+        getData: function(row, child) {
+            return child ? this.childTable.data()[row] :  this.table.data()[row];
         },
 
         // 获取语言配置信息
@@ -607,7 +677,7 @@
             return $.ajax(params).always(function () {
                 layer.close(mixLoading);
             }).fail(function () {
-                layer.msg(meTables().getLanguage("sServerError"), {icon: 5});
+                layer.msg(meTables.fn.getLanguage("sServerError"), {icon: 5});
             });
         },
 
@@ -708,7 +778,7 @@
                     html += '<div class="checkbox col-xs-12">' +
                             '<label>' +
                                 '<input type="checkbox" class="ace checkbox-all" onclick="var isChecked = $(this).prop(\'checked\');$(this).parent().parent().parent().find(\'input[type=checkbox]\').prop(\'checked\', isChecked);" />' +
-                                '<span class="lbl"> 选择全部 </span>' +
+                                '<span class="lbl"> ' + meTables.fn.getLanguage("sSelectAll") + ' </span>' +
                             '</label>' +
                         '</div>';
                 }
@@ -752,9 +822,22 @@
             return "<textarea" + this.handleParams(params) + ">" + html;
         },
 
+        buttonsCreate: function(index, data) {
+            var div1   = '<div class="hidden-sm hidden-xs btn-group">',
+                div2   = '<div class="hidden-md hidden-lg"><div class="inline position-relative"><button data-position="auto" data-toggle="dropdown" class="btn btn-minier btn-primary dropdown-toggle"><i class="ace-icon fa fa-cog icon-only bigger-110"></i></button><ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">';
+            // 添加按钮信息
+            if(data != undefined && typeof data == "object") {
+                for(var i in data) {
+                    div1 += ' <button class="btn ' + data[i]['className'] + ' '+  data[i]['cClass'] + ' btn-xs" table-data="' + index + '"><i class="ace-icon fa ' + data[i]["icon"] + ' bigger-120"></i> ' + (data[i]["button-title"] ? data[i]["button-title"] : '') + '</button> ';
+                    div2 += '<li><a title="' + data[i]['title'] + '" data-rel="tooltip" class="tooltip-info ' + data[i]['cClass'] + '" href="javascript:;" data-original-title="' + data[i]['title'] + '" table-data="' + index + '"><span class="' + data[i]['sClass'] + '"><i class="ace-icon fa ' + data[i]['icon'] + ' bigger-120"></i></span></a></li>';
+                }
+            }
+
+            return div1 + '</div>' + div2 + '</ul></div></div>';
+        },
+
         formCreate: function(k, oParams) {
             var form = '';
-            console.info(oParams);
             if (!oParams.index) oParams.index = 0;
 
             // 处理其他参数
@@ -781,7 +864,6 @@
                 form += '<div class="col-sm-'+ oParams.aCols[1] + '">';
 
                 // 使用函数
-                console.info(k.edit.type);
                 try {
                     form += this[k.edit.type + "Create"](k.edit);
                 } catch (e) {
@@ -886,7 +968,8 @@
         options: {
             title: "",// 表格的标题
             language: "zh-cn",      // 使用语言
-            sModal: "#table-model", // 编辑Modal选择器
+            pk: "id",		// 行内编辑pk索引值
+            sModal: "#table-modal", // 编辑Modal选择器
             sTable:  "#show-table", 	// 显示表格选择器
             sFormId: "#edit-form",		// 编辑表单选择器
             sMethod: "POST",			// 查询数据的请求方式
@@ -903,6 +986,20 @@
                 "method": "post",
                 "class":  "form-horizontal",
                 "name":   "edit-form"
+            },
+
+            // 编辑表单验证方式
+            formValidate: {
+                errorElement: 'div',
+                errorClass: 'help-block',
+                focusInvalid: false,
+                highlight: function (e) {
+                    $(e).closest('.form-group').removeClass('has-info').addClass('has-error');
+                },
+                success: function (e) {
+                    $(e).closest('.form-group').removeClass('has-error');//.addClass('has-info');
+                    $(e).remove();
+                }
             },
 
             // 表单编辑其他信息
@@ -932,7 +1029,6 @@
             // 行内编辑
             bInline: false,	// 是否开启行内编辑
             oInline: {},	// 行内编辑对象信息
-            pk: "id",		// 行内编辑pk索引值
 
             // 关于地址配置信息
             urlPrefix: "",
@@ -967,12 +1063,12 @@
                 // "order": [[1, "desc"]]       // 默认排序
             },
 
-            // 详情配置信息
-            bDetail: false, // 是否开启详情
-            details: {
-                sTable: "#detail-table",
-                sModal: "#detail-modal",
-                sFormId: "#detail-form",
+            // 字表格配置信息
+            bChildTables: false, // 是否开启
+            childTables: {
+                sTable: "#child-table",
+                sModal: "#child-modal",
+                sFormId: "#child-form",
                 urlPrefix: "", //self.options.sBaseUrl, // 详情编辑的统一前缀
                 urlSuffix: "",
                 url: {
@@ -981,7 +1077,7 @@
                     "update": "update",	// 修改
                     "delete": "delete" // 删除
                 },
-                sClickSelect: "td.details-control",
+                sClickSelect: "td.child-control",
                 table: 	{
                     "bPaginate": false,             // 不使用分页
                     "bLengthChange": false,         // 是否可以调整分页
@@ -997,7 +1093,9 @@
         data: {
             sSearchForm: "", // 搜索表单
             sUpdateModel: "",// 编辑表单Model
-            sInfoTable: ""   // 查看Table
+            sInfoTable: "",   // 查看Table,
+            childParams: null, // 子类表格参数
+            childObject: null  // 子类对象
         },
 
         // 语言配置
@@ -1012,6 +1110,7 @@
                         "sDelete": "删除"
                     },
 
+                    "sSelectAll": "选择全部",
                     "sInfo": "详情",
                     "sInsert": "新增",
                     "sEdit": "编辑",
@@ -1045,6 +1144,47 @@
                         "sPrevious": "上一页",
                         "sNext": 	 "下一页",
                         "sLast": 	 "尾页"
+                    }
+                }
+            }
+        }
+    });
+
+    meTables.fn.extend({
+        options: {
+            childTables: {
+                operations: {
+                    "data": null,
+                    "title": meTables.fn.getLanguage("oOperation").sTitle,
+                    "bSortable": false,
+                    "width": "120px",
+                    "createdCell": function (td, data, rowArr, row, col) {
+                        $(td).html(meTables.buttonsCreate(row, [
+                            {
+                                "data": row,
+                                "title": meTables.fn.getLanguage("oOperation").sView,
+                                "className": "btn-success",
+                                "cClass": "me-table-child-detail",
+                                "icon": "fa-search-plus",
+                                "sClass": "blue"
+                            },
+                            {
+                                "data": row,
+                                "title": meTables.fn.getLanguage("oOperation").sEdit,
+                                "className": "btn-info",
+                                "cClass": "me-table-child-update",
+                                "icon": "fa-pencil-square-o",
+                                "sClass": "green"
+                            },
+                            {
+                                "data": row,
+                                "title": meTables.fn.getLanguage("oOperation").sDelete,
+                                "className": "btn-danger",
+                                "cClass": "me-table-child-delete",
+                                "icon": "fa-trash-o",
+                                "sClass": "red"
+                            }
+                        ]));
                     }
                 }
             }
