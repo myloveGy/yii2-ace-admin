@@ -187,6 +187,7 @@
                 this.childTable = $(this.options.childTables.sTable).DataTable(this.options.childTables.table);
                 // 新增、查看、编辑、删除
                 $('.me-table-child-create').click(function(evt){evt.preventDefault();self.create(true);});
+                $('.me-table-child-save').click(function(evt){evt.preventDefault();self.save(null, true);});
                 $(document).on('click', '.me-table-child-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'), true)});
                 $(document).on('click', '.me-table-child-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'), true)});
                 $(document).on('click', '.me-table-child-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'), true)});
@@ -256,7 +257,7 @@
         // 数据修改
         update: function (row, child) {
             this.action = "update";
-            this.initForm(this.getData(row, child), child);
+            this.initForm(child ? this.childTable.data()[row] : this.table.data()[row], child);
         },
 
         // 数据删除
@@ -271,7 +272,7 @@
                 icon: 0
                 // 确认删除
             }, function(){
-                self.save(self.getData(row, child));
+                self.save(child ? this.childTable.data()[row] : this.table.data()[row], child);
                 // 取消删除
             }, function(){
                 layer.msg(self.getLanguage("oDelete").cancelOperation, {time:800});
@@ -351,20 +352,22 @@
             }
         },
 
-        save: function(data) {
+        save: function(data, child) {
             var self = this;
             if (meTables.inArray(this.action, ["create", "update", "delete", "deleteAll"])) {
+                var f = this.options.sFormId, u = this.getUrl(this.action), m = this.options.sModal;
+                if (child) {
+                    f = this.options.childTables.sFormId;
+                    u = this.options.childTables.url[this.action];
+                    m = this.options.childTables.sModal;
+                }
                 // 新增和修改验证数据、数据的处理
                 if (meTables.inArray(this.action, ["create", "update"])) {
-                    console.info(this.options.sFormId, self.options.formValidate);
-                    if ($(this.options.sFormId).validate(self.options.formValidate).form()) {
-                        data = $(this.options.sFormId).serializeArray();
-                        data.push({"name": "actionType", "value": self.action});
+                    if ($(f).validate(self.options.formValidate).form()) {
+                        data = $(f).serializeArray();
                     } else {
                         return false;
                     }
-                } else {
-                    data["actionType"] = self.action;
                 }
 
                 // 数据验证
@@ -373,7 +376,7 @@
                     if (typeof self.beforeSave != 'function' || self.beforeSave(data)) {
                         // ajax提交数据
                         meTables.ajax({
-                            url: self.getUrl(this.action),
+                            url: u,
                             type: "POST",
                             data: data,
                             dataType: "json"
@@ -383,8 +386,8 @@
                             if (json.errCode == 0) {
                                 // 执行之后的数据处理
                                 if (typeof self.afterSave != 'function' || self.afterSave(json.data)) {
-                                    self.table.draw(false);
-                                    if (self.action !== "delete") $(self.options.sModal).modal('hide');
+                                    child ? self.table.draw() : self.childTable.draw();
+                                    if (self.action !== "delete") $(m).modal('hide');
                                     self.action = "save";
                                 }
                             }
@@ -475,7 +478,7 @@
             this.options.table.aoColumns.forEach(function(k, v) {
                 if (k.bViews !== false) views += meTables.createViewTr(k.title, k.data, v, self.options.detailTable);// 查看详情信息
                 if (k.edit != undefined) form += meTables.formCreate(k, self.options.editFormParams);	// 编辑表单信息
-                if (k.search != undefined) self.options.sSearchHtml += createSearchForm(k, v);  // 搜索信息
+                if (k.search != undefined) self.options.sSearchHtml += meTables.searchFormCreate(k, v);  // 搜索信息
                 if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
                 if (k.isHide) aTargets.push(v);													// 是否隐藏
 
@@ -505,22 +508,21 @@
             });
 
             // 判断添加行内编辑信息
-            if (self.options.bEditTable)
-            {
-                self.tableOptions["fnDrawCallback"] = function() {
+            if (self.options.bEditTable) {
+                // self.tableOptions["fnDrawCallback"] = function() {
                     for (var key in self.options.oEditTable) {
                         $(self.options.sTable + " tbody tr td.edit-" + key).each(function(){
                             var data = self.table.row($(this).closest('tr')).data(), mv = {};
                             // 判断存在重新赋值
                             if (data){
                                 mv['value'] = data[key];
-                                mv['pk']    = data[self.options.sEditPk];
+                                mv['pk']    = data[self.options.pk];
                             }
 
                             $(this).editable($.extend(self.options.oEditTable[key], mv))
                         });
                     }
-                }
+                // }
             }
 
             if (self.options.editFormParams.bMultiCols && meTables.empty(self.options.editFormParams.modalClass)) {
@@ -533,7 +535,7 @@
             }
 
             // 生成HTML
-            this.data.sUpdateModel = createModal({
+            this.data.sUpdateModel = meTables.createModal({
                     "params": {"id": self.options.sModal.replace("#", "")},
                     "html":   form,
                     "bClass": "me-table-save",
@@ -546,7 +548,7 @@
 
             // 处理详情编辑信息
             if (this.options.bChildTables) {
-                form  = '<form id="myDetailForm" class="form-horizontal" action="' + this.getUrl("update") + '" name="myDetailForm" method="post" enctype="multipart/form-data"><fieldset>';
+                form  = '<form id="' + this.options.childTables.sFormId.replace("#", "") + '" class="form-horizontal" action="' + this.getUrl("update") + '" name="myDetailForm" method="post" enctype="multipart/form-data"><fieldset>';
                 views = '<table class="table table-bordered table-striped table-detail">';
                 // 处理生成表单
                 this.options.childTables.table.aoColumns.forEach(function(k, v) {
@@ -555,10 +557,10 @@
                 });
 
                 // 添加详情输入框
-                this.data.sUpdateModel += createModal({
+                this.data.sUpdateModel += meTables.createModal({
                         "params": {"id": self.options.childTables.sModal.replace("#", "")},
                         "html":	  form,
-                        "bClass": "me-table-save"},
+                        "bClass": "me-table-child-save"},
                     {
                         "params": {"id":"data-detail-child"},
                         "html":   views
@@ -606,11 +608,6 @@
             if (typeof this.afterShow == 'function' && ! this.afterShow(data, child)) return false;
 
             $(m).modal({backdrop: "static"});   // 弹出信息
-        },
-
-        // 获取每行数据
-        getData: function(row, child) {
-            return child ? this.childTable.data()[row] :  this.table.data()[row];
         },
 
         // 获取语言配置信息
@@ -690,11 +687,6 @@
             }
 
             return false;
-        },
-
-        // 首字母大写
-        ucFirst: function (str) {
-            return str.substr(0, 1).toUpperCase() + str.substr(1);
         },
 
         // 是否为空
@@ -820,6 +812,20 @@
             html = params.value + "</textarea>";
             delete params.value;
             return "<textarea" + this.handleParams(params) + ">" + html;
+        },
+
+        searchFormCreate: function(k, v) {
+            k.search.name = k.sName;
+            k.search.vid = v;
+            k.search.class = "me-search";
+            if (k.search.type == "select") {k.value["All"] = "全部";}
+            try {
+                html = this[k.search.type + "Create"](k.search);
+            } catch (e) {
+                html = this.inputCreate(k.search);
+            }
+
+            return this.labelCreate(k.title + " : " + html) + ' ';
         },
 
         buttonsCreate: function(index, data) {
@@ -1104,9 +1110,8 @@
                 "bRetrieve": true,
                 "bDestroy": true,
                 // "processing": true,				    // 是否使用加载进度条
+                // "searching": false,
                 "sPaginationType":  "full_numbers"     // 分页样式
-                // "oLanguage": meTables().getLanguage("dataTables", "*")
-                // "oLanguage":        oTableLanguage,	// 语言配置
                 // "order": [[1, "desc"]]       // 默认排序
             },
 

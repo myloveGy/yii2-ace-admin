@@ -149,13 +149,16 @@ $this->title = 'Yii2 Admin 登录信息';
                     $(td).html(data + '<b class="arrow fa fa-angle-down pull-right"></b>');
                 }, "data": "id", "sName": "id", "class": "child-control", "title": "Id", "edit":{"type":"hidden"}, "search":{"type":"text"}, "defaultOrder": "desc"},
                 {"data": "pid", "sName": "pid", "title": "上级分类"},
-                {"data": "name", "sName": "name", "title":"名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
+                {"data": "name", "sName": "name", "title":"名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false}
             ]
         },
         bChildTables: true,
         childTables: {
             url: {
-                "search": "<?=\yii\helpers\Url::toRoute('china/child')?>"
+                "search": "<?=\yii\helpers\Url::toRoute('china/child')?>",
+                "create": "<?=\yii\helpers\Url::toRoute('china/create')?>",
+                "update": "<?=\yii\helpers\Url::toRoute('china/update')?>",
+                "delete": "<?=\yii\helpers\Url::toRoute('china/delete')?>"
             },
             table: {
                 "aoColumns":[

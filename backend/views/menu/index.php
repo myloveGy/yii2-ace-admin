@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $(td).html(aParents[data] ? aParents[data] : '顶级分类');
     }
 
+    console.time();
     var myTable = new MeTable({sTitle: "导航栏目信息", bColResize:false},{
         "aoColumns":[
             {"data": "id", "sName":"id", "title": "Id",  "edit":{"type":"hidden"}, "search":{"type":"text"}},
@@ -63,6 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
     // 表单初始化
     $(function(){
         myTable.init();
+        console.timeEnd();
     });
 </script>
 <?php $this->endBlock(); ?>

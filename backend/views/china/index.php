@@ -30,15 +30,17 @@ $this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' =>
 </p>
 <!--表格数据-->
 <table class="table table-striped table-bordered table-hover" id="showTable"></table>
+<table class="table table-striped table-bordered table-hover" id="show-table"></table>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
+    console.time();
     var myTable = new MeTable({
         sTitle: "地址信息",
         isCheckbox: false,
         oOperation: {
             isOpen: false
-        },
-        bColResize: true
+        }
+        // bColResize: true
     },{
         "aoColumns":[
 			{"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc", "edit": {"type": "text", "options": {"required":true,"number":true,}}},
@@ -46,6 +48,23 @@ $this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' =>
 			{"title": "父类ID", "data": "pid", "sName": "pid", "value": <?=json_encode($parent)?>, "edit": {"type": "text", "options": {"number":true}}, "search": {"type":"select"}},
         ]
     });
+
+    console.timeEnd();
+
+    console.time();
+    var m = meTables({
+        title: "地址信息",
+        bCheckbox: false,
+        table: {
+            "aoColumns":[
+                {"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc", "edit": {"type": "text", "options": {"required":true,"number":true,}}},
+                {"title": "地址名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"rangelength":"[2, 40]"}}, "search": {"type": "text"}, "bSortable": false},
+                {"title": "父类ID", "data": "pid", "sName": "pid", "value": <?=json_encode($parent)?>, "edit": {"type": "text", "options": {"number":true}}, "search": {"type":"select"}},
+            ]
+        }
+    });
+
+    console.timeEnd();
 
     /**
      * 显示的前置和后置操作
@@ -60,7 +79,13 @@ $this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' =>
       */
 
     $(function(){
+        console.time();
         myTable.init();
+        console.timeEnd();
+
+        console.time();
+        m.init();
+        console.timeEnd();
     })
 </script>
 <?php $this->endBlock(); ?>

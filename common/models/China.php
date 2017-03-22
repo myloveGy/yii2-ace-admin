@@ -31,7 +31,7 @@ class China extends \common\models\Model
             [['id'], 'required'],
             [['id', 'pid'], 'integer'],
             [['name'], 'string', 'max' => 40],
-            [['pid'], 'exist', 'skipOnError' => true, 'targetClass' => China::className(), 'targetAttribute' => ['Pid' => 'Id']],
+            // [['pid'], 'exist', 'skipOnError' => true, 'targetClass' => China::className(), 'targetAttribute' => ['Pid' => 'Id']],
         ];
     }
 
