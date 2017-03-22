@@ -314,20 +314,20 @@
                 data = this.table.data()[row],
                 obj = this.options.table.aoColumns,
                 t = self.options.title,
-                c = '.data-detail',
+                c = '.data-detail-',
                 i = "#data-detail";
             if (child) {
                 t += self.getLanguage("sInfo");
                 data = this.childTable.data()[row];
-                obj  = this.childTables.table.aoColumns;
+                obj  = this.options.childTables.table.aoColumns;
                 t = '';
-                c += '-child';
+                c += 'child-';
                 i += "-child";
             }
 
             // 处理的数据
             if (data != undefined) {
-                viewTable(obj, data, c, row);
+                meTables.viewTable(obj, data, c, row);
                 // 弹出显示
                 this.options.oLoading = layer.open({
                     type: this.options.oViewConfig.type,
@@ -473,7 +473,7 @@
 
             // 处理生成表单
             this.options.table.aoColumns.forEach(function(k, v) {
-                if (k.bViews !== false) views += createViewTr(k.title, k.data, v, self.options.oViewTable);// 查看详情信息
+                if (k.bViews !== false) views += meTables.createViewTr(k.title, k.data, v, self.options.detailTable);// 查看详情信息
                 if (k.edit != undefined) form += meTables.formCreate(k, self.options.editFormParams);	// 编辑表单信息
                 if (k.search != undefined) self.options.sSearchHtml += createSearchForm(k, v);  // 搜索信息
                 if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
@@ -545,18 +545,18 @@
                 });
 
             // 处理详情编辑信息
-            if (this.bChildTabls) {
+            if (this.options.bChildTables) {
                 form  = '<form id="myDetailForm" class="form-horizontal" action="' + this.getUrl("update") + '" name="myDetailForm" method="post" enctype="multipart/form-data"><fieldset>';
                 views = '<table class="table table-bordered table-striped table-detail">';
                 // 处理生成表单
-                this.oDetails.oTableOptions.aoColumns.forEach(function(k) {
-                    views += createViewTr(k.title, 'detail-' + k.data);// 查看详情信息
-                    if (k.edit != undefined) form += createForm(k);		// 编辑表单信息
+                this.options.childTables.table.aoColumns.forEach(function(k, v) {
+                    views += meTables.createViewTr(k.title, 'child-' + k.data, v, self.options.childTables.detailTable);// 查看详情信息
+                    if (k.edit != undefined) form += meTables.formCreate(k, self.options.childTables.editFormParams);		// 编辑表单信息
                 });
 
                 // 添加详情输入框
-                Modal += createModal({
-                        "params": {"id": self.options.childTables.sModel.replace("#", "")},
+                this.data.sUpdateModel += createModal({
+                        "params": {"id": self.options.childTables.sModal.replace("#", "")},
                         "html":	  form,
                         "bClass": "me-table-save"},
                     {
@@ -594,8 +594,8 @@
 
             // 是否操作详情信息
             if (child) {
-                f = this.childTables.sFormId;
-                m = this.childTables.sModal;
+                f = this.options.childTables.sFormId;
+                m = this.options.childTables.sModal;
                 t += this.getLanguage("sInfo");
             }
 
@@ -960,6 +960,53 @@
                 <span class="input-group-addon"><i class="fa fa-calendar bigger-110"></i></span> \
                 <input class="form-control daterange-picker me-daterange" type="text" ' + this.handleParams(params) + ' /> \
             </div>';
+        },
+
+        viewTable: function(object, data, tClass, row) {
+            // 循环处理显示信息
+            object.forEach(function(k) {
+                var tmpKey = k.data,tmpValue = data[tmpKey],dataInfo = $(tClass + tmpKey);
+                if (k.edit != undefined && k.edit.type == 'password') tmpValue = "******";
+                (k.createdCell != undefined && typeof k.createdCell == "function") ? k.createdCell(dataInfo, tmpValue, data, row, undefined) : dataInfo.html(tmpValue);
+            });
+        },
+
+        createViewTr: function(title, data, iKey,  aParams) {
+            html = '';
+            if (aParams && aParams.bMultiCols) {
+                if (aParams.iColsLength > 1 && iKey % aParams.iColsLength == 0) {
+                    html += '<tr>';
+                }
+
+                html += '<td width="25%">' + title + '</td><td class="views-info data-detail-' + data + '"></td>';
+
+                if (aParams.iColsLength > 1 && iKey % aParams.iColsLength == (aParams.iColsLength - 1)) {
+                    html += '</tr>';
+                }
+            } else {
+                html += '<tr><td width="25%">' + title + '</td><td class="views-info data-detail-' + data + '"></td></tr>';
+            }
+
+            return html;
+        },
+
+        createModal: function(oModal, oViews) {
+            return '<div class="isHide" '+ handleParams(oViews['params']) +'> ' + oViews['html'] +  ' </table></div> \
+            <div class="modal fade ' + (oModal["modalClass"] ? oModal["modalClass"] : "") + '" '+ handleParams(oModal['params']) +' tabindex="-1" role="dialog" > \
+                <div class="modal-dialog ' + (oModal["modalDialogClass"] ? oModal["modalDialogClass"] : "") + '" role="document"> \
+                    <div class="modal-content"> \
+                        <div class="modal-header"> \
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> \
+                            <h4 class="modal-title"> 编 辑 </h4> \
+                        </div> \
+                        <div class="modal-body">' + oModal['html'] + '</fieldset></form></div> \
+                        <div class="modal-footer"> \
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> \
+                            <button type="button" class="btn btn-primary btn-image ' + oModal['bClass'] + '">确定</button> \
+                        </div> \
+                    </div> \
+                </div> \
+            </div>';
         }
     });
 
@@ -1021,7 +1068,7 @@
                 area: ['50%', 'auto']
             },
 
-            oViewTable: {                   // 查看详情配置信息
+            detailTable: {                   // 查看详情配置信息
                 bMultiCols: false,
                 iColsLength: 1
             },
@@ -1085,6 +1132,19 @@
                     "bAutoWidth": false,
                     "searching": false,				// 搜索
                     "ordering": false			 	// 排序
+                },
+
+                detailTable: {                   // 查询详情配置信息
+                    bMultiCols: false,
+                    iColsLength: 1
+                },
+
+                editFormParams: {				// 编辑表单配置
+                    bMultiCols: false,          // 是否多列
+                    iColsLength: 1,             // 几列
+                    aCols: [3, 9],              // label 和 input 栅格化设置
+                    sModalClass: "",			// 弹出模块框配置
+                    sModalDialogClass: ""		// 弹出模块的class
                 }
             }
         },
