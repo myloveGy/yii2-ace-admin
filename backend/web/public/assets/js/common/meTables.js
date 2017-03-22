@@ -1251,7 +1251,7 @@
         }
     });
 
-    window.meTables = window.metables = window.mt = meTables;
+    window.meTables = window.mt = meTables;
 
     return meTables;
 })(window, jQuery);
