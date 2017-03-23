@@ -16,6 +16,7 @@
             // 初始化数据
             this.table = null;
             this.action = "construct";
+            var self = this;
             $.fn.dataTable.defaults['bFilter'] = true;
             this.options.table.fnServerData = function(sSource, aoData, fnCallback) {
                 var attributes = aoData[2].value.split(","),
@@ -30,20 +31,20 @@
                 }
 
                 // 添加排序字段信息
-                meTables.fn.push(aoData, {"orderBy": attributes[parseInt(aoData[mSort].value)]}, "params");
+                self.push(aoData, {"orderBy": attributes[parseInt(aoData[mSort].value)]}, "params");
 
                 // 添加其他字段信息
-                meTables.fn.push(aoData, meTables.fn.options.params, "params");
+                meTables.fn.push(aoData, self.options.params, "params");
 
                 // ajax请求
                 meTables.ajax({
                     url: sSource,
                     data: aoData,
-                    type: meTables.fn.options.sMethod,
+                    type: self.options.sMethod,
                     dataType: 'json'
                 }).done(function(data){
                     if (data.errCode != 0) {
-                        return layer.msg(meTables.fn.getLanguage("sAppearError") + data.errMsg, {
+                        return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
                             time:2000,
                             icon:5
                         });
@@ -68,7 +69,7 @@
                     "title": 	 '<label class="position-relative"><input type="checkbox" class="ace" /><span class="lbl"></span></label>',
                     "bViews":    false,
                     "render": 	 function(data){
-                        return '<label class="position-relative"><input type="checkbox" value="' + data[meTables.fn.options.pk] + '" class="ace" /><span class="lbl"></span></label>';
+                        return '<label class="position-relative"><input type="checkbox" value="' + data[self.options.pk] + '" class="ace" /><span class="lbl"></span></label>';
                     }
                 })
             }
@@ -78,10 +79,10 @@
                 this.options.table.aoColumns.push({
                     "data": 	 null,
                     "bSortable": false,
-                    "title": this.options.operations.title,
-                    "width": this.options.operations.width,
+                    "title": self.options.operations.title,
+                    "width": self.options.operations.width,
                     "createdCell": function(td, data, rowArr, row) {
-                        $(td).html(meTables.buttonsCreate(row, meTables.fn.options.operations.buttons));
+                        $(td).html(meTables.buttonsCreate(row, self.options.operations.buttons));
                     }
                 })
             }
@@ -92,10 +93,10 @@
                 if (!this.options.childTables.table.sAjaxSource) this.options.childTables.table.sAjaxSource = this.options.childTables.url.search;
                 if (this.options.childTables.table.fnServerData == undefined) {
                     this.options.childTables.table.fnServerData = function(sSource, aoData, fnCallback) {
-                        if (meTables.fn.data.childParams) {
+                        if (self.data.childParams) {
 
-                            meTables.fn.push(aoData, meTables.fn.data.childParams);
-                            meTables.fn.push(aoData, meTables.fn.options.childTables.params);
+                            self.push(aoData, self.data.childParams);
+                            self.push(aoData, self.options.childTables.params);
 
                             // ajax请求
                             meTables.ajax({
@@ -105,15 +106,15 @@
                                 dataType: "json"
                             }).done(function (data) {
                                 if (data.errCode != 0) {
-                                    return layer.msg(meTables.fn.getLanguage("sAppearError") + data.errMsg, {
+                                    return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
                                         time: 2000,
                                         icon: 5
                                     });
                                 }
 
                                 fnCallback(data.data);
-                                if (meTables.fn.data.childObject) meTables.fn.data.childObject.child(function () {
-                                    return $(meTables.fn.options.childTables.sTable).parent().html();
+                                if (meTables.fn.data.childObject) self.data.childObject.child(function () {
+                                    return $(self.options.childTables.sTable).parent().html();
                                 }).show();
                             });
                         }
@@ -128,15 +129,14 @@
         init: function (params) {
             this.action = "init";
             this.initRender();
-
             this.table = $(this.options.sTable).DataTable(this.options.table);	// 初始化主要表格
-
+            var self = this;
             // 判断初始化处理(搜索添加位置)
             if (this.options.sSearchType == 'middle') {
                 $(this.options.sTable + '_filter').html('<form action="post" id="' +
                     this.options.sSearchForm.replace("#", "") + '">' + this.options.sSearchHtml + '</form>');
-                $('input.me-search').on('blur', function () { meTables.fn.table.draw();}); 						// 搜索事件
-                $('select.me-search').on('change', function () { meTables.fn.table.draw();}); 						// 搜索事件
+                $('input.me-search').on('blur', function () { self.table.draw();}); 						// 搜索事件
+                $('select.me-search').on('change', function () { self.table.draw();}); 						// 搜索事件
                 $(this.options.sTable + '_wrapper div.row div.col-xs-6:first')
                     .removeClass('col-xs-6')
                     .addClass('col-xs-2')
@@ -149,14 +149,14 @@
             }
 
             // 新增、修改、删除、查看、删除全部、保存、刷新、导出
-            $('.me-table-create').click(function(evt){evt.preventDefault();meTables.fn.create();});
-            $(document).on('click', '.me-table-update', function(evt){evt.preventDefault();meTables.fn.update($(this).attr('table-data'))});
-            $(document).on('click', '.me-table-delete', function(evt){evt.preventDefault();meTables.fn.delete($(this).attr('table-data'))});
-            $(document).on('click', '.me-table-detail', function(evt){evt.preventDefault();meTables.fn.detail($(this).attr('table-data'))});
-            $('.me-table-delete-all').click(function(evt){evt.preventDefault();meTables.fn.deleteAll();});
-            $('.me-table-save').click(function(evt){evt.preventDefault();meTables.fn.save();});
-            $('.me-table-reload').click(function(evt){evt.preventDefault();meTables.fn.search(true);});
-            $('.me-table-export').click(function(evt){evt.preventDefault();meTables.fn.export();});
+            $('.me-table-create').click(function(evt){evt.preventDefault();self.create();});
+            $(document).on('click', '.me-table-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'))});
+            $(document).on('click', '.me-table-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'))});
+            $(document).on('click', '.me-table-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'))});
+            $('.me-table-delete-all').click(function(evt){evt.preventDefault();self.deleteAll();});
+            $('.me-table-save').click(function(evt){evt.preventDefault();self.save();});
+            $('.me-table-reload').click(function(evt){evt.preventDefault();self.search(true);});
+            $('.me-table-export').click(function(evt){evt.preventDefault();self.export();});
 
             // 行选择
             $(document).on('click', this.options.sTable + ' th input:checkbox' , function(){
@@ -172,19 +172,19 @@
                 // 初始化详情表格
                 this.childTable = $(this.options.childTables.sTable).DataTable(this.options.childTables.table);
                 // 新增、查看、编辑、删除
-                $('.me-table-child-create').click(function(evt){evt.preventDefault();meTables.fn.create(true);});
-                $('.me-table-child-save').click(function(evt){evt.preventDefault();meTables.fn.save(null, true);});
-                $(document).on('click', '.me-table-child-detail', function(evt){evt.preventDefault();meTables.fn.detail($(this).attr('table-data'), true)});
-                $(document).on('click', '.me-table-child-update', function(evt){evt.preventDefault();meTables.fn.update($(this).attr('table-data'), true)});
-                $(document).on('click', '.me-table-child-delete', function(evt){evt.preventDefault();meTables.fn.delete($(this).attr('table-data'), true)});
+                $('.me-table-child-create').click(function(evt){evt.preventDefault();self.create(true);});
+                $('.me-table-child-save').click(function(evt){evt.preventDefault();self.save(null, true);});
+                $(document).on('click', '.me-table-child-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-child-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-child-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'), true)});
 
                 // 详情选择
                 $(this.options.sTable + ' tbody').on('click', this.options.childTables.sClickSelect, function(){
-                    var tr = $(this).closest('tr'),row = meTables.fn.table.row(tr);
+                    var tr = $(this).closest('tr'),row = self.table.row(tr);
                     // 处理已经打开的
                     tr.siblings(tr).each(function(){
-                        if (meTables.fn.table.row($(this)).child.isShown()) {
-                            meTables.fn.table.row($(this)).child.hide();$(this).removeClass('shown');
+                        if (self.table.row($(this)).child.isShown()) {
+                            self.table.row($(this)).child.hide();$(this).removeClass('shown');
                         }
                     });
 
@@ -193,9 +193,9 @@
                         row.child.hide();
                         tr.removeClass('shown');
                     } else {
-                        meTables.fn.data.childParams = row.data();
-                        meTables.fn.data.childObject = row;
-                        meTables.fn.childTable.draw();
+                        self.data.childParams = row.data();
+                        self.data.childObject = row;
+                        self.childTable.draw();
                         tr.addClass('shown');
                     }
                 });
@@ -214,9 +214,9 @@
             // if (self.options.bColResize) $(self.options.sTable).colResizable();
 
             // 文件上传
-            if (!meTables.empty(meTables.fn.options.fileSelector) && meTables.fn.options.fileSelector.length > 0) {
-                for (var i in meTables.fn.options.fileSelector) {
-                    aceFileUpload(meTables.fn.options.fileSelector[i], self.getUrl("upload"));
+            if (!meTables.empty(self.options.fileSelector) && self.options.fileSelector.length > 0) {
+                for (var i in self.options.fileSelector) {
+                    aceFileUpload(self.options.fileSelector[i], self.getUrl("upload"));
                 }
             }
 
@@ -469,7 +469,7 @@
                 if (k.isHide) aTargets.push(v);													// 是否隐藏
 
                 // 判断行内编辑
-                if (k.editable != undefined) {
+                if (k.editable != undefined && self.options.editable !== false) {
                     if (self.options.editable == null) self.options.editable = {};
                     // 默认修改参数
                     self.options.editable[k.sName] = {

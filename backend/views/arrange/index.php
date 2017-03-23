@@ -51,9 +51,10 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
         aTimeColors = <?=\yii\helpers\Json::encode($timeColors)?>;
     aAdmins['0'] = '待定';
 
+    console.time();
     var m = mt({
         title: "管理员日程安排",
-        bEditable: true,
+        editable: true,
 //        oEditFormParams: {				// 编辑表单配置
 //            bMultiCols: true,          // 是否多列
 //            iColsLength: 2,             // 几列
@@ -167,7 +168,7 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
     mt.fn.extend({
         afterShow: function(data, child) {
 
-            var html = this.action == "insert" ? "" : data.desc;
+            var html = this.action == "create" ? "" : data.desc;
             $('#me-desc').html(html);
 
             return true;
@@ -188,6 +189,8 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
         $('.datetime-picker').datetimepicker({
             format: 'YYYY-MM-DD H:mm:s'
         });
+
+        console.timeEnd();
 
         function showErrorAlert (reason, detail) {
             var msg='';
