@@ -16,30 +16,13 @@
             // 初始化数据
             this.table = null;
             this.action = "construct";
-
-            // 先处理表格的回调函数
-            var self = this;
-
-            // 操作按钮选项
-            this.options.operations =  {
-                isOpen: true,
-                width: "120px",
-                title: self.getLanguage("oOperation").sTitle,
-                defaultContent: "",
-                buttons: [
-                    {"title": self.getLanguage("oOperation").sView, "className": "btn-success", "cClass":"me-table-detail",  "icon":"fa-search-plus",  "sClass":"blue"},
-                    {"title": self.getLanguage("oOperation").sEdit, "className": "btn-info", "cClass":"me-table-update", "icon":"fa-pencil-square-o",  "sClass":"green"},
-                    {"title": self.getLanguage("oOperation").sDelete, "className": "btn-danger", "cClass":"me-table-delete", "icon":"fa-trash-o",  "sClass":"red"}
-                ]
-            };
-
             $.fn.dataTable.defaults['bFilter'] = true;
             this.options.table.fnServerData = function(sSource, aoData, fnCallback) {
                 var attributes = aoData[2].value.split(","),
                     mSort 	   = (attributes.length + 1) * 5 + 2;
 
                 // 添加查询条件
-                var data = $(self.options.sSearchForm).serializeArray();
+                var data = $(meTables.fn.options.sSearchForm).serializeArray();
                 for (i in data) {
                     if (!meTables.empty(data[i]["value"]) && data[i]["value"] != "All") {
                         aoData.push({"name": "params[" + data[i]['name'] + "]", "value": data[i]["value"]});
@@ -47,20 +30,20 @@
                 }
 
                 // 添加排序字段信息
-                self.push(aoData, {"orderBy": attributes[parseInt(aoData[mSort].value)]}, "params");
+                meTables.fn.push(aoData, {"orderBy": attributes[parseInt(aoData[mSort].value)]}, "params");
 
                 // 添加其他字段信息
-                self.push(aoData, self.options.params, "params");
+                meTables.fn.push(aoData, meTables.fn.options.params, "params");
 
                 // ajax请求
                 meTables.ajax({
                     url: sSource,
                     data: aoData,
-                    type: self.options.sMethod,
+                    type: meTables.fn.options.sMethod,
                     dataType: 'json'
                 }).done(function(data){
                     if (data.errCode != 0) {
-                        return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
+                        return layer.msg(meTables.fn.getLanguage("sAppearError") + data.errMsg, {
                             time:2000,
                             icon:5
                         });
@@ -85,7 +68,7 @@
                     "title": 	 '<label class="position-relative"><input type="checkbox" class="ace" /><span class="lbl"></span></label>',
                     "bViews":    false,
                     "render": 	 function(data){
-                        return '<label class="position-relative"><input type="checkbox" value="' + data[self.options.pk] + '" class="ace" /><span class="lbl"></span></label>';
+                        return '<label class="position-relative"><input type="checkbox" value="' + data[meTables.fn.options.pk] + '" class="ace" /><span class="lbl"></span></label>';
                     }
                 })
             }
@@ -97,8 +80,8 @@
                     "bSortable": false,
                     "title": this.options.operations.title,
                     "width": this.options.operations.width,
-                    "createdCell": function(td, data, rowArr, row, col) {
-                        $(td).html(meTables.buttonsCreate(row, self.options.operations.buttons));
+                    "createdCell": function(td, data, rowArr, row) {
+                        $(td).html(meTables.buttonsCreate(row, meTables.fn.options.operations.buttons));
                     }
                 })
             }
@@ -109,10 +92,10 @@
                 if (!this.options.childTables.table.sAjaxSource) this.options.childTables.table.sAjaxSource = this.options.childTables.url.search;
                 if (this.options.childTables.table.fnServerData == undefined) {
                     this.options.childTables.table.fnServerData = function(sSource, aoData, fnCallback) {
-                        if (self.data.childParams) {
+                        if (meTables.fn.data.childParams) {
 
-                            self.push(aoData, self.data.childParams);
-                            self.push(aoData, self.options.childTables.params);
+                            meTables.fn.push(aoData, meTables.fn.data.childParams);
+                            meTables.fn.push(aoData, meTables.fn.options.childTables.params);
 
                             // ajax请求
                             meTables.ajax({
@@ -122,15 +105,15 @@
                                 dataType: "json"
                             }).done(function (data) {
                                 if (data.errCode != 0) {
-                                    return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
+                                    return layer.msg(meTables.fn.getLanguage("sAppearError") + data.errMsg, {
                                         time: 2000,
                                         icon: 5
                                     });
                                 }
 
                                 fnCallback(data.data);
-                                if (self.data.childObject) self.data.childObject.child(function () {
-                                    return $(self.options.childTables.sTable).parent().html();
+                                if (meTables.fn.data.childObject) meTables.fn.data.childObject.child(function () {
+                                    return $(meTables.fn.options.childTables.sTable).parent().html();
                                 }).show();
                             });
                         }
@@ -143,8 +126,6 @@
 
         // 初始化整个 meTables
         init: function (params) {
-
-            var self = this;
             this.action = "init";
             this.initRender();
 
@@ -152,27 +133,33 @@
 
             // 判断初始化处理(搜索添加位置)
             if (this.options.sSearchType == 'middle') {
-                $('#show-table_filter').html('<form action="post" id="' + this.options.sSearchForm.replace("#", "") + '">' + self.options.sSearchHtml + '</form>');
-                $('input.me-search').on('blur', function () { self.table.draw();}); 						// 搜索事件
-                $('select.me-search').on('change', function () { self.table.draw();}); 						// 搜索事件
-                $('#show-table_wrapper div.row div.col-xs-6:first').removeClass('col-xs-6').addClass('col-xs-2').next().removeClass('col-xs-6').addClass('col-xs-10');	// 处理搜索信息
+                $(this.options.sTable + '_filter').html('<form action="post" id="' +
+                    this.options.sSearchForm.replace("#", "") + '">' + this.options.sSearchHtml + '</form>');
+                $('input.me-search').on('blur', function () { meTables.fn.table.draw();}); 						// 搜索事件
+                $('select.me-search').on('change', function () { meTables.fn.table.draw();}); 						// 搜索事件
+                $(this.options.sTable + '_wrapper div.row div.col-xs-6:first')
+                    .removeClass('col-xs-6')
+                    .addClass('col-xs-2')
+                    .next()
+                    .removeClass('col-xs-6')
+                    .addClass('col-xs-10');	// 处理搜索信息
             } else {
                 // 添加搜索表单信息
-                $(this.options.sSearchForm).append(self.options.sSearchHtml);
+                $(this.options.sSearchForm).append(this.options.sSearchHtml);
             }
 
             // 新增、修改、删除、查看、删除全部、保存、刷新、导出
-            $('.me-table-create').click(function(evt){evt.preventDefault();self.create();});
-            $(document).on('click', '.me-table-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'))});
-            $(document).on('click', '.me-table-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'))});
-            $(document).on('click', '.me-table-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'))});
-            $('.me-table-delete-all').click(function(evt){evt.preventDefault();self.deleteAll();});
-            $('.me-table-save').click(function(evt){evt.preventDefault();self.save();});
-            $('.me-table-reload').click(function(evt){evt.preventDefault();self.search(true);});
-            $('.me-table-export').click(function(evt){evt.preventDefault();self.export();});
+            $('.me-table-create').click(function(evt){evt.preventDefault();meTables.fn.create();});
+            $(document).on('click', '.me-table-update', function(evt){evt.preventDefault();meTables.fn.update($(this).attr('table-data'))});
+            $(document).on('click', '.me-table-delete', function(evt){evt.preventDefault();meTables.fn.delete($(this).attr('table-data'))});
+            $(document).on('click', '.me-table-detail', function(evt){evt.preventDefault();meTables.fn.detail($(this).attr('table-data'))});
+            $('.me-table-delete-all').click(function(evt){evt.preventDefault();meTables.fn.deleteAll();});
+            $('.me-table-save').click(function(evt){evt.preventDefault();meTables.fn.save();});
+            $('.me-table-reload').click(function(evt){evt.preventDefault();meTables.fn.search(true);});
+            $('.me-table-export').click(function(evt){evt.preventDefault();meTables.fn.export();});
 
             // 行选择
-            $(document).on('click', self.options.sTable + ' th input:checkbox' , function(){
+            $(document).on('click', this.options.sTable + ' th input:checkbox' , function(){
                 var that = this;
                 $(this).closest('table').find('tr > td:first-child input:checkbox').each(function(){
                     this.checked = that.checked;$(this).closest('tr').toggleClass('selected');
@@ -180,25 +167,24 @@
             });
 
             // 判断是否开启子类处理
-            if (self.options.bChildTables) {
+            if (this.options.bChildTables) {
 
                 // 初始化详情表格
                 this.childTable = $(this.options.childTables.sTable).DataTable(this.options.childTables.table);
                 // 新增、查看、编辑、删除
-                $('.me-table-child-create').click(function(evt){evt.preventDefault();self.create(true);});
-                $('.me-table-child-save').click(function(evt){evt.preventDefault();self.save(null, true);});
-                $(document).on('click', '.me-table-child-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'), true)});
-                $(document).on('click', '.me-table-child-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'), true)});
-                $(document).on('click', '.me-table-child-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'), true)});
+                $('.me-table-child-create').click(function(evt){evt.preventDefault();meTables.fn.create(true);});
+                $('.me-table-child-save').click(function(evt){evt.preventDefault();meTables.fn.save(null, true);});
+                $(document).on('click', '.me-table-child-detail', function(evt){evt.preventDefault();meTables.fn.detail($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-child-update', function(evt){evt.preventDefault();meTables.fn.update($(this).attr('table-data'), true)});
+                $(document).on('click', '.me-table-child-delete', function(evt){evt.preventDefault();meTables.fn.delete($(this).attr('table-data'), true)});
 
                 // 详情选择
-                $(self.options.sTable + ' tbody').on('click', self.options.childTables.sClickSelect, function(){
-                    var tr = $(this).closest('tr'),row = self.table.row(tr);
-                    console.info(tr, row);
+                $(this.options.sTable + ' tbody').on('click', this.options.childTables.sClickSelect, function(){
+                    var tr = $(this).closest('tr'),row = meTables.fn.table.row(tr);
                     // 处理已经打开的
                     tr.siblings(tr).each(function(){
-                        if (self.table.row($(this)).child.isShown()) {
-                            self.table.row($(this)).child.hide();$(this).removeClass('shown');
+                        if (meTables.fn.table.row($(this)).child.isShown()) {
+                            meTables.fn.table.row($(this)).child.hide();$(this).removeClass('shown');
                         }
                     });
 
@@ -207,16 +193,16 @@
                         row.child.hide();
                         tr.removeClass('shown');
                     } else {
-                        self.data.childParams = row.data();
-                        self.data.childObject = row;
-                        self.childTable.draw();
+                        meTables.fn.data.childParams = row.data();
+                        meTables.fn.data.childObject = row;
+                        meTables.fn.childTable.draw();
                         tr.addClass('shown');
                     }
                 });
             }
 
             // 判断开启editTable
-            if (self.options.bEditable) {
+            if (this.options.bEditable) {
                 $.fn.editable.defaults.mode = 'inline';
                 $.fn.editableform.loading = "<div class='editableform-loading'><i class='ace-icon fa fa-spinner fa-spin fa-2x light-blue'></i></div>";
                 $.fn.editableform.buttons = '<button type="submit" class="btn btn-info editable-submit"><i class="ace-icon fa fa-check"></i></button>'+
@@ -228,9 +214,9 @@
             // if (self.options.bColResize) $(self.options.sTable).colResizable();
 
             // 文件上传
-            if (!meTables.empty(self.options.fileSelector) && self.options.fileSelector.length > 0) {
-                for (var i in self.options.fileSelector) {
-                    aceFileUpload(self.options.fileSelector[i], self.getUrl("upload"));
+            if (!meTables.empty(meTables.fn.options.fileSelector) && meTables.fn.options.fileSelector.length > 0) {
+                for (var i in meTables.fn.options.fileSelector) {
+                    aceFileUpload(meTables.fn.options.fileSelector[i], self.getUrl("upload"));
                 }
             }
 
@@ -264,9 +250,9 @@
             var self = this;
             this.action = "delete";
             // 询问框
-            layer.confirm(this.getLanguage("oDelete").confirm.replace("_LENGTH_", ""), {
-                title: self.getLanguage("oDelete").confirmOperation,
-                btn: [self.getLanguage("oDelete").determine, self.getLanguage("oDelete").cancel],
+            layer.confirm(this.getLanguage("confirm").replace("_LENGTH_", ""), {
+                title: self.getLanguage("confirmOperation"),
+                btn: [self.getLanguage("determine"), self.getLanguage("cancel")],
                 shift: 4,
                 icon: 0
                 // 确认删除
@@ -274,7 +260,7 @@
                 self.save(child ? this.childTable.data()[row] : this.table.data()[row], child);
                 // 取消删除
             }, function(){
-                layer.msg(self.getLanguage("oDelete").cancelOperation, {time:800});
+                layer.msg(self.getLanguage("cancelOperation"), {time:800});
             });
 
         },
@@ -288,13 +274,13 @@
 
             // 数据为空提醒
             if (data.length < 1)  {
-                return layer.msg(self.getLanguage("oDelete").noSelect, {icon:5});
+                return layer.msg(self.getLanguage("noSelect"), {icon:5});
             }
 
             // 询问框
-            layer.confirm(this.getLanguage("oDelete").confirm.replace("_LENGTH_", data.length), {
-                title: self.getLanguage("oDelete").confirmOperation,
-                btn: [self.getLanguage("oDelete").determine, self.getLanguage("oDelete").cancel],
+            layer.confirm(this.getLanguage("confirm").replace("_LENGTH_", data.length), {
+                title: self.getLanguage("confirmOperation"),
+                btn: [self.getLanguage("determine"), self.getLanguage("cancel")],
                 shift: 4,
                 icon: 0
                 // 确认删除
@@ -303,7 +289,7 @@
                 $(self.options.sTable + " input:checkbox:checked").prop("checked", false);
                 // 取消删除
             }, function(){
-                layer.msg(self.getLanguage("oDelete").cancelOperation, {time:800});
+                layer.msg(self.getLanguage("cancelOperation"), {time:800});
             });
         },
 
@@ -484,8 +470,9 @@
 
                 // 判断行内编辑
                 if (k.editable != undefined) {
+                    if (self.options.editable == null) self.options.editable = {};
                     // 默认修改参数
-                    self.data.editable[k.sName] = {
+                    self.options.editable[k.sName] = {
                         name: k.sName,
                         type: k.edit.type == "radio" ? "select" : k.edit.type,
                         source: k.value,
@@ -502,7 +489,7 @@
                     };
 
                     // 继承修改配置参数
-                    self.data.editable[k.sName] = self.extend(self.data.editable[k.sName], k.editable);
+                    self.options.editable[k.sName] = self.extend(self.options.editable[k.sName], k.editable);
                     k["class"] = "my-edit edit-" + k.sName;
                 }
             });
@@ -510,7 +497,7 @@
             // 判断添加行内编辑信息
             if (self.options.bEditable) {
                 self.options.table.fnDrawCallback = function() {
-                    for (var key in self.data.editable) {
+                    for (var key in self.options.editable) {
                         $(self.options.sTable + " tbody tr td.edit-" + key).each(function(){
                             var data = self.table.row($(this).closest('tr')).data(), mv = {};
                             // 判断存在重新赋值
@@ -519,7 +506,7 @@
                                 mv['pk']    = data[self.options.pk];
                             }
 
-                            $(this).editable(self.extend(self.data.editable[key], mv))
+                            $(this).editable(self.extend(self.options.editable[key], mv))
                         });
                     }
                 }
@@ -1002,12 +989,12 @@
                     <div class="modal-content"> \
                         <div class="modal-header"> \
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> \
-                            <h4 class="modal-title"> 编 辑 </h4> \
+                            <h4 class="modal-title"></h4> \
                         </div> \
                         <div class="modal-body">' + oModal['html'] + '</fieldset></form></div> \
                         <div class="modal-footer"> \
-                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> \
-                            <button type="button" class="btn btn-primary btn-image ' + oModal['bClass'] + '">确定</button> \
+                            <button type="button" class="btn btn-default" data-dismiss="modal">' + meTables.fn.getLanguage("sBtnCancel") + '</button> \
+                            <button type="button" class="btn btn-primary btn-image ' + oModal['bClass'] + '">' + meTables.fn.getLanguage("sBtnCancel") + '</button> \
                         </div> \
                     </div> \
                 </div> \
@@ -1078,10 +1065,6 @@
                 iColsLength: 1
             },
 
-            // 行内编辑
-            bInline: false,	// 是否开启行内编辑
-            oInline: {},	// 行内编辑对象信息
-
             // 关于地址配置信息
             urlPrefix: "",
             urlSuffix: "",
@@ -1124,7 +1107,7 @@
                 urlSuffix: "",
                 url: {
                     "search": "view",  // 查询
-                    "insert": "create", // 创建
+                    "create": "create", // 创建
                     "update": "update",	// 修改
                     "delete": "delete" // 删除
                 },
@@ -1153,8 +1136,7 @@
             },
 
             // 开启行处理
-            bEditable: false,
-            editable: {}
+            editable: null
         },
 
         // 数据信息
@@ -1163,8 +1145,7 @@
             sUpdateModel: "",// 编辑表单Model
             sInfoTable: "",   // 查看Table,
             childParams: null, // 子类表格参数
-            childObject: null,  // 子类对象,
-            editable: {}
+            childObject: null  // 子类对
         },
 
         // 语言配置
@@ -1172,29 +1153,25 @@
             "zh-cn": {
                 // 我的信息
                 meTables: {
-                    "oOperation": {
-                        "sTitle": "操作",
-                        "sView": "查看",
-                        "sEdit": "编辑",
-                        "sDelete": "删除"
-                    },
-
+                    "sOperation": "操作",
+                    "sBtnView": "查看",
+                    "sBtnEdit": "编辑",
+                    "sBtnDelete": "删除",
+                    "sBtnCancel": "取消",
+                    "sBtnSubmit": "确定",
                     "sSelectAll": "选择全部",
                     "sInfo": "详情",
-                    "sInsert": "新增",
-                    "sEdit": "编辑",
+                    "sCreate": "新增",
+                    "sUpdate": "编辑",
                     "sExport": "数据正在导出, 请稍候...",
                     "sAppearError": "出现错误",
                     "sServerError": "服务器繁忙,请稍候再试...",
-                    "oDelete": {
-                        "determine": "确定",
-                        "cancel": "取消",
-                        "confirm": "您确定需要删除这_LENGTH_条数据吗?",
-                        "confirmOperation": "确认操作",
-                        "cancelOperation": "您取消了删除操作!",
-                        "noSelect": "没有选择需要删除的数据"
-                    },
-
+                    "determine": "确定",
+                    "cancel": "取消",
+                    "confirm": "您确定需要删除这_LENGTH_条数据吗?",
+                    "confirmOperation": "确认操作",
+                    "cancelOperation": "您取消了删除操作!",
+                    "noSelect": "没有选择需要删除的数据",
                     "operationError": "操作有误"
                 },
 
@@ -1221,17 +1198,28 @@
 
     meTables.fn.extend({
         options: {
+            operations: {
+                isOpen: true,
+                width: "120px",
+                title: meTables.fn.getLanguage("sOperation"),
+                defaultContent: "",
+                buttons: [
+                    {"title": meTables.fn.getLanguage("sBtnView"), "className": "btn-success", "cClass":"me-table-detail",  "icon":"fa-search-plus",  "sClass":"blue"},
+                    {"title": meTables.fn.getLanguage("sBtnEdit"), "className": "btn-info", "cClass":"me-table-update", "icon":"fa-pencil-square-o",  "sClass":"green"},
+                    {"title": meTables.fn.getLanguage("sBtnDelete"), "className": "btn-danger", "cClass":"me-table-delete", "icon":"fa-trash-o",  "sClass":"red"}
+                ]
+            },
             childTables: {
                 operations: {
                     "data": null,
-                    "title": meTables.fn.getLanguage("oOperation").sTitle,
+                    "title": meTables.fn.getLanguage("sOperation"),
                     "bSortable": false,
                     "width": "120px",
                     "createdCell": function (td, data, rowArr, row, col) {
                         $(td).html(meTables.buttonsCreate(row, [
                             {
                                 "data": row,
-                                "title": meTables.fn.getLanguage("oOperation").sView,
+                                "title": meTables.fn.getLanguage("sBtnView"),
                                 "className": "btn-success",
                                 "cClass": "me-table-child-detail",
                                 "icon": "fa-search-plus",
@@ -1239,7 +1227,7 @@
                             },
                             {
                                 "data": row,
-                                "title": meTables.fn.getLanguage("oOperation").sEdit,
+                                "title": meTables.fn.getLanguage("sBtnEdit"),
                                 "className": "btn-info",
                                 "cClass": "me-table-child-update",
                                 "icon": "fa-pencil-square-o",
@@ -1247,7 +1235,7 @@
                             },
                             {
                                 "data": row,
-                                "title": meTables.fn.getLanguage("oOperation").sDelete,
+                                "title": meTables.fn.getLanguage("sBtnDelete"),
                                 "className": "btn-danger",
                                 "cClass": "me-table-child-delete",
                                 "icon": "fa-trash-o",
