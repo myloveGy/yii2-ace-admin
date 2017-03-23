@@ -16,7 +16,6 @@
             // 初始化数据
             this.table = null;
             this.action = "construct";
-            this.data = {};
 
             // 先处理表格的回调函数
             var self = this;
@@ -217,7 +216,7 @@
             }
 
             // 判断开启editTable
-            if (self.options.bEditTable) {
+            if (self.options.bEditable) {
                 $.fn.editable.defaults.mode = 'inline';
                 $.fn.editableform.loading = "<div class='editableform-loading'><i class='ace-icon fa fa-spinner fa-spin fa-2x light-blue'></i></div>";
                 $.fn.editableform.buttons = '<button type="submit" class="btn btn-info editable-submit"><i class="ace-icon fa fa-check"></i></button>'+
@@ -229,9 +228,9 @@
             // if (self.options.bColResize) $(self.options.sTable).colResizable();
 
             // 文件上传
-            if (!meTables.empty(self.options.aFileSelector) && self.options.aFileSelector.length > 0) {
-                for (var i in self.options.aFileSelector) {
-                    aceFileUpload(self.options.aFileSelector[i], self.getUrl("upload"));
+            if (!meTables.empty(self.options.fileSelector) && self.options.fileSelector.length > 0) {
+                for (var i in self.options.fileSelector) {
+                    aceFileUpload(self.options.fileSelector[i], self.getUrl("upload"));
                 }
             }
 
@@ -386,7 +385,7 @@
                             if (json.errCode == 0) {
                                 // 执行之后的数据处理
                                 if (typeof self.afterSave != 'function' || self.afterSave(json.data)) {
-                                    child ? self.table.draw(false) : self.childTable.draw(false);
+                                    child ? self.childTable.draw(false) : self.table.draw(false);
                                     if (self.action !== "delete") $(m).modal('hide');
                                     self.action = "save";
                                 }
@@ -419,7 +418,7 @@
             // 添加查询条件
             var value = $(self.options.sSearchForm).serializeArray();
             for (var i in value) {
-                if (empty(value[i]["value"]) || value[i]["value"] == "All") continue;
+                if (meTables.empty(value[i]["value"]) || value[i]["value"] == "All") continue;
                 html += '<input type="hidden" name="params[' + value[i]['name'] + ']" value="' + value[i]["value"] + '"/>';
             }
 
@@ -503,7 +502,7 @@
                     };
 
                     // 继承修改配置参数
-                    self.data.editable[k.sName] = $.extend(self.options.editable[k.sName], k.editTable);
+                    self.data.editable[k.sName] = self.extend(self.data.editable[k.sName], k.editable);
                     k["class"] = "my-edit edit-" + k.sName;
                 }
             });
@@ -511,7 +510,7 @@
             // 判断添加行内编辑信息
             if (self.options.bEditable) {
                 self.options.table.fnDrawCallback = function() {
-                    for (var key in self.options.editable) {
+                    for (var key in self.data.editable) {
                         $(self.options.sTable + " tbody tr td.edit-" + key).each(function(){
                             var data = self.table.row($(this).closest('tr')).data(), mv = {};
                             // 判断存在重新赋值
@@ -520,7 +519,7 @@
                                 mv['pk']    = data[self.options.pk];
                             }
 
-                            $(this).editable($.extend(self.data.editable[key], mv))
+                            $(this).editable(self.extend(self.data.editable[key], mv))
                         });
                     }
                 }
@@ -1032,7 +1031,7 @@
             sSearchType: "middle",			// 搜索表单位置
             sSearchForm: "#search-form",	// 搜索表单选择器
 
-            aFileSelector: [],				// 上传文件选择器
+            fileSelector: [],				// 上传文件选择器
 
             // 编辑表单信息
             form: {
@@ -1164,7 +1163,8 @@
             sUpdateModel: "",// 编辑表单Model
             sInfoTable: "",   // 查看Table,
             childParams: null, // 子类表格参数
-            childObject: null  // 子类对象
+            childObject: null,  // 子类对象,
+            editable: {}
         },
 
         // 语言配置

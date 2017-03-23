@@ -72,12 +72,13 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
                     "data": "id",
                     "sName": "id",
                     "edit": {"type": "hidden"},
-                    "search": {"type": "text"}
+                    "search": {"type": "text"},
+                    "defaultOrder": "desc"
                 },
                 {
                     "title": "事件标题",
                     "data": "title",
-                    "editTable": {
+                    "editable": {
                         validate: function (x) {
                             if (x.length > 100 || x.length < 2) return "长度必须为2到50字符";
                         }
@@ -116,7 +117,7 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
                     "edit": {"type": "radio", "default": 0, "required": true, "number": true},
                     "search": {"type": "select"},
                     "bSortable": false,
-                    "editTable": {},
+                    "editable": {},
                     "createdCell": function (td, data, rowArr, row, col) {
                         $(td).html(showSpan(aStatus, aColors, data));
                     }
@@ -165,10 +166,9 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
 
     mt.fn.extend({
         afterShow: function(data, child) {
-            if (child) {
-                var html = this.actionType == "insert" ? "" : data.desc;
-                $('#me-desc').html(html);
-            }
+
+            var html = this.action == "insert" ? "" : data.desc;
+            $('#me-desc').html(html);
 
             return true;
         },
