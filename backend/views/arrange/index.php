@@ -19,7 +19,7 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
 ?>
 <!--前面导航信息-->
 <p>
-    <button class="btn btn-white btn-success btn-bold me-table-insert">
+    <button class="btn btn-white btn-success btn-bold me-table-create">
         <i class="ace-icon fa fa-plus bigger-120 blue"></i>
         添加
     </button>
@@ -41,7 +41,7 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
     </button>
 </p>
 <!--表格数据-->
-<table class="table table-striped table-bordered table-hover" id="showTable"></table>
+<table class="table table-striped table-bordered table-hover" id="show-table"></table>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
@@ -51,9 +51,9 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
         aTimeColors = <?=\yii\helpers\Json::encode($timeColors)?>;
     aAdmins['0'] = '待定';
 
-    var myTable = new MeTable({
-        sTitle: "管理员日程安排",
-        bEditTable: true
+    var m = mt({
+        title: "管理员日程安排",
+        bEditable: true,
 //        oEditFormParams: {				// 编辑表单配置
 //            bMultiCols: true,          // 是否多列
 //            iColsLength: 2,             // 几列
@@ -65,131 +65,124 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
 //            bMultiCols: true,
 //            iColsLength: 2
 //        }
-    }, {
-        "aoColumns": [
-            {
-                "title": "id ",
-                "data": "id",
-                "sName": "id",
-                "edit": {"type": "hidden", "options": {}},
-                "search": {"type": "text"}
-            },
-            {
-                "title": "事件标题",
-                "data": "title",
-                "editTable": {
-                    validate: function (x) {
-                        if (x.length > 100 || x.length < 2) return "长度必须为2到50字符";
+        table: {
+            "aoColumns": [
+                {
+                    "title": "id ",
+                    "data": "id",
+                    "sName": "id",
+                    "edit": {"type": "hidden"},
+                    "search": {"type": "text"}
+                },
+                {
+                    "title": "事件标题",
+                    "data": "title",
+                    "editTable": {
+                        validate: function (x) {
+                            if (x.length > 100 || x.length < 2) return "长度必须为2到50字符";
+                        }
+                    },
+                    "sName": "title",
+                    "edit": {"type": "text", "required": true, "rangelength": "[2, 100]"},
+                    "search": {"type": "text"},
+                    "bSortable": false
+                },
+                {
+                    "title": "事件描述",
+                    "data": "desc",
+                    "sName": "desc",
+                    "edit": {"type": "div", "id": "me-desc", "class": "wysiwyg-editor", "rows": 5, "required": true, "rangelength": "[2, 255]"},
+                    "bSortable": false
+                },
+                {
+                    "title": "开始时间",
+                    "data": "start_at",
+                    "sName": "start_at",
+                    "edit": {"type": "dateTime", "required": true},
+                    "createdCell": dateTimeString
+                },
+                {
+                    "title": "结束时间",
+                    "data": "end_at",
+                    "sName": "end_at",
+                    "edit": {"type": "dateTime", "required": true, "class": "m-time"},
+                    "createdCell": dateTimeString
+                },
+                {
+                    "title": "日程状态",
+                    "data": "status",
+                    "sName": "status",
+                    "value": aStatus,
+                    "edit": {"type": "radio", "default": 0, "required": true, "number": true},
+                    "search": {"type": "select"},
+                    "bSortable": false,
+                    "editTable": {},
+                    "createdCell": function (td, data, rowArr, row, col) {
+                        $(td).html(showSpan(aStatus, aColors, data));
                     }
                 },
-                "sName": "title",
-                "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 100]"}},
-                "search": {"type": "text"},
-                "bSortable": false
-            },
-            {
-                "title": "事件描述",
-                "data": "desc",
-                "sName": "desc",
-                "edit": {"type": "div", "options": {"id": "me-desc", "class": "wysiwyg-editor", "rows": 5, "required": true, "rangelength": "[2, 255]"}},
-                "bSortable": false
-            },
-            {
-                "title": "开始时间",
-                "data": "start_at",
-                "sName": "start_at",
-                "edit": {"type": "datetime", "options": {"required": true}},
-                "createdCell": dateTimeString
-            },
-            {
-                "title": "结束时间",
-                "data": "end_at",
-                "sName": "end_at",
-                "edit": {"type": "datetime", "options": {"required": true, "class": "m-time"}},
-                "createdCell": dateTimeString
-            },
-            {
-                "title": "日程状态",
-                "data": "status",
-                "sName": "status",
-                "value": aStatus,
-                "edit": {"type": "radio", "default": 0, "options": {"required": true, "number": true}},
-                "search": {"type": "select"},
-                "bSortable": false,
-                "editTable": {},
-                "createdCell": function (td, data, rowArr, row, col) {
-                    $(td).html(showSpan(aStatus, aColors, data));
+                {
+                    "title": "时间状态",
+                    "data": "time_status",
+                    "sName": "time_status",
+                    "value": aTimeStatus,
+                    "edit": {"type": "radio", "default": 1, "required": true, "number": true},
+                    "search": {"type": "select"},
+                    "bSortable": false,
+                    "createdCell": function (td, data, rowArr, row, col) {
+                        $(td).html(showSpan(aTimeStatus, aTimeColors, data));
+                    }
+                },
+                {
+                    "title": "处理人",
+                    "data": "admin_id",
+                    "sName": "admin_id",
+                    "value": aAdmins,
+                    "edit": {"type": "select", "required": true, "number": true},
+                    "search": {"type": "select"},
+                    "createdCell": adminToString,
+                    "bSortable": false
+                },
+                {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell": dateTimeString},
+                {
+                    "title": "添加用户",
+                    "data": "created_id",
+                    "sName": "created_id",
+                    "bSortable": false,
+                    "createdCell": adminToString
+                },
+                {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": dateTimeString},
+                {
+                    "title": "修改用户",
+                    "data": "updated_id",
+                    "sName": "updated_id",
+                    "bSortable": false,
+                    "createdCell": adminToString
                 }
-            },
-            {
-                "title": "时间状态",
-                "data": "time_status",
-                "sName": "time_status",
-                "value": aTimeStatus,
-                "edit": {"type": "radio", "default": 1, "options": {"required": true, "number": true}},
-                "search": {"type": "select"},
-                "bSortable": false,
-                "createdCell": function (td, data, rowArr, row, col) {
-                    $(td).html(showSpan(aTimeStatus, aTimeColors, data));
-                }
-            },
-            {
-                "title": "处理人",
-                "data": "admin_id",
-                "sName": "admin_id",
-                "value": aAdmins,
-                "edit": {"type": "select", "options": {"required": true, "number": true}},
-                "search": {"type": "select"},
-                "createdCell": adminToString,
-                "bSortable": false
-            },
-            {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell": dateTimeString},
-            {
-                "title": "添加用户",
-                "data": "created_id",
-                "sName": "created_id",
-                "bSortable": false,
-                "createdCell": adminToString
-            },
-            {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": dateTimeString},
-            {
-                "title": "修改用户",
-                "data": "updated_id",
-                "sName": "updated_id",
-                "bSortable": false,
-                "createdCell": adminToString
-            }
-        ]
+            ]
+        }
     });
 
-    /**
-     * 显示的前置和后置操作
-     * myTable.beforeShow(object data, bool isDetail) return true 前置
-     * myTable.afterShow(object data, bool isDetail)  return true 后置
-     */
-    myTable.afterShow = function(data, isDetail) {
-        if ( ! isDetail) {
-            var html = this.actionType == "insert" ? "" : data.desc;
-            $('#me-desc').html(html);
-        }
-        return true;
-    };
+    mt.fn.extend({
+        afterShow: function(data, child) {
+            if (child) {
+                var html = this.actionType == "insert" ? "" : data.desc;
+                $('#me-desc').html(html);
+            }
 
-    /**
-     * 编辑的前置和后置操作
-     * myTable.beforeSave(object data) return true 前置
-     * myTable.afterSave(object data)  return true 后
-     */
-    myTable.beforeSave = function(data) {
-        if (this.actionType != 'delete' && this.actionType != 'deleteAll') {
-            data.push({"name": "desc", "value": $('#me-desc').html()}); //
-        }
-        return true;
-    };
+            return true;
+        },
 
+        beforeSave: function(data) {
+            if (this.action != 'delete' && this.action != 'deleteAll') {
+                data.push({"name": "desc", "value": $('#me-desc').html()});
+            }
+            return true;
+        }
+    });
 
     $(function(){
-        myTable.init();
+        m.init();
 
         // 时间选项
         $('.datetime-picker').datetimepicker({

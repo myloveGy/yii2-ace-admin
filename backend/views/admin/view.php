@@ -9,8 +9,6 @@ use backend\assets\AppAsset;
 
 AppAsset::loadTimeJavascript($this, 'datetime');
 $this->title = '管理员个人信息';
-
-
 $this->registerCssFile('@web/public/assets/css/bootstrap-editable.css', ['depends' => 'backend\assets\AppAsset']);
 $this->registerCssFile('@web/public/assets/css/jquery-ui.custom.min.css', ['depends' => 'backend\assets\AppAsset']);
 $this->registerCssFile('@web/public/assets/css/select2.css', ['depends' => 'backend\assets\AppAsset']);

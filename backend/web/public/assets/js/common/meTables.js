@@ -153,10 +153,10 @@
 
             // 判断初始化处理(搜索添加位置)
             if (this.options.sSearchType == 'middle') {
-                $('#showTable_filter').html('<form action="post" id="' + this.options.sSearchForm.replace("#", "") + '">' + self.options.sSearchHtml + '</form>');
+                $('#show-table_filter').html('<form action="post" id="' + this.options.sSearchForm.replace("#", "") + '">' + self.options.sSearchHtml + '</form>');
                 $('input.me-search').on('blur', function () { self.table.draw();}); 						// 搜索事件
                 $('select.me-search').on('change', function () { self.table.draw();}); 						// 搜索事件
-                $('#showTable_wrapper div.row div.col-xs-6:first').removeClass('col-xs-6').addClass('col-xs-2').next().removeClass('col-xs-6').addClass('col-xs-10');	// 处理搜索信息
+                $('#show-table_wrapper div.row div.col-xs-6:first').removeClass('col-xs-6').addClass('col-xs-2').next().removeClass('col-xs-6').addClass('col-xs-10');	// 处理搜索信息
             } else {
                 // 添加搜索表单信息
                 $(this.options.sSearchForm).append(self.options.sSearchHtml);
@@ -169,7 +169,7 @@
             $(document).on('click', '.me-table-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'))});
             $('.me-table-delete-all').click(function(evt){evt.preventDefault();self.deleteAll();});
             $('.me-table-save').click(function(evt){evt.preventDefault();self.save();});
-            $('.me-table-reload').click(function(evt){evt.preventDefault();self.search();});
+            $('.me-table-reload').click(function(evt){evt.preventDefault();self.search(true);});
             $('.me-table-export').click(function(evt){evt.preventDefault();self.export();});
 
             // 行选择
@@ -244,7 +244,7 @@
         // 搜索
         search: function(params){
             this.action = "search";
-            if (!params) params = true;
+            if (!params) params = false;
             this.table.draw(params);
         },
 
@@ -386,7 +386,7 @@
                             if (json.errCode == 0) {
                                 // 执行之后的数据处理
                                 if (typeof self.afterSave != 'function' || self.afterSave(json.data)) {
-                                    child ? self.table.draw() : self.childTable.draw();
+                                    child ? self.table.draw(false) : self.childTable.draw(false);
                                     if (self.action !== "delete") $(m).modal('hide');
                                     self.action = "save";
                                 }
@@ -425,6 +425,7 @@
 
             // 表单提交
             var $form = $(html);
+            $('body').append($form);
             var deferred = new $.Deferred,
                 temporary_iframe_id = 'temporary-iframe-'+(new Date()).getTime()+'-'+(parseInt(Math.random()*1000)),
                 temp_iframe = $('<iframe id="'+temporary_iframe_id+'" name="'+temporary_iframe_id+'" \
@@ -483,14 +484,14 @@
                 if (k.isHide) aTargets.push(v);													// 是否隐藏
 
                 // 判断行内编辑
-                if (k.editTable != undefined) {
+                if (k.editable != undefined) {
                     // 默认修改参数
-                    self.options.oEditTable[k.sName] = {
+                    self.data.editable[k.sName] = {
                         name: k.sName,
                         type: k.edit.type == "radio" ? "select" : k.edit.type,
                         source: k.value,
                         send: "always",
-                        url: self.options.aActionUrl.inline,
+                        url: self.getUrl("editable"),
                         title: k.title,
                         success: function(response) {
                             if (response.errCode != 0) return response.errMsg;
@@ -502,27 +503,27 @@
                     };
 
                     // 继承修改配置参数
-                    self.options.oEditTable[k.sName] = $.extend(self.options.oEditTable[k.sName], k.editTable);
+                    self.data.editable[k.sName] = $.extend(self.options.editable[k.sName], k.editTable);
                     k["class"] = "my-edit edit-" + k.sName;
                 }
             });
 
             // 判断添加行内编辑信息
-            if (self.options.bEditTable) {
-                // self.tableOptions["fnDrawCallback"] = function() {
-                    for (var key in self.options.oEditTable) {
+            if (self.options.bEditable) {
+                self.options.table.fnDrawCallback = function() {
+                    for (var key in self.options.editable) {
                         $(self.options.sTable + " tbody tr td.edit-" + key).each(function(){
                             var data = self.table.row($(this).closest('tr')).data(), mv = {};
                             // 判断存在重新赋值
-                            if (data){
+                            if (data) {
                                 mv['value'] = data[key];
                                 mv['pk']    = data[self.options.pk];
                             }
 
-                            $(this).editable($.extend(self.options.oEditTable[key], mv))
+                            $(this).editable($.extend(self.data.editable[key], mv))
                         });
                     }
-                // }
+                }
             }
 
             if (self.options.editFormParams.bMultiCols && meTables.empty(self.options.editFormParams.modalClass)) {
@@ -732,19 +733,18 @@
         },
 
         fileCreate: function(params) {
-            html = '<input type="hidden" name="' + params.name + '"/>';
-            params["id"] = params["id"] ? "file-input-" + params["id"] : "file-input-" + params.name;
-            if (params.fileName) params.name = params.fileName;
-            params.type = file;
-            return html + this.inputCreate(params);
+            var o = params.options;
+            delete params.options;
+            html = '<input type="hidden" '+ this.handleParams(params) +'/>';
+            o.type = "file";
+            return html + this.inputCreate(o);
         },
 
-        radioCreate: function(params) {
+        radioCreate: function(params, d) {
             html = "";
-            if (params.value && this.isObject(params.value)) {
+            if (d && this.isObject(d)) {
                 params['class'] = "ace valid";
-                var d = params.value, c = params.default;
-                delete params.value;
+                var c = params.default;
                 params = this.handleParams(params);
                 for (i in d) {
                     html += '<label class="line-height-1 blue"> ' +
@@ -757,11 +757,10 @@
             return html;
         },
 
-        checkboxCreate: function(params) {
+        checkboxCreate: function(params, d) {
             html = '';
-            if (params.value && this.isObject(params.value)) {
-                var d = params.value, o = params.all, c = params.divClass ? params.divClass : "col-xs-6";
-                delete params.value;
+            if (d && this.isObject(d)) {
+                var o = params.all, c = params.divClass ? params.divClass : "col-xs-6";
                 delete params.all;
                 delete params.divClass;
                 params["class"] = "ace m-checkbox";
@@ -787,16 +786,13 @@
             return html;
         },
 
-        selectCreate: function(params) {
+        selectCreate: function(params, d) {
             html = "";
-            if (params.value && this.isObject(params.value)) {
-                var d = params.value, c = params.default;
-
-                delete params.value;
+            if (d && this.isObject(d)) {
+                var c = params.default;
                 delete params.default;
-
                 html += "<select " + this.handleParams(params) + ">";
-                for (i in data){
+                for (i in d){
                     html += '<option value="' + i + '" ' + (i == c ? ' selected="selected" ' : "") + " >" + d[i] + "</option>";
                 }
 
@@ -820,7 +816,7 @@
             k.search.class = "me-search";
             if (k.search.type == "select") {k.value["All"] = "全部";}
             try {
-                html = this[k.search.type + "Create"](k.search);
+                html = this[k.search.type + "Create"](k.search, k.value);
             } catch (e) {
                 html = this.inputCreate(k.search);
             }
@@ -871,9 +867,9 @@
 
                 // 使用函数
                 try {
-                    form += this[k.edit.type + "Create"](k.edit);
+                    form += this[k.edit.type + "Create"](k.edit, k.value);
                 } catch (e) {
-                    console.info(e);
+                    k.edit.type = "text";
                     form += this["inputCreate"](k.edit);
                 }
 
@@ -927,6 +923,10 @@
                     }
                 }
             }
+        },
+
+        divCreate: function(params) {
+            return '<div' + this.handleParams(params) + '></div>'
         },
 
         dateCreate: function (params) {
@@ -997,8 +997,8 @@
         },
 
         createModal: function(oModal, oViews) {
-            return '<div class="isHide" '+ handleParams(oViews['params']) +'> ' + oViews['html'] +  ' </table></div> \
-            <div class="modal fade ' + (oModal["modalClass"] ? oModal["modalClass"] : "") + '" '+ handleParams(oModal['params']) +' tabindex="-1" role="dialog" > \
+            return '<div class="isHide" '+ this.handleParams(oViews['params']) +'> ' + oViews['html'] +  ' </table></div> \
+            <div class="modal fade ' + (oModal["modalClass"] ? oModal["modalClass"] : "") + '" '+ this.handleParams(oModal['params']) +' tabindex="-1" role="dialog" > \
                 <div class="modal-dialog ' + (oModal["modalDialogClass"] ? oModal["modalDialogClass"] : "") + '" role="document"> \
                     <div class="modal-content"> \
                         <div class="modal-header"> \
@@ -1151,7 +1151,11 @@
                     sModalClass: "",			// 弹出模块框配置
                     sModalDialogClass: ""		// 弹出模块的class
                 }
-            }
+            },
+
+            // 开启行处理
+            bEditable: false,
+            editable: {}
         },
 
         // 数据信息

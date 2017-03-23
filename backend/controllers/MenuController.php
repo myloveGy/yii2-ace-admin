@@ -22,6 +22,7 @@ class MenuController extends Controller
     public function where($params)
     {
         return [
+            'id' => '=',
             'menu_name'   => 'like',
             'url'         => '=',
             'action_name' => 'like',

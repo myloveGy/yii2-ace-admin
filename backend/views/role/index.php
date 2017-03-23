@@ -7,7 +7,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <!--前面导航信息-->
 <p>
-    <button class="btn btn-white btn-success btn-bold me-table-insert">
+    <button class="btn btn-white btn-success btn-bold me-table-create">
         <i class="ace-icon fa fa-plus bigger-120 blue"></i>
         添加
     </button>
@@ -25,58 +25,44 @@ $this->params['breadcrumbs'][] = $this->title;
     </button>
 </p>
 <!--表格数据-->
-<table class="table table-striped table-bordered table-hover" id="showTable"></table>
+<table class="table table-striped table-bordered table-hover" id="show-table"></table>
 <?php $this->beginBlock('javascript');?>
-<script src="/public/assets/js/dataTables.colResize.js"></script>
 <script type="text/javascript">
     // 设置表单信息
     function setOperate(td, data, rowArr, row, col)
     {
         var str = '<a class="btn btn-success btn-xs" href="<?=Url::toRoute(['role/view'])?>?name=' + rowArr['name'] + '"><i class="glyphicon glyphicon-zoom-in"></i></a> ';
-        str += '<a class="btn btn-info btn-xs" href="javascript:;" onclick="myTable.update('+row+');"><i class="glyphicon glyphicon-edit "></i></a> ';
+        str += '<a class="btn btn-info btn-xs" href="javascript:;" onclick="m.update('+row+');"><i class="glyphicon glyphicon-edit "></i></a> ';
         str += '<a class="btn btn-warning btn-xs" href="<?=Url::toRoute(['role/edit'])?>?name=' + rowArr['name'] + '" ><i class="glyphicon glyphicon-edit "></i>编辑权限</a> ';
-        str += '<a class="btn btn-danger btn-xs" href="javascript:;" onclick="myTable.delete('+row+');"><i class="glyphicon glyphicon-trash "></i></a>';
+        str += '<a class="btn btn-danger btn-xs" href="javascript:;" onclick="m.delete('+row+');"><i class="glyphicon glyphicon-trash "></i></a>';
         $(td).html(str);
     }
 
-    var myTable = new MeTable({
-        sTitle:   "角色信息",
-        oOperation: {
+    var m = mt({
+        title: "角色信息",
+        operations: {
             isOpen: false
         },
-//        bColResize: true
-    },{
-//        bServerSide: false,
-        "dom": 'Zlfrtip',
-//        "colResize": {
-//            "rtl": true
-//        },
-        "aoColumns":[
-			{"title": "角色名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
-			{"title": "说明描述", "data": "description", "sName": "description", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 255]"}}, "search": {"type": "text"}, "bSortable": false},
-			{"title": "创建时间", "data": "created_at", "sName": "created_at", "defaultOrder": "desc", "createdCell" : dateTimeString},
-			{"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell" : dateTimeString},
-            {"data": null, "title":"操作", "bSortable":false, "createdCell":setOperate, "width":"200px"}
-        ]
+        table: {
+            "aoColumns":[
+                {"title": "角色名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
+                {"title": "说明描述", "data": "description", "sName": "description", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 255]"}}, "search": {"type": "text"}, "bSortable": false},
+                {"title": "创建时间", "data": "created_at", "sName": "created_at", "defaultOrder": "desc", "createdCell" : dateTimeString},
+                {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell" : dateTimeString},
+                {"data": null, "title":"操作", "bSortable":false, "createdCell":setOperate, "width":"200px"}
+            ]
+        }
     });
 
-    // 显示之前的处理
-    myTable.afterShow = function(){
-        $(this.options.sFormId).find('input[name=name]').attr('readonly', this.actionType == 'update');
-        return true;
-    };
+    mt.fn.extend({
+        afterShow: function(){
+            $(this.options.sFormId).find('input[name=name]').attr('readonly', this.action == 'update');
+            return true;
+        }
+    });
 
     $(function(){
-        myTable.init();
-        $("#showTable").on('column-sizing.dt', function(e, settings){
-            e.preventDefault();
-            console.info(2, e, settings);
-           return false;
-        });
-        $("#showTable").on('column-resize', function(e, steting){
-            console.info(1);
-            return false;
-        });
+        m.init();
     })
 </script>
 <?php $this->endBlock(); ?>

@@ -5,7 +5,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <!--前面导航信息-->
 <p>
-    <button class="btn btn-white btn-success btn-bold me-table-insert">
+    <button class="btn btn-white btn-success btn-bold me-table-create">
         <i class="ace-icon fa fa-plus bigger-120 blue"></i>
         添加
     </button>
@@ -27,29 +27,30 @@ $this->params['breadcrumbs'][] = $this->title;
     </button>
 </p>
 <!--表格数据-->
-<table class="table table-striped table-bordered table-hover" id="showTable">
-</table>
+<table class="table table-striped table-bordered table-hover" id="show-table"></table>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var myTable = new MeTable({
-        sTitle: "权限信息"
-    },{
-        "aoColumns":[
-            {"title": "权限名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
-			{"title": "说明描述", "data": "description", "sName": "description", "edit": {"type": "text", "options": {"required":true,"rangelength":"[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
-			{"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell": dateTimeString, "defaultOrder": "desc"},
-			{"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": dateTimeString}
-        ]
+    var m = mt({
+        title: "权限信息",
+        table: {
+            "aoColumns":[
+                {"title": "权限名称", "data": "name", "sName": "name", "edit": {"type": "text", "required": true,"rangelength":"[2, 64]"}, "search": {"type": "text"}, "bSortable": false},
+                {"title": "说明描述", "data": "description", "sName": "description", "edit": {"type": "text", "required": true,"rangelength":"[2, 64]"}, "search": {"type": "text"}, "bSortable": false},
+                {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell": dateTimeString, "defaultOrder": "desc"},
+                {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": dateTimeString}
+            ]
+        }
     });
 
-    // 显示之前的处理
-    myTable.afterShow = function(){
-        $(this.options.sFormId).find('input[name=name]').attr('readonly', this.actionType == 'update');
-        return true;
-    };
+    mt.fn.extend({
+        afterShow: function() {
+            $(this.options.sFormId).find('input[name=name]').attr('readonly', this.action == 'update');
+            return true;
+        }
+    });
 
     $(function(){
-        myTable.init();
+        m.init();
     })
 </script>
 <?php $this->endBlock(); ?>

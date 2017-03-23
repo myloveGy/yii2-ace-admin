@@ -238,10 +238,7 @@ function showSpan(aData, aColorData, iVal, sDefaultClass) {
     return '<span class="' + sDefaultClass + ' ' + (aColorData[iVal] ? aColorData[iVal] : '') + '"> ' + (aData[iVal] ? aData[iVal] : iVal ) + ' </span>';
 }
 
-// 时间格式化
-Date.prototype.Format=function(fmt){var o={"M+":this.getMonth()+1,"d+":this.getDate(),"h+":this.getHours(),"m+":this.getMinutes(),"s+":this.getSeconds(),"q+":Math.floor((this.getMonth()+3)/3),"S":this.getMilliseconds()};if(/(y+)/.test(fmt)){fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length))}for(var k in o){if(new RegExp("("+k+")").test(fmt)){fmt=fmt.replace(RegExp.$1,(RegExp.$1.length==1)?(o[k]):(("00"+o[k]).substr((""+o[k]).length)))}}return fmt};
-// 根据时间戳返回时间字符串
-function timeFormat(time,str){if(empty(str)){str="yyyy-MM-dd"}var date=new Date(time*1000);return date.Format(str)}
+
 // 初始化表单信息
 function InitForm(select, data) {
     objForm = $(select).get(0); // 获取表单对象

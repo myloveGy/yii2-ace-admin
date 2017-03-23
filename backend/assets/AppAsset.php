@@ -40,8 +40,8 @@ class AppAsset extends AssetBundle
         $options = ['depends' => 'backend\assets\AppAsset'];
 //        $view->registerCssFile(self::$assetsUrl.'css/bootstrap-editable.css', $options);
         $arrJsResource = [
-            'js/common/base.js',
-            'js/common/dataTable.js',
+            'js/common/tools.js',
+//            'js/common/dataTable.js',
             'js/common/meTables.js',
 //            'js/x-editable/bootstrap-editable.min.js',
 //            'js/x-editable/ace-editable.min.js',
