@@ -273,7 +273,7 @@ HTML;
                 $html = "\t\t\t{\"title\": \"{$value['title']}\", \"data\": \"{$key}\", \"sName\": \"{$key}\", ";
 
                 // 编辑
-                if ($value['edit'] == 1) $html .= "\"edit\": {\"type\": \"{$value['type']}\", \"options\": {{$value['options']}}}, ";
+                if ($value['edit'] == 1) $html .= "\"edit\": {\"type\": \"{$value['type']}\", {$value['options']}}, ";
 
                 // 搜索
                 if ($value['search'] == 1) {
@@ -290,7 +290,7 @@ HTML;
                 $strHtml .= trim($html, ', ')."}, \n";
             }
 
-            $strHtml .= "\t\t\toOperate";
+            $strHtml .= "\t\t\tmt.fn.operations";
         }
 
         $sHtml =  <<<html
@@ -301,7 +301,7 @@ HTML;
 ?>
 <!--前面导航信息-->
 <p>
-    <button class="btn btn-white btn-success btn-bold me-table-insert">
+    <button class="btn btn-white btn-success btn-bold me-table-create">
         <i class="ace-icon fa fa-plus bigger-120 blue"></i>
         添加
     </button>
@@ -327,28 +327,36 @@ HTML;
 
 <?php \$this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var myTable = new MeTable({
-        sTitle: "{$title}"
-    },{
-        "aoColumns": [
-{$strHtml}
-        ]
+    var m = mt({
+        title: "{$title}",
+        table: {
+            "aoColumns": [
+                {$strHtml}
+            ]       
+        }
+    });
+    
+    /**
+    m.fn.extend({
+        // 显示的前置和后置操作
+        beforeShow: function(data, child) {
+            return true;
+        },
+        afterShow: function(data, child) {
+            return true;
+        },
+        
+        // 编辑的前置和后置操作
+        beforeSave: function(data, child) {
+            return true;
+        },
+        afterSave: function(data, child) {
+            return true;
+        }
     });
 
-    /**
-     * 显示的前置和后置操作
-     * myTable.beforeShow(object data, bool isDetail) return true 前置
-     * myTable.afterShow(object data, bool isDetail)  return true 后置
-     */
-
-     /**
-      * 编辑的前置和后置操作
-      * myTable.beforeSave(object data) return true 前置
-      * myTable.afterSave(object data)  return true 后置
-      */
-
      \$(function(){
-         myTable.init();
+         mt.init();
      });
 </script>
 <?php \$this->endBlock(); ?>
