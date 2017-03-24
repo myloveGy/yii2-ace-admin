@@ -51,7 +51,6 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
         aTimeColors = <?=\yii\helpers\Json::encode($timeColors)?>;
     aAdmins['0'] = '待定';
 
-    console.time();
     var m = mt({
         title: "管理员日程安排",
         editable: true,
@@ -100,7 +99,7 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
                     "title": "开始时间",
                     "data": "start_at",
                     "sName": "start_at",
-                    "edit": {"type": "dateTime", "required": true},
+                    "edit": {"type": "dateTime", "class": "time-format", "required": true},
                     "createdCell": dateTimeString
                 },
                 {
@@ -166,11 +165,9 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
     });
 
     mt.fn.extend({
-        afterShow: function(data, child) {
-
+        afterShow: function(data) {
             var html = this.action == "create" ? "" : data.desc;
             $('#me-desc').html(html);
-
             return true;
         },
 
@@ -189,8 +186,6 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
         $('.datetime-picker').datetimepicker({
             format: 'YYYY-MM-DD H:mm:s'
         });
-
-        console.timeEnd();
 
         function showErrorAlert (reason, detail) {
             var msg='';

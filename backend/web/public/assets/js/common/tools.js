@@ -2,19 +2,67 @@
  * Created by liujinxing on 2017/3/23.
  */
 // 时间格式化
-Date.prototype.Format=function(fmt){var o={"M+":this.getMonth()+1,"d+":this.getDate(),"h+":this.getHours(),"m+":this.getMinutes(),"s+":this.getSeconds(),"q+":Math.floor((this.getMonth()+3)/3),"S":this.getMilliseconds()};if(/(y+)/.test(fmt)){fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length))}for(var k in o){if(new RegExp("("+k+")").test(fmt)){fmt=fmt.replace(RegExp.$1,(RegExp.$1.length==1)?(o[k]):(("00"+o[k]).substr((""+o[k]).length)))}}return fmt};
+Date.prototype.Format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1,
+        "d+": this.getDate(),
+        "h+": this.getHours(),
+        "m+": this.getMinutes(),
+        "s+": this.getSeconds(),
+        "q+": Math.floor((this.getMonth() + 3) / 3),
+        "S": this.getMilliseconds()
+    };
+
+    if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4-RegExp.$1.length));
+    }
+
+    for (var k in o) {
+        if (new RegExp("("+k+")").test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]):(("00"+o[k]).substr((""+o[k]).length)));
+        }
+    }
+    return fmt;
+};
+
 // 根据时间戳返回时间字符串
-function timeFormat(time,str){if(str){str="yyyy-MM-dd"}var date=new Date(time*1000);return date.Format(str)}
-function dateTimeString(td, cellData) {$(td).html(timeFormat(cellData, 'yyyy-MM-dd hh:mm:ss'));}
+function timeFormat(time, str) {
+    if (!str) str = "yyyy-MM-dd";
+    var date = new Date(time * 1000);
+    return date.Format(str);
+}
+
+function dateTimeString(td, cellData) {
+    $(td).html(timeFormat(cellData, 'yyyy-MM-dd hh:mm:ss'));
+}
+
 // 状态信息
-function statusToString(td, data) {$(td).html('<span class="label label-' + (data == 1 ? 'success">启用' : 'warning">禁用') + '</span>');}
+function statusToString(td, data) {
+    $(td).html('<span class="label label-' + (data == 1 ? 'success">启用' : 'warning">禁用') + '</span>');
+}
+
 // 用户显示
-function adminToString(td, data, rowArr, row, col) {$(td).html(aAdmins[data]);}
+function adminToString(td, data, rowArr, row, col) {
+    $(td).html(aAdmins[data]);
+}
+
 // 显示标签
 function showSpan(aData, aColorData, iVal, sDefaultClass) {
     if (sDefaultClass == undefined) sDefaultClass = 'label label-sm ';
     return '<span class="' + sDefaultClass + ' ' + (aColorData[iVal] ? aColorData[iVal] : '') + '"> ' + (aData[iVal] ? aData[iVal] : iVal ) + ' </span>';
 }
+
+function validateFile(info) {
+    var error = [];
+    if (info && typeof info == "object") {
+        // 判断错误类型
+        if (info.error_count['ext'] || info.error_count['mime']) error.push("上传文件类型错误");
+        // 判断上传文件大小
+        if (info.error_count['size']) error.push("上传文件过大");
+    }
+    return error.join(";");
+}
+
 // 文件上传
 function aceFileInputAjax(file_input, url) {
     var $form      = file_input.closest('form'),
@@ -34,13 +82,13 @@ function aceFileInputAjax(file_input, url) {
 
         // 提交数据
         deferred = $.ajax({
-            url:         url,
-            type:        'Post',
+            url: url,
+            type: 'Post',
             processData: false,//important
             contentType: false,//important
-            dataType:   'json',
-            data:       formData_object,
-        })
+            dataType: 'json',
+            data: formData_object
+        });
     } else {
         var temporary_iframe_id = 'temporary-iframe-'+(new Date()).getTime()+'-'+(parseInt(Math.random()*1000));
         var temp_iframe =
@@ -50,11 +98,11 @@ function aceFileInputAjax(file_input, url) {
                 .insertAfter($form);
 
         $form.append('<input type="hidden" name="temporary-iframe-id" value="'+temporary_iframe_id+'" />');
-        temp_iframe.data('deferrer' , deferred);
+        temp_iframe.data('deferrer', deferred);
         $form.attr({
             method:  'POST',
             enctype: 'multipart/form-data',
-            target:  temporary_iframe_id //important
+            target:  temporary_iframe_id
         });
 
         file_input.ace_file_input('loading', true);
@@ -63,7 +111,7 @@ function aceFileInputAjax(file_input, url) {
             ie_timeout = null;
             temp_iframe.attr('src', 'about:blank').remove();
             deferred.reject({'status':'fail', 'message':'Timeout!'});
-        } , 30000);
+        }, 30000);
     }
 
     return deferred;
@@ -82,10 +130,10 @@ function aceFileUpload(select, sFileUploadUrl) {
             allowExt: allowExt ? allowExt : ['jpg', 'jpeg', 'png', 'gif'],
             maxSize: maxSize ? maxSize : 200000000,
             denyExt: denyExt ? denyExt : ['exe', 'php']
-        };
+        },
+        oOther;
 
     if (allowMime) aParams["allowMime"] = allowMime;
-    var oOther = {};
     if ($input.attr('input-type') == 'ace_file') {
         oOther = {
             no_file: '没有选择文件 ...',

@@ -202,8 +202,8 @@
             }
 
             // 判断开启editTable
-            if (this.options.bEditable) {
-                $.fn.editable.defaults.mode = 'inline';
+            if (this.options.editable) {
+                // $.fn.editable.defaults.mode = 'inline';
                 $.fn.editableform.loading = "<div class='editableform-loading'><i class='ace-icon fa fa-spinner fa-spin fa-2x light-blue'></i></div>";
                 $.fn.editableform.buttons = '<button type="submit" class="btn btn-info editable-submit"><i class="ace-icon fa fa-check"></i></button>'+
                     '<button type="button" class="btn editable-cancel"><i class="ace-icon fa fa-times"></i></button>';
@@ -469,8 +469,7 @@
                 if (k.isHide) aTargets.push(v);													// 是否隐藏
 
                 // 判断行内编辑
-                if (k.editable != undefined && self.options.editable !== false) {
-                    if (self.options.editable == null) self.options.editable = {};
+                if (self.options.editable && k.editable != undefined) {
                     // 默认修改参数
                     self.options.editable[k.sName] = {
                         name: k.sName,
@@ -495,7 +494,7 @@
             });
 
             // 判断添加行内编辑信息
-            if (self.options.bEditable) {
+            if (self.options.editable) {
                 self.options.table.fnDrawCallback = function() {
                     for (var key in self.options.editable) {
                         $(self.options.sTable + " tbody tr td.edit-" + key).each(function(){
@@ -588,7 +587,7 @@
                 t += this.getLanguage("sInfo");
             }
 
-            $(m).find('h4').html(t + this.getLanguage(this.action == "insert" ? "sInsert": "sEdit"));
+            $(m).find('h4').html(t + this.getLanguage(this.action == "create" ? "sCreate": "sUpdate"));
             meTables.initForm(f, data);
 
             // 显示之后的处理
@@ -917,14 +916,14 @@
 
         dateCreate: function (params) {
             return '<div class="input-group bootstrap-datepicker"> \
-                <input class="form-control date-picker me-date"  type="text" ' + this.handleParams(params) + '/> \
+                <input class="form-control date-picker ' + (params["class"] ? params["class"] : "") + '"  type="text" ' + this.handleParams(params) + '/> \
                 <span class="input-group-addon"><i class="fa fa-calendar bigger-110"></i></span> \
                 </div>';
         },
 
         timeCreate: function (params) {
             return '<div class="input-group bootstrap-timepicker"> \
-                <input type="text" class="form-control time-picker" ' + this.handleParams(params) + '/> \
+                <input type="text" class="form-control time-picker ' + (params["class"] ? params["class"] : "") + '" ' + this.handleParams(params) + '/> \
                 <span class="input-group-addon"><i class="fa fa-clock-o bigger-110"></i></span> \
                 </div>';
         },
@@ -932,7 +931,7 @@
         // 添加时间
         dateTimeCreate: function (params) {
             return '<div class="input-group bootstrap-datetimepicker"> \
-                <input type="text" class="form-control datetime-picker" ' + this.handleParams(params) + '/> \
+                <input type="text" class="form-control datetime-picker ' + (params["class"] ? params["class"] : "") + '" ' + this.handleParams(params) + '/> \
                 <span class="input-group-addon"><i class="fa fa-clock-o bigger-110"></i></span> \
                 </div>';
         },
@@ -950,7 +949,7 @@
         dateRangeCreate: function (params) {
             return '<div class="input-group"> \
                 <span class="input-group-addon"><i class="fa fa-calendar bigger-110"></i></span> \
-                <input class="form-control daterange-picker me-daterange" type="text" ' + this.handleParams(params) + ' /> \
+                <input class="form-control daterange-picker ' + (params["class"] ? params["class"] : "") + '" type="text" ' + this.handleParams(params) + ' /> \
             </div>';
         },
 
@@ -994,7 +993,7 @@
                         <div class="modal-body">' + oModal['html'] + '</fieldset></form></div> \
                         <div class="modal-footer"> \
                             <button type="button" class="btn btn-default" data-dismiss="modal">' + meTables.fn.getLanguage("sBtnCancel") + '</button> \
-                            <button type="button" class="btn btn-primary btn-image ' + oModal['bClass'] + '">' + meTables.fn.getLanguage("sBtnCancel") + '</button> \
+                            <button type="button" class="btn btn-primary btn-image ' + oModal['bClass'] + '">' + meTables.fn.getLanguage("sBtnSubmit") + '</button> \
                         </div> \
                     </div> \
                 </div> \
