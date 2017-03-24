@@ -211,11 +211,11 @@ class ModuleController extends Controller
         foreach ($array as $value) {
             $key     = $value['Field'];
             $sTitle  = isset($value['Comment']) && ! empty($value['Comment']) ? $value['Comment'] : $value['Field'];
-            $sOption = isset($value['Null']) && $value['Null'] == 'NO' ? '"required":true,' : '';
-            if (stripos($value['Type'], 'int(') !== false) $sOption .= '"number":true,';
+            $sOption = isset($value['Null']) && $value['Null'] == 'NO' ? '"required": true,' : '';
+            if (stripos($value['Type'], 'int(') !== false) $sOption .= '"number": true,';
             if (stripos($value['Type'], 'varchar(') !== false) {
                 $sLen = trim(str_replace('varchar(', '', $value['Type']), ')');
-                $sOption .= '"rangelength":"[2, '.$sLen.']"';
+                $sOption .= '"rangelength": "[2, '.$sLen.']"';
             }
 
             $sOther = stripos($value['Field'], '_at') !== false ? 'dateTimeString' : '';
@@ -273,7 +273,7 @@ HTML;
                 $html = "\t\t\t{\"title\": \"{$value['title']}\", \"data\": \"{$key}\", \"sName\": \"{$key}\", ";
 
                 // 编辑
-                if ($value['edit'] == 1) $html .= "\"edit\": {\"type\": \"{$value['type']}\", {$value['options']}}, ";
+                if ($value['edit'] == 1) $html .= "\"edit\": {\"type\": \"{$value['type']}\", " . trim($value['options'], ',') . "}, ";
 
                 // 搜索
                 if ($value['search'] == 1) {
@@ -354,6 +354,7 @@ HTML;
             return true;
         }
     });
+    */
 
      \$(function(){
          mt.init();

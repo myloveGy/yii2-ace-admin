@@ -214,13 +214,13 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                                 $(e).remove();
                             }
                         }).form()) {
-                        oLoading = layer.load();
-                        $.ajax({
-                            'async':        false,
-                            'url' :         f.attr('action'),
-                            'data' :        $('form').serialize(),
-                            'type' :        'POST',
-                            'dataType' :    'json'
+
+                        mt.ajax({
+                            'async': false,
+                            'url': f.attr('action'),
+                            'data': $('form').serialize(),
+                            'type': 'POST',
+                            'dataType': 'json'
                         }).done(function(json){
                             layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
                             if (json.errCode == 0) {
@@ -247,9 +247,7 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                             } else {
                                 event.preventDefault()
                             }
-                        })
-                        .fail(ajaxFail)
-                        .always(alwaysClose);
+                        });
                     } else {
                         return false;
                     }
@@ -262,8 +260,7 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                     // 自己验证
                     if ($('input[name=allow]:checked').val() == 1 || ($('#input-html').val() != file && $('#input-controller').val() != controller))
                     {
-                        oLoading = layer.load();
-                        $.ajax({
+                        mt.ajax({
                             url: "<?=Url::toRoute('module/produce')?>",
                             data: $('form').serialize(),
                             dataType: "json",
@@ -278,7 +275,7 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                                     window.location.reload();
                                 $('form').each(function(){this.reset()});
                             }
-                        }).fail(ajaxFail).always(alwaysClose)
+                        });
                     } else {
                         layer.msg('文件名存在, 不能执行覆盖操作...');
                     }
