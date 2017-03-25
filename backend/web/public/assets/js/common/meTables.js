@@ -8,6 +8,31 @@
             return new meTables.fn._construct(options);
         };
 
+    // 时间格式化
+    Date.prototype.Format = function(fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes(),
+            "s+": this.getSeconds(),
+            "q+": Math.floor((this.getMonth() + 3) / 3),
+            "S": this.getMilliseconds()
+        };
+
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4-RegExp.$1.length));
+        }
+
+        for (var k in o) {
+            if (new RegExp("("+k+")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]):(("00"+o[k]).substr((""+o[k]).length)));
+            }
+        }
+
+        return fmt;
+    };
+
     meTables.fn = meTables.prototype = {
         constructor: meTables,
 
@@ -998,7 +1023,36 @@
                     </div> \
                 </div> \
             </div>';
+        },
+
+        // 根据时间戳返回时间字符串
+        timeFormat: function(time, str) {
+            if (!str) str = "yyyy-MM-dd";
+            var date = new Date(time * 1000);
+            return date.Format(str);
+        },
+
+        // 时间戳转字符日期
+        dateTimeString: function(td, data) {
+            $(td).html(mt.timeFormat(data, 'yyyy-MM-dd hh:mm:ss'));
+        },
+
+        // 状态信息
+        statusString: function(td, data) {
+            $(td).html('<span class="label label-' + (data == 1 ? 'success">启用' : 'warning">禁用') + '</span>');
+        },
+
+        // 用户显示
+        adminString: function(td, data) {
+            $(td).html(aAdmins[data]);
+        },
+
+        // 显示标签
+        valuesString: function(data, color, value, defaultClass) {
+            if (defaultClass == undefined) defaultClass = 'label label-sm ';
+            return '<span class="' + defaultClass + ' ' + (color[value] ? color[value] : '') + '"> ' + (data[value] ? data[value] : value) + ' </span>';
         }
+
     });
 
     // 设置默认配置信息

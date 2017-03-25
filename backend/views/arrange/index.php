@@ -100,14 +100,14 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
                     "data": "start_at",
                     "sName": "start_at",
                     "edit": {"type": "dateTime", "class": "time-format", "required": true},
-                    "createdCell": dateTimeString
+                    "createdCell": mt.dateTimeString
                 },
                 {
                     "title": "结束时间",
                     "data": "end_at",
                     "sName": "end_at",
                     "edit": {"type": "dateTime", "required": true, "class": "m-time"},
-                    "createdCell": dateTimeString
+                    "createdCell": mt.dateTimeString
                 },
                 {
                     "title": "日程状态",
@@ -118,8 +118,8 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
                     "search": {"type": "select"},
                     "bSortable": false,
                     "editable": {},
-                    "createdCell": function (td, data, rowArr, row, col) {
-                        $(td).html(showSpan(aStatus, aColors, data));
+                    "createdCell": function (td, data) {
+                        $(td).html(mt.valuesString(aStatus, aColors, data));
                     }
                 },
                 {
@@ -130,8 +130,8 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
                     "edit": {"type": "radio", "default": 1, "required": true, "number": true},
                     "search": {"type": "select"},
                     "bSortable": false,
-                    "createdCell": function (td, data, rowArr, row, col) {
-                        $(td).html(showSpan(aTimeStatus, aTimeColors, data));
+                    "createdCell": function (td, data) {
+                        $(td).html(mt.valuesString(aTimeStatus, aTimeColors, data));
                     }
                 },
                 {
@@ -141,24 +141,24 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
                     "value": aAdmins,
                     "edit": {"type": "select", "required": true, "number": true},
                     "search": {"type": "select"},
-                    "createdCell": adminToString,
+                    "createdCell": mt.adminString,
                     "bSortable": false
                 },
-                {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell": dateTimeString},
+                {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell": mt.dateTimeString},
                 {
                     "title": "添加用户",
                     "data": "created_id",
                     "sName": "created_id",
                     "bSortable": false,
-                    "createdCell": adminToString
+                    "createdCell": mt.adminString
                 },
-                {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": dateTimeString},
+                {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": mt.dateTimeString},
                 {
                     "title": "修改用户",
                     "data": "updated_id",
                     "sName": "updated_id",
                     "bSortable": false,
-                    "createdCell": adminToString
+                    "createdCell": mt.adminString
                 }
             ]
         }

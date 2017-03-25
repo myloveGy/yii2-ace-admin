@@ -15,8 +15,7 @@ class PayController extends Controller
         $strPayType  = $request->get('payType');  // 对应支付方式
 
         // 验证数据的有效性
-        if ($strPayType && $strGameName)
-        {
+        if ($strPayType && $strGameName) {
             $objPayment = Helper::create($strPayType);
             var_dump($objPayment->getPaymentUrl(['user_id' => 1], ['order_id' => 123], ['params' => 1, 'auth' => 1]));
         }

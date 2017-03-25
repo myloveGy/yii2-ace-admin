@@ -45,13 +45,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
                 {"data": "icons", "sName":"icons", "title":"图标", "edit": {"rangelength":"[2, 50]"}, "bSortable": false},
                 {"data": "url", "sName":"url", "title":"访问地址", "edit": {"rangelength":"[2, 50]"}, "search":{"type": "text"}, "bSortable": false},
-                {"data": "status", "sName":"status","title": "状态", "value" : arrStatus, "edit":{"type":"radio", "default": 1, "required": 1, "number": 1},"search":{"type":"select"}, "createdCell":statusToString},
+                {"data": "status", "sName":"status","title": "状态", "value" : arrStatus, "edit":{"type":"radio", "default": 1, "required": 1, "number": 1},"search":{"type":"select"}, "createdCell": mt.statusString},
                 {"data": "sort", "sName":"sort","title":"排序", "value" : 100, "edit":{"type":"text", "required":1, "number":1}},
                 // 公共属性字段信息
-                {"data": "created_at", "sName":"created_at","title":"创建时间", "createdCell":dateTimeString},
-                {"data": "created_id", "sName":"created_id", "title":"创建用户", "createdCell":adminToString, "bSortable": false},
-                {"data": "updated_at", "sName":"updated_at", "title":"修改时间", "createdCell":dateTimeString},
-                {"data": "updated_id", "sName":"updated_id", "title":"修改用户", "createdCell":adminToString, "bSortable": false},
+                {"data": "created_at", "sName":"created_at","title":"创建时间", "createdCell": mt.dateTimeString},
+                {"data": "created_id", "sName":"created_id", "title":"创建用户", "createdCell": mt.adminString, "bSortable": false},
+                {"data": "updated_at", "sName":"updated_at", "title":"修改时间", "createdCell": mt.dateTimeString},
+                {"data": "updated_id", "sName":"updated_id", "title":"修改用户", "createdCell": mt.adminString, "bSortable": false}
             ]
         }
     });
