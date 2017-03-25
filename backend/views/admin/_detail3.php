@@ -194,7 +194,7 @@
     function setProgress()
     {
         var iHave  = 1;
-        $input.each(function(){if ( ! empty($(this).val())) iHave ++;});
+        $input.each(function(){if ( ! mt.empty($(this).val())) iHave ++;});
         var sProgress = Math.min(parseInt(iHave / $input.length  * 100), 100) + '%';
         $('#sProgressHtml').html(sProgress);
         $('#sProgress').css('width', sProgress);
@@ -214,7 +214,7 @@
                     first = $('#form-field-first').val(),
                     last  = $('#form-field-last').val();
                 data.push({"name":"actionType", "value": "update"});
-                if (!empty(first) && ! empty(last)) data.push({"name": "nickname", "value": first + last});
+                if (!mt.empty(first) && ! mt.empty(last)) data.push({"name": "nickname", "value": first + last});
                 oLoading = layer.load();
                 $.ajax({
                     url:      "<?=\yii\helpers\Url::toRoute(['admin/update'])?>",

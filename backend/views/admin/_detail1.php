@@ -262,7 +262,7 @@ use yii\helpers\Url;
     // 选择县
     function selectAddress(iPid, sName)
     {
-        if (empty(sName)) sName = '选择县';
+        if (mt.empty(sName)) sName = '选择县';
         var address = $('#address').removeAttr('id').show().get(0);
         $(address).clone().attr('id', 'address').text(sName).editable({
             type: 'select2',
@@ -280,7 +280,7 @@ use yii\helpers\Url;
                 var arr = $(this).data('editable').input.sourceData, value = params.value;
                 for (var i in arr){if (arr[i].id == value) {value = arr[i].text;break;}}
                 // 没有选择数据
-                if (empty(value)) return false;
+                if (mt.empty(value)) return false;
                 params.value = $('#country').html() + "," + $('#city').html() + "," + value;
                 return params;
             },
@@ -300,7 +300,7 @@ use yii\helpers\Url;
     // 选择市函数
     function selectCity(iPid, sName)
     {
-        if (empty(sName)) sName = '选择市';
+        if (mt.empty(sName)) sName = '选择市';
         var city = $('#city').removeAttr('id').get(0);
         $(city).clone().attr('id', 'city').text(sName).editable({
             type: 'select2',
@@ -312,7 +312,7 @@ use yii\helpers\Url;
             },
             success: function(response, newValue) {
                 // 没有选择数据
-                if (empty(newValue)) {
+                if (mt.empty(newValue)) {
                     gAlert('温馨提醒', '你没有选择您所在的地址信息', 'warning');
                     return false;
                 }
@@ -321,16 +321,15 @@ use yii\helpers\Url;
                 $.ajax({
                     "url":      sAddressUrl + "?iPid=" + newValue,
                     "type":     "GET",
-                    "dataType": "json",
+                    "dataType": "json"
                 }).done(function(json){
                     if (json.length > 0)
                     {
                         selectAddress(newValue);
                     } else {
                         $('#address').hide();
-                        oLoading = layer.load();
                         // 修改数据
-                        $.ajax({
+                        mt.ajax({
                             url:        sBaseUrl,
                             type:       "POST",
                             dataType:   "json",
@@ -341,7 +340,7 @@ use yii\helpers\Url;
                             }
                         }).done(function(json){
                             layer.msg(json.errMsg, {icon: json.errCode == 0 ? 6 : 5})
-                        }).fail(ajaxFail).always(alwaysClose)
+                        });
                     }
                     return true;
                 });
