@@ -160,8 +160,8 @@
             if (this.options.sSearchType == 'middle') {
                 $(this.options.sTable + '_filter').html('<form action="post" id="' +
                     this.options.sSearchForm.replace("#", "") + '">' + this.options.sSearchHtml + '</form>');
-                $('input.me-search').on('blur', function () { self.table.draw();}); 						// 搜索事件
-                $('select.me-search').on('change', function () { self.table.draw();}); 						// 搜索事件
+                $(this.options.sSearchForm + ' input').on('blur', function () { self.table.draw();}); 						// 搜索事件
+                $(this.options.sSearchForm + ' select').on('change', function () { self.table.draw();}); 						// 搜索事件
                 $(this.options.sTable + '_wrapper div.row div.col-xs-6:first')
                     .removeClass('col-xs-6')
                     .addClass('col-xs-2')
@@ -338,7 +338,7 @@
 
             // 处理的数据
             if (data != undefined) {
-                meTables.viewTable(obj, data, c, row);
+                meTables.detailTable(obj, data, c, row);
                 // 弹出显示
                 this.options.oLoading = layer.open({
                     type: this.options.oViewConfig.type,
@@ -487,9 +487,9 @@
 
             // 处理生成表单
             this.options.table.aoColumns.forEach(function(k, v) {
-                if (k.bViews !== false) views += meTables.createViewTr(k.title, k.data, v, self.options.detailTable);// 查看详情信息
+                if (k.bViews !== false) views += meTables.detailTableCreate(k.title, k.data, v, self.options.detailTable);// 查看详情信息
                 if (k.edit != undefined) form += meTables.formCreate(k, self.options.editFormParams);	// 编辑表单信息
-                if (k.search != undefined) self.options.sSearchHtml += meTables.searchFormCreate(k, v);  // 搜索信息
+                if (k.search != undefined) self.options.sSearchHtml += meTables.searchInputCreate(k, v);  // 搜索信息
                 if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
                 if (k.isHide) aTargets.push(v);													// 是否隐藏
 
@@ -546,7 +546,7 @@
             }
 
             // 生成HTML
-            this.data.sUpdateModel = meTables.createModal({
+            this.data.sUpdateModel = meTables.modalCreate({
                     "params": {"id": self.options.sModal.replace("#", "")},
                     "html":   form,
                     "bClass": "me-table-save",
@@ -568,7 +568,7 @@
                 });
 
                 // 添加详情输入框
-                this.data.sUpdateModel += meTables.createModal({
+                this.data.sUpdateModel += meTables.medalCreate({
                         "params": {"id": self.options.childTables.sModal.replace("#", "")},
                         "html":	  form,
                         "bClass": "me-table-child-save"},
@@ -734,6 +734,7 @@
         },
 
         textCreate: function(params) {
+            params.type = "text";
             return this.inputCreate(params);
         },
 
@@ -820,15 +821,20 @@
             return "<textarea" + this.handleParams(params) + ">" + html;
         },
 
-        searchFormCreate: function(k, v) {
+        // 搜索框表单元素创建
+        searchInputCreate: function(k, v) {
             k.search.name = k.sName;
-            k.search.vid = v;
-            k.search.class = "me-search";
-            if (k.search.type == "select") {k.value["All"] = "全部";}
+            if (k.search.type == "select") {
+                k.value["All"] = "全部";
+                k.search.default = "All";
+            } else {
+                k.search.type = "text";
+            }
+
             try {
                 html = this[k.search.type + "Create"](k.search, k.value);
             } catch (e) {
-                html = this.inputCreate(k.search);
+                html = this.textCreate(k.search);
             }
 
             return this.labelCreate(k.title + " : " + html) + ' ';
@@ -926,7 +932,7 @@
                             var obj = $(objForm[i]), tmp = data[i];
                             // 时间处理
                             if (obj.hasClass('time-format')) {
-                                tmp = timeFormat(parseInt(tmp), obj.attr('time-format') ? obj.attr('time-format') : "yyyy-MM-dd hh:mm:ss");
+                                tmp = mt.timeFormat(parseInt(tmp), obj.attr('time-format') ? obj.attr('time-format') : "yyyy-MM-dd hh:mm:ss");
                             }
                             objForm[i].value = tmp;
                         }
@@ -978,7 +984,7 @@
             </div>';
         },
 
-        viewTable: function(object, data, tClass, row) {
+        detailTable: function(object, data, tClass, row) {
             // 循环处理显示信息
             object.forEach(function(k) {
                 var tmpKey = k.data,tmpValue = data[tmpKey],dataInfo = $(tClass + tmpKey);
@@ -987,7 +993,7 @@
             });
         },
 
-        createViewTr: function(title, data, iKey,  aParams) {
+        detailTableCreate: function(title, data, iKey,  aParams) {
             html = '';
             if (aParams && aParams.bMultiCols) {
                 if (aParams.iColsLength > 1 && iKey % aParams.iColsLength == 0) {
@@ -1006,7 +1012,7 @@
             return html;
         },
 
-        createModal: function(oModal, oViews) {
+        modalCreate: function(oModal, oViews) {
             return '<div class="isHide" '+ this.handleParams(oViews['params']) +'> ' + oViews['html'] +  ' </table></div> \
             <div class="modal fade ' + (oModal["modalClass"] ? oModal["modalClass"] : "") + '" '+ this.handleParams(oModal['params']) +' tabindex="-1" role="dialog" > \
                 <div class="modal-dialog ' + (oModal["modalDialogClass"] ? oModal["modalDialogClass"] : "") + '" role="document"> \

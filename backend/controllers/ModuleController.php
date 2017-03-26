@@ -323,7 +323,7 @@ HTML;
     </button>
 </p>
 <!--表格数据-->
-<table class="table table-striped table-bordered table-hover" id="showTable"></table>
+<table class="table table-striped table-bordered table-hover" id="show-table"></table>
 
 <?php \$this->beginBlock('javascript') ?>
 <script type="text/javascript">

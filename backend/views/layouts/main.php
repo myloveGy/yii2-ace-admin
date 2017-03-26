@@ -49,10 +49,10 @@ AppAsset::registerCommon($this);
             <div class="page-content-area">
                 <div class="page-header">
                     <h1> <?=$this->title;?>
-                        <small>
-                            <i class="ace-icon fa fa-angle-double-right"></i>
-                            编辑我的信息
-                        </small>
+<!--                        <small>-->
+<!--                            <i class="ace-icon fa fa-angle-double-right"></i>-->
+<!--                            编辑我的信息-->
+<!--                        </small>-->
                     </h1>
                 </div>
                 <div class="row">

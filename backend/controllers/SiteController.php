@@ -3,12 +3,14 @@
 namespace backend\controllers;
 
 use common\helpers\Helper;
+use common\models\China;
 use Yii;
 use yii\filters\AccessControl;
 use common\models\AdminForm;
 use backend\models\Menu;
 use backend\models\Admin;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\web\UnauthorizedHttpException;
 
 /**
@@ -30,7 +32,7 @@ class SiteController extends \yii\web\Controller
                         'allow'   => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'system'],
+                        'actions' => ['logout', 'index', 'system', 'grid', 'get-data', 'update', 'create'],
                         'allow'   => true,
                         'roles'   => ['@'],
                     ],
@@ -55,67 +57,7 @@ class SiteController extends \yii\web\Controller
         ];
     }
 
-//    /**
-//     * actionTest() 用来生成默认的权限信息
-//     */
-//    public function actionTest()
-//    {
-//        // 用户信息和导航栏目
-//        Yii::$app->view->params['menus'] = $menus;
-//        Yii::$app->view->params['user']  = Yii::$app->getUser()->identity;
-//        return $this->render('test');
-//        $controller = [
-//            'admin'     => '管理员信息',
-//            'arrange'   => '日程管理',
-//            'authority' => '权限信息',
-//            'china'     => '地址信息',
-//            'menu'      => '导航栏目',
-//            'module'    => '模块生成',
-//            'role'      => '角色信息',
-//        ];
-//
-//        $action = [
-//            'index'  => '显示',
-//            'search' => '搜索',
-//            'create' => '创建',
-//            'update' => '修改',
-//            'delete' => '删除',
-//        ];
-//
-//        foreach ($controller as $key => $value) {
-//            foreach ($action as $k => $v) {
-//                $model = new Auth();
-//                $model->type = 2;
-//                $model->name = $key.'/'.$k;
-//                $model->description = $v.$value;
-//                $model->save();
-//            }
-//        }
-//
-//        $admin = [
-//            'administrator' => '超级管理员',
-//            'admin'         => '管理员',
-//            'user'          => '普通用户',
-//        ];
-//
-//        foreach ($admin as $key => $value) {
-//            $model = new Auth();
-//            $model->type = 1;
-//            $model->name = $key;
-//            $model->description = $value;
-//            if ($model->save() && $key == 'administrator') {
-//                $auth = Auth::findAll(['type' => 2]);
-//                if ($auth) {
-//                    foreach ($auth as $val) {
-//                        Yii::$app->db->createCommand()->insert('yii2_auth_item_child', [
-//                            'parent' => $model->name,
-//                            'child'  => $val->name,
-//                        ])->execute();
-//                    }
-//                }
-//            }
-//        }
-//    }
+
 
     /**
      * actionIndex() 管理员登录欢迎页
@@ -161,6 +103,49 @@ class SiteController extends \yii\web\Controller
             'mysql'  => 'MySQL '.($version ? $version['version'] : ''), // Mysql版本
             'upload' => ini_get('upload_max_filesize'),                 // 上传文件大小
         ]);
+    }
+
+    public function actionGrid()
+    {
+        return $this->render('grid');
+    }
+
+    public function actionGetData()
+    {
+        $request = Yii::$app->request;
+        $intPage = (int)$request->post('page'); // 第几页
+        $intPage = $intPage ? $intPage : 1;  // 默认第一页
+        $intRows = (int)$request->post('rows'); // 每页多少条
+        $strOrder = $request->post('sidx');      // 排序字段
+        $sord = $request->post('sord'); // 排序方式
+        $intStart = ($intPage - 1) * $intRows;
+
+        // 开始查询数据
+        $intCount = China::find()->count();
+        if ($intCount) {
+            $intTotalPage = ceil($intCount/$intRows);
+            $array = China::find()->offset($intStart)->limit($intRows)->all();
+        } else {
+            $intTotalPage = 0;
+            $array = [];
+        }
+
+        exit(Json::encode([
+            'page' => $intPage,
+            'total' => $intTotalPage,
+            'records' => $intCount,
+            'rows' => $array,
+        ]));
+    }
+
+    public function actionCreate()
+    {
+        return Json::encode([false, 'null']);
+    }
+
+    public function actionUpdate()
+    {
+        return Json::encode([false, 'null']);
     }
 
     /**
