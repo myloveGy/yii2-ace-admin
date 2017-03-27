@@ -145,11 +145,8 @@ jQuery(grid_selector).jqGrid({
         }, 0);
     },
 
-    editurl: function() {
-        console.info(this);
-        return "/index.php"
-    }, //"/dummy.html",//nothing is saved
-    caption: "jqGrid with inline editing"
+    editurl: "<?=\yii\helpers\Url::toRoute('update')?>", //"/dummy.html",//nothing is saved
+    caption: "中国省份信息"
 
     //,autowidth: true,
 
@@ -168,13 +165,28 @@ jQuery(grid_selector).jqGrid({
 
 });
 
-jQuery(grid_selector).jqGrid('filterToolbar',{searchOperators : true});
+// jQuery(grid_selector).jqGrid('filterToolbar', {
+//     searchOperators : true
+// });
+
 // 表单提交
-    $("#search-form").submit(function(evt){
-        evt.preventDefault();
-        // jQuery(grid_selector).jqGrid('setpostdata', {"name": 123, "username": 456});
-        jQuery(grid_selector).trigger("reloadGrid");
-    });
+$("#search-form").submit(function(evt){
+    evt.preventDefault();
+    // jQuery(grid_selector).jqGrid('setpostdata', {"name": 123, "username": 456});
+    var data = $("#search-form").serializeArray(),
+    params = {};
+    for (var i in data) {
+        if (data[i]["value"] != "") {
+            params["params[" + data[i]["name"] + "]"] = data[i]["value"];
+        }
+    }
+
+    console.info(params);
+    jQuery(grid_selector).jqGrid('setGridParam', {
+        'postData': params
+    }).trigger("reloadGrid");
+});
+
 $(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
 
 //enable search/filter toolbar

@@ -119,12 +119,14 @@ class SiteController extends \yii\web\Controller
         $strOrder = $request->post('sidx');      // 排序字段
         $sord = $request->post('sord'); // 排序方式
         $intStart = ($intPage - 1) * $intRows;
+        $strOrder = $strOrder ? $strOrder : 'id';
+        $srod = $sord == 'asc' ? SORT_ASC : SORT_DESC;
 
         // 开始查询数据
         $intCount = China::find()->count();
         if ($intCount) {
             $intTotalPage = ceil($intCount/$intRows);
-            $array = China::find()->offset($intStart)->limit($intRows)->all();
+            $array = China::find()->offset($intStart)->limit($intRows)->orderBy([$strOrder => $srod])->all();
         } else {
             $intTotalPage = 0;
             $array = [];

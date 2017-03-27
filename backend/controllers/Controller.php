@@ -78,42 +78,63 @@ class Controller extends \common\controllers\Controller
     }
 
     /**
+     * getQueryRequest() 获取查询参数处理返回
+     * @return array 返回查询信息
+     */
+    protected function getQueryRequest()
+    {
+        // 接收查询参数
+        $request = Yii::$app->request;
+        $sort = $request->post('sSortDir_0', 'asc');         // 排序方式
+        $sort = $sort == 'asc' ? SORT_ASC : SORT_DESC;       // 排序方式
+        $params = $request->post('params'); // 请求参数
+
+        // 处理排序字段信息
+        if (iset($params['orderBy']) && !empty($params['orderBy'])) {
+            $filed = $params['orderBy'];
+        } else {
+            $filed = $this->sort;
+        }
+
+        // 返回查询请求的参数
+        return [
+            'orderBy' => [$field => $sort], // 排序信息
+            'sort' => $sort,    // 排序方式
+            'field' => $field, // 排序字段
+            'params' => $request->post('params'),  // 请求参数
+            'echo' => $request->post('sEcho', 1),   // 查询次数
+            'offset' => $request->post('iDisplayStart', 0),   // 查询开始位置
+            'limit' => $request->post('iDisplayLength', 10),  // 查询数据条数
+            'where' => [], // 默认查询
+        ];
+    }
+
+    /**
      * query() 查询查询参数信息
      * @return array
      */
     protected function query()
     {
-        $request = Yii::$app->request;
-        $params  = $request->post('params');                    // 接收查询参数
-        $sort    = $request->post('sSortDir_0', 'asc');         // 排序方式
-        $sort    = $sort == 'asc' ? SORT_ASC : SORT_DESC;       // 排序方式
-
-        // 接收参数
-        $aWhere  = $this->where($params);                       // 查询配置信息
-        $sFile   = isset($params['orderBy']) && ! empty($params['orderBy']) ? $params['orderBy'] : $this->sort; // 排序字段
-        $aSearch = [
-            'orderBy' => [$sFile => $sort],                     // 默认排序方式
-            'where'   => [],                                    // 查询条件
-            'offset'  => $request->post('iDisplayStart',  0),   // 查询开始位置
-            'limit'   => $request->post('iDisplayLength', 10),  // 查询数据条数
-            'echo'    => $request->post('sEcho',          1),   // 查询次数
-        ];
+        // 获取查询参数
+        $arrSearch = $this->getQueryRequest();
+        // 处理定义查询信息
+        $arrWhere  = $this->where($afterSearch['params']);
 
         // 自定义了排序
-        if ( ! empty($aWhere) && isset($aWhere['orderBy']) && ! empty($aWhere['orderBy'])) {
+        if (!empty($arrWhere) && isset($arrWhere['orderBy']) && !empty($arrWhere['orderBy'])) {
             // 判断自定义排序字段还是方式
-            $aSearch['orderBy'] = is_array($aWhere['orderBy']) ? $aSearch['orderBy'] : [$aSearch['orderBy'] => $sort];
-            unset($aWhere['orderBy']);
+            $arrSearch['orderBy'] = is_array($arrWhere['orderBy']) ? $arrSearch['orderBy'] : [$arrSearch['orderBy'] => $sort];
+            unset($arrWhere['orderBy']);
         }
 
         // 处理默认查询条件
-        if ( ! empty($aWhere) && isset($aWhere['where']) && ! empty($aWhere['where'])) {
+        if (!empty($aWhere) && isset($aWhere['where']) && !empty($aWhere['where'])) {
             $aSearch['where'] = array_merge($aSearch['where'], $aWhere['where']);
             unset($aWhere['where']);
         }
 
         // 处理其他查询条件
-        if ( ! empty($aWhere) && ! empty($params)) {
+        if (!empty($aWhere) && !empty($params)) {
             foreach ($params as $key => $value) {
                 if ( ! isset($aWhere[$key])) continue;
                 $tmpKey = $aWhere[$key];
@@ -122,7 +143,7 @@ class Controller extends \common\controllers\Controller
         }
 
         // 添加查询条件
-        if ( ! empty($aSearch['where'])) array_unshift($aSearch['where'], 'and');
+        if (!empty($aSearch['where'])) array_unshift($aSearch['where'], 'and');
         return $aSearch;
     }
 
@@ -299,7 +320,7 @@ class Controller extends \common\controllers\Controller
         // 返回数据
         return $this->returnJson();
     }
-    
+
     /**
      * getUploadPath() 获取上传文件目录(默认是相对路径 ./public/uploads)
      * @access protected
