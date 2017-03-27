@@ -6,12 +6,38 @@ $this->registerJsFile('@web/public/assets/js/jqGrid/jquery.jqGrid.min.js', ['dep
 $this->registerJsFile('@web/public/assets/js/jqGrid/i18n/grid.locale-cn.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
-<form id="search-form">
-    <label>ID: <input name="id" type="text" /></label>
-    <label>Name: <input name="name" type="text" /></label>
-    <label>Pid: <input name="pid" type="text" /></label>
-    <label><input type="submit" value="查询"  /></label>
-</form>
+<style type="text/css">
+    .well form label input {margin-top: 1px;}
+</style>
+<div class="well well-sm">
+    <form class="form-inline" role="form" id="search-form">
+        <div class="form-group">
+            <label class="sr-only" for="id">ID</label>
+            <input type="text" class="form-control" id="id" name="id" placeholder="请输入ID">
+        </div>
+        <div class="form-group">
+            <label  for="name">名称</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="请输入名称">
+        </div>
+        <div class="form-group">
+            <label class="sr-only" for="pid">父类ID</label>
+            <input type="text" class="form-control" id="pid" name="pid" placeholder="请输入父类ID">
+        </div>
+<!--        <div class="form-group">-->
+<!--            <label class="sr-only" for="inputfile">文件输入</label>-->
+<!--            <input type="file" id="inputfile">-->
+<!--        </div>-->
+<!--        <div class="checkbox">-->
+<!--            <label>-->
+<!--                <input type="checkbox">请打勾-->
+<!--            </label>-->
+<!--        </div>-->
+        <button class="btn btn-info btn-sm">
+            <i class="ace-icon fa fa-search align-top bigger-125"></i>
+            查询
+        </button>
+    </form>
+</div>
 <table id="grid-table"></table>
 <div id="grid-pager"></div>
 <script type="text/javascript">
@@ -151,18 +177,15 @@ jQuery(grid_selector).jqGrid({
     //,autowidth: true,
 
 
-    /**
     ,
-    grouping:true,
-    groupingView : {
-    groupField : ['name'],
-    groupDataSorted : true,
-    plusicon : 'fa fa-chevron-down bigger-110',
-    minusicon : 'fa fa-chevron-up bigger-110'
-    },
-    caption: "Grouping"
-    */
-
+//    grouping:true,
+//    groupingView : {
+//    groupField : ['name'],
+//    groupDataSorted : true,
+//    plusicon : 'fa fa-chevron-down bigger-110',
+//    minusicon : 'fa fa-chevron-up bigger-110'
+//    },
+//    caption: "Grouping"
 });
 
 // jQuery(grid_selector).jqGrid('filterToolbar', {
