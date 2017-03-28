@@ -5,7 +5,7 @@
  * Time: 13:15
  */
 
-namespace Admin\Strategy;
+namespace common\strategy;
 
 
 class Substance
@@ -30,7 +30,7 @@ class Substance
      */
     public static function getInstance($type, array $config = [])
     {
-        $className = '\\Admin\\Strategy\\'.ucfirst($type);
+        $className = '\\common\\strategy\\'.ucfirst($type);
         if (class_exists($className)) {
             if (!self::$strategy) {
                 self::$strategy = new $className($config);

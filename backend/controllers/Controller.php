@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\strategy\Substance;
 use Yii;
 
 use backend\models\Admin;
@@ -23,6 +24,7 @@ class Controller extends \common\controllers\Controller
     // 'enableCsrfValidation' => true // 配置文件关闭CSRF
     public    $admins = null;    //
     protected $sort   = 'id';    // 默认排序字段
+    protected $strategy = 'DataTables'; // 数据显示使用策略类
 
     /**
      * beforeAction() 请求之前的数据验证
@@ -78,73 +80,45 @@ class Controller extends \common\controllers\Controller
     }
 
     /**
-     * getQueryRequest() 获取查询参数处理返回
-     * @return array 返回查询信息
-     */
-    protected function getQueryRequest()
-    {
-        // 接收查询参数
-        $request = Yii::$app->request;
-        $sort = $request->post('sSortDir_0', 'asc');         // 排序方式
-        $sort = $sort == 'asc' ? SORT_ASC : SORT_DESC;       // 排序方式
-        $params = $request->post('params'); // 请求参数
-
-        // 处理排序字段信息
-        if (iset($params['orderBy']) && !empty($params['orderBy'])) {
-            $filed = $params['orderBy'];
-        } else {
-            $filed = $this->sort;
-        }
-
-        // 返回查询请求的参数
-        return [
-            'orderBy' => [$field => $sort], // 排序信息
-            'sort' => $sort,    // 排序方式
-            'field' => $field, // 排序字段
-            'params' => $request->post('params'),  // 请求参数
-            'echo' => $request->post('sEcho', 1),   // 查询次数
-            'offset' => $request->post('iDisplayStart', 0),   // 查询开始位置
-            'limit' => $request->post('iDisplayLength', 10),  // 查询数据条数
-            'where' => [], // 默认查询
-        ];
-    }
-
-    /**
      * query() 查询查询参数信息
      * @return array
      */
-    protected function query()
+    protected function query($array)
     {
-        // 获取查询参数
-        $arrSearch = $this->getQueryRequest();
         // 处理定义查询信息
-        $arrWhere  = $this->where($afterSearch['params']);
+        $arrWhere  = $this->where($array['params']);
+        $array['where'] = [];
+        $array['field'] = $array['field'] ? $array['field'] : $this->sort;
+        $array['orderBy'] = [$array['field'] => $array['sort']];
 
-        // 自定义了排序
-        if (!empty($arrWhere) && isset($arrWhere['orderBy']) && !empty($arrWhere['orderBy'])) {
-            // 判断自定义排序字段还是方式
-            $arrSearch['orderBy'] = is_array($arrWhere['orderBy']) ? $arrSearch['orderBy'] : [$arrSearch['orderBy'] => $sort];
-            unset($arrWhere['orderBy']);
-        }
-
-        // 处理默认查询条件
-        if (!empty($aWhere) && isset($aWhere['where']) && !empty($aWhere['where'])) {
-            $aSearch['where'] = array_merge($aSearch['where'], $aWhere['where']);
-            unset($aWhere['where']);
-        }
-
-        // 处理其他查询条件
-        if (!empty($aWhere) && !empty($params)) {
-            foreach ($params as $key => $value) {
-                if ( ! isset($aWhere[$key])) continue;
-                $tmpKey = $aWhere[$key];
-                $aSearch['where'][] = is_array($tmpKey) ? $tmpKey : [$tmpKey, $key, $value];
+        // 处理查询信息
+        if (!empty($arrWhere)) {
+            // 是否存在默认排序
+            if (isset($arrWhere['orderBy']) && !empty($arrWhere['orderBy'])) {
+                $array['orderBy'] = is_array($arrWhere['orderBy']) ? $array['orderBy'] : [$arrWhere['orderBy'] => $array['sort']];
+                unset($arrWhere['orderBy']);
             }
+
+            // 处理默认查询条件
+            if (!isset($arrWhere['where']) && !empty($arrWhere['where'])) {
+                $array['where'] = array_merge($array['where'], $arrWhere['where']);
+                unset($arrWhere['where']);
+            }
+
+            // 处理其他查询条件
+            if (!empty($arrWhere) && !empty($array['params'])) {
+                foreach ($array['params'] as $key => $value) {
+                    if (!isset($array['params'][$key]) || $array['params'][$key] === '') continue;
+                    $tmpKey = $arrWhere[$key];
+                    $array['where'][] = is_array($tmpKey) ? $tmpKey : [$tmpKey, $key, $value];
+                }
+            }
+
+            // 添加查询条件连接方式
+            if (!empty($array['where'])) array_unshift($array['where'], 'and');
         }
 
-        // 添加查询条件
-        if (!empty($aSearch['where'])) array_unshift($aSearch['where'], 'and');
-        return $aSearch;
+        return $array;
     }
 
     /**
@@ -164,27 +138,29 @@ class Controller extends \common\controllers\Controller
      */
     public function actionSearch()
     {
-        // 定义请求数据
-        $search = $this->query();                          // 处理查询参数
+        // 实例化数据显示类
+        $strategy = Substance::getInstance($this->strategy);
+
+        // 获取查询参数
+        $search = $this->query($strategy->getRequest()); // 处理查询参数
         $query  = $this->getModel()->find()->where($search['where']);
 
         // 查询之前的处理
         $total = $query->count();                        // 查询数据条数
-        $array = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->all();
-        if ($array) $this->afterSearch($array);
+        if ($total) {
+            $model = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy']);
+            $array = $model->all();
+            if ($array) $this->afterSearch($array);
+            $this->arrJson['other'] = $model->createCommand()->getRawSql();
+        } else {
+            $array = [];
+        }
 
-        // 返回数据
-        $this->arrJson = [
-            'errCode' => 0,
-            'other'   => $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->createCommand()->getRawSql(),
-            'data'    => [
-                'sEcho'                => $search['echo'],  // 查询次数
-                'iTotalRecords'        => count($array),    // 本次查询数据条数
-                'iTotalDisplayRecords' => $total,           // 数据总条数
-                'aaData'               => $array,           // 本次查询数据信息
-            ]
-        ];
+        // 处理返回数据
+        $this->arrJson['errCode'] = 0;
+        $this->arrJson['data'] = $strategy->handleResponse($array, $total);
 
+        // 返回JSON数据
         return $this->returnJson();
     }
 
