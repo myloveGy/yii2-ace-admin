@@ -89,7 +89,7 @@ class Admin extends \common\models\Admin
     {
         return [
             [['username', 'email'], 'required'],
-            [['password', 'repassword', 'role'], 'required', 'on' => ['admin-create']],
+            [['password', 'repassword', 'role'], 'required', 'on' => ['create']],
             [['username', 'email', 'password', 'repassword'], 'trim'],
             [['password', 'repassword'], 'string', 'min' => 6, 'max' => 30],
             // Unique

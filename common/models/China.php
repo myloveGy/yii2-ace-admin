@@ -28,9 +28,9 @@ class China extends \common\models\Model
     public function rules()
     {
         return [
-            [['id'], 'required'],
+            [['id', 'name'], 'required'],
             [['id', 'pid'], 'integer'],
-            [['name'], 'string', 'max' => 40],
+            [['name'], 'string', 'min' => 2, 'max' => 40],
             // [['pid'], 'exist', 'skipOnError' => true, 'targetClass' => China::className(), 'targetAttribute' => ['Pid' => 'Id']],
         ];
     }
