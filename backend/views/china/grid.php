@@ -29,6 +29,7 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
         </button>
     </form>
 </div>
+<div id="grid-tools"></div>
 <table id="grid-table"></table>
 <div id="grid-pager"></div>
 <script type="text/javascript">
@@ -36,17 +37,7 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
 </script>
 <?php $this->beginBlock('javascript');?>
 <script>
-    var subgrid_data = [
-        {id:"1", name:"sub grid item 1", qty: 11},
-        {id:"2", name:"sub grid item 2", qty: 3},
-        {id:"3", name:"sub grid item 3", qty: 12},
-        {id:"4", name:"sub grid item 4", qty: 5},
-        {id:"5", name:"sub grid item 5", qty: 2},
-        {id:"6", name:"sub grid item 6", qty: 9},
-        {id:"7", name:"sub grid item 7", qty: 3},
-        {id:"8", name:"sub grid item 8", qty: 8}
-    ];
-
+//    jQuery.fn.fmatter.rowactions.call(this,'save');
     $(function(){
         var grid_selector = "#grid-table";
         var pager_selector = "#grid-pager";
@@ -81,17 +72,30 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
 
             // for this example we are using local data
             subGridRowExpanded: function (subgridDivId, rowId) {
+                console.info(rowId);
                 var subgridTableId = subgridDivId + "_t";
                 $("#" + subgridDivId).html("<table id='" + subgridTableId + "'></table>");
                 $("#" + subgridTableId).jqGrid({
-                    datatype: 'local',
-                    data: subgrid_data,
-                    colNames: ['No','Item Name','Qty'],
+                    datatype: "json",
+                    url: "<?=\yii\helpers\Url::toRoute('search')?>",
+                    mtype: "post",
+                    colNames: ["id", "名称", "父类ID"],
+                    postData: {
+                        "params[pid]":rowId
+                    },
                     colModel: [
-                        { name: 'id', width: 50},
-                        { name: 'name', width: 150 },
-                        { name: 'qty', width: 50 }
-                    ]
+                        { name: 'id', index: "id",  width: 200},
+                        { name: 'name', index: "name", width: 200 },
+                        { name: 'pid', index: "pid",  width: 200 }
+                    ],
+                    jsonReader: {
+                        id: "id",
+                        root: "data.rows",
+                        page: "data.page",
+                        total: "data.total",
+                        records: "data.records",
+                        repeatiems: false
+                    }
                 });
             },
 
@@ -125,8 +129,12 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
                             beforeShowForm: beforeDeleteCallback,
                             afterSubmit: ajaxResponse
                         },
+
+                        aftersave: function () {
+                            alert(123)
+                        }
                     },
-                    search: false,
+                    search: false
                 },
                 {name:'id', index: 'id', width: 60, sorttype: "int", editable: true},
                 {
@@ -135,12 +143,12 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
                     width: 90,
                     editable: true,
                     sorttype: "date",
-                    editoptions: {size: "20", "minlength": "2", "maxlength": "255"},
+                    editoptions: {size: "20", "minlength": "2", "maxlength": "255"}
                     /* unformat: pickDate */
                 },
                 {name:'pid', index: 'pid', width: 50, editable: true, editoptions: {size: "20", maxlength:"30"}, searchoptions: {
                     sopt:["eq"]
-                }},
+                }}
                 // {name:'stock',index:'stock', width:70, editable: true,edittype:"checkbox",editoptions: {value:"Yes:No"},unformat: aceSwitch},
                 // {name:'ship',index:'ship', width:90, editable: true,edittype:"select",editoptions:{value:"FE:FedEx;IN:InTime;TN:TNT;AR:ARAMEX"}},
                 // {name:'note',index:'note', width:150, sortable:false,editable: true,edittype:"textarea", editoptions:{rows:"2",cols:"10"}}
@@ -168,7 +176,6 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
             loadBeforeSend: function() {
                 arguments[1].data += "&" + $("#search-form").serialize();
             },
-
             editurl: "<?=\yii\helpers\Url::toRoute('update')?>",
             caption: "中国省份信息"
         });
@@ -186,7 +193,9 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
         // 表单搜索
         $("#search-form").submit(function(evt){
             evt.preventDefault();
-            jQuery(grid_selector).trigger("reloadGrid");
+            jQuery(grid_selector).jqGrid("setGridParam", {
+               page: 1
+            }).trigger("reloadGrid");
         });
 
         $(window).triggerHandler('resize.jqGrid');
