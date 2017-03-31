@@ -6,10 +6,29 @@ $this->registerJsFile('@web/public/assets/js/jqGrid/jquery.jqGrid.min.js', ['dep
 $this->registerJsFile('@web/public/assets/js/jqGrid/i18n/grid.locale-cn.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
-<style type="text/css">
-    .well form label input {margin-top: 1px;}
-</style>
-<div class="well well-sm" id="search-div">
+<p>
+    <button class="btn btn-primary btn-xs">
+        <i class="ace-icon fa fa-plus-circle"></i>
+        添加
+    </button>
+    <button class="btn btn-info btn-xs">
+        <i class="ace-icon fa fa-pencil-square-o"></i>
+        编辑
+    </button>
+    <button class="btn btn-danger btn-xs">
+        <i class="ace-icon fa fa-trash-o "></i>
+        删除
+    </button>
+    <button class="btn btn-success btn-xs">
+        <i class="ace-icon fa  fa-refresh"></i>
+        刷新
+    </button>
+    <button class="btn btn-warning btn-xs">
+        <i class="ace-icon glyphicon glyphicon-export"></i>
+        导出
+    </button>
+</p>
+<div class="well well-sm" id="search-div" style="margin-bottom: 0">
     <form class="form-inline" role="form" id="search-form">
         <div class="form-group">
             <label class="sr-only" for="id">ID</label>
@@ -130,9 +149,17 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
                             afterSubmit: ajaxResponse
                         },
 
-                        aftersave: function () {
-                            alert(123)
+                        onSuccess: function(response) {
+                            var arr = ajaxResponse(response);
+                            layer.msg(arr[1], {icon: arr[0] ? 6 : 5});
+                            return arr[0];
                         }
+
+//                        afterSave: function () {
+//                            alert(123);
+//                            console.info(arguments);
+//                            return false;
+//                        }
                     },
                     search: false
                 },
@@ -146,7 +173,7 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
                     editoptions: {size: "20", "minlength": "2", "maxlength": "255"}
                     /* unformat: pickDate */
                 },
-                {name:'pid', index: 'pid', width: 50, editable: true, editoptions: {size: "20", maxlength:"30"}, searchoptions: {
+                {name:'pid', index: 'pid', width: 50, editable: true, edittype: "file", editoptions: {size: "20", maxlength:"30"}, searchoptions: {
                     sopt:["eq"]
                 }}
                 // {name:'stock',index:'stock', width:70, editable: true,edittype:"checkbox",editoptions: {value:"Yes:No"},unformat: aceSwitch},
