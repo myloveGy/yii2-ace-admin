@@ -7,23 +7,23 @@ $this->registerJsFile('@web/public/assets/js/jqGrid/i18n/grid.locale-cn.js', ['d
 $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
 <p>
-    <button class="btn btn-primary btn-xs">
+    <button class="btn btn-primary btn-xs" id="jqGrid-create">
         <i class="ace-icon fa fa-plus-circle"></i>
         添加
     </button>
-    <button class="btn btn-info btn-xs">
+    <button class="btn btn-info btn-xs" id="jqGrid-update">
         <i class="ace-icon fa fa-pencil-square-o"></i>
         编辑
     </button>
-    <button class="btn btn-danger btn-xs">
+    <button class="btn btn-danger btn-xs" id="jqGrid-delete">
         <i class="ace-icon fa fa-trash-o "></i>
         删除
     </button>
-    <button class="btn btn-success btn-xs">
+    <button class="btn btn-success btn-xs" id="jqGrid-reload">
         <i class="ace-icon fa  fa-refresh"></i>
         刷新
     </button>
-    <button class="btn btn-warning btn-xs">
+    <button class="btn btn-warning btn-xs" id="jqGrid-export">
         <i class="ace-icon glyphicon glyphicon-export"></i>
         导出
     </button>
@@ -48,12 +48,8 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
         </button>
     </form>
 </div>
-<div id="grid-tools"></div>
 <table id="grid-table"></table>
 <div id="grid-pager"></div>
-<script type="text/javascript">
-    var $path_base = "..";//in Ace demo this will be used for editurl parameter
-</script>
 <?php $this->beginBlock('javascript');?>
 <script>
 //    jQuery.fn.fmatter.rowactions.call(this,'save');
@@ -173,7 +169,7 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
                     editoptions: {size: "20", "minlength": "2", "maxlength": "255"}
                     /* unformat: pickDate */
                 },
-                {name:'pid', index: 'pid', width: 50, editable: true, edittype: "file", editoptions: {size: "20", maxlength:"30"}, searchoptions: {
+                {name:'pid', index: 'pid', width: 50, editable: true, editoptions: {size: "20", maxlength:"30"}, searchoptions: {
                     sopt:["eq"]
                 }}
                 // {name:'stock',index:'stock', width:70, editable: true,edittype:"checkbox",editoptions: {value:"Yes:No"},unformat: aceSwitch},
@@ -216,6 +212,68 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
                 return [false, "服务器繁忙,请稍后再试..."]
             }
         }
+
+        // 添加数据
+        $("#jqGrid-create").click(function(evt){
+            evt.preventDefault();
+            jQuery(grid_selector).jqGrid('editGridRow', "new", {
+//                width: 700,
+//                height: 500,
+                closeAfterAdd: true,
+                recreateForm: true,
+                viewPagerButtons: false,
+                url: "<?=\yii\helpers\Url::toRoute('create')?>",
+                beforeShowForm : function(e) {
+                    var form = $(e[0]);
+                    form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
+                        .wrapInner('<div class="widget-header" />');
+                    style_edit_form(form);
+                },
+                afterSubmit: ajaxResponse
+            });
+        });
+
+        //　编辑数据
+        $("#jqGrid-update").click(function(evt){
+            evt.preventDefault();
+            var gr = jQuery(grid_selector).jqGrid('getGridParam','selrow');
+            if (gr != null) {
+                jQuery(grid_selector).jqGrid('editGridRow', gr, {
+                    url: "<?=\yii\helpers\Url::toRoute('update')?>",
+                    recreateForm: true,
+                    closeAfterEdit: true,
+                    beforeShowForm : function(e) {
+                        var form = $(e[0]);
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
+                        style_edit_form(form);
+                    },
+
+                    afterSubmit: ajaxResponse
+                });
+            } else {
+                alert("Please Select Row");
+            }
+        });
+
+        // 删除数据
+        $("#jqGrid-delete").click(function() {
+            var gr = jQuery(grid_selector).jqGrid('getGridParam', 'selrow');
+            if (gr != null)
+                jQuery(grid_selector).jqGrid('delGridRow', gr, {
+                    url: "delete",
+                    recreateForm: true,
+                    beforeShowForm : function(e) {
+                        var form = $(e[0]);
+                        if (form.data('styled')) return false;
+                        form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
+                        style_delete_form(form);
+                        form.data('styled', true);
+                    },
+                    afterSubmit: ajaxResponse
+                });
+            else
+                alert("Please Select Row to delete!");
+        });
 
         // 表单搜索
         $("#search-form").submit(function(evt){
