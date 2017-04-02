@@ -23,10 +23,10 @@ class MenuController extends Controller
     {
         return [
             'id' => '=',
-            'menu_name'   => 'like',
-            'url'         => '=',
+            'menu_name' => 'like',
+            'url' => '=',
             'action_name' => 'like',
-            'status'      => '=',
+            'status' => '=',
         ];
     }
 
@@ -38,7 +38,9 @@ class MenuController extends Controller
     {
         // 查询父级分类信息
         $parents = Menu::find()->select(['id', 'menu_name'])->where(['status' => 1, 'pid' => 0])->indexBy('id')->all();
-        return $this->render('index', ['parents' => Json::encode(Helper::map($parents, 'id', 'menu_name', ['顶级分类']))]);
+        return $this->render('index', [
+            'parents' => Json::encode(Helper::map($parents, 'id', 'menu_name', ['顶级分类']))
+        ]);
     }
 
     /**

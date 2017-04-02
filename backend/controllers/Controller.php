@@ -7,6 +7,7 @@ use Yii;
 
 use backend\models\Admin;
 use common\models\UploadForm;
+use yii\db\Query;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
@@ -25,6 +26,7 @@ class Controller extends \common\controllers\Controller
     public    $admins = null;    //
     protected $sort   = 'id';    // 默认排序字段
     protected $strategy = 'DataTables'; // 数据显示使用策略类
+    protected $pk = 'id';
 
     /**
      * beforeAction() 请求之前的数据验证
@@ -79,46 +81,56 @@ class Controller extends \common\controllers\Controller
         return [];
     }
 
-    /**
-     * query() 查询查询参数信息
-     * @return array
-     */
-    protected function query($array)
+
+    public function handleWhere($params, $where)
     {
-        // 处理定义查询信息
-        $arrWhere  = $this->where($array['params']);
-        $array['where'] = [];
-        $array['field'] = $array['field'] ? $array['field'] : $this->sort;
-        $array['orderBy'] = [$array['field'] => $array['sort']];
-
-        // 处理查询信息
-        if (!empty($arrWhere)) {
-            // 是否存在默认排序
-            if (isset($arrWhere['orderBy']) && !empty($arrWhere['orderBy'])) {
-                $array['orderBy'] = is_array($arrWhere['orderBy']) ? $array['orderBy'] : [$arrWhere['orderBy'] => $array['sort']];
-                unset($arrWhere['orderBy']);
+        $arrReturn = [];
+        if ($where) {
+            // 默认查询
+            if (isset($where['where']) && !empty($where['where'])) {
+                $arrReturn = $where['where'];
+                unset($where['where']);
             }
 
-            // 处理默认查询条件
-            if (!isset($arrWhere['where']) && !empty($arrWhere['where'])) {
-                $array['where'] = array_merge($array['where'], $arrWhere['where']);
-                unset($arrWhere['where']);
-            }
+            // 处理其他查询
+            if ($where && $params) {
+                foreach ($params as $key => $value) {
+                    if (isset($where[$key]) && $value !== "") {
+                        $v = $where[$key];
 
-            // 处理其他查询条件
-            if (!empty($arrWhere) && !empty($array['params'])) {
-                foreach ($array['params'] as $key => $value) {
-                    if (!isset($array['params'][$key]) || $array['params'][$key] === '') continue;
-                    $tmpKey = $arrWhere[$key];
-                    $array['where'][] = is_array($tmpKey) ? $tmpKey : [$tmpKey, $key, $value];
+                        // 判断字符串类型处理
+                        if (is_string($v)) {
+                            $arrReturn[] = [$v, $key, $value];
+                        // 判断数组处理
+                        } else if (is_array($v)) {
+                            // 处理函数
+                            if (isset($v['func']) && function_exists($v['func'])) {
+                                $value = $v['func']($value);
+                            }
+
+                            // 对应字段
+                            if (!isset($v['field']) || empty($v['field'])) {
+                                $v['field'] = $key;
+                            }
+
+                            // 链接类型
+                            if (!isset($v['and']) || empty($v['and'])) {
+                                $v['and'] = '=';
+                            }
+
+                            $arrReturn[] = [$v['and'], $v['field'], $value];
+                        // 对象处理（匿名函数）
+                        } else if (is_object($v)) {
+                            $arrReturn[] = $v($key, $value);
+                        }
+                    }
                 }
             }
 
-            // 添加查询条件连接方式
-            if (!empty($array['where'])) array_unshift($array['where'], 'and');
+            if ($arrReturn) array_unshift($arrReturn, 'and');
         }
 
-        return $array;
+        return $arrReturn;
     }
 
     /**
@@ -142,11 +154,16 @@ class Controller extends \common\controllers\Controller
         $strategy = Substance::getInstance($this->strategy);
 
         // 获取查询参数
-        $search = $this->query($strategy->getRequest()); // 处理查询参数
-        $query  = $this->getModel()->find()->where($search['where']);
+        $search = $strategy->getRequest(); // 处理查询参数
+        $search['field'] = $search['field'] ? $search['field'] : $this->sort;
+        $search['orderBy'] = [$search['field'] => $search['sort']];
+        $search['where'] = $this->handleWhere($search['params'], $this->where($search['params']));
 
         // 查询之前的处理
-        $total = $query->count();                        // 查询数据条数
+        $query = $this->getModel()->find()->where($search['where']);
+
+        // 查询数据条数
+        $total = $query->count();
         if ($total) {
             $model = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy']);
             $array = $model->all();
@@ -199,16 +216,16 @@ class Controller extends \common\controllers\Controller
     {
         // 接收参数判断
         $data = Yii::$app->request->post();
-        if ($data) {
+        if ($data && isset($data[$this->pk]) && !empty($data[$this->pk])) {
             // 接收参数
-            $model = $this->findModel($data);
+            $model = $this->getModel()->findOne($data[$this->pk]);
             if ($model) {
                 $arrScenarios = $model->scenarios();
                 if (isset($arrScenarios['update'])) {
                     $model->scenario = 'update';
                 }
 
-                // 新增数据
+                // 修改数据
                 $this->arrJson['errCode'] = 205;
                 $isTrue = $model->load(['params' => $data], 'params');
                 if ($isTrue) {
@@ -230,13 +247,15 @@ class Controller extends \common\controllers\Controller
     public function actionDelete()
     {
         $data = Yii::$app->request->post();
-        if ($data) {
-            $model = $this->findModel($data);
+        if ($data && isset($data[$this->pk]) && !empty($data[$this->pk])) {
+            $model = $this->getModel()->findOne($data[$this->pk]);
+            $this->arrJson['errCode'] = 222;
             if ($model) {
-                if ($model->delete())
+                if ($model->delete()) {
                     $this->handleJson($model);
-                else
+                } else {
                     $this->arrJson['errMsg'] = $model->getErrorString();
+                }
             }
         }
 
@@ -249,15 +268,12 @@ class Controller extends \common\controllers\Controller
      */
     public function actionDeleteAll()
     {
-        $ids = Yii::$app->request->post('ids');
+        $ids = Yii::$app->request->post($this->pk);
         if ($ids) {
             $model = $this->getModel();
-            $index = $model->primaryKey();
             $this->arrJson['errCode'] = 220; // 查询数据不存在
-            if ($index && isset($index[0])) {
-                if ($model->deleteAll([$index[0] => explode(',', $ids)])) {
-                    $this->handleJson([]);
-                }
+            if ($model->deleteAll([explode(',', $ids)])) {
+                $this->handleJson($ids);
             }
         }
 
@@ -394,17 +410,21 @@ class Controller extends \common\controllers\Controller
             // 接收参数
             $arrFields = $request->post('aFields');         // 字段信息
             $strTitle  = $request->post('sTitle');          // 标题信息
+            $params = $request->post('params'); // 查询条件信息
 
             // 判断数据的有效性
             if ($arrFields && $strTitle) {
                 // 获取数据
                 $arrKeys   = array_keys($arrFields);        // 所有的字段
-                $arrSearch = $this->query();                // 处理查询参数
-                $objArray  = $this->getModel()->find()->where($arrSearch['where'])->orderBy($arrSearch['orderBy'])->all();
+                $query = $this->getModel()
+                    ->find()
+                    ->where($this->handleWhere($params, $this->where($params)))
+                    ->orderBy([$this->sort => SORT_DESC]);
 
+                $intCount = $query->count();
                 // 判断数据是否存在
                 $this->arrJson['errCode'] = 220;
-                if ($objArray) {
+                if ($intCount > 0) {
                     ob_end_clean();
                     ob_start();
                     $objPHPExcel = new \PHPExcel();
@@ -434,16 +454,18 @@ class Controller extends \common\controllers\Controller
 
                     // 写入数据信息
                     $intNum = 2;
-                    foreach ($objArray as $value) {
-                        // 处理查询到的数据
-                        $this->handleExport($value);
-                        // 写入信息数据
-                        foreach ($arrLetter as $intKey => $strValue) {
-                            $tmpAttribute = $arrKeys[$intKey];
-                            $objPHPExcel->getActiveSheet()->setCellValue($strValue.$intNum, $value->$tmpAttribute);
-                        }
+                    foreach ($query->batch(1000) as $array) {
+                        foreach ($array as $value) {
+                            // 处理查询到的数据
+                            $this->handleExport($value);
+                            // 写入信息数据
+                            foreach ($arrLetter as $intKey => $strValue) {
+                                $tmpAttribute = $arrKeys[$intKey];
+                                $objPHPExcel->getActiveSheet()->setCellValue($strValue.$intNum, $value->$tmpAttribute);
+                            }
 
-                        $intNum ++;
+                            $intNum ++;
+                        }
                     }
 
                     // 设置sheet 标题信息
@@ -479,24 +501,4 @@ class Controller extends \common\controllers\Controller
     {
         return new Admin();
     }
-
-    /**
-     * findModel() 查询单个model
-     * @param  array $data 请求的数据
-     * @return Controller|Admin
-     */
-    protected function findModel($data)
-    {
-        $model = $this->getModel();
-        $index = $model->primaryKey();
-        if ($index && isset($index[0]) && isset($data[$index[0]])) {
-            $mixReturn = $model->findOne($data[$index[0]]);
-        } else {
-            $mixReturn = false;
-            $this->arrJson['errCode'] = 220; // 查询数据不存在
-        }
-
-        return $mixReturn;
-    }
-
 }

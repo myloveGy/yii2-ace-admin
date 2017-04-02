@@ -257,7 +257,7 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
 
         // 删除数据
         $("#jqGrid-delete").click(function() {
-            var gr = jQuery(grid_selector).jqGrid('getGridParam', 'selrow');
+            var gr = jQuery(grid_selector).jqGrid('getGridParam', 'selarrrow');
             if (gr != null)
                 jQuery(grid_selector).jqGrid('delGridRow', gr, {
                     url: "delete",

@@ -24,27 +24,12 @@ class ChinaController extends Controller
     public function where($params)
     {
         return [
-            'id' => '=',
-            'name' => 'like',
+            'id' => ['and' => '=', 'func' => 'intval'],
+            'name' => function($key, $value) {
+                return ['like', 'name', trim($value)];
+            },
             'pid'  => '='
         ];
-    }
-
-    public function actionChild()
-    {
-        $request = \Yii::$app->request;
-        $array = China::find()->where(['pid' => $request->post('id')])->all();
-        $this->arrJson = [
-            'errCode' => 0,
-            'other'   => China::find()->where(['pid' => \Yii::$app->request->post('id')])->createCommand()->getRawSql(),
-            'data'    => [
-                'sEcho'                => $request->post('echo'),  // 查询次数
-                'iTotalRecords'        => count($array),    // 本次查询数据条数
-                'iTotalDisplayRecords' => count($array),           // 数据总条数
-                'aaData'               => $array,           // 本次查询数据信息
-            ]
-        ];
-        return $this->returnJson();
     }
 
     /**
@@ -57,11 +42,6 @@ class ChinaController extends Controller
         return $this->render('grid', [
             'parent' => ArrayHelper::map(China::find()->where(['pid' => 0])->all(), 'id', 'name'),
         ]);
-    }
-
-    public function actionDelete()
-    {
-        return $this->returnJson();
     }
 
     /**
