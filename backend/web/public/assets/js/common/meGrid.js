@@ -17,10 +17,54 @@
                 this.extend({options: options});
             }
 
+            // 处理标题
+            if (!this.options.grid.caption) {
+                this.options.grid.caption = this.options.title;
+            }
+
+            // 搜索地址
+            if (!this.options.grid.url) {
+                this.options.grid.url = this.getUrl("search");
+            }
+
+            // 分页选择器
+            if (!this.options.grid.pager) {
+                this.options.grid.pager = this.options.pageSelector;
+            }
+
+            // 添加数据地址
+            if (!this.options.createOptions.url) {
+                this.options.createOptions.url = this.getUrl("create");
+            }
+
+            // 修改数据地址
+            if (!this.options.updateOptions.url) {
+                this.options.updateOptions.url = this.getUrl("update");
+            }
+
+            // 删除数据地址
+            if (!this.options.deleteOptions.url) {
+                this.options.deleteOptions.url = this.getUrl("deleteAll");
+            }
+
+            // 单个删除
+            if (this.options.bOperation) {
+                if (!this.options.operation.title) {
+                    this.options.operation.title = this.getLanguage("operation");
+                }
+
+                if (!this.options.operation.formatoptions.delOptions.url) {
+                    this.options.operation.formatoptions.delOptions.url = this.getUrl("delete");
+                }
+            }
+
             // 处理按钮
             for (var i in this.options.buttons) {
                 if (this.options.buttons[i] != null) {
                     this.options.buttonOptions[i] = true;
+                    if (!this.options.buttons[i].text) {
+                        this.options.buttons[i].text = this.getLanguage(i);
+                    }
                     this.options.buttonHtml += '<button class="' + this.options.buttons[i]["className"] + '" id="' + this.options.gridSelector.replace("#", "") + "-" + i + '">\
                                 <i class="' + this.options.buttons[i]["icon"] + '"></i>\
                             ' + this.options.buttons[i]["text"] + '\
@@ -53,7 +97,7 @@
                 if (this.options.search.render) {
                     this.options.searchHtml += '<button class="' + this.options.search.button.class + '">\
                     <i class="' + this.options.search.button.icon + '"></i>\
-                    ' + this.options.search.button.text + '\
+                    ' + this.getLanguage("search") + '\
                     </button>';
                 }
             }
@@ -117,7 +161,7 @@
                     if (gr != null) {
                         self.grid.jqGrid('editGridRow', gr, self.options.updateOptions);
                     } else {
-                        layer.msg(self.language.selectRow, {icon: 5});
+                        layer.msg(self.getLanguage("selectRow"), {icon: 5});
                     }
                 });
             }
@@ -127,11 +171,10 @@
                 $(self.options.gridSelector + "-del").click(function() {
                     var gr = self.grid.jqGrid('getGridParam', 'selarrrow');
                     if (gr != null && gr.length >= 1) {
-                        console.info(self.options.deleteOptions)
                         self.grid.jqGrid('delGridRow', gr, self.options.deleteOptions);
                     }
                     else
-                        layer.msg(self.language.selectRow, {icon: 5});
+                        layer.msg(self.getLanguage("selectRow"), {icon: 5});
                 });
             }
 
@@ -171,6 +214,12 @@
         // 获取连接地址
         getUrl: function (strType) {
             return this.options.urlPrefix + this.options.url[strType] + this.options.urlSuffix;
+        },
+
+        // 获取语言参数
+        getLanguage: function(str, language) {
+            if (!language) language = this.options.language;
+            return this.language[language][str];
         }
     };
 
@@ -223,6 +272,8 @@
             buttonSelector: "#grid-buttons",
             // 操作项
             bOperation: true,
+            // 语言版本
+            language: "zh-cn",
             // 关于地址配置信息
             urlPrefix: "",
             urlSuffix: "",
@@ -284,16 +335,18 @@
         },
 
         language: {
-            "responseError": "服务器繁忙,请稍后再试...",
-            "selectRow": "请选择需要处理的行",
-            "operation": "操作",
-            "create": "添加",
-            "update": "编辑",
-            "delete": "删除",
-            "reload": "刷新",
-            "export": "导出",
-            "pleaseInput": "请输入",
-            "search": "搜索"
+            "zh-cn": {
+                "responseError": "服务器繁忙,请稍后再试...",
+                "selectRow": "请选择需要处理的行",
+                "operation": "操作",
+                "add": "添加",
+                "edit": "编辑",
+                "del": "删除",
+                "refresh": "刷新",
+                "export": "导出",
+                "pleaseInput": "请输入",
+                "search": "搜索"
+            }
         }
     });
 
@@ -305,7 +358,7 @@
                 return [jsonObject.errCode == 0, jsonObject.errMsg];
             } catch (e) {
                 console.info(e);
-                return [false, meGrid.fn.language.responseError]
+                return [false, meGrid.fn.getLanguage("responseError")]
             }
         },
 
@@ -387,7 +440,7 @@
             var defaultParams = {
                 "id": "search-" + name,
                 "name": "params[" + name + "]",
-                "placeholder": meGrid.fn.language.pleaseInput + text,
+                "placeholder": meGrid.fn.getLanguage("pleaseInput") + text,
                 "class": "form-control"
             }, defaultLabel = {
                 "class": "sr-only",
@@ -418,18 +471,12 @@
                 button: {
                     "class": "btn btn-info btn-sm",
                     "icon": "ace-icon fa fa-search",
-                    "text": meGrid.fn.language.search
+                    // "text": meGrid.fn.getLanguage("search")
                 }
             },
 
             // 表格信息
             grid: {
-                // 表格标题
-                caption: meGrid.fn.options.title,
-                // 搜索地址
-                url: meGrid.fn.getUrl("search"),
-                // 分页选择器
-                pager: meGrid.fn.options.pageSelector,
                 // 加载之后的处理
                 loadComplete : function() {
                     var table = this;
@@ -446,7 +493,6 @@
 
             // 创建配置选项
             createOptions: {
-                url: meGrid.fn.getUrl("create"),
                 closeAfterAdd: true,
                 recreateForm: true,
                 viewPagerButtons: false,
@@ -462,7 +508,6 @@
 
             // 修改配置选项
             updateOptions: {
-                url: meGrid.fn.getUrl("update"),
                 recreateForm: true,
                 closeAfterEdit: true,
                 beforeShowForm : function(e) {
@@ -476,7 +521,6 @@
 
             // 删除配置选项
             deleteOptions: {
-                url: meGrid.fn.getUrl("delete"),
                 recreateForm: true,
                 beforeShowForm : function(e) {
                     var form = $(e[0]);
@@ -494,7 +538,7 @@
                 name: 'myac',
                 index: '',
                 width: 80,
-                title: meGrid.fn.language.operation,
+                // title: meGrid.fn.getLanguage("operation"),
                 fixed: true,
                 sortable: false,
                 resize: false,
@@ -502,7 +546,7 @@
                 formatoptions: {
                     keys: true,
                     delOptions: {
-                        url: meGrid.fn.getUrl("delete"),
+                        // url: meGrid.fn.getUrl("delete"),
                         recreateForm: true,
                         beforeShowForm: meGrid.beforeDeleteCallback,
                         afterSubmit: meGrid.ajaxResponse
@@ -520,27 +564,26 @@
             //　默认按钮信息
             buttons: {
                 add: {
-                    text: meGrid.fn.language.create,
                     icon: "ace-icon fa fa-plus-circle",
                     className: "btn btn-primary btn-xs"
                 },
                 edit: {
-                    text: meGrid.fn.language.update,
+                    // text: meGrid.fn.getLanguage("update"),
                     icon: "ace-icon fa fa-pencil-square-o",
                     className: "btn btn-info btn-xs"
                 },
                 del: {
-                    text: meGrid.fn.language.delete,
+                    // text: meGrid.fn.getLanguage("delete"),
                     icon: "ace-icon fa fa-trash-o ",
                     className: "btn btn-danger btn-xs"
                 },
                 refresh: {
-                    text: meGrid.fn.language.reload,
+                    // text: meGrid.fn.getLanguage("reload"),
                     icon: "ace-icon fa  fa-refresh",
                     className: "btn btn-success btn-xs"
                 },
                 export: {
-                    text: meGrid.fn.language.export,
+                    // text: meGrid.fn.getLanguage("export"),
                     icon: "ace-icon glyphicon glyphicon-export",
                     className: "btn btn-warning btn-xs"
                 }

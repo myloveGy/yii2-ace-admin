@@ -19,10 +19,8 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
 <?php $this->beginBlock('javascript');?>
 <script>
     var g = meGrid({
-        title: "中国地址信息123",
-        url: {
-            search: "delete"
-        },
+        title: "中国地址信息",
+//        language: "en-us",
         grid: {
             // 子表处理
 //            subGrid : false,
