@@ -416,13 +416,13 @@
             this.action = "export";
             var self = this,
                 html = '<form action="' + this.getUrl("export") + '" target="_blank" method="POST" class="me-export" style="display:none">';
-            html += '<input type="hidden" name="sTitle" value="' + self.options.title + '"/>';
+            html += '<input type="hidden" name="title" value="' + self.options.title + '"/>';
             html += '<input type="hidden" name="_csrf" value="' + $('meta[name=csrf-token]').attr('content') + '"/>';
 
             // 添加字段信息
             this.options.table.aoColumns.forEach(function(k, v){
                 if (k.data != null && (k.isExport == undefined)) {
-                    html += '<input type="hidden" name="aFields[' + k.data + ']" value="' + k.title + '"/>';
+                    html += '<input type="hidden" name="fields[' + k.data + ']" value="' + k.title + '"/>';
                 }
             });
 
