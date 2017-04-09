@@ -1,6 +1,5 @@
 <?php
-$this->title = 'Yii2 admin JqGrid';
-
+$this->title = '我国省份地址信息';
 $this->registerCssFile('@web/public/assets/css/ui.jqgrid.css', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jqGrid/jquery.jqGrid.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jqGrid/i18n/grid.locale-cn.js', ['depends' => 'backend\assets\AppAsset']);
@@ -77,7 +76,6 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
 
     $(function(){
         g.init();
-        console.info(g);
     });
 </script>
 <?php $this->endBlock(); ?>

@@ -192,6 +192,15 @@
                 self.refresh();
             });
 
+            // 数据导出
+            if (self.options.buttons.export) {
+                console.info(self.options.gridSelector + "-export");
+                $(document).on('click', self.options.gridSelector + "-export", function(evt){
+                    evt.preventDefault();
+                    self.export();
+                });
+            }
+
             $(document).on('ajaxloadstart', function(e) {
                 self.grid.jqGrid('GridUnload');
                 $('.ui-jqdialog').remove();
@@ -200,6 +209,67 @@
             if (typeof func == "function") {
                 func();
             }
+        },
+
+        // 数据导出
+        export: function() {
+            this.action = "export";
+            var self = this,
+                html = '<form action="' + this.getUrl("export") + '" target="_blank" method="POST" class="me-export" style="display:none">';
+            html += '<input type="hidden" name="title" value="' + self.options.title + '"/>';
+            html += '<input type="hidden" name="_csrf" value="' + $('meta[name=csrf-token]').attr('content') + '"/>';
+
+            // 添加字段信息
+            this.options.grid.colModel.forEach(function(k){
+                if (k.index != null && (k.bExport == undefined)) {
+                    html += '<input type="hidden" name="fields[' + k.index + ']" value="' + k.title + '"/>';
+                }
+            });
+
+            // 添加查询条件
+            var value = $(self.options.searchSelector).serializeArray();
+            for (var i in value) {
+                if (meTables.empty(value[i]["value"]) || value[i]["value"] == "All") continue;
+                html += '<input type="hidden" name="' + value[i]['name'] + '" value="' + value[i]["value"] + '"/>';
+            }
+
+            // 表单提交
+            var $form = $(html);
+            $('body').append($form);
+            var deferred = new $.Deferred,
+                temporary_iframe_id = 'temporary-iframe-'+(new Date()).getTime()+'-'+(parseInt(Math.random()*1000)),
+                temp_iframe = $('<iframe id="'+temporary_iframe_id+'" name="'+temporary_iframe_id+'" \
+								frameborder="0" width="0" height="0" src="about:blank"\
+								style="position:absolute; z-index:-1; visibility: hidden;"></iframe>')
+                    .insertAfter($form);
+            $form.append('<input type="hidden" name="temporary-iframe-id" value="'+temporary_iframe_id+'" />');
+            temp_iframe.data('deferrer' , deferred);
+            $form.attr({
+                method:  'POST',
+                enctype: 'multipart/form-data',
+                target:  temporary_iframe_id //important
+            });
+
+            $form.get(0).submit();
+            var ie_timeout = setTimeout(function(){
+                ie_timeout = null;
+                deferred.reject($(document.getElementById(temporary_iframe_id).contentDocument).text());
+                $('.me-export').remove();
+            } , 500);
+
+            deferred.fail(function(result) {
+                if (result) {
+                    try {
+                        result = $.parseJSON(result);
+                        layer.msg(result.errMsg, {icon: result.errCode == 0 ? 6 : 5});
+                    } catch (e) {
+                        layer.msg(self.getLanguage("responseError"), {icon: 5});
+                    }
+                } else {
+                    layer.msg(self.getLanguage("exportSuccess"), {icon: 6});
+                }
+            }).always(function() {clearTimeout(ie_timeout);});
+            deferred.promise();
         },
 
         // 刷新页面
@@ -345,7 +415,8 @@
                 "refresh": "刷新",
                 "export": "导出",
                 "pleaseInput": "请输入",
-                "search": "搜索"
+                "search": "搜索",
+                "exportSuccess": "数据正在导出，请稍后..."
             }
         }
     });
@@ -543,6 +614,7 @@
                 sortable: false,
                 resize: false,
                 formatter: 'actions',
+                bExport: false,
                 formatoptions: {
                     keys: true,
                     delOptions: {
