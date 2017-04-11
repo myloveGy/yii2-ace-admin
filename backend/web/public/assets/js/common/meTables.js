@@ -282,7 +282,7 @@
                 icon: 0
                 // 确认删除
             }, function(){
-                self.save(child ? this.childTable.data()[row] : this.table.data()[row], child);
+                self.save(child ? self.childTable.data()[row] : self.table.data()[row], child);
                 // 取消删除
             }, function(){
                 layer.msg(self.getLanguage("cancelOperation"), {time:800});
