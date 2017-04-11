@@ -2,6 +2,10 @@
  * Created by liujinxing on 2017/3/23.
  */
 
+function empty(value) {
+    return value == undefined || value == null || value == "";
+}
+
 function validateFile(info) {
     var error = [];
     if (info && typeof info == "object") {

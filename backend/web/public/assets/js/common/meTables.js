@@ -147,6 +147,11 @@
                 }
             }
 
+            // 处理搜索位置
+            if (this.options.sSearchType != "middle") {
+                
+            }
+
             return this;
         },
 
