@@ -44,16 +44,6 @@ class ChinaController extends Controller
         ]);
     }
 
-    public function actionDelete()
-    {
-        return $this->returnJson();
-    }
-
-    public function actionDeleteAll()
-    {
-        return $this->returnJson();
-    }
-
     /**
      * getModel() 获取model
      * @return China

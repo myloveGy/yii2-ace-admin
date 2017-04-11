@@ -32,8 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
         aRoles  = <?=\yii\helpers\Json::encode($roles)?>,
         m = mt({
             title: "管理员信息",
-            aFileSelector: ["#file"],
-            oEditFormParams: {
+            fileSelector: ["#file"],
+            editFormParams: {
                 bMultiCols: true,
                 iColsLength: 2,
                 aCols: [2, 4]

@@ -244,6 +244,7 @@
             // if (self.options.bColResize) $(self.options.sTable).colResizable();
 
             // 文件上传
+            console.info(self.options.fileSelector);
             if (!meTables.empty(self.options.fileSelector) && self.options.fileSelector.length > 0) {
                 for (var i in self.options.fileSelector) {
                     aceFileUpload(self.options.fileSelector[i], self.getUrl("upload"));
