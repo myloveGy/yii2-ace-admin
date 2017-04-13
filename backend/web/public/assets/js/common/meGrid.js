@@ -42,6 +42,10 @@
                 this.options.updateOptions.url = this.getUrl("update");
             }
 
+            if (!this.options.grid.editurl) {
+                this.options.grid.editurl = this.getUrl("update");
+            }
+
             // 删除数据地址
             if (!this.options.deleteOptions.url) {
                 this.options.deleteOptions.url = this.getUrl("deleteAll");
@@ -60,7 +64,7 @@
 
             // 处理按钮
             for (var i in this.options.buttons) {
-                if (this.options.buttons[i] != null) {
+                if (this.options.buttons[i] != null && this.options.buttons[i].show == true) {
                     this.options.buttonOptions[i] = true;
                     if (!this.options.buttons[i].text) {
                         this.options.buttons[i].text = this.getLanguage(i);
@@ -541,8 +545,7 @@
                 type: "append",
                 button: {
                     "class": "btn btn-info btn-sm",
-                    "icon": "ace-icon fa fa-search",
-                    // "text": meGrid.fn.getLanguage("search")
+                    "icon": "ace-icon fa fa-search"
                 }
             },
 
@@ -609,7 +612,6 @@
                 name: 'myac',
                 index: '',
                 width: 80,
-                // title: meGrid.fn.getLanguage("operation"),
                 fixed: true,
                 sortable: false,
                 resize: false,
@@ -636,26 +638,27 @@
             //　默认按钮信息
             buttons: {
                 add: {
+                    show: true,
                     icon: "ace-icon fa fa-plus-circle",
                     className: "btn btn-primary btn-xs"
                 },
                 edit: {
-                    // text: meGrid.fn.getLanguage("update"),
+                    show: true,
                     icon: "ace-icon fa fa-pencil-square-o",
                     className: "btn btn-info btn-xs"
                 },
                 del: {
-                    // text: meGrid.fn.getLanguage("delete"),
+                    show: true,
                     icon: "ace-icon fa fa-trash-o ",
                     className: "btn btn-danger btn-xs"
                 },
                 refresh: {
-                    // text: meGrid.fn.getLanguage("reload"),
+                    show: true,
                     icon: "ace-icon fa  fa-refresh",
                     className: "btn btn-success btn-xs"
                 },
                 export: {
-                    // text: meGrid.fn.getLanguage("export"),
+                    show: true,
                     icon: "ace-icon glyphicon glyphicon-export",
                     className: "btn btn-warning btn-xs"
                 }

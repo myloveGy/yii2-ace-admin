@@ -152,6 +152,19 @@
                 
             }
 
+            // 处理按钮
+            for (var i in this.options.buttons) {
+                if (this.options.buttons[i] != null && this.options.buttons[i].show == true) {
+                    if (!this.options.buttons[i].text) {
+                        this.options.buttons[i].text = this.getLanguage(i);
+                    }
+                    this.options.buttonHtml += '<button class="' + this.options.buttons[i]["className"] + '" id="' + this.options.sTable.replace("#", "") + "-" + i + '">\
+                                <i class="' + this.options.buttons[i]["icon"] + '"></i>\
+                            ' + this.options.buttons[i]["text"] + '\
+                            </button> ';
+                }
+            }
+
             return this;
         },
 
@@ -178,15 +191,31 @@
                 $(this.options.sSearchForm).append(this.options.sSearchHtml);
             }
 
+            // 添加按钮
+            try {
+                $(self.options.buttonSelector)[self.options.buttonType](self.options.buttonHtml);
+            } catch (e) {
+                $(self.options.buttonSelector).append(self.options.buttonHtml);
+            }
+
+            // 添加按钮事件
+            for (var m in self.options.buttons) {
+                (function(s){
+                    if (self.options.buttons[s] && self.options.buttons[s].show == true) {
+                        console.info(self.options.sTable + s);
+                        $(document).on('click', self.options.sTable + "-" + s, function(evt) {
+                            evt.preventDefault();
+                            self[s]();
+                        });
+                    }
+                })(m);
+            }
+
             // 新增、修改、删除、查看、删除全部、保存、刷新、导出
             $('.me-table-create').click(function(evt){evt.preventDefault();self.create();});
             $(document).on('click', '.me-table-update', function(evt){evt.preventDefault();self.update($(this).attr('table-data'))});
             $(document).on('click', '.me-table-delete', function(evt){evt.preventDefault();self.delete($(this).attr('table-data'))});
             $(document).on('click', '.me-table-detail', function(evt){evt.preventDefault();self.detail($(this).attr('table-data'))});
-            $('.me-table-delete-all').click(function(evt){evt.preventDefault();self.deleteAll();});
-            $('.me-table-save').click(function(evt){evt.preventDefault();self.save();});
-            $('.me-table-reload').click(function(evt){evt.preventDefault();self.search(true);});
-            $('.me-table-export').click(function(evt){evt.preventDefault();self.export();});
 
             // 行选择
             $(document).on('click', this.options.sTable + ' th input:checkbox' , function(){
@@ -264,6 +293,12 @@
             this.table.draw(params);
         },
 
+        // 刷新
+        refresh: function() {
+            this.action = "refresh";
+            this.search(true);
+        },
+
         // 数据新增
         create: function(child){
             this.action = "create";
@@ -274,6 +309,12 @@
         update: function (row, child) {
             this.action = "update";
             this.initForm(child ? this.childTable.data()[row] : this.table.data()[row], child);
+        },
+
+        // 修改
+        updateAll: function() {
+            var row = 0;
+            this.initForm(this.table.data()[row], false);
         },
 
         // 数据删除
@@ -1201,7 +1242,42 @@
             },
 
             // 开启行处理
-            editable: null
+            editable: null,
+
+            // 默认按钮信息
+            buttonHtml: "",
+            // 按钮添加容器
+            buttonSelector: "#me-table-buttons",
+            // 按钮添加方式
+            buttonType: "append",
+            // 默认按钮信息
+            buttons: {
+                create: {
+                    show: true,
+                    icon: "ace-icon fa fa-plus-circle blue",
+                    className: "btn btn-white btn-primary btn-bold"
+                },
+                updateAll: {
+                    show: true,
+                    icon: "ace-icon fa fa-pencil-square-o orange",
+                    className: "btn btn-white btn-info btn-bold"
+                },
+                deleteAll: {
+                    show: true,
+                    icon: "ace-icon fa fa-trash-o red",
+                    className: "btn btn-white btn-danger btn-bold"
+                },
+                refresh: {
+                    show: true,
+                    icon: "ace-icon fa  fa-refresh",
+                    className: "btn btn-white btn-success btn-bold"
+                },
+                export: {
+                    show: true,
+                    icon: "ace-icon glyphicon glyphicon-export",
+                    className: "btn btn-white btn-warning btn-bold"
+                }
+            }
         },
 
         // 数据信息
@@ -1237,7 +1313,12 @@
                     "confirmOperation": "确认操作",
                     "cancelOperation": "您取消了删除操作!",
                     "noSelect": "没有选择需要删除的数据",
-                    "operationError": "操作有误"
+                    "operationError": "操作有误",
+                    "create": "添加",
+                    "updateAll": "修改",
+                    "deleteAll": "删除",
+                    "refresh": "刷新",
+                    "export": "导出"
                 },
 
                 // dataTables 表格
