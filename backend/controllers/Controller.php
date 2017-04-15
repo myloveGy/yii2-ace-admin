@@ -25,7 +25,7 @@ class Controller extends \common\controllers\Controller
     // 'enableCsrfValidation' => true // 配置文件关闭CSRF
     public    $admins = null;    //
     protected $sort   = 'id';    // 默认排序字段
-    protected $strategy = 'DataTables'; // 数据显示使用策略类
+    protected $strategy = 'DataTables'; // 数据显示使用方式
     protected $pk = 'id';
 
     /**
@@ -47,8 +47,8 @@ class Controller extends \common\controllers\Controller
                     throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
             }
 
-            // 处理提前获取数据
-            if (!in_array($action->id, ['insert', 'update', 'delete'])) {
+            // 处理获取数据
+            if (!in_array($action->id, ['create', 'update', 'delete'])) {
                 $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
                 // 注入变量信息
                 Yii::$app->view->params['admins'] = $this->admins;
@@ -156,7 +156,7 @@ class Controller extends \common\controllers\Controller
         // 获取查询参数
         $search = $strategy->getRequest(); // 处理查询参数
         $search['field'] = $search['field'] ? $search['field'] : $this->sort;
-        $search['orderBy'] = [$search['field'] => $search['sort']];
+        $search['orderBy'] = [$search['field'] => $search['sort'] == 'asc' ? SORT_ASC : SORT_DESC];
         $search['where'] = $this->handleWhere($search['params'], $this->where($search['params']));
 
         // 查询之前的处理

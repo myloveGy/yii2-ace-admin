@@ -14,12 +14,21 @@ $this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' =>
     var arrParent = <?=\yii\helpers\Json::encode($parent)?>,
         m = meTables({
         title: "地址信息",
-        bCheckbox: false,
+        bCheckbox: true,
         table: {
             "aoColumns":[
-                {"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc", "edit": {"type": "text", "options": {"required":true,"number":true,}}},
-                {"title": "地址名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"rangelength":"[2, 40]"}}, "search": {"type": "text"}, "bSortable": false},
-                {"title": "父类ID", "data": "pid", "sName": "pid", "value": arrParent, "edit": {"type": "text", "options": {"number":true}}, "search": {"type":"select"}},
+                {"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc",
+                    "edit": {"type": "text", "required":true,"number":true}
+                },
+                {"title": "地址名称", "data": "name", "sName": "name",
+                    "edit": {"type": "text", "required": true, "rangelength":"[2, 40]"},
+                    "search": {"type": "text"},
+                    "bSortable": false
+                },
+                {"title": "父类ID", "data": "pid", "sName": "pid", "value": arrParent,
+                    "edit": {"type": "text", "required": true, "number": true},
+                    "search": {"type":"select"}
+                }
             ]
         }
     });

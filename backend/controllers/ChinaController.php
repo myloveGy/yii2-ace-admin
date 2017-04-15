@@ -14,7 +14,7 @@ use yii\helpers\ArrayHelper;
 
 class ChinaController extends Controller
 {
-    protected $strategy = 'JqGrid';
+    protected $strategy = 'DataTables';
 
     /**
      * where() 查询参数配置
@@ -39,7 +39,7 @@ class ChinaController extends Controller
     public function actionIndex()
     {
         // 加载视图
-        return $this->render('grid', [
+        return $this->render('index', [
             'parent' => ArrayHelper::map(China::find()->where(['pid' => 0])->all(), 'id', 'name'),
         ]);
     }
