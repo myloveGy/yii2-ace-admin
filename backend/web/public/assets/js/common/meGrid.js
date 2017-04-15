@@ -125,7 +125,6 @@
                 $(this.options.searchSelector).append(this.options.searchHtml);
             }
 
-
             var self = this;
             // 修改大小
             $(window).on('resize.jqGrid', function () {
@@ -365,9 +364,9 @@
                 // 显示详情
                 viewrecords: true,
                 // 每页条数
-                rowNum: 10,
+                rowNum: 15,
                 // 可以选择的分页数
-                rowList: [10, 20, 30, 50, 100],
+                rowList: [15, 25, 30, 50, 100],
                 // 全选是否添加
                 altRows: true,
                 // 多行显示

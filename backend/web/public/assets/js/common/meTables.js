@@ -185,20 +185,30 @@
             this.table = $(this.options.sTable).DataTable(this.options.table);	// 初始化主要表格
             var self = this;
             // 判断初始化处理(搜索添加位置)
-            if (this.options.searchType == 'middle') {
-                $(this.options.sTable + '_filter').html('<form action="post" id="' +
+            if (this.options.searchType == "middle") {
+                $(this.options.sTable + "_filter").html('<form id="' +
                     this.options.searchForm.replace("#", "") + '">' + this.options.searchHtml + '</form>');
-                $(this.options.searchForm + ' input').on('blur', function () { self.table.draw();}); 						// 搜索事件
-                $(this.options.searchForm + ' select').on('change', function () { self.table.draw();}); 						// 搜索事件
-                $(this.options.sTable + '_wrapper div.row div.col-xs-6:first')
-                    .removeClass('col-xs-6')
-                    .addClass('col-xs-2')
+                $(this.options.searchForm + ' input').on("blur", function () { self.table.draw();}); 						// 搜索事件
+                $(this.options.searchForm + ' select').on("change", function () { self.table.draw();}); 						// 搜索事件
+                $(this.options.sTable + "_wrapper div.row div.col-xs-6:first")
+                    .removeClass("col-xs-6")
+                    .addClass("col-xs-2")
                     .next()
-                    .removeClass('col-xs-6')
-                    .addClass('col-xs-10');	// 处理搜索信息
+                    .removeClass("col-xs-6")
+                    .addClass("col-xs-10");	// 处理搜索信息
             } else {
                 // 添加搜索表单信息
-                $(this.options.searchForm).append(this.options.searchHtml);
+                if (this.options.search.render) {
+                    this.options.searchHtml += '<button class="' + this.options.search.button.class + '">\
+                    <i class="' + this.options.search.button.icon + '"></i>\
+                    ' + this.getLanguage("search") + '\
+                    </button>';
+                    try {
+                        $(this.options.searchForm)[this.options.search.type](this.options.searchHtml);
+                    } catch (e) {
+                        $(this.options.searchForm).append(this.options.searchHtml);
+                    }
+                }
             }
 
             // 添加按钮
@@ -219,6 +229,12 @@
                     }
                 })(m);
             }
+
+            // 添加表单事件
+            $(this.options.searchForm).submit(function(evt) {
+               evt.preventDefault();
+               self.search(true);
+            });
 
             // 添加保存事件
             $(document).on('click', self.options.sTable + '-save', function(evt){evt.preventDefault();self.save();});
@@ -555,7 +571,7 @@
             this.options.table.aoColumns.forEach(function(k, v) {
                 if (k.bViews !== false) views += meTables.detailTableCreate(k.title, k.data, v, self.options.detailTable);// 查看详情信息
                 if (k.edit != undefined) form += meTables.formCreate(k, self.options.editFormParams);	// 编辑表单信息
-                if (k.search != undefined) self.options.searchHtml += meTables.searchInputCreate(k, v);  // 搜索信息
+                if (k.search != undefined) self.options.searchHtml += meTables.searchInputCreate(k, v, self.options.searchType);  // 搜索信息
                 if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
                 if (k.isHide) aTargets.push(v);													// 是否隐藏
 
@@ -888,7 +904,7 @@
         },
 
         // 搜索框表单元素创建
-        searchInputCreate: function(k, v) {
+        searchInputCreate: function(k, v, searchType) {
             k.search.name = k.sName;
             if (k.search.type == "select") {
                 k.value["All"] = "全部";
@@ -897,13 +913,24 @@
                 k.search.type = "text";
             }
 
-            try {
-                html = this[k.search.type + "Create"](k.search, k.value);
-            } catch (e) {
-                html = this.textCreate(k.search);
+            if (searchType == "middle") {
+                try {
+                    html = this[k.search.type + "Create"](k.search, k.value);
+                } catch (e) {
+                    html = this.textCreate(k.search);
+                }
+
+                html = this.labelCreate(k.title + " : " + html) + ' ';
+            } else {
+                try {
+                    html = this[k.search.type + "SearchCreate"](k.sName, k.title, k.search, k.value);
+                } catch (e) {
+                    html = this.textSearchCreate(k.sName, k.title, k.search);
+                }
+
             }
 
-            return this.labelCreate(k.title + " : " + html) + ' ';
+            return html;
         },
 
         buttonsCreate: function(index, data) {
@@ -965,6 +992,66 @@
             }
 
             return form;
+        },
+
+        // 搜索表单text创建
+        textSearchCreate: function(name, text, params) {
+            var defaultParams = {
+                "id": "search-" + name,
+                "name": name,
+                "placeholder": meTables.fn.getLanguage("pleaseInput") + text,
+                "class": "form-control"
+            }, defaultLabel = {
+                "class": "sr-only",
+                "for": "search-" + name
+            };
+
+            if (params.inputOptions) {
+                defaultParams = this.extend(defaultParams, params.inputOptions);
+            }
+
+            if (params.labelOptions) {
+                defaultLabel = this.extend(defaultLabel, params.labelOptions);
+            }
+
+            return '<div class="form-group">\
+                    <label' + this.handleParams(defaultLabel) + '>' + text + ':</label>\
+                    <input type="text"' + this.handleParams(defaultParams) + '>\
+                </div> ';
+        },
+
+        // 搜索表但select 创建
+        selectSearchCreate: function(name, text, params, value) {
+            console.info(params);
+            var defaultParams = {
+                "id": "search-" + name,
+                "name": name,
+                // "placeholder": meTables.fn.getLanguage("pleaseInput") + text,
+                "class": "form-control"
+            }, defaultLabel = {
+                // "class": "sr-only",
+                "for": "search-" + name
+            };
+
+            if (params.inputOptions) {
+                defaultParams = this.extend(defaultParams, params.inputOptions);
+            }
+
+            if (params.labelOptions) {
+                defaultLabel = this.extend(defaultLabel, params.labelOptions);
+            }
+
+            html = "";
+            for (i in value) {
+                html += '<option value="' + i + '">' + value[i] + '</option>'
+            }
+
+            return '<div class="form-group">\
+                    <label' + this.handleParams(defaultLabel) + '>' + text + ':</label>\
+                    <select type="text"' + this.handleParams(defaultParams) + '>\
+                    ' + html + '\
+                    </select>\
+                </div> ';
         },
 
         // 初始化表单信息
@@ -1143,6 +1230,16 @@
             searchHtml: "",				// 搜索信息额外HTML
             searchType: "middle",		// 搜索表单位置
             searchForm: "#search-form",	// 搜索表单选择器
+
+            // 搜索信息(只对searchType !== "middle") 情况
+            search: {
+                render: true,
+                type: "append",
+                button: {
+                    "class": "btn btn-info btn-sm",
+                    "icon": "ace-icon fa fa-search"
+                }
+            },
 
             fileSelector: [],			// 上传文件选择器
 
@@ -1348,11 +1445,13 @@
                     "cancelOperation": "您取消了删除操作!",
                     "noSelect": "没有选择需要操作的数据",
                     "operationError": "操作有误",
+                    "search": "搜索",
                     "create": "添加",
                     "updateAll": "修改",
                     "deleteAll": "删除",
                     "refresh": "刷新",
-                    "export": "导出"
+                    "export": "导出",
+                    "pleaseInput": "请输入"
                 },
 
                 // dataTables 表格
