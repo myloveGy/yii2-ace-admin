@@ -905,30 +905,27 @@
 
         // 搜索框表单元素创建
         searchInputCreate: function(k, v, searchType) {
+            // 默认值
             k.search.name = k.sName;
-            if (k.search.type == "select") {
-                k.value["All"] = "全部";
-                k.search.default = "All";
-            } else {
-                k.search.type = "text";
-            }
+            k.search.title = k.title;
+
+            // 类型处理
+            if (!k.search.type) k.search.type = "text";
+            // select 默认选中
+            var defaultObject = k.search.type == "select" ? {"All": meTables.fn.getLanguage("all")} : null;
 
             if (searchType == "middle") {
                 try {
-                    html = this[k.search.type + "Create"](k.search, k.value);
+                    html = this[k.search.type + "SearchMiddleCreate"](k.search, k.value, defaultObject);
                 } catch (e) {
-                    html = this.textCreate(k.search);
+                    html = this.textSearchMiddleCreate(k.search);
                 }
-
-                html = this.labelCreate(k.title + " : " + html) + ' ';
             } else {
-                k.search.title = k.title;
                 try {
-                    html = this[k.search.type + "SearchCreate"](k.search, k.value);
+                    html = this[k.search.type + "SearchCreate"](k.search, k.value, defaultObject);
                 } catch (e) {
                     html = this.textSearchCreate(k.search);
                 }
-
             }
 
             return html;
@@ -995,63 +992,86 @@
             return form;
         },
 
-        // 搜索表单text创建
-        textSearchCreate: function(params) {
-            var defaultParams = {
-                "id": "search-" + params.name,
-                "name": params.name,
-                "placeholder": meTables.fn.getLanguage("pleaseInput") + params.title,
-                "class": "form-control"
-            }, defaultLabel = {
-                "class": "sr-only",
-                "for": "search-" + params.name
-            };
-
-            if (params.options) {
-                defaultParams = this.extend(defaultParams, params.options);
+        selectInput: function(params, value, defaultObject) {
+            html = "";
+            if (defaultObject) {
+                for (i in defaultObject) {
+                    html += '<option value="' + i + '" selected="selected">' + defaultObject[i] + '</option>';
+                }
             }
 
-            if (params.labelOptions) {
-                defaultLabel = this.extend(defaultLabel, params.labelOptions);
+            if (value) {
+                for (i in value) {
+                    html += '<option value="' + i + '">' + value[i] + '</option>';
+                }
             }
 
-            return '<div class="form-group">\
-                    <label' + this.handleParams(defaultLabel) + '>' + params.title + ':</label>\
-                    <input type="text"' + this.handleParams(defaultParams) + '>\
-                </div> ';
+            return '<select ' + this.handleParams(params) + '>' + html + '</select>';
         },
 
-        // 搜索表但select 创建
-        selectSearchCreate: function(params, value) {
+        textSearchMiddleCreate: function(params) {
+            params["id"] = "search-" + params.name;
+            return '<label for="search-' + params.name + '"> ' + params.title + ': ' + this.inputCreate(params) +  '</label>';
+        },
+
+        selectSearchMiddleCreate: function(params, value, defaultObject) {
+            params["id"] = "search-" + params.name;
+            return '<label for="search-' + params.name + '"> ' + params.title + ': ' + this.selectInput(params, value, defaultObject) + '</label>';
+        },
+
+        searchParams: function(params) {
             var defaultParams = {
                 "id": "search-" + params.name,
                 "name": params.name,
-                // "placeholder": meTables.fn.getLanguage("pleaseInput") + text,
+                // "placeholder": meGrid.fn.getLanguage("pleaseInput") + params.title,
                 "class": "form-control"
             }, defaultLabel = {
                 // "class": "sr-only",
                 "for": "search-" + params.name
-            };
+            }, options = params.options, labelOptions = params.labelOptions;
 
-            if (params.options) {
-                defaultParams = this.extend(defaultParams, params.options);
+            // 删除多余信息
+            delete params.options;
+            delete params.labelOptions;
+
+            defaultParams = this.extend(defaultParams, params);
+            if (options) {
+                defaultParams = this.extend(defaultParams, options);
             }
 
-            if (params.labelOptions) {
-                defaultLabel = this.extend(defaultLabel, params.labelOptions);
+            if (labelOptions) {
+                defaultLabel = this.extend(defaultLabel, labelOptions);
             }
 
-            html = "";
-            for (i in value) {
-                var c = i == params.default ? 'selected="selected"': "";
-                html += '<option value="' + i + '" ' + c + '>' + value[i] + '</option>'
+            return {
+                input: defaultParams,
+                label: defaultLabel
             }
+        },
+
+        textSearchCreate: function(params) {
+            // 默认赋值
+            if (!params.placeholder) {
+                params.placeholder = meTables.fn.getLanguage("pleaseInput") + params.title;
+            }
+
+            if (!params.labelOptions) {
+                params.labelOptions = {"class": "sr-only"};
+            }
+
+            var options = this.searchParams(params);
 
             return '<div class="form-group">\
-                    <label' + this.handleParams(defaultLabel) + '>' + params.title + ':</label>\
-                    <select type="text"' + this.handleParams(defaultParams) + '>\
-                    ' + html + '\
-                    </select>\
+                <label' + this.handleParams(options.label) + '>' + params.title + '</label>\
+                <input type="text"' + this.handleParams(options.input) + '>\
+                </div> ';
+        },
+
+        selectSearchCreate: function(params, value, defaultObject) {
+            var options = this.searchParams(params), i = null;
+            return '<div class="form-group">\
+                <label' + this.handleParams(options.label) + '>' + params.title + '</label>\
+                ' + this.selectInput(options.input, value, defaultObject) + '\
                 </div> ';
         },
 
@@ -1452,7 +1472,8 @@
                     "deleteAll": "删除",
                     "refresh": "刷新",
                     "export": "导出",
-                    "pleaseInput": "请输入"
+                    "pleaseInput": "请输入",
+                    "all": "全部",
                 },
 
                 // dataTables 表格
