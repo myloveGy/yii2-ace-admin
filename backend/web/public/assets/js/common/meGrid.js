@@ -88,7 +88,20 @@
                 this.options.grid.colModel.forEach(function(value, key) {
                     self.options.colNames[key] = value.title;
                     if (value.gridSearch) {
-                        self.options.searchHtml += meGrid.inputCreate(value.index, value.title, value.gridSearch);
+                        if (!value.gridSearch.type) {
+                            value.gridSearch.type = "text";
+                        }
+
+                        value.gridSearch.title = value.title;
+                        value.gridSearch.name = value.index;
+                        var defaultObject = value.gridSearch.type == "select" ?  {"All": self.getLanguage("all")} : null;
+                        try {
+                            self.options.searchHtml += meGrid[value.gridSearch.type + "Create"](value.gridSearch, value.value, defaultObject);
+                        } catch (e) {
+                            console.info(e);
+                            self.options.searchHtml += meGrid.textCreate(value.gridSearch);
+                        }
+
                     }
                 });
 
@@ -197,7 +210,6 @@
 
             // 数据导出
             if (self.options.buttons.export) {
-                console.info(self.options.gridSelector + "-export");
                 $(document).on('click', self.options.gridSelector + "-export", function(evt){
                     evt.preventDefault();
                     self.export();
@@ -419,7 +431,8 @@
                 "export": "导出",
                 "pleaseInput": "请输入",
                 "search": "搜索",
-                "exportSuccess": "数据正在导出，请稍后..."
+                "exportSuccess": "数据正在导出，请稍后...",
+                "all": "全部"
             }
         }
     });
@@ -428,10 +441,8 @@
         ajaxResponse: function(response) {
             try {
                 var jsonObject = $.parseJSON(response.responseText);
-                console.info(jsonObject.errCode == 0, jsonObject.errMsg);
                 return [jsonObject.errCode == 0, jsonObject.errMsg];
             } catch (e) {
-                console.info(e);
                 return [false, meGrid.fn.getLanguage("responseError")]
             }
         },
@@ -510,28 +521,73 @@
             return other;
         },
 
-        inputCreate: function(name, text, params) {
+        searchParams: function(params) {
             var defaultParams = {
-                "id": "search-" + name,
-                "name": "params[" + name + "]",
-                "placeholder": meGrid.fn.getLanguage("pleaseInput") + text,
+                "id": "search-" + params.name,
+                "name": "params[" + params.name + "]",
+                // "placeholder": meGrid.fn.getLanguage("pleaseInput") + params.title,
                 "class": "form-control"
             }, defaultLabel = {
-                "class": "sr-only",
+                // "class": "sr-only",
                 "for": "search-" + name
-            };
+            }, options = params.options, labelOptions = params.labelOptions;
 
-            if (params.inputOptions) {
-                defaultParams = this.extend(defaultParams, params.inputOptions);
+            // 删除多余信息
+            delete params.name;
+            delete params.options;
+            delete params.labelOptions;
+
+            defaultParams = this.extend(defaultParams, params);
+            if (options) {
+                defaultParams = this.extend(defaultParams, options);
             }
 
-            if (params.labelOptions) {
-                defaultLabel = this.extend(defaultLabel, params.labelOptions);
+            if (labelOptions) {
+                defaultLabel = this.extend(defaultLabel, labelOptions);
+            }
+
+            return {
+                input: defaultParams,
+                label: defaultLabel
+            }
+        },
+
+        textCreate: function(params) {
+            // 默认赋值
+            if (!params.placeholder) {
+                params.placeholder = meGrid.fn.getLanguage("pleaseInput") + params.title;
+            }
+
+            if (!params.labelOptions) {
+                params.labelOptions = {"class": "sr-only"};
+            }
+
+            var options = this.searchParams(params);
+
+            return '<div class="form-group">\
+                <label' + this.handleParams(options.label) + '>' + params.title + '</label>\
+                <input type="text"' + this.handleParams(options.input) + '>\
+                </div> ';
+        },
+
+        selectCreate: function(params, value, defaultObject) {
+            var options = this.searchParams(params), i = null, html = "";
+
+            if (defaultObject) {
+                for (i in defaultObject) {
+                    html += '<option value="' + i + '" selected="selected">' + defaultObject[i] + '</option>';
+                }
+            }
+
+            if (value) {
+                for (i in value) {
+                    html += '<option value="' + i + '">' + value[i] + '</option>';
+                }
             }
 
             return '<div class="form-group">\
-                <label' + this.handleParams(defaultLabel) + '>' + text + '</label>\
-                <input type="text"' + this.handleParams(defaultParams) + '>\
+                <label' + this.handleParams(options.label) + '>' + params.title + '</label>\
+                <select' + this.handleParams(options.input) + '>' + html + '</select>\
                 </div> ';
         }
     });
@@ -559,8 +615,14 @@
                     }, 0);
                 },
                 // 发送数据之前的处理
-                loadBeforeSend: function() {
-                    arguments[1].data += "&" + $(meGrid.fn.options.searchSelector).serialize();
+                loadBeforeSend: function(response, request) {
+                    console.info(arguments);
+                    var data = $(meGrid.fn.options.searchSelector).serializeArray();
+                    for (var i in data) {
+                        if (data[i]["value"] !== "" && data[i]["value"] !== "All") {
+                            request.data += "&" + encodeURIComponent(data[i]["name"]) + "=" + encodeURIComponent(data[i]["value"]);
+                        }
+                    }
                 }
             },
 

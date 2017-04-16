@@ -8,9 +8,9 @@ $this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' =>
 <!-- 表格按钮 -->
 <p id="me-table-buttons"></p>
 <!-- 搜索表单 -->
-<div class="well well-sm" style="margin-bottom: 0">
-    <form class="form-inline" role="form" id="table-search-form"></form>
-</div>
+<!--<div class="well well-sm" style="margin-bottom: 0">-->
+<!--    <form class="form-inline" role="form" id="table-search-form"></form>-->
+<!--</div>-->
 <!--表格数据-->
 <table class="table table-striped table-bordered table-hover" id="show-table"></table>
 <?php $this->beginBlock('javascript') ?>
@@ -20,7 +20,7 @@ $this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' =>
         title: "地址信息",
         bCheckbox: true,
         searchForm: "#table-search-form",
-        searchType: "top",
+//        searchType: "top",
         table: {
             "aoColumns":[
                 {"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc",

@@ -17,6 +17,7 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
 <div id="grid-pager"></div>
 <?php $this->beginBlock('javascript');?>
 <script>
+    var arrParent = <?=\yii\helpers\Json::encode($parent)?>;
     var g = meGrid({
         title: "中国地址信息",
         buttons: {
@@ -69,8 +70,8 @@ $this->registerJsFile('@web/public/assets/js/date-time/bootstrap-datepicker.min.
                     gridSearch: {type: "text"},
                     editoptions: {size: "20", "minlength": "2", "maxlength": "255"}
                 },
-                {name:'pid', index: 'pid', title: "父类ID", width: 50, editable: true,
-                    gridSearch: {type: "text"},
+                {name:'pid', index: 'pid', title: "父类ID", width: 50, editable: true, value: arrParent,
+                    gridSearch: {type: "select"},
                     editoptions: {size: "20", maxlength:"30"}
                 }
             ]

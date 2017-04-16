@@ -922,10 +922,11 @@
 
                 html = this.labelCreate(k.title + " : " + html) + ' ';
             } else {
+                k.search.title = k.title;
                 try {
-                    html = this[k.search.type + "SearchCreate"](k.sName, k.title, k.search, k.value);
+                    html = this[k.search.type + "SearchCreate"](k.search, k.value);
                 } catch (e) {
-                    html = this.textSearchCreate(k.sName, k.title, k.search);
+                    html = this.textSearchCreate(k.search);
                 }
 
             }
@@ -995,19 +996,19 @@
         },
 
         // 搜索表单text创建
-        textSearchCreate: function(name, text, params) {
+        textSearchCreate: function(params) {
             var defaultParams = {
-                "id": "search-" + name,
-                "name": name,
-                "placeholder": meTables.fn.getLanguage("pleaseInput") + text,
+                "id": "search-" + params.name,
+                "name": params.name,
+                "placeholder": meTables.fn.getLanguage("pleaseInput") + params.title,
                 "class": "form-control"
             }, defaultLabel = {
                 "class": "sr-only",
-                "for": "search-" + name
+                "for": "search-" + params.name
             };
 
-            if (params.inputOptions) {
-                defaultParams = this.extend(defaultParams, params.inputOptions);
+            if (params.options) {
+                defaultParams = this.extend(defaultParams, params.options);
             }
 
             if (params.labelOptions) {
@@ -1015,26 +1016,25 @@
             }
 
             return '<div class="form-group">\
-                    <label' + this.handleParams(defaultLabel) + '>' + text + ':</label>\
+                    <label' + this.handleParams(defaultLabel) + '>' + params.title + ':</label>\
                     <input type="text"' + this.handleParams(defaultParams) + '>\
                 </div> ';
         },
 
         // 搜索表但select 创建
-        selectSearchCreate: function(name, text, params, value) {
-            console.info(params);
+        selectSearchCreate: function(params, value) {
             var defaultParams = {
-                "id": "search-" + name,
-                "name": name,
+                "id": "search-" + params.name,
+                "name": params.name,
                 // "placeholder": meTables.fn.getLanguage("pleaseInput") + text,
                 "class": "form-control"
             }, defaultLabel = {
                 // "class": "sr-only",
-                "for": "search-" + name
+                "for": "search-" + params.name
             };
 
-            if (params.inputOptions) {
-                defaultParams = this.extend(defaultParams, params.inputOptions);
+            if (params.options) {
+                defaultParams = this.extend(defaultParams, params.options);
             }
 
             if (params.labelOptions) {
@@ -1043,11 +1043,12 @@
 
             html = "";
             for (i in value) {
-                html += '<option value="' + i + '">' + value[i] + '</option>'
+                var c = i == params.default ? 'selected="selected"': "";
+                html += '<option value="' + i + '" ' + c + '>' + value[i] + '</option>'
             }
 
             return '<div class="form-group">\
-                    <label' + this.handleParams(defaultLabel) + '>' + text + ':</label>\
+                    <label' + this.handleParams(defaultLabel) + '>' + params.title + ':</label>\
                     <select type="text"' + this.handleParams(defaultParams) + '>\
                     ' + html + '\
                     </select>\
