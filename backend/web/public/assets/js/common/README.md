@@ -1,4 +1,4 @@
-meTables 基于 jquery.dataTables.js 表格
+meTables.js 基于 jquery.dataTables.js 表格
 ===================================
 
 ### 简介
