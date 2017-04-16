@@ -71,10 +71,12 @@
                     this.options.table.bServerSide = false;
                     this.options.table.lengthMenu = [100, 200, 300, 500, 1000];
                     this.options.table.pageLength = 100;
+                    this.options.operations.isOpen = false;
                     this.options.buttons = this.extend(this.options.buttons, {
                         "create": {bShow: false},
                         "updateAll": {bShow: false}
                     });
+
                 } else {
                     // $.fn.dataTable.defaults['bFilter'] = true;
                     this.options.table.fnServerData = this.fnServerData;

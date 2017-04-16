@@ -289,8 +289,6 @@ HTML;
 
                 $strHtml .= trim($html, ', ')."}, \n";
             }
-
-            $strHtml .= "\t\t\tmt.fn.operations";
         }
 
         $sHtml =  <<<html
@@ -357,7 +355,7 @@ HTML;
     */
 
      \$(function(){
-         mt.init();
+         m.init();
      });
 </script>
 <?php \$this->endBlock(); ?>
