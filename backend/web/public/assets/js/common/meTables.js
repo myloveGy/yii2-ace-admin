@@ -42,47 +42,49 @@
             this.table = null;
             this.action = "construct";
             var self = this;
-            // $.fn.dataTable.defaults['bFilter'] = true;
-            this.options.table.fnServerData = function(sSource, aoData, fnCallback) {
-                var attributes = aoData[2].value.split(","),
-                    mSort 	   = (attributes.length + 1) * 5 + 2;
-
-                // 添加查询条件
-                var data = $(meTables.fn.options.searchForm).serializeArray();
-                for (i in data) {
-                    if (!meTables.empty(data[i]["value"]) && data[i]["value"] != "All") {
-                        aoData.push({"name": "params[" + data[i]['name'] + "]", "value": data[i]["value"]});
-                    }
-                }
-
-                // 添加排序字段信息
-                self.push(aoData, {"orderBy": attributes[parseInt(aoData[mSort].value)]}, "params");
-
-                // 添加其他字段信息
-                meTables.fn.push(aoData, self.options.params, "params");
-
-                // ajax请求
-                meTables.ajax({
-                    url: sSource,
-                    data: aoData,
-                    type: self.options.sMethod,
-                    dataType: 'json'
-                }).done(function(data){
-                    if (data.errCode != 0) {
-                        return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
-                            time:2000,
-                            icon:5
-                        });
-                    }
-
-                    fnCallback(data.data);
-                });
-            };
 
             // 属性覆盖继承
-            if (options !== undefined) this.extend({options: options});
+            if (options !== undefined) {
+                if (options.ajaxRequest) {
+                    this.options.table.ajax = {
+                        url: self.getUrl("search"),
+                        type: self.options.sMethod,
+                        dataType: "json",
+                        data: function(d) {
+                            var data = $(meTables.fn.options.searchForm).serializeArray(),request_params = [];
+                            for (var i in data) {
+                                if (data[i]["value"] !== "" && data[i]["value"]) {
+                                    request_params.push({"name": "params[" + data[i]["value"] + "]", "value": data[i]["value"]});
+                                }
+                            }
+
+                            // 添加其他字段信息
+                            meTables.fn.push(request_params, self.options.params, "params");
+
+                            return request_params;
+                        }
+                    };
+
+                    // 修改默认配置
+                    this.options.table.sAjaxSource = false;
+                    this.options.table.fnServerData = false;
+                    this.options.table.bServerSide = false;
+                    this.options.table.lengthMenu = [100, 200, 300, 500, 1000];
+                    this.options.table.pageLength = 100;
+                    this.options.buttons = this.extend(this.options.buttons, {
+                        "create": {bShow: false},
+                        "updateAll": {bShow: false}
+                    });
+                } else {
+                    // $.fn.dataTable.defaults['bFilter'] = true;
+                    this.options.table.fnServerData = this.fnServerData;
+                    this.options.table.sAjaxSource = this.getUrl("search");
+                }
+
+                this.extend({options: options});
+            }
+
             this.options.table.oLanguage = this.getLanguage("dataTables", "*");
-            this.options.table.sAjaxSource = this.getUrl("search");
             this.options.form["id"] = this.options.sFormId.replace("#", "");
 
             // 判断添加数据(多选)
@@ -164,7 +166,7 @@
 
             // 处理按钮
             for (var i in this.options.buttons) {
-                if (this.options.buttons[i] != null && this.options.buttons[i].show == true) {
+                if (this.options.buttons[i] != null && this.options.buttons[i].bShow == true) {
                     if (!this.options.buttons[i].text) {
                         this.options.buttons[i].text = this.getLanguage(i);
                     }
@@ -221,7 +223,7 @@
             // 添加按钮事件
             for (var m in self.options.buttons) {
                 (function(s){
-                    if (self.options.buttons[s] && self.options.buttons[s].show == true) {
+                    if (self.options.buttons[s] && self.options.buttons[s].bShow == true) {
                         $(document).on('click', self.options.sTable + "-" + s, function(evt) {
                             evt.preventDefault();
                             self[s]();
@@ -310,11 +312,48 @@
             return this;
         },
 
+        // 处理服务器数据
+        fnServerData: function(sSource, aoData, fnCallback) {
+            var attributes = aoData[2].value.split(","),
+                mSort 	   = (attributes.length + 1) * 5 + 2;
+
+            // 添加查询条件
+            var data = $(meTables.fn.options.searchForm).serializeArray();
+            for (i in data) {
+                if (!meTables.empty(data[i]["value"]) && data[i]["value"] != "All") {
+                    aoData.push({"name": "params[" + data[i]['name'] + "]", "value": data[i]["value"]});
+                }
+            }
+
+            // 添加排序字段信息
+            meTables.fn.push(aoData, {"orderBy": attributes[parseInt(aoData[mSort].value)]}, "params");
+
+            // 添加其他字段信息
+            meTables.fn.push(aoData, meTables.fn.options.params, "params");
+
+            // ajax请求
+            meTables.ajax({
+                url: sSource,
+                data: aoData,
+                type: meTables.fn.options.sMethod,
+                dataType: 'json'
+            }).done(function(data){
+                if (data.errCode != 0) {
+                    return layer.msg(meTables.fn.getLanguage("sAppearError") + data.errMsg, {
+                        time:2000,
+                        icon:5
+                    });
+                }
+
+                fnCallback(data.data);
+            });
+        },
+
         // 搜索
         search: function(params){
             this.action = "search";
             if (!params) params = false;
-            this.table.draw(params);
+            this.options.ajaxRequest ? this.table.ajax.reload() : this.table.draw(params);
         },
 
         // 刷新
@@ -1247,6 +1286,7 @@
             sMethod: "POST",			// 查询数据的请求方式
             bCheckbox: true,			// 需要多选框
             params: null,				// 请求携带参数
+            ajaxRequest: false,         // ajax一次性获取数据
 
             searchHtml: "",				// 搜索信息额外HTML
             searchType: "middle",		// 搜索表单位置
@@ -1392,27 +1432,27 @@
             // 默认按钮信息
             buttons: {
                 create: {
-                    show: true,
+                    bShow: true,
                     icon: "ace-icon fa fa-plus-circle blue",
                     className: "btn btn-white btn-primary btn-bold"
                 },
                 updateAll: {
-                    show: true,
+                    bShow: true,
                     icon: "ace-icon fa fa-pencil-square-o orange",
                     className: "btn btn-white btn-info btn-bold"
                 },
                 deleteAll: {
-                    show: true,
+                    bShow: true,
                     icon: "ace-icon fa fa-trash-o red",
                     className: "btn btn-white btn-danger btn-bold"
                 },
                 refresh: {
-                    show: true,
+                    bShow: true,
                     icon: "ace-icon fa  fa-refresh",
                     className: "btn btn-white btn-success btn-bold"
                 },
                 export: {
-                    show: true,
+                    bShow: true,
                     icon: "ace-icon glyphicon glyphicon-export",
                     className: "btn btn-white btn-warning btn-bold"
                 }
