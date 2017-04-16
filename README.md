@@ -3,7 +3,7 @@ Yii2 ace Admin 后台模板
 
 ### 简介
 系统基于yii2高级版本开发，后台模板使用的ace admin。对于一般的后台开发，比较方便; 对于数据表的CURL操作都有封装，且所有操作都有有权限控制。
-####特点
+#### 特点
 * 基于RBAC权限管理
 * 视图使用JS控制，数据显示使用的DataTables
 * 基于数据表的增、删、改、查都有封装，添加新的数据表操作方便
@@ -84,9 +84,13 @@ class ChinaController extends Controller
      * title 配置表格名称
      * table DataTables 的配置 
      * --- aoColumns 中的 value, search, edit 是 meTables 的配置
-     * ------ value 为编辑表单redis、select, checkbox， 搜索的表单的select 提供数据源
+     * ------ value 为编辑表单radio、select, checkbox， 搜索的表单的select 提供数据源
      * ------ search 搜索表单配置(不配置不会生成查询表单), type 类型支持 text, select 其他可以自行扩展
-     * ------ edit 编辑表单配置（不配置不会生成编辑表单）, type 类型支持text, password, file, radio, select, checkbox, textarea 等等 meTable.inputCreate 等后缀命名函数， 可以自行扩展
+     * ------ edit 编辑表单配置（不配置不会生成编辑表单）, 
+     * --------- type 类型支持hidden, text, password, file, radio, select, checkbox, textarea 等等 
+     * --------- meTable.inputCreate 等后缀函数为其生成表单元素，可以自行扩展
+     * --------- 除了表单元素自带属性，比如 required: true, number: true 等为 jquery.validate.js 的验证配置
+     * --------- 最终生成表单元素 <input name="name" required="true" number="true" />
      * 其他配置查看 meTables 配置
      */
     var m = meTables({
@@ -109,10 +113,12 @@ class ChinaController extends Controller
         }
     });
 
+
     $(function(){
         m.init();
     })
 ```
+[meTables配置说明](./backend/web/public/assets/js/common/README.md)
 目录结构
 -------------------
 
