@@ -44,6 +44,9 @@ var mt = meTables({
 ![试图文件](../../images/desc5.png)
 
 ### 配置说明
+
+* 在 meTables() 函数中传递的对象信息会覆盖如下的默认配置信息
+* 选择器配置一定要使用ID选择器，例如：sModal, sTable, sFormId, searchForm, buttonSelector
 ```js
 var config = {
     title: "",                  // 表格的标题  
@@ -56,6 +59,41 @@ var config = {
     bCheckbox: true,			// 需要多选框
     params: null,				// 请求携带参数
     ajaxRequest: false,         // ajax一次性获取数据
+    
+    // 关于地址配置信息
+    urlPrefix: "", 
+    urlSuffix: "",
+    url: {
+        search: "search",
+        create: "create",
+        update: "update",
+        delete: "delete",
+        export: "export",
+        upload: "upload",
+        editable: "editable",
+        deleteAll: "delete-all"
+    },
+    
+    // 最终生成地址 urlPrefix + url.search + urlSuffix;
+             
+    // dataTables 表格默认配置对象信息
+    table: {
+        // "fnServerData": fnServerData,		// 获取数据的处理函数
+        // "sAjaxSource":      "search",		// 获取数据地址
+        "bLengthChange": true, 			// 是否可以调整分页
+        "bAutoWidth": false,           	// 是否自动计算列宽
+        "bPaginate": true,			    // 是否使用分页
+        "iDisplayStart":  0,
+        "iDisplayLength": 10,
+        "bServerSide": true,		 	// 是否开启从服务器端获取数据
+        "bRetrieve": true,
+        "bDestroy": true,
+        // "processing": true,		    // 是否使用加载进度条
+        // "searching": false,
+        "sPaginationType":  "full_numbers"     // 分页样式
+        // "order": [[1, "desc"]]       // 默认排序，
+        // sDom: "t<'row'<'col-xs-6'li><'col-xs-6'p>>"
+    },
 
     // 关于搜索的配置
     searchHtml: "",				// 搜索信息额外HTML
@@ -120,42 +158,6 @@ var config = {
     detailTable: {                   // 查看详情配置信息
         bMultiCols: false,
         iColsLength: 1
-    },
-
-    // 关于地址配置信息
-    urlPrefix: "", 
-    urlSuffix: "",
-    url: {
-        search: "search",
-        create: "create",
-        update: "update",
-        delete: "delete",
-        export: "export",
-        upload: "upload",
-        editable: "editable",
-        deleteAll: "delete-all"
-    },
-    
-    // 最终生成地址 urlPrefix + url.search + urlSuffix;
-   
-    
-    // dataTables 表格默认配置对象信息
-    table: {
-        // "fnServerData": fnServerData,		// 获取数据的处理函数
-        // "sAjaxSource":      "search",		// 获取数据地址
-        "bLengthChange": true, 			// 是否可以调整分页
-        "bAutoWidth": false,           	// 是否自动计算列宽
-        "bPaginate": true,			    // 是否使用分页
-        "iDisplayStart":  0,
-        "iDisplayLength": 10,
-        "bServerSide": true,		 	// 是否开启从服务器端获取数据
-        "bRetrieve": true,
-        "bDestroy": true,
-        // "processing": true,		    // 是否使用加载进度条
-        // "searching": false,
-        "sPaginationType":  "full_numbers"     // 分页样式
-        // "order": [[1, "desc"]]       // 默认排序，
-        // sDom: "t<'row'<'col-xs-6'li><'col-xs-6'p>>"
     },
 
     // 子表格配置信息
