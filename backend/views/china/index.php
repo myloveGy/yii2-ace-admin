@@ -18,10 +18,6 @@ $this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' =>
     var arrParent = <?=\yii\helpers\Json::encode($parent)?>,
         m = meTables({
             title: "地址信息",
-            bCheckbox: true,
-//            ajaxRequest: true,
-            searchForm: "#table-search-form",
-    //        searchType: "top",
             table: {
                 "aoColumns":[
                     {"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc",
