@@ -20,6 +20,10 @@ git clone https://github.com/myloveGy/yii2-ace-admin.git
 composer install
 ```
 3. 浏览器进入该目录的下执行index.php 其实就是导入数据
+### 预览
+1. 登录页
+2. 数据显示
+3. 权限分配
 ### 使用说明
 1. 后台控制器配置
 ```php
@@ -119,6 +123,7 @@ class ChinaController extends Controller
     })
 ```
 [meTables配置说明](./backend/web/public/assets/js/common/README.md)
+
 目录结构
 -------------------
 
