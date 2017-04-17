@@ -43,6 +43,43 @@ var mt = meTables({
 #### 生成视图
 ![试图文件](../../images/desc5.png)
 
+#### 服务器返回数据说明
+* 查询返回json
+```
+{
+  errCode: 0, 
+  errMsg: "操作成功", 
+  data: {
+    sEcho: 1,                   // 查询次数
+    iTotalRecords: 10,          // 当页数据条数
+    iTotalDisplayRecords: 100,  // 数据总条数 
+    aaData: [                   // 数据
+      {id: 1, name: "中国"},
+      {id: 2, name: "上海"}
+    ]
+  }
+}
+```
+* 新增、修改、删除返回json
+1. 处理成功
+```
+{
+    errCode: 0,
+    errMsg: "操作成功",
+    data: {
+        id: 1,
+        name: "中国"
+    }
+}
+```
+2. 处理失败
+```js
+{
+  errCode: 1,
+  errMsg: "处理失败",
+  data: null
+}
+```
 ### 配置说明
 
 * 在 meTables() 函数中传递的对象信息会覆盖如下的默认配置信息
