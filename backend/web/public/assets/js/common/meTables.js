@@ -47,7 +47,7 @@
             if (options !== undefined) {
                 if (options.ajaxRequest) {
                     this.options.table.ajax = {
-                        url: self.getUrl("search"),
+                        url: null,
                         type: self.options.sMethod,
                         dataType: "json",
                         data: function(d) {
@@ -80,10 +80,16 @@
                 } else {
                     // $.fn.dataTable.defaults['bFilter'] = true;
                     this.options.table.fnServerData = this.fnServerData;
-                    this.options.table.sAjaxSource = this.getUrl("search");
                 }
 
                 this.extend({options: options});
+            }
+
+            // 请求地址
+            if (this.options.ajaxRequest) {
+                if (!this.options.table.ajax.url) this.options.table.ajax.url = self.getUrl("search");
+            } else {
+                if (!this.options.table.sAjaxSource) this.options.table.sAjaxSource = this.getUrl("search");
             }
 
             this.options.table.oLanguage = this.getLanguage("dataTables", "*");
@@ -92,11 +98,11 @@
             // 判断添加数据(多选)
             if (this.options.bCheckbox) {
                 this.options.table.aoColumns.unshift({
-                    "data": 	 null,
+                    "data": null,
                     "bSortable": false,
-                    "class": 	 "center",
-                    "title": 	 '<label class="position-relative"><input type="checkbox" class="ace" /><span class="lbl"></span></label>',
-                    "bViews":    false,
+                    "class": "center",
+                    "title": '<label class="position-relative"><input type="checkbox" class="ace" /><span class="lbl"></span></label>',
+                    "bViews": false,
                     "createdCell": function(td, data, array, row, col){
                         $(td).html('<label class="position-relative"><input type="checkbox" value="' + row + '" class="ace" table-data="'+ row +'" /><span class="lbl"></span></label>');
                     }
@@ -116,7 +122,7 @@
                 }
 
                 this.options.table.aoColumns.push({
-                    "data": 	 null,
+                    "data": null,
                     "bSortable": false,
                     "title": self.getLanguage("operations"),
                     "width": self.options.operations.width,
@@ -172,6 +178,7 @@
                     if (!this.options.buttons[i].text) {
                         this.options.buttons[i].text = this.getLanguage(i);
                     }
+
                     this.options.buttonHtml += '<button class="' + this.options.buttons[i]["className"] + '" id="' + this.options.sTable.replace("#", "") + "-" + i + '">\
                                 <i class="' + this.options.buttons[i]["icon"] + '"></i>\
                             ' + this.options.buttons[i]["text"] + '\
