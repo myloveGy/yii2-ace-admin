@@ -946,7 +946,7 @@
         textareaCreate: function(params) {
             if (!params["class"]) params["class"] = "form-control";
             if (!params["rows"]) params["rows"] = 5;
-            html = params.value + "</textarea>";
+            html = (params.value ? params.value : "") + "</textarea>";
             delete params.value;
             return "<textarea" + this.handleParams(params) + ">" + html;
         },

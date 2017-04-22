@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         title: "导航栏目",
         table: {
             "aoColumns":[
-                {"data": "id", "sName":"id", "title": "Id",  "edit":{"type":"hidden"}, "search":{"type":"text"}},
+                {"data": "id", "sName":"id", "title": "Id", "defaultOrder": "desc", "edit":{"type":"hidden"}, "search":{"type":"text"}},
                 {"data": "pid", "sName":"pid", "title": "上级分类", "value": aParents,  "edit":{"type":"select", "number":1}, "createdCell": parentStatus},
                 {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
                 {"data": "icons", "sName":"icons", "title":"图标", "edit": {"rangelength":"[2, 50]"}, "bSortable": false},
