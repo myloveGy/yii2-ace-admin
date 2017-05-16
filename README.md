@@ -19,7 +19,11 @@ git clone https://github.com/myloveGy/yii2-ace-admin.git
 ```angular2html
 composer install
 ```
-3. 浏览器进入该目录的下执行index.php 其实就是导入数据
+3. 执行该目录下的 init 初始化配置（生成本地配置文件） 
+
+4. 浏览器进入该目录的下执行index.php （项目根目录下的index.php）进行数据库数据的导入
+
+5. 配置虚拟机,设置路径为 bacekend/web/ 下，配置好路由重写 
 ### 使用说明
 1. 后台控制器配置
 ```php
