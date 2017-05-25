@@ -218,7 +218,7 @@ class ModuleController extends Controller
                 $sOption .= '"rangelength": "[2, '.$sLen.']"';
             }
 
-            $sOther = stripos($value['Field'], '_at') !== false ? 'dateTimeString' : '';
+            $sOther = stripos($value['Field'], '_at') !== false ? 'meTables.dateTimeString' : '';
 
             $strHtml .= <<<HTML
 <div class="alert alert-success me-alert-su">
@@ -304,7 +304,7 @@ HTML;
 
 <?php \$this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var m = mt({
+    var m = meTables({
         title: "{$title}",
         table: {
             "aoColumns": [
@@ -314,7 +314,7 @@ HTML;
     });
     
     /**
-    m.fn.extend({
+    meTables.fn.extend({
         // 显示的前置和后置操作
         beforeShow: function(data, child) {
             return true;
