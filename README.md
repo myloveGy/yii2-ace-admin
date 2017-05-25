@@ -116,7 +116,7 @@ class ChinaController extends Controller
          * 使用配置 search: {"type": "email", "id": "search-email"}
          * search 里面配置的信息都通过 params 传递给函数
          */
-        "emailSearchCreate": function(prams) {
+        "emailSearchCreate": function(params) {
             return '<input type="text" name="' + params.name +'">';
         }
     });
