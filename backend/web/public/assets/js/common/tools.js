@@ -85,7 +85,8 @@ function aceFileUpload(select, sFileUploadUrl) {
             maxSize: maxSize ? maxSize : 200000000,
             denyExt: denyExt ? denyExt : ['exe', 'php']
         },
-        oOther;
+        oOther,
+        field = $input.attr("input-name");
 
     if (allowMime) aParams["allowMime"] = allowMime;
     if ($input.attr('input-type') == 'ace_file') {
@@ -109,17 +110,30 @@ function aceFileUpload(select, sFileUploadUrl) {
 
     aParams = $.extend(aParams, oOther);
 
+    // 处理请求地址
+    sFileUploadUrl += sFileUploadUrl.indexOf("?") >= 0 ? "&" : "?";
+    sFileUploadUrl += "sField=" + field;
+
     // 删除操作
     aParams["before_remove"] = function(){
-        if ($file.val()) {
-            $.post(sFileUploadUrl, {"face": $file.val()})
+        var v = $file.val();
+        if (v) {
+            var arr = {};
+            arr[field] = v;
+            $.ajax({
+                type: "POST",
+                url: sFileUploadUrl,
+                data: arr
+            });
+
         }
+
         $file.val('');
         return true;
     };
 
     $input.ace_file_input(aParams).on('change', function() {
-        var deferred = aceFileInputAjax($input, sFileUploadUrl + '?sField=' + $input.attr('input-name'));
+        var deferred = aceFileInputAjax($input, sFileUploadUrl);
         // 成功执行
         deferred.done(function(json) {
             if (json.errCode == 0) {

@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
         aStatusColor = <?=\yii\helpers\Json::encode($statusColor)?>,
         aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
         aRoles  = <?=\yii\helpers\Json::encode($roles)?>,
-        m = mt({
+        m = meTables({
             title: "管理员信息",
             fileSelector: ["#file"],
             editFormParams: {
@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     {"title": "状态", "data": "status", "sName": "status", "value": aStatus, "edit": {"type": "radio", "default": 1, "required":true,"number":true}, "bSortable": false, "createdCell":function(td, data) {
                         $(td).html(mt.valuesString(aStatus, aStatusColor, data));
                     }},
-                    {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell" : mt.dateTimeString},
+                    {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell" : meTables.dateTimeString},
                     {"title": "创建用户", "data": "created_id", "sName": "created_id", "bSortable": false, "createdCell": mt.adminString},
                     {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell" : mt.dateTimeString},
                     {"title": "修改用户", "data": "updated_id", "sName": "updated_id", "bSortable": false, "createdCell": mt.adminString}
