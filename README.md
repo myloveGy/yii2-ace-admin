@@ -80,7 +80,10 @@ class ChinaController extends Controller
     }
 }
 ```
-2. 视图文件JS配置
+2. 后台model
+    使用gii生成，命名空间 backend\models , 继承 common\models\Model; 该主要model 提过了一个将新增修改数据时的错误信息转换为一个字符串
+
+3. 视图文件JS配置
 ```js
     var arrParent = {"0": "中国", "1": "湖南"};
     /**
