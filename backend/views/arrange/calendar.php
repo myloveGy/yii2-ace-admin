@@ -159,7 +159,6 @@ $this->registerJsFile('@web/public/assets/js/fullcalendar.min.js', ['depends' =>
 
     var aColors     = <?=json_encode($statusColors)?>;
     jQuery(function($) {
-        handleMenuActive('\\/arrange\\/index');
         // 时间选项
         $('.me-datetime').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
 

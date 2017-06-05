@@ -188,8 +188,5 @@ $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.tree.min.js');
             }
         });
     });
-
-    // 导航栏样式装换
-    handleMenuActive('\\/role\\/index');
 </script>
 <?php $this->endBlock(); ?>

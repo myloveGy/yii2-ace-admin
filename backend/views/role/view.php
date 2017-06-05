@@ -166,9 +166,6 @@ $this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js');
         $('.dd-handle a').on('mousedown', function(e){
             e.stopPropagation();
         });
-
-        // 导航栏样式装换
-        handleMenuActive('\\/role\\/index');
     });
 </script>
 <?php $this->endBlock(); ?>

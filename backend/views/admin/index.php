@@ -16,11 +16,11 @@ $this->params['breadcrumbs'][] = $this->title;
         m = meTables({
             title: "管理员信息",
             fileSelector: ["#file"],
-            editFormParams: {
-                bMultiCols: true,
-                iColsLength: 2,
-                aCols: [2, 4]
-            },
+//            editFormParams: {
+//                bMultiCols: true,
+//                iColsLength: 2,
+//                aCols: [2, 4]
+//            },
             table: {
                 "aoColumns":[
                     {"title": "管理员ID", "data": "id", "sName": "id", "edit": {"type": "hidden"}, "search": {"type": "text"}, "defaultOrder": "desc"},
