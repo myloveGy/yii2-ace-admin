@@ -14,6 +14,7 @@ use common\models\China;
  */
 class AdminController extends Controller
 {
+    public $modelClass = '';
     /**
      * where() 搜索配置
      * @param  array $params 查询参数
