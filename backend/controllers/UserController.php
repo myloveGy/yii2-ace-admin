@@ -18,6 +18,12 @@ use backend\models\User;
 class UserController extends Controller
 {
     /**
+     * 定义使用的model
+     * @var string
+     */
+    public $modelClass = 'backend\models\User';
+
+    /**
      * where() 查询处理
      * @param  array $params
      * @return array 返回数组
@@ -28,15 +34,6 @@ class UserController extends Controller
             'username' => 'like',
 			'email' => 'like',
         ];
-    }
-
-    /**
-     * getModel() 返回model
-     * @return User
-     */
-    public function getModel()
-    {
-        return new User();
     }
 
     /**

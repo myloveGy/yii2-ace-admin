@@ -9,42 +9,62 @@ use yii\web\AssetBundle;
  */
 class AppAsset extends AssetBundle
 {
+    /**
+     * 定义使用的目录路径
+     * @var string
+     */
     public $basePath = '@webroot';
+
+    /**
+     * 定义使用的地址url
+     * @var string
+     */
     public $baseUrl  = '@web/public/assets/';
+
+    /**
+     * 定义使用的资源目录
+     * @var string
+     */
     public static $assetsUrl = '@web/public/assets/';
 
-    // 加载CSS
+    /**
+     * 加载的公共css
+     * @var array
+     */
     public $css = [
         'css/bootstrap.min.css',
         'css/font-awesome.min.css',
         'css/ace-fonts.css',
     ];
 
-    // 加载的JavaScript
+    /**
+     * 定义默认加载的js
+     * @var array
+     */
     public $js = [
         'js/ace-elements.min.js',
         'js/ace.min.js',
     ];
 
+    /**
+     * 定义使用加载资源的依靠类
+     * @var array
+     */
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
     ];
 
     /**
-     * registerCommon() 注册主要的资源
+     * 注册主要的资源
      * @param $view
      */
     public static function registerCommon($view)
     {
         $options = ['depends' => 'backend\assets\AppAsset'];
-//        $view->registerCssFile(self::$assetsUrl.'css/bootstrap-editable.css', $options);
         $arrJsResource = [
             'js/common/tools.js',
-//            'js/common/dataTable.js',
             'js/common/meTables.js',
-//            'js/x-editable/bootstrap-editable.min.js',
-//            'js/x-editable/ace-editable.min.js',
             'js/jquery.dataTables.min.js',
             'js/jquery.dataTables.bootstrap.js',
             'js/jquery.validate.min.js',
@@ -58,7 +78,7 @@ class AppAsset extends AssetBundle
     }
 
     /**
-     * loadDataTables() 加载公共的dataTables 的css 和 javascript
+     * 加载公共的dataTables 的css 和 javascript
      * @param $view
      * @param array $arrNoLoad
      * @param array $options

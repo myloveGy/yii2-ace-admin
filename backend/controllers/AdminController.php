@@ -14,7 +14,18 @@ use common\models\China;
  */
 class AdminController extends Controller
 {
-    public $modelClass = '';
+    /**
+     * 定义使用的model
+     * @var string
+     */
+    public $modelClass = 'backend\models\Admin';
+
+    /**
+     * 定义上传文件的目录
+     * @var string
+     */
+    public $strUploadPath = './public/assets/avatars/';
+
     /**
      * where() 搜索配置
      * @param  array $params 查询参数
@@ -24,7 +35,7 @@ class AdminController extends Controller
     {
         $where  = [];
         $intUid = (int)Yii::$app->user->id;
-        if ($intUid != 1) {
+        if ($intUid !== 1) {
             $where = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
         }
 
@@ -51,15 +62,6 @@ class AdminController extends Controller
     }
 
     /**
-     * getModel() 获取model
-     * @return Admin
-     */
-    public function getModel()
-    {
-        return new Admin();
-    }
-
-    /**
      * actionView() 查看个人信息
      * @return string
      */
@@ -73,28 +75,19 @@ class AdminController extends Controller
             if ($arrAddress) {
                 if (isset($arrAddress[2])) $address = $arrAddress[2];
                 // 查询省市信息
-                $arrChina = \common\models\China::find()->where(['name' => array_slice($arrAddress, 0, 2)])->orderBy(['pid' => SORT_ASC])->all();
+                $arrChina = \common\models\China::find()
+                    ->where(['name' => array_slice($arrAddress, 0, 2)])
+                    ->orderBy(['pid' => SORT_ASC])
+                    ->all();
             }
         }
-
-        // 获取用户日志信息
-        $arrLogs = $this->getInfo('update');
 
         // 载入视图文件
         return $this->render('view', [
             'address' => $address,  // 县
             'china'   => $arrChina, // 省市信息
-            'logs'    => $arrLogs,  // 日志信息
+            'logs'    => [],  // 日志信息
         ]);
-    }
-
-    /**
-     * getUploadPath() 获取上传文件路径
-     * @return string
-     */
-    public function getUploadPath()
-    {
-        return './public/assets/avatars/';
     }
 
     /**
@@ -117,6 +110,7 @@ class AdminController extends Controller
 
             // 处理图片
             $strTmpPath = dirname($strFilePath).'/thumb_'.basename($strFilePath);
+            /* @var $image \yii\image\drivers\Kohana_Image */
             $image = Yii::$app->image->load($strFilePath);
             $image->resize(180, 180, \yii\image\drivers\Image::CROP)->save($strTmpPath);
             $image->resize(48, 48, \yii\image\drivers\Image::CROP)->save();

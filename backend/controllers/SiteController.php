@@ -2,19 +2,18 @@
 
 namespace backend\controllers;
 
-use common\helpers\Helper;
-use common\models\China;
 use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\UnauthorizedHttpException;
 use common\models\AdminForm;
+use common\helpers\Helper;
 use backend\models\Menu;
 use backend\models\Admin;
-use yii\filters\VerbFilter;
-use yii\helpers\Json;
-use yii\web\UnauthorizedHttpException;
 
 /**
- * Site controller
+ * Class SiteController 后台首页处理
+ * @package backend\controllers
  */
 class SiteController extends \yii\web\Controller
 {
@@ -81,7 +80,8 @@ class SiteController extends \yii\web\Controller
     }
 
     /**
-     * actionSystem
+     * 显示首页系统信息
+     * @return string
      */
     public function actionSystem()
     {
@@ -105,53 +105,8 @@ class SiteController extends \yii\web\Controller
         ]);
     }
 
-    public function actionGrid()
-    {
-        return $this->render('grid');
-    }
-
-    public function actionGetData()
-    {
-        $request = Yii::$app->request;
-        $intPage = (int)$request->post('page'); // 第几页
-        $intPage = $intPage ? $intPage : 1;  // 默认第一页
-        $intRows = (int)$request->post('rows'); // 每页多少条
-        $strOrder = $request->post('sidx');      // 排序字段
-        $sord = $request->post('sord'); // 排序方式
-        $intStart = ($intPage - 1) * $intRows;
-        $strOrder = $strOrder ? $strOrder : 'id';
-        $srod = $sord == 'asc' ? SORT_ASC : SORT_DESC;
-
-        // 开始查询数据
-        $intCount = China::find()->count();
-        if ($intCount) {
-            $intTotalPage = ceil($intCount/$intRows);
-            $array = China::find()->offset($intStart)->limit($intRows)->orderBy([$strOrder => $srod])->all();
-        } else {
-            $intTotalPage = 0;
-            $array = [];
-        }
-
-        exit(Json::encode([
-            'page' => $intPage,
-            'total' => $intTotalPage,
-            'records' => $intCount,
-            'rows' => $array,
-        ]));
-    }
-
-    public function actionCreate()
-    {
-        return Json::encode([false, 'null']);
-    }
-
-    public function actionUpdate()
-    {
-        return Json::encode([false, 'null']);
-    }
-
     /**
-     * actionLogin() 后台管理员登录
+     * 后台管理员登录
      * @return string|\yii\web\Response
      */
     public function actionLogin()

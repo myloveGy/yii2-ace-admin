@@ -4,6 +4,12 @@ namespace common\helpers;
 
 use yii\helpers\ArrayHelper;
 
+/**
+ * Class Helper
+ * 辅助处理类，一般用来定义公共方法
+ * @author  liujx
+ * @package common\helpers
+ */
 class Helper
 {
     /**
@@ -54,7 +60,7 @@ class Helper
 
     /**
      * create() 根据类名和命名空间创建对象
-     * @param $strClassName
+     * @param string $strClassName
      * @param string $namespace
      * @return null
      */
@@ -67,5 +73,80 @@ class Helper
         }
 
         return $objReturn;
+    }
+
+    /**
+     * 处理通过请求参数对应yii2 where 查询条件
+     * @param array $params 请求参数数组
+     * @param array $where  定义查询处理方式数组
+     * @param string $join  默认查询方式是and
+     * @return array
+     */
+    public static function handleWhere($params, $where, $join = 'and')
+    {
+        $arrReturn = [];
+        if ($where) {
+            // 处理默认查询条件
+            if (isset($where['where']) && !empty($where['where'])) {
+                $arrReturn = $where['where'];
+                unset($where['where']);
+            }
+
+            // 处理其他查询
+            if ($where && $params) {
+                foreach ($where as $key => $value) {
+                    // 判断不能查询请求的数据不能为空
+                    if (isset($params[$key]) && $params[$key] !== '') {
+                        // 根据定义的查询类型处理查询
+                        switch (gettype($value)) {
+                            case 'string':  // 字符串
+                                $arrReturn[] = [$value, $key, $params[$key]];
+                                break;
+                            case 'array':   // 数组
+                                // 处理函数
+                                if (isset($value['func']) && function_exists($value['func'])) {
+                                    $params[$key] = $value['func']($params[$key]);
+                                }
+
+                                // 对应字段
+                                if (empty($value['field'])) $value['field'] = $key;
+
+                                // 查询连接类型
+                                if (empty($value['and'])) $value['and'] = '=';
+
+                                $arrReturn[] = [$value['and'], $value['field'], $params[$key]];
+                                break;
+                            case 'object':  // 匿名函数类型
+                                $arrReturn[] = $value($params[$key]);
+                                break;
+                            default:
+                                $arrReturn[] = ['=', $key, $params[$key]];
+                        }
+                    }
+                }
+            }
+
+            // 存在查询条件，数组前面添加 连接类型
+            if ($arrReturn) array_unshift($arrReturn, $join);
+        }
+
+        return $arrReturn;
+    }
+
+    /**
+     * 将一个多维数组连接为一个字符串
+     * @param  array $array 数组
+     * @return string
+     */
+    public static function arrayToString($array)
+    {
+        $str = '';
+        if (!empty($array)) {
+            foreach ($array as $value) {
+                $str .= is_array($value) ? implode('', $value) : $value;
+            }
+        }
+
+        return $str;
     }
 }

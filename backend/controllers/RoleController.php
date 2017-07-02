@@ -13,10 +13,23 @@ use backend\models\Auth;
 use backend\models\Menu;
 use yii\web\HttpException;
 
+/**
+ * Class RoleController 角色管理类
+ * @package backend\controllers
+ */
 class RoleController extends Controller
 {
-    public $sort = 'created_at';        // 排序
-    public $type = Auth::TYPE_ROLE;     // 类型
+    /**
+     * 定义使用的model
+     * @var string
+     */
+    public $modelClass = 'backend\models\Auth';
+
+    /**
+     * 定义排序字段
+     * @var string
+     */
+    public $sort = 'created_at';
 
     /**
      * where() 设置查询参数
@@ -25,7 +38,7 @@ class RoleController extends Controller
      */
     public function where($params)
     {
-        $uid   = Yii::$app->user->id;
+        $uid = Yii::$app->user->id;
         $where = [['=', 'type', Auth::TYPE_ROLE]]; // 查询角色信息
 
         // 不是管理员
@@ -45,17 +58,6 @@ class RoleController extends Controller
     }
 
     /**
-     * getModel() 获取model
-     * @return Auth
-     */
-    public function getModel()
-    {
-        $model = new Auth();
-        $model->type = $this->type;
-        return $model;
-    }
-
-    /**
      * actionCreate() 处理新增数据
      * @return mixed|string
      */
@@ -63,7 +65,7 @@ class RoleController extends Controller
     {
         $array = Yii::$app->request->post();
         if ($array) {
-            $model = $this->getModel();
+            $model = new Auth();
             if ($model->load(['params' => $array], 'params')) {
                 // 添加角色成功
                 $permissions = $this->preparePermissions(Yii::$app->request->post());
@@ -164,7 +166,7 @@ class RoleController extends Controller
         }
 
         // 判断自己是否有这个权限
-        $uid      = Yii::$app->user->id;                     // 用户ID
+        $uid = Yii::$app->user->id;                     // 用户ID
         $objAuth  = Yii::$app->getAuthManager();             // 权限对象
         $mixRoles = $objAuth->getAssignment($name, $uid);    // 获取用户是否有改权限
         if ( ! $mixRoles && $uid != 1) {
@@ -173,9 +175,11 @@ class RoleController extends Controller
 
         // 添加权限
         $request = Yii::$app->request;       // 请求信息
-        $model   = $this->findModel($name);  // 查询对象
-        $array   = $request->post();         // 请求参数信息
-        if ($request->post() && $model->load(['params' => $array], 'params')) {
+
+        /* @var $model \backend\models\Auth */
+        $model = $this->findModel($name);  // 查询对象
+        $array = $request->post();         // 请求参数信息
+        if ($array && $model->load($array, '')) {
             // 修改权限
             $permissions = $this->preparePermissions($array);
             if ($model->updateRole($name, $permissions)) {
@@ -229,6 +233,7 @@ class RoleController extends Controller
     public function actionView($name)
     {
         // 查询角色信息
+        /* @var $model \backend\models\Auth */
         $model = $this->findModel($name);
         $model->loadRolePermissions($name);
         $permissions = $this->getPermissions();
@@ -273,9 +278,9 @@ class RoleController extends Controller
 
     /**
      * findModel() 查询单个model
-     * @param array $name
-     * @return Auth
-     * @throws HttpException
+     * @param  string $name
+     * @return \backend\models\Auth
+     * @throws \yii\web\HttpException
      */
     protected function findModel($name)
     {

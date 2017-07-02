@@ -6,14 +6,23 @@
  * date: 2016-09-19 14:39:17
  */
 
-// 引入命名空间
 namespace backend\controllers;
 
 use Yii;
 use backend\models\Arrange;
 
+/**
+ * Class ArrangeController 日程安排控制器
+ * @package backend\controllers
+ */
 class ArrangeController extends Controller
 {
+    /**
+     * 定义使用的model
+     * @var string
+     */
+    public $modelClass = 'backend\models\Arrange';
+
     /**
      * where() 查询参数配置
      * @param array $params
@@ -50,7 +59,12 @@ class ArrangeController extends Controller
     public function actionCalendar()
     {
         // 查询没有委派的信息
-        $arrArrange = Arrange::find()->where(['and', ['!=', 'status', Arrange::STATUS_DEFER], ['=', 'admin_id', 0]])->orderBy(['time_status' => SORT_DESC])->all();
+        $arrArrange = Arrange::find()->where([
+            'and',
+            ['!=', 'status', Arrange::STATUS_DEFER],
+            ['=', 'admin_id', 0]
+        ])->orderBy(['time_status' => SORT_DESC])->all();
+
         // 载入视图
         return $this->render('calendar', [
             'status'       => Arrange::getStatus(),         // 状态
@@ -101,16 +115,8 @@ class ArrangeController extends Controller
     }
 
     /**
-     * getModel() 获取model
-     * @return Arrange
-     */
-    public function getModel()
-    {
-        return new Arrange();
-    }
-
-    /**
-     * handleExport() 导出数据显示问题(时间问题可以通过Excel自动装换)
+     * 导出数据显示问题(时间问题可以通过Excel自动装换)
+     * @param \backend\models\Arrange $objModel
      */
     public function handleExport(&$objModel)
     {

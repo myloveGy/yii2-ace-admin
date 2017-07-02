@@ -1,14 +1,21 @@
 <?php
-
 namespace common\controllers;
 
+use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 
-// 用户必须登录的控制器
+/**
+ * Class UserController
+ * @author  liujx
+ * @package common\controllers
+ */
 class UserController extends Controller
 {
-    // 初始化处理
+    /**
+     * 行为定义类
+     * @return array
+     */
     public function behaviors()
     {
         return [

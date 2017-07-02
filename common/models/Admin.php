@@ -24,7 +24,7 @@ use common\behaviors\UpdateBehavior;
  * @property integer $updated_time
  * @property string $password write-only password
  */
-class Admin extends Model implements IdentityInterface
+class Admin extends \yii\db\ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = -1;
     const STATUS_INACTIVE = 0;

@@ -14,6 +14,7 @@ use yii\helpers\Json;
  */
 class MenuController extends Controller
 {
+    public $modelClass = 'backend\models\Menu';
     /**
      * where() 查询参数配置
      * @param array $params
@@ -37,18 +38,13 @@ class MenuController extends Controller
     public function actionIndex()
     {
         // 查询父级分类信息
-        $parents = Menu::find()->select(['id', 'menu_name'])->where(['status' => 1, 'pid' => 0])->indexBy('id')->all();
+        $parents = Menu::find()->select(['id', 'menu_name'])->where([
+            'status' => 1,
+            'pid' => 0
+        ])->indexBy('id')->all();
+
         return $this->render('index', [
             'parents' => Json::encode(Helper::map($parents, 'id', 'menu_name', ['顶级分类']))
         ]);
-    }
-
-    /**
-     * getModel() 获取model
-     * @return Menu
-     */
-    public function getModel()
-    {
-        return new Menu();
     }
 }

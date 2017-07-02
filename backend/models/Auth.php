@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use common\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "auth_item".
@@ -21,7 +22,7 @@ use common\behaviors\TimestampBehavior;
  * @property AuthRule $ruleName
  * @property AuthItemChild[] $authItemChildren
  */
-class Auth extends \common\models\Model
+class Auth extends ActiveRecord
 {
     /**
      * Auth type

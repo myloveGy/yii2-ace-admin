@@ -6,15 +6,16 @@
  * date: 2016-07-21 13:29:28
  */
 
-// 引入命名空间
 namespace backend\controllers;
 
 use backend\models\Auth;
 
+/**
+ * Class AuthorityController 权限管理类
+ * @package backend\controllers
+ */
 class AuthorityController extends RoleController
 {
-    public $type = Auth::TYPE_PERMISSION;
-
     /**
      * where() 查询参数配置
      * @param array $params
@@ -23,14 +24,15 @@ class AuthorityController extends RoleController
     public function where($params)
     {
         return [
-            'name'        => 'like',
+            'name' => 'like',
 			'description' => 'like',
-            'where'       => [['=', 'type', Auth::TYPE_PERMISSION]],
+            'where' => [['=', 'type', Auth::TYPE_PERMISSION]],
         ];
     }
 
     /**
-     * handleExport() 导出数据显示问题(时间问题可以通过Excel自动装换)
+     * 导出数据显示问题(时间问题可以通过Excel自动转换)
+     * @param \backend\models\Auth $objModel
      */
     public function handleExport(&$objModel)
     {

@@ -14,7 +14,11 @@ use yii\helpers\ArrayHelper;
 
 class ChinaController extends Controller
 {
-    protected $strategy = 'DataTables';
+    /**
+     * 定义使用的model
+     * @var string
+     */
+    public $modelClass = '\common\models\China';
 
     /**
      * where() 查询参数配置
@@ -42,14 +46,5 @@ class ChinaController extends Controller
         return $this->render('index', [
             'parent' => ArrayHelper::map(China::find()->where(['pid' => 0])->all(), 'id', 'name'),
         ]);
-    }
-
-    /**
-     * getModel() 获取model
-     * @return China
-     */
-    public function getModel()
-    {
-        return new China();
     }
 }

@@ -2,31 +2,68 @@
 
 namespace backend\controllers;
 
-use common\strategy\Substance;
 use Yii;
 
-use backend\models\Admin;
+use common\models\Admin;
 use common\models\UploadForm;
-use yii\db\Query;
+use common\strategy\Substance;
+use common\helpers\Helper;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * Class    PraiseController
+ * Class Controller 后台的基础控制器
+ * @author  liujx
  * @package backend\controllers
- * Desc     后台公共的控制器
- * User     liujx
- * Date     2016-4-8
  */
-class Controller extends \common\controllers\Controller
+class Controller extends \common\controllers\UserController
 {
-    // 'enableCsrfValidation' => true // 配置文件关闭CSRF
-    public    $admins = null;    //
-    protected $sort   = 'id';    // 默认排序字段
-    protected $strategy = 'DataTables'; // 数据显示使用方式
+    // 引入json 返回处理类
+    use \common\traits\Json;
+
+    /**
+     * 定义是否关闭CSRF
+     * @var bool
+     */
+    // public $enableCsrfValidation = true;
+
+    /**
+     * 定义使用的model
+     * @var string
+     */
+    protected $modelClass = '\backend\models\Admin';
+
+    /**
+     * pk 定义表使用的主键名称
+     * @var string
+     */
     protected $pk = 'id';
+
+    /**
+     * sort 定义默认排序条件
+     * @var string
+     */
+    protected $sort   = 'id';
+
+    /**
+     * 定义上传文件的保存的路径
+     * @var string
+     */
+    protected $strUploadPath = './public/uploads/';
+
+    /**
+     * 定义使用资源的策略类名
+     * @var string
+     */
+    protected $strategy = 'DataTables';
+
+    /**
+     * admins 定义管理员信息
+     * @var null
+     */
+    protected $admins = null;
 
     /**
      * beforeAction() 请求之前的数据验证
@@ -37,14 +74,23 @@ class Controller extends \common\controllers\Controller
     public function beforeAction($action)
     {
         // 主控制器验证
-        if (parent::beforeAction($action)) {
+        $isTrue = parent::beforeAction($action);
+        if ($isTrue) {
             // 验证权限
-            if(!Yii::$app->user->can($action->controller->id . '/' . $action->id) && Yii::$app->getErrorHandler()->exception === null) {
+            if(!Yii::$app->user->can($action->controller->id . '/' . $action->id)
+                && Yii::$app->getErrorHandler()->exception === null
+            ) {
                 // 没有权限AJAX返回
-                if (Yii::$app->request->isAjax)
-                    exit(Json::encode(['errCode' => 216, 'errMsg' => '对不起，您现在还没获得该操作的权限!', 'data' => []]));
-                else
+                if (Yii::$app->request->isAjax) {
+                    header('application/json; charset=utf-8');
+                    exit(Json::encode([
+                            'errCode' => 216,
+                            'errMsg' => '对不起，您现在还没获得该操作的权限!',
+                            'data' => []]
+                    ));
+                } else {
                     throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
+                }
             }
 
             // 处理获取数据
@@ -54,11 +100,9 @@ class Controller extends \common\controllers\Controller
                 Yii::$app->view->params['admins'] = $this->admins;
                 Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
             }
-
-            return true;
-        } else {
-            return false;
         }
+
+        return $isTrue;
     }
 
     /**
@@ -81,58 +125,6 @@ class Controller extends \common\controllers\Controller
         return [];
     }
 
-
-    public function handleWhere($params, $where)
-    {
-        $arrReturn = [];
-        if ($where) {
-            // 默认查询
-            if (isset($where['where']) && !empty($where['where'])) {
-                $arrReturn = $where['where'];
-                unset($where['where']);
-            }
-
-            // 处理其他查询
-            if ($where && $params) {
-                foreach ($params as $key => $value) {
-                    if (isset($where[$key]) && $value !== "") {
-                        $v = $where[$key];
-
-                        // 判断字符串类型处理
-                        if (is_string($v)) {
-                            $arrReturn[] = [$v, $key, $value];
-                        // 判断数组处理
-                        } else if (is_array($v)) {
-                            // 处理函数
-                            if (isset($v['func']) && function_exists($v['func'])) {
-                                $value = $v['func']($value);
-                            }
-
-                            // 对应字段
-                            if (!isset($v['field']) || empty($v['field'])) {
-                                $v['field'] = $key;
-                            }
-
-                            // 链接类型
-                            if (!isset($v['and']) || empty($v['and'])) {
-                                $v['and'] = '=';
-                            }
-
-                            $arrReturn[] = [$v['and'], $v['field'], $value];
-                        // 对象处理（匿名函数）
-                        } else if (is_object($v)) {
-                            $arrReturn[] = $v($key, $value);
-                        }
-                    }
-                }
-            }
-
-            if ($arrReturn) array_unshift($arrReturn, 'and');
-        }
-
-        return $arrReturn;
-    }
-
     /**
      * afterSearch() 查询之后的数据处理函数
      * @access protected
@@ -151,57 +143,66 @@ class Controller extends \common\controllers\Controller
     public function actionSearch()
     {
         // 实例化数据显示类
+        /* @var $strategy \common\strategy\Strategy */
         $strategy = Substance::getInstance($this->strategy);
 
         // 获取查询参数
         $search = $strategy->getRequest(); // 处理查询参数
         $search['field'] = $search['field'] ? $search['field'] : $this->sort;
         $search['orderBy'] = [$search['field'] => $search['sort'] == 'asc' ? SORT_ASC : SORT_DESC];
-        $search['where'] = $this->handleWhere($search['params'], $this->where($search['params']));
+        $search['where'] = Helper::handleWhere($search['params'], $this->where($search['params']));
 
         // 查询之前的处理
-        $query = $this->getModel()->find()->where($search['where']);
+
+        /* @var $model \yii\db\ActiveRecord */
+        $model = $this->modelClass;
+        $query = $model::find()->where($search['where']);
 
         // 查询数据条数
         $total = $query->count();
         if ($total) {
-            $model = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy']);
-            $array = $model->all();
+            $array = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->all();
             if ($array) $this->afterSearch($array);
-            $this->arrJson['other'] = $model->createCommand()->getRawSql();
+            $this->arrJson['other'] = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->createCommand()->getRawSql();
         } else {
             $array = [];
         }
 
         // 处理返回数据
-        $this->arrJson['errCode'] = 0;
-        $this->arrJson['data'] = $strategy->handleResponse($array, $total);
+        $this->handleJson($strategy->handleResponse($array, $total));
 
         // 返回JSON数据
         return $this->returnJson();
     }
 
     /**
-     * actionInsert() 处理新增数据
+     * 处理新增数据
      * @return mixed|string
      */
     public function actionCreate()
     {
         $data = Yii::$app->request->post();
         if ($data) {
-            $model  = $this->getModel();
+            // 实例化出查询的model
+            /* @var $model \yii\db\ActiveRecord */
+            $model = new $this->modelClass();
+
+            // 验证是否定义了创建对象的验证场景
             $arrScenarios = $model->scenarios();
             if (isset($arrScenarios['create'])) {
                 $model->scenario = 'create';
             }
 
-            $isTrue = $model->load(['params' => $data], 'params');
-            if ($isTrue) {
-                $isTrue = $model->save();
-                $this->arrJson['errMsg'] = $model->getErrorString();
-                if ($isTrue) $this->handleJson($model);
+            // 对model对象各个字段进行赋值
+            $this->arrJson['errCode'] = 205;
+            if ($model->load($data, '')) {
+                // 判断修改返回数据
+                if ($model->save()) {
+                    $this->handleJson($model);
+                } else {
+                    $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
+                }
             }
-
         }
 
         // 返回数据
@@ -216,22 +217,30 @@ class Controller extends \common\controllers\Controller
     {
         // 接收参数判断
         $data = Yii::$app->request->post();
-        if ($data && isset($data[$this->pk]) && !empty($data[$this->pk])) {
-            // 接收参数
-            $model = $this->getModel()->findOne($data[$this->pk]);
+        if ($data && !empty($data[$this->pk])) {
+
+            // 通过传递过来的唯一主键值查询数据
+            /* @var $model \yii\db\ActiveRecord */
+            $model = $this->modelClass;
+            $model = $model::findOne($data[$this->pk]);
+
+            // 存在数据
             if ($model) {
+                // 判断是否存在指定的验证场景，有则使用，没有默认
                 $arrScenarios = $model->scenarios();
                 if (isset($arrScenarios['update'])) {
                     $model->scenario = 'update';
                 }
 
-                // 修改数据
+                // 对model对象各个字段进行赋值
                 $this->arrJson['errCode'] = 205;
-                $isTrue = $model->load(['params' => $data], 'params');
-                if ($isTrue) {
-                    $isTrue = $model->save();
-                    $this->arrJson['errMsg'] = $model->getErrorString();
-                    if ($isTrue) $this->handleJson($model);
+                if ($model->load($data, '')) {
+                    // 修改数据成功
+                    if ($model->save()) {
+                        $this->handleJson($model);
+                    } else {
+                        $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
+                    }
                 }
             }
         }
@@ -247,14 +256,18 @@ class Controller extends \common\controllers\Controller
     public function actionDelete()
     {
         $data = Yii::$app->request->post();
-        if ($data && isset($data[$this->pk]) && !empty($data[$this->pk])) {
-            $model = $this->getModel()->findOne($data[$this->pk]);
+        if ($data && !empty($data[$this->pk])) {
+            // 通过传递过来的唯一主键值查询数据
+            /* @var $model \yii\db\ActiveRecord */
+            $model = $this->modelClass;
+            $model = $model::findOne($data[$this->pk]);
             $this->arrJson['errCode'] = 222;
             if ($model) {
+                // 删除数据成功
                 if ($model->delete()) {
                     $this->handleJson($model);
                 } else {
-                    $this->arrJson['errMsg'] = $model->getErrorString();
+                    $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                 }
             }
         }
@@ -268,13 +281,18 @@ class Controller extends \common\controllers\Controller
      */
     public function actionDeleteAll()
     {
-        $ids = Yii::$app->request->post($this->pk);
+        $ids = Yii::$app->request->post('ids');
         if ($ids) {
-            $model = $this->getModel();
-            $this->arrJson['errCode'] = 220; // 查询数据不存在
-            if ($model->deleteAll([explode(',', $ids)])) {
-                $this->handleJson($ids);
+            $arrIds = explode(',', $ids);
+            if ($arrIds) {
+                /* @var $model \yii\db\ActiveRecord */
+                $model = $this->modelClass;
+                $this->arrJson['errCode'] = 220;
+                if ($model::deleteAll([$this->pk => $arrIds])) {
+                    $this->handleJson($ids);
+                }
             }
+
         }
 
         return $this->returnJson();
@@ -289,21 +307,27 @@ class Controller extends \common\controllers\Controller
         $request = Yii::$app->request;
         if ($request->isAjax) {
             // 接收参数
-            $mixPk    = $request->post('pk');    // 主键值
-            $strAttr  = $request->post('name');  // 字段名
+            $mixPk = $request->post('pk');    // 主键值
+            $strAttr = $request->post('name');  // 字段名
             $mixValue = $request->post('value'); // 字段值
+
+            // 主键值、修改字段、修改的值不能为空字符串
             $this->arrJson['errCode'] = 207;
-            if ($mixPk && $strAttr  && $mixValue != '') {
-                // 查询到数据
-                $model = $this->getModel()->findOne($mixPk);
+            if ($mixPk && $strAttr && $mixValue !== '') {
+
+                // 通过主键查询数据
+                /* @var $model \yii\db\ActiveRecord */
+                $model = $this->modelClass;
+                $model = $model::findOne($mixPk);
                 $this->arrJson['errCode'] = 220;
                 if ($model) {
+                    // 修改对应的字段
                     $model->$strAttr = $mixValue;
                     $this->arrJson['errCode'] = 206;
                     if ($model->save()) {
                         $this->handleJson($model);
                     } else {
-                        $this->arrJson['errMsg'] = $model->getErrorString();
+                        $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                     }
                 }
             }
@@ -314,16 +338,6 @@ class Controller extends \common\controllers\Controller
     }
 
     /**
-     * getUploadPath() 获取上传文件目录(默认是相对路径 ./public/uploads)
-     * @access protected
-     * @return string 返回上传文件的目录地址(相对于index.php文件的目录)
-     */
-    protected function getUploadPath()
-    {
-        return './public/uploads/';
-    }
-
-    /**
      * afterUpload() 文件上传成功的处理信息
      * @access protected
      * @param  object $object     文件上传类
@@ -331,7 +345,7 @@ class Controller extends \common\controllers\Controller
      * @param  string $strField    上传文件表单名
      * @return bool 上传成功返回true
      */
-    public function afterUpload($object, &$strFilePath, $strField)
+    protected function afterUpload($object, &$strFilePath, $strField)
     {
         return true;
     }
@@ -347,13 +361,14 @@ class Controller extends \common\controllers\Controller
         if ($request->isPost) {
             // 接收参数
             $strField = $request->get('sField');    // 上传文件表单名称
-            if ( ! empty($strField)) {
+            if (!empty($strField)) {
                 // 判断删除之前的文件
                 $strFile  = $request->post($strField);   // 旧的地址
-                if (! empty($strFile) && file_exists('.'.$strFile)) unlink('.'.$strFile);
+                if (!empty($strFile) && file_exists('.'.$strFile)) unlink('.'.$strFile);
 
-                $model = new UploadForm();
-                $model->scenario = $strField;
+                // 初始化上次表单model对象，并定义好验证场景
+                $model = new UploadForm(['scenario' => $strField]);
+
                 try {
                     $objFile = $model->$strField = UploadedFile::getInstance($model, $strField);
                     $this->arrJson['errCode'] = 221;
@@ -361,9 +376,9 @@ class Controller extends \common\controllers\Controller
                         $isTrue = $model->validate();
                         $this->arrJson['errMsg'] = $model->getFirstError($strField);
                         if ($isTrue) {
-                            // 创建目录
-                            $dirName = $this->getUploadPath();
-                            if ( ! file_exists($dirName)) mkdir($dirName, 0777, true);
+                            // 定义好保存文件目录，目录不存在那么创建
+                            $dirName = $this->strUploadPath;
+                            if (!file_exists($dirName)) mkdir($dirName, 0777, true);
                             $this->arrJson['errCode'] = 202;
                             $this->arrJson['data'] = $dirName;
                             if (file_exists($dirName)) {
@@ -371,7 +386,11 @@ class Controller extends \common\controllers\Controller
                                 $strFileName = uniqid() . '.';
                                 $strFilePath = $dirName. $strFileName. $objFile->extension;
                                 $this->arrJson['errCode'] = 204;
-                                if ($objFile->saveAs($strFilePath) && $this->afterUpload($objFile, $strFilePath, $strField)) {
+
+                                // 执行文件上传保存，并且处理自己定义上传之后的处理
+                                if ($objFile->saveAs($strFilePath)
+                                    && $this->afterUpload($objFile, $strFilePath, $strField)
+                                ) {
                                     $this->handleJson([
                                         'sFilePath' => trim($strFilePath, '.'),
                                         'sFileName' => $objFile->baseName.'.'.$objFile->extension,
@@ -380,7 +399,6 @@ class Controller extends \common\controllers\Controller
                             }
                         }
                     }
-
                 } catch (\Exception $e) {
                     $this->handleJson([], 203, $e->getMessage());
                 }
@@ -408,17 +426,19 @@ class Controller extends \common\controllers\Controller
         $request = Yii::$app->request;
         if ($request->isPost) {
             // 接收参数
-            $arrFields = $request->post('fields');         // 字段信息
-            $strTitle  = $request->post('title');          // 标题信息
-            $params = $request->post('params'); // 查询条件信息
+            $arrFields = $request->post('fields');    // 字段信息
+            $strTitle  = $request->post('title');     // 标题信息
+            $params = $request->post('params');       // 查询条件信息
 
             // 判断数据的有效性
             if ($arrFields && $strTitle) {
                 // 获取数据
-                $arrKeys   = array_keys($arrFields);        // 所有的字段
-                $query = $this->getModel()
-                    ->find()
-                    ->where($this->handleWhere($params, $this->where($params)))
+                $arrKeys = array_keys($arrFields);        // 所有的字段
+
+                /* @var $model \yii\db\ActiveRecord */
+                $model = $this->modelClass;
+                $query = $model::find()
+                    ->where(Helper::handleWhere($params, $this->where($params)))
                     ->orderBy([$this->sort => SORT_DESC]);
 
                 $intCount = $query->count();
@@ -491,14 +511,5 @@ class Controller extends \common\controllers\Controller
         }
 
         return $this->returnJson();
-    }
-
-    /**
-     * getModel() 获取model对象
-     * @return Admin
-     */
-    protected function getModel()
-    {
-        return new Admin();
     }
 }

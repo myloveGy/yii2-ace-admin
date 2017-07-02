@@ -12,7 +12,7 @@ namespace common\models;
  * @property China $p
  * @property China[] $chinas
  */
-class China extends \common\models\Model
+class China extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc

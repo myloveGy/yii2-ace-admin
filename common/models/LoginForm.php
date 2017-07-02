@@ -2,11 +2,12 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * Login form
  */
-class LoginForm extends Model
+class LoginForm extends ActiveRecord
 {
     public $username;
     public $password;

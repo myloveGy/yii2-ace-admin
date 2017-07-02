@@ -9,13 +9,22 @@ use yii\behaviors\AttributeBehavior;
 
 class TimestampBehavior extends AttributeBehavior
 {
-    // 创建时间
+    /**
+     * 定义创建时间的字段名
+     * @var string
+     */
     public $createdAtAttribute = 'created_at';
 
-    // 修改时间
+    /**
+     * 定义修改时间字段名
+     * @var string
+     */
     public $updatedAtAttribute = 'updated_at';
 
-    // 值
+    /**
+     * 定义值
+     * @var integer
+     */
     public $value;
 
 
