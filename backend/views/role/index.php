@@ -13,11 +13,15 @@ $this->params['breadcrumbs'][] = $this->title;
 <script type="text/javascript">
     var m = mt({
         title: "角色信息",
+        bCheckbox: false,
+        buttons: {
+            "updateAll": {bShow: false},
+            "deleteAll": {bShow: false}
+        },
         operations: {
             width: "200px",
             buttons: {
                 "see": {"cClass": "role-see"},
-                "update": {"cClass": "role-update"},
                 "other": {
                     "title": "编辑权限",
                     "button-title": "编辑权限",

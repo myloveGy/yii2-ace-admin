@@ -8,6 +8,7 @@
  */
 namespace backend\controllers;
 
+use common\helpers\Helper;
 use Yii;
 use backend\models\Auth;
 use backend\models\Menu;
@@ -70,9 +71,20 @@ class RoleController extends Controller
                 // 添加角色成功
                 $permissions = $this->preparePermissions(Yii::$app->request->post());
                 // 判断类型 (添加角色还是操作权限)
-                $isTrue = $model->type == Auth::TYPE_ROLE ? $model->createRole($permissions) : $model->createPermission();
-                $this->arrJson['errCode']  = $model->type == Auth::TYPE_ROLE ? 211 : 212;
-                if ($isTrue) $this->handleJson($model);
+                if ($this->id === 'role') {
+                    $isTrue = $model->createRole($permissions);
+                    $this->arrJson['errCode'] = 211;
+                } else {
+                    $isTrue = $model->createPermission();
+                    $this->arrJson['errCode'] = 211;
+                }
+
+                // 判断处理是否成功
+                if ($isTrue) {
+                    $this->handleJson($model);
+                } else {
+                    $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
+                }
             }
         }
 
@@ -169,7 +181,7 @@ class RoleController extends Controller
         $uid = Yii::$app->user->id;                     // 用户ID
         $objAuth  = Yii::$app->getAuthManager();             // 权限对象
         $mixRoles = $objAuth->getAssignment($name, $uid);    // 获取用户是否有改权限
-        if ( ! $mixRoles && $uid != 1) {
+        if (!$mixRoles && $uid != 1) {
             throw new \yii\web\UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
         }
 
@@ -319,7 +331,8 @@ class RoleController extends Controller
      * @param  array $post 提交参数
      * @return array
      */
-    protected function preparePermissions($post) {
+    protected function preparePermissions($post)
+    {
         return (isset($post['Auth']['_permissions']) &&
             is_array($post['Auth']['_permissions'])) ? $post['Auth']['_permissions'] : [];
     }

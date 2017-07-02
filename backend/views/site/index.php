@@ -69,7 +69,7 @@ AppAsset::register($this);
 
         <div class="navbar-header pull-left">
             <a href="/site" class="navbar-brand">
-                <small>Yii2 Admin 后台管理</small>
+                <small><?=Yii::$app->params['projectName']?></small>
             </a>
         </div>
 

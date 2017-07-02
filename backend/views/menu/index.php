@@ -29,8 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
                 {"data": "icons", "sName":"icons", "title":"图标", "edit": {"rangelength":"[2, 50]"}, "bSortable": false},
                 {"data": "url", "sName":"url", "title":"访问地址", "edit": {"rangelength":"[2, 50]"}, "search":{"type": "text"}, "bSortable": false},
-                {"data": "status", "sName":"status","title": "状态", "value" : arrStatus, "edit":{"type":"radio", "default": 1, "required": 1, "number": 1},"search":{"type":"select"}, "createdCell": mt.statusString},
-                {"data": "sort", "sName":"sort","title":"排序", "value" : 100, "edit":{"type":"text", "required":1, "number":1}},
+                {"data": "status", "sName":"status","title": "状态", "value" : arrStatus,
+                    "edit": {"type": "radio", "default": 1, "required": 1, "number": 1},
+                    "search": {"type": "select"},
+                    "createdCell": mt.statusString,
+                    "bSortable": false
+                },
+                {"data": "sort", "sName":"sort","title":"排序", "edit":{"type":"text", "required":1, "number":1, "value": 100}},
                 // 公共属性字段信息
                 {"data": "created_at", "sName":"created_at","title":"创建时间", "createdCell": mt.dateTimeString},
                 {"data": "created_id", "sName":"created_id", "title":"创建用户", "createdCell": mt.adminString, "bSortable": false},
@@ -43,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
     // 添加之前之后处理
     mt.fn.extend({
         afterSave: function() {
-            window.location.reload();
+            window.parent.location.reload();
             return false;
         }
     });

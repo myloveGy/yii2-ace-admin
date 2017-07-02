@@ -8,12 +8,16 @@
 
 // 引入命名空间
 namespace backend\controllers;
+
 use Yii;
 use backend\models\Menu;
 use backend\models\Auth;
 use yii\helpers\Url;
 
-// 引入命名空间
+/**
+ * Class ModuleController 模块生成测试文件
+ * @package backend\controllers
+ */
 class ModuleController extends Controller
 {
     /**
@@ -197,10 +201,9 @@ class ModuleController extends Controller
     }
 
     /**
-     * createForm() 生成表格配置表单信息
-     * @access private
-     * @param  array  $array  数据表信息
-     * return  string 返回HTML
+     * 生成视图文件信息
+     * @param $array
+     * @return string
      */
     private function createForm($array)
     {
@@ -295,7 +298,6 @@ HTML;
 <?php
 // 定义标题和面包屑信息
 \$this->title = '{$title}';
-\$this->params['breadcrumbs'][] = \$this->title;
 ?>
 <!-- 表格按钮 -->
 <p id="me-table-buttons"></p>
@@ -356,6 +358,7 @@ html;
      * @param  string $name  控制器名
      * @param  string $title 标题
      * @param  string $path  文件名
+     * @param  string $where 查询条件
      * @return void
      */
     private function createController($name, $title, $path, $where)
@@ -366,18 +369,20 @@ html;
         $strModel = ucfirst($name);
         $strControllers = <<<Html
 <?php
-/**
- * file: {$strFile}
- * desc: {$title} 执行操作控制器
- * date: {$strDate}
- */
-
 namespace backend\controllers;
 
-use backend\models\\{$strModel};
-
+/**
+ * Class {$strName} {$title} 执行操作控制器
+ * @package backend\controllers
+ */
 class {$strName} extends Controller
 {
+    /**
+     * 定义使用的model
+     * @var string
+     */
+    public \$modelClass = 'backend\models\{$strModel}';
+     
     /**
      * where() 查询处理
      * @param  array \$params
@@ -388,15 +393,6 @@ class {$strName} extends Controller
         return [
             {$where}
         ];
-    }
-
-    /**
-     * getModel() 返回model
-     * @return {$strModel}
-     */
-    public function getModel()
-    {
-        return new {$strModel}();
     }
 }
 

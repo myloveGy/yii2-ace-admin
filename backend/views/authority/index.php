@@ -1,7 +1,6 @@
 <?php
-// 定义标题和面包屑信息
-$this->title = '角色信息';
-$this->params['breadcrumbs'][] = $this->title;
+// 定义标题
+$this->title = '权限信息';
 ?>
 <!-- 表格按钮 -->
 <p id="me-table-buttons"></p>
@@ -11,6 +10,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <script type="text/javascript">
     var m = mt({
         title: "权限信息",
+        pk: "name",
         table: {
             "aoColumns":[
                 {"title": "权限名称", "data": "name", "sName": "name", "edit": {"type": "text", "required": true,"rangelength":"[2, 64]"}, "search": {"type": "text"}, "bSortable": false},

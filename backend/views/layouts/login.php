@@ -12,7 +12,7 @@
     <meta charset="<?= Yii::$app->charset ?>" />
     <meta name="description" content="overview &amp; stats" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <title>Yii2 Admin 后台登录页面</title>
+    <title><?=Yii::$app->params['projectTitle']?></title>
     <!-- bootstrap & fontawesome -->
     <link rel="stylesheet" href="/public/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/public/assets/css/font-awesome.min.css" />
@@ -62,10 +62,8 @@
                 <div class="login-container">
                     <div class="center">
                         <h1>
-                            <span class="red"> Yii2 Admin </span>
-<!--                            <span class="white" id="id-text2">项目后台</span>-->
+                            <span class="red"><?=Yii::$app->params['projectName']?></span>
                         </h1>
-                        <h4 class="blue" id="id-company-text">&copy; Company Name</h4>
                     </div>
 
                     <div class="space-6"></div>

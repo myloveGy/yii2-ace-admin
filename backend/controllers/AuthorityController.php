@@ -1,13 +1,7 @@
 <?php
-/**
- * file: AuthorityController.php
- * desc: 权限信息 执行操作控制器
- * user: liujx
- * date: 2016-07-21 13:29:28
- */
-
 namespace backend\controllers;
 
+use yii;
 use backend\models\Auth;
 
 /**
@@ -38,5 +32,36 @@ class AuthorityController extends RoleController
     {
         $objModel->created_at = date('Y-m-d H:i:s', $objModel->created_at);
         $objModel->updated_at = date('Y-m-d H:i:s', $objModel->updated_at);
+    }
+
+    /**
+     * 一次删除多个权限
+     * @return mixed|string
+     */
+    public function actionDeleteAll()
+    {
+        // 第一步接收参数
+        $ids = Yii::$app->request->post('ids');
+        if ($ids) {
+            // 处理为数组
+            $array = explode(',', $ids);
+            if ($array) {
+                $this->arrJson['errCode'] = 214;
+                // 查询数据存在
+                $models = Auth::findAll($array);
+                if ($models) {
+                    // 执行删除权限
+                    $auth = Yii::$app->getAuthManager();
+                    foreach ($models as $model) {
+                        $item = $auth->getPermission($model->name);
+                        if ($item) $auth->remove($item);
+                    }
+                }
+
+                $this->handleJson($model);
+            }
+        }
+
+        return $this->returnJson();
     }
 }

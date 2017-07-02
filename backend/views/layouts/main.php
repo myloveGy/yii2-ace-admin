@@ -22,14 +22,10 @@ AppAsset::registerCommon($this);
     <!--[if lte IE 9]>
     <link rel="stylesheet" href="/public/assets/css/ace-part2.min.css" />
     <![endif]-->
-    <link rel="stylesheet" href="/public/assets/css/ace-skins.min.css" />
-    <link rel="stylesheet" href="/public/assets/css/ace-rtl.min.css" />
     <!--[if lte IE 9]>
     <link rel="stylesheet" href="/public/assets/css/ace-ie.min.css" />
     <![endif]-->
-
     <!-- inline styles related to this page -->
-
     <!-- ace settings handler -->
     <script src="/public/assets/js/ace-extra.min.js"></script>
     <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
@@ -48,12 +44,7 @@ AppAsset::registerCommon($this);
             <!--主要内容信息-->
             <div class="page-content-area">
                 <div class="page-header">
-                    <h1> <?=$this->title;?>
-<!--                        <small>-->
-<!--                            <i class="ace-icon fa fa-angle-double-right"></i>-->
-<!--                            编辑我的信息-->
-<!--                        </small>-->
-                    </h1>
+                    <h1><?=$this->title;?></h1>
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
@@ -68,10 +59,7 @@ AppAsset::registerCommon($this);
     <div class="footer">
         <div class="footer-inner">
             <div class="footer-content">
-                <span class="bigger-120">
-                    <span class="blue bolder"> Liujinxing </span>
-                    Yii2 Admin 项目 &copy; 2016-2018
-                </span>
+                <span class="bigger-120"><?=Yii::$app->params['companyName']?></span>
             </div>
         </div>
     </div>
