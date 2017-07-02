@@ -74,8 +74,7 @@ class Controller extends \common\controllers\UserController
     public function beforeAction($action)
     {
         // 主控制器验证
-        $isTrue = parent::beforeAction($action);
-        if ($isTrue) {
+        if (parent::beforeAction($action)) {
             // 验证权限
             if(!Yii::$app->user->can($action->controller->id . '/' . $action->id)
                 && Yii::$app->getErrorHandler()->exception === null
@@ -100,9 +99,11 @@ class Controller extends \common\controllers\UserController
                 Yii::$app->view->params['admins'] = $this->admins;
                 Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
             }
+
+            return true;
         }
 
-        return $isTrue;
+        return false;
     }
 
     /**
