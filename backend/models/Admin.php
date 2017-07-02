@@ -30,6 +30,7 @@ class Admin extends \common\models\Admin
 
     /**
      * getArrayStatus() 获取状态说明信息
+     * @param integer|null $intStatus
      * @return array|string
      */
     public static function getArrayStatus($intStatus = null)
