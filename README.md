@@ -29,10 +29,18 @@ composer install
 ```php
 namespace backend\controllers;
 
-use common\models\China;
-
+/**
+ * Class ChinaController
+ * @package backend\controllers
+ */
 class ChinaController extends Controller 
 {
+    /**
+     * 定义使用的model
+     * @var string
+     */
+    protected $modelClass = '\common\models\China';
+        
     /**
      * where() 处理查询信息(主要查询、数据导出时候使用)
      * @param array $params 查询时候请求的参数信息（一个数组）
@@ -67,16 +75,6 @@ class ChinaController extends Controller
         
         // 该段配置最终会处理为model 查询的where 条件数组(只有在查询值有效，不为空的情况下，对应字段的查询才会加上)
         // $model->find()->where(['and', ['=', 'id', '查询值'], ['like', 'name', '查询值'], ['=', 'pid', '查询值']])
-    }
-    
-    /**
-     * getModel() 获取model
-     * @return China
-     * @desc 数据的添加、修改、删除、查询都基于该方法返回的model
-     */
-    public function getModel()
-    {
-        return new China();
     }
 }
 ```

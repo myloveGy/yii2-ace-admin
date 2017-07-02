@@ -1,17 +1,13 @@
 <?php
-/**
- * file: ChinaController.php
- * desc: 地址信息 执行操作控制器
- * user: liujx
- * date: 2016-07-25 10:55:43
- */
-
-// 引入命名空间
 namespace backend\controllers;
 
 use common\models\China;
 use yii\helpers\ArrayHelper;
 
+/**
+ * Class ChinaController
+ * @package backend\controllers
+ */
 class ChinaController extends Controller
 {
     /**
