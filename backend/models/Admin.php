@@ -157,30 +157,14 @@ class Admin extends \common\models\Admin
      */
     public function beforeSave($insert)
     {
-        if (parent::beforeSave($insert)) {
-            // 新增记录和修改了密码
-            if ($this->isNewRecord || (!$this->isNewRecord && $this->password)) {
-                $this->setPassword($this->password);
-                $this->generateAuthKey();
-                $this->generatePasswordResetToken();
-            }
-
-            // 登录修改验证权限
-            $intUid = Yii::$app->user->id;
-            if ( ! $insert && $intUid) {
-                // 不是管理员验证权限
-                if ($intUid !== 1) {
-                    if ($this->id != $intUid && $this->created_id != $intUid) {
-                        $this->addError('username', '你没有权限修改这个管理员信息');
-                        return false;
-                    }
-                }
-            }
-
-            return true;
+        // 新增记录和修改了密码
+        if ($this->isNewRecord || (!$this->isNewRecord && $this->password)) {
+            $this->setPassword($this->password);
+            $this->generateAuthKey();
+            $this->generatePasswordResetToken();
         }
 
-        return false;
+        return parent::beforeSave($insert);
     }
 
     /**

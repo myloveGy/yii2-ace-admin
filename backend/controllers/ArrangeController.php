@@ -115,7 +115,7 @@ class ArrangeController extends Controller
     }
 
     /**
-     * 导出数据显示问题(时间问题可以通过Excel自动装换)
+     * 导出数据显示问题(时间问题可以通过Excel自动转换)
      * @param \backend\models\Arrange $objModel
      */
     public function handleExport(&$objModel)
