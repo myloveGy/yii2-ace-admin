@@ -284,10 +284,10 @@ use yii\helpers\Url;
                 params.value = $('#country').html() + "," + $('#city').html() + "," + value;
                 return params;
             },
-            validate:       function(x){
+            validate: function(x){
                 if (x == false)
                 {
-                    gAlert('温馨提醒', '你没有选择您所在的地址信息', 'warning');
+                    layer.msg('你没有选择您所在的地址信息', {icon: 5, "title": "温馨提醒!"});
                     return '你没有选择您所在的地址信息';
                 }
             },
@@ -313,7 +313,10 @@ use yii\helpers\Url;
             success: function(response, newValue) {
                 // 没有选择数据
                 if (mt.empty(newValue)) {
-                    gAlert('温馨提醒', '你没有选择您所在的地址信息', 'warning');
+                    layer.alert('你没有选择您所在的地址信息', {
+                        title: "温馨提醒",
+                        icon: 5
+                    });
                     return false;
                 }
 
@@ -476,29 +479,27 @@ use yii\helpers\Url;
                     //specify ace file input plugin's options here
                     btn_choose: '选择头像',
                     droppable: true,
-                    maxSize: 110000,//~100Kb
+                    maxSize: 11000000,//~100Kb
                     //and a few extra ones here
                     name: 'avatar',//put the field name here as well, will be used inside the custom plugin
                     on_error : function(error_type) {//on_error function will be called when the selected file has a problem
-                        if(last_gritter) $.gritter.remove(last_gritter);
-                        if(error_type == 1) {//file format error
-                            last_gritter = $.gritter.add({
-                                title: '上传文件类型错误!',
-                                text: '请选择一个JPG、GIF、PNG图片格式文件！',
-                                class_name: 'gritter-error gritter-center'
+                        if(last_gritter) layer.close(last_gritter);
+                        if(error_type === 1) {//file format error
+                            layer.alert("上传文件类型错误!请选择一个JPG、GIF、PNG图片格式文件!", {
+                                icon: 2,
+                                title: "温馨提醒",
                             });
-                        } else if(error_type == 2) {//file size rror
-                            last_gritter = $.gritter.add({
-                                title: '上传图片文件过大!',
-                                text: '图像大小不超过100KB!',
-                                class_name: 'gritter-error gritter-center'
+                        } else if(error_type === 2) {//file size rror
+                            layer.alert("上传图片文件过大!图像大小不超过100KB!", {
+                                icon: 2,
+                                title: "温馨提醒",
                             });
                         }
                         else {//other error
                         }
                     },
                     on_success : function() {
-                        $.gritter.removeAll();
+                        layer.close(last_gritter);
                     }
                 },
                 url: function(params) {
@@ -595,7 +596,12 @@ use yii\helpers\Url;
                             else
                                 layer.msg(result.errMsg, {icon:5, time:1000})
                         })
-                        .fail(ajaxFail)
+                        .fail(function(error) {
+                            layer.alert("服务器繁忙,请稍后再试...", {
+                                title: "温馨提醒",
+                                icon: 2
+                            });
+                        })
                         .always(function() {//called on both success and failure
                             if(ie_timeout) clearTimeout(ie_timeout)
                             ie_timeout = null;

@@ -21,4 +21,5 @@ return [
     'Create' => '创建',
     'Save'   => '保存',
     'Update' => '更新',
+    ''
 ];

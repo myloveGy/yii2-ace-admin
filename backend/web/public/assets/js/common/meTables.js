@@ -513,7 +513,7 @@
                 // 数据验证
                 if (data) {
                     // 执行之前的数据处理
-                    if (typeof self.beforeSave != 'function' || self.beforeSave(data)) {
+                    if (typeof self.beforeSave != 'function' || self.beforeSave(data, child)) {
                         // ajax提交数据
                         meTables.ajax({
                             url: u,
@@ -525,7 +525,7 @@
                             // 判断操作成功
                             if (json.errCode == 0) {
                                 // 执行之后的数据处理
-                                if (typeof self.afterSave != 'function' || self.afterSave(json.data)) {
+                                if (typeof self.afterSave != 'function' || self.afterSave(json.data, child)) {
                                     child ? self.childTable.draw(false) : self.table.draw(false);
                                     if (self.action !== "delete") $(m).modal('hide');
                                     self.action = "save";
@@ -730,7 +730,7 @@
         initForm: function(data, child) {
             layer.close(this.options.oLoading);
             // 显示之前的处理
-            if (typeof this.beforeShowChild == 'function' && ! this.beforeShowChild(data, child)) return false;
+            if (typeof this.beforeShow == 'function' && ! this.beforeShow(data, child)) return false;
 
             // 确定操作的表单和模型
             var f = this.options.sFormId, m = this.options.sModal, t = this.options.title;
