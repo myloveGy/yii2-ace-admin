@@ -14,7 +14,10 @@ $this->title = '规则管理';
         pk: "oldName",
         table: {
             "aoColumns": [
-                {"title": "名称", "data": "name", "defaultOrder": "desc", "sName": "name", "edit": {"type": "hidden"}},
+                {"title": "名称", "data": "name", "defaultOrder": "desc", "sName": "name",
+                    "edit": {"type": "hidden"},
+                    "search": {"type": "text"}
+                },
                 {"title": "名称", "data": "name", "sName": "newName",
                     "edit": {"type": "text", "required": true,"rangelength": "[2, 64]"},
                     "isHide": true
