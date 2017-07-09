@@ -11,7 +11,7 @@ $this->title = '规则管理';
 <script type="text/javascript">
     var m = meTables({
         title: "规则管理",
-        pk: "oldName",
+        pk: "name",
         table: {
             "aoColumns": [
                 {"title": "名称", "data": "name", "defaultOrder": "desc", "sName": "name",
