@@ -1128,7 +1128,7 @@
             var $fm = $(select);
             objForm = $fm.get(0); // 获取表单对象
             if (objForm != undefined) {
-                $fm.find('input[type=hidden]').val('');                                  // 隐藏按钮充值
+                $fm.find('input[type=hidden]').val('');
                 $fm.find('input[type=checkbox]').each(function(){$(this).attr('checked', false);if ($(this).get(0)) $(this).get(0).checked = false;});                                                                             // 多选菜单
                 objForm.reset();                                                                // 表单重置
                 if (data != undefined) {

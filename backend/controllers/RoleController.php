@@ -21,6 +21,11 @@ use yii\web\HttpException;
 class RoleController extends Controller
 {
     /**
+     * @var string 定义使用的主键
+     */
+    public $pk = 'name';
+
+    /**
      * 定义使用的model
      * @var string
      */
@@ -59,68 +64,14 @@ class RoleController extends Controller
     }
 
     /**
-     * actionCreate() 处理新增数据
-     * @return mixed|string
+     * 角色信息显示首页
+     * @return string
      */
-    public function actionCreate()
+    public function actionIndex()
     {
-        $array = Yii::$app->request->post();
-        if ($array) {
-            $model = new Auth();
-            if ($model->load(['params' => $array], 'params')) {
-                // 添加角色成功
-                $permissions = $this->preparePermissions(Yii::$app->request->post());
-                // 判断类型 (添加角色还是操作权限)
-                if ($this->id === 'role') {
-                    $isTrue = $model->createRole($permissions);
-                    $this->arrJson['errCode'] = 211;
-                } else {
-                    $isTrue = $model->createPermission();
-                    $this->arrJson['errCode'] = 211;
-                }
-
-                // 判断处理是否成功
-                if ($isTrue) {
-                    $this->handleJson($model);
-                } else {
-                    $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
-                }
-            }
-        }
-
-        // 返回数据
-        return $this->returnJson();
-    }
-
-    /**
-     * actionUpdate() 编辑数据处理
-     * @return mixed|string
-     */
-    public function actionUpdate()
-    {
-        $array = Yii::$app->request->post();                // 请求参数
-        // 判断数据正确提交
-        if ($array && isset($array['name'])) {
-            $model = Auth::findOne($array['name']);
-            $this->arrJson['errCode'] = 213;
-            // 执行修改权限
-            if ($model->load(['params' => $array], 'params')) {
-                // 修改角色
-                if ($model->type == Auth::TYPE_ROLE) {
-                    $auth = Yii::$app->getAuthManager();
-                    $role = $auth->getRole($model->name);
-                    $role->description = $model->description;
-                    $isTrue = $auth->update($model->name, $role);
-                } else {
-                    $isTrue = $model->updatePermission($model->name);
-                }
-
-                // 修改成功
-                if ($isTrue) $this->handleJson($model);
-            }
-        }
-
-        return $this->returnJson();
+        return $this->render('index', [
+            'type' => Auth::TYPE_ROLE
+        ]);
     }
 
     /**

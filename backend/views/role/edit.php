@@ -151,7 +151,7 @@ $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.tree.min.js');
             if ($data != null) setTimeout(function(){callback({ data: $data });} , parseInt(Math.random() * 500) + 200);
         };
 
-        var treeDataSource = new DataSourceTree({data: <?=json_encode($trees)?>});
+        var treeDataSource = new DataSourceTree({data: <?=yii\helpers\Json::encode($trees)?>});
 
         // 全部选择
         $('.allChecked').click(function(){

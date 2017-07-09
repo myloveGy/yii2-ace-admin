@@ -11,6 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <table class="table table-striped table-bordered table-hover" id="show-table"></table>
 <?php $this->beginBlock('javascript');?>
 <script type="text/javascript">
+    var iType = <?=$type?>;
     var m = mt({
         title: "角色信息",
         bCheckbox: false,
@@ -34,7 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
         },
         table: {
             "aoColumns":[
-                {"title": "角色名称", "data": "name", "sName": "name", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
+                {"title": "类型", "data": "type", "sName": "type", "isHide": true, "edit": {"type": "hidden", "value": iType}},
+                {"title": "名称", "data": "name", "sName": "name", "isHide": true, "edit": {"type": "hidden"}},
+                {"title": "角色名称", "data": "name", "sName": "newName", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 64]"}}, "search": {"type": "text"}, "bSortable": false},
                 {"title": "说明描述", "data": "description", "sName": "description", "edit": {"type": "text", "options": {"required": true, "rangelength": "[2, 255]"}}, "search": {"type": "text"}, "bSortable": false},
                 {"title": "创建时间", "data": "created_at", "sName": "created_at", "defaultOrder": "desc", "createdCell" : mt.dateTimeString},
                 {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell" : mt.dateTimeString}
@@ -43,8 +46,15 @@ $this->params['breadcrumbs'][] = $this->title;
     });
 
     mt.fn.extend({
+        beforeShow: function(data) {
+            if (this.action === "update") {
+                data.newName = data.name;
+            }
+
+            return true;
+        },
         afterShow: function(){
-            $(this.options.sFormId).find('input[name=name]').attr('readonly', this.action == 'update');
+            $(this.options.sFormId).find('input[name=type]').val(iType);
             return true;
         }
     });
