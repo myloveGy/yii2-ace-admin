@@ -1,18 +1,12 @@
 <?php
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\widgets\Alert;
 $this->title = '角色信息分配权限';
-$this->params['breadcrumbs'] = [
-    [
-        'label' => '角色信息',
-        'url'   => ['/role/index']
-    ],
-
-    $this->title
-];
 // 注册fuelux.trer.min.js
 $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.tree.min.js');
 ?>
+<?=Alert::widget()?>
 <?php $form = ActiveForm::begin(['enableClientValidation' => true]);?>
 <div class="col-xs-12 col-sm-3">
     <div class="col-xs-12 col-sm-12 widget-container-col  ui-sortable">
@@ -38,6 +32,7 @@ $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.tree.min.js');
 
             <div class="widget-body">
                 <div class="widget-main">
+                    <input type="hidden" name="Auth[type]" value="<?=$model->type?>" />
                     <?php
                     echo $form->field($model, 'name')->textInput($model->isNewRecord ? [] : ['disabled' => 'disabled']) .
                         $form->field($model, 'description')->textarea(['style' => 'height: 100px']) .

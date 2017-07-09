@@ -75,46 +75,6 @@ class RoleController extends Controller
     }
 
     /**
-     * actionDelete() 处理删除数据
-     * @return mixed|string
-     */
-    public function actionDelete()
-    {
-        $array = Yii::$app->request->post();
-        if ($array && isset($array['name'])) {
-            $model = Auth::findOne($array['name']);
-            if ($model) {
-                // 判断操作数据类型
-                if ($model->type == Auth::TYPE_ROLE) {
-                    // 删除角色
-                    $this->arrJson['errCode'] = 209;
-                    if ( ! Auth::hasUsersByRole($model->name) && $model->name != Yii::$app->params['adminRoleName']) {
-                        $auth = Yii::$app->getAuthManager();
-                        $role = $auth->getRole($model->name);
-
-                        // 请求这个角色的所有权限
-                        $permissions = $auth->getPermissionsByRole($model->name);
-                        foreach($permissions as $permission) {$auth->removeChild($role, $permission);}
-                        $this->arrJson['errCode'] = 210;
-
-                        // 删除角色成功
-                        if ($auth->remove($role)) $this->handleJson($model);
-                    }
-
-                } else {
-                    // 删除权限
-                    $this->arrJson['errCode'] = 214;
-                    $auth = Yii::$app->getAuthManager();
-                    $item = $auth->getPermission($model->name);
-                    if ($item && $auth->remove($item)) $this->handleJson($model);
-                }
-            }
-        }
-
-        return $this->returnJson();
-    }
-
-    /**
      * actionEdit() 修改角色权限信息
      * @param  string $name 角色名
      * @return string|\yii\web\Response
@@ -148,6 +108,8 @@ class RoleController extends Controller
             if ($model->updateRole($name, $permissions)) {
                 Yii::$app->session->setFlash('success', " '$model->name' " . Yii::t('app', 'successfully updated'));
                 return $this->redirect(['view', 'name' => $name]);
+            } else {
+                Yii::$app->session->setFlash('error', Helper::arrayToString($model->getErrors()));
             }
         }
 
@@ -253,6 +215,7 @@ class RoleController extends Controller
             $role  = $auth->getRole($name);
             if ($role) {
                 $model->name        = $role->name;
+                $model->type = $role->type;
                 $model->description = $role->description;
                 $model->created_at  = $role->createdAt;
                 $model->updated_at  = $role->updatedAt;

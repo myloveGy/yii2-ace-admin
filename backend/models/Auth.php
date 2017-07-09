@@ -173,20 +173,62 @@ class Auth extends ActiveRecord
                     $item->data = $this->data;
                 }
 
-                if ($auth->update($this->name, $item)) {
-//                    // remove old permissions
-//                    $oldPermissions = $auth->getPermissionsByRole($this->name);
-//                    foreach($oldPermissions as $permission) {
-//                        $auth->removeChild($item, $permission);
-//                    }
-//
-//                    // add new permissions
-//                    foreach ($permissions as $permission) {
-//                        $obj = $auth->getPermission($permission);
-//                        $auth->addChild($item, $obj);
-//                    }
-                    return true;
+                return $auth->update($this->name, $item);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 删除
+     * @return bool
+     */
+    public function delete()
+    {
+        $auth = Yii::$app->getAuthManager();
+        $this->type = (int)$this->type;
+
+        // 角色
+        if ($this->type === self::TYPE_ROLE) {
+            if (!Auth::hasUsersByRole($this->name) && $this->name != Yii::$app->params['adminRoleName']) {
+
+                $role = $auth->getRole($this->name);
+
+                // 请求这个角色的所有权限
+                $permissions = $auth->getPermissionsByRole($this->name);
+                foreach($permissions as $permission) {
+                    $auth->removeChild($role, $permission);
                 }
+                // 删除角色成功
+                return $auth->remove($role);
+            } else {
+                $this->addError('name', '角色还在使用');
+            }
+
+        // 权限
+        } else {
+            $item = $auth->getPermission($this->name);
+            return $item ? $auth->remove($item) : false;
+        }
+
+        return false;
+    }
+
+    /**
+     * 删除多个数据
+     * @param null $condition
+     * @param array $params
+     * @return bool
+     */
+    public static function deleteAll($condition = null, $params = [])
+    {
+        $all = self::findAll($condition);
+        if ($all) {
+            foreach ($all as $value) {
+                $value->delete();
             }
 
             return true;
@@ -223,6 +265,7 @@ class Auth extends ActiveRecord
                 return true;
             }
         }
+
         return false;
     }
 

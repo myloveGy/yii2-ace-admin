@@ -63,35 +63,4 @@ class AuthorityController extends RoleController
         $objModel->created_at = date('Y-m-d H:i:s', $objModel->created_at);
         $objModel->updated_at = date('Y-m-d H:i:s', $objModel->updated_at);
     }
-
-    /**
-     * 一次删除多个权限
-     * @return mixed|string
-     */
-    public function actionDeleteAll()
-    {
-        // 第一步接收参数
-        $ids = Yii::$app->request->post('ids');
-        if ($ids) {
-            // 处理为数组
-            $array = explode(',', $ids);
-            if ($array) {
-                $this->arrJson['errCode'] = 214;
-                // 查询数据存在
-                $models = Auth::findAll($array);
-                if ($models) {
-                    // 执行删除权限
-                    $auth = Yii::$app->getAuthManager();
-                    foreach ($models as $model) {
-                        $item = $auth->getPermission($model->name);
-                        if ($item) $auth->remove($item);
-                    }
-                }
-
-                $this->handleJson($model);
-            }
-        }
-
-        return $this->returnJson();
-    }
 }
