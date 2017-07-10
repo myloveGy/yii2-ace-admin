@@ -174,9 +174,10 @@ class ModuleController extends Controller
 
         foreach ($arrAuth as $key => $value) {
             $model = new Auth();
-            $model->name        = $strPrefix.$key;
+            $model->name = $model->newName =  $strPrefix.$key;
+            $model->type = Auth::TYPE_PERMISSION;
             $model->description = $value.$title;
-            $model->createPermission();
+            $model->save();
         }
     }
 
