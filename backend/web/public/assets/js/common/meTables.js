@@ -232,7 +232,7 @@
             // 添加按钮事件
             for (var m in self.options.buttons) {
                 (function(s){
-                    if (self.options.buttons[s] && self.options.buttons[s].bShow == true) {
+                    if (self.options.buttons[s] && self.options.buttons[s].bShow === true) {
                         $(document).on('click', self.options.sTable + "-" + s, function(evt) {
                             evt.preventDefault();
                             self[s]();
@@ -551,15 +551,15 @@
 
             // 添加字段信息
             this.options.table.aoColumns.forEach(function(k, v){
-                if (k.data != null && (k.isExport == undefined)) {
+                if (k.data != null && (k.isExport === undefined)) {
                     html += '<input type="hidden" name="fields[' + k.data + ']" value="' + k.title + '"/>';
                 }
             });
 
             // 添加查询条件
-            var value = $(self.options.sSearchForm).serializeArray();
+            var value = $(self.options.searchForm).serializeArray();
             for (var i in value) {
-                if (meTables.empty(value[i]["value"]) || value[i]["value"] == "All") continue;
+                if (meTables.empty(value[i]["value"]) || value[i]["value"] === "All") continue;
                 html += '<input type="hidden" name="params[' + value[i]['name'] + ']" value="' + value[i]["value"] + '"/>';
             }
 
@@ -634,7 +634,7 @@
                         url: self.getUrl("editable"),
                         title: k.title,
                         success: function(response) {
-                            if (response.errCode != 0) return response.errMsg;
+                            if (response.errCode !== 0) return response.errMsg;
                         },
                         error: function(e) {
                             console.info(e);
