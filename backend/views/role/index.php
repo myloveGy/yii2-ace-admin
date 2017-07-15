@@ -59,6 +59,33 @@ $this->params['breadcrumbs'][] = $this->title;
         }
     });
 
+    var mixLayer = null;
+
+    function layerClose()
+    {
+        layer.close(mixLayer);
+        mixLayer = null;
+    }
+
+    function layerOpen(title, url)
+    {
+        if (mixLayer) {
+            layer.msg("请先关闭当前的弹出窗口");
+        } else {
+            mixLayer = layer.open({
+                type: 2,
+                area: ["90%", "90%"],
+                title: title,
+                content: url,
+                anim: 2,
+                maxmin: true,
+                cancel: function(){
+                    mixLayer = null;
+                }
+            });
+        }
+    }
+
     $(function(){
         m.init();
 
@@ -66,7 +93,10 @@ $this->params['breadcrumbs'][] = $this->title;
         $(document).on('click', '.role-see', function(){
             var data = m.table.data()[$(this).attr('table-data')];
             if (data) {
-                window.location.href = "<?=Url::toRoute(['role/view'])?>?name=" + data['name'];
+                layerOpen(
+                    "查看" + data["name"] + "(" + data["description"] + ") 详情",
+                    "<?=Url::toRoute(['role/view'])?>?name=" + data['name']
+                );
             }
         });
 
@@ -74,7 +104,10 @@ $this->params['breadcrumbs'][] = $this->title;
         $(document).on('click', '.role-edit', function(){
             var data = m.table.data()[$(this).attr('table-data')];
             if (data) {
-                window.location.href = "<?=Url::toRoute(['role/edit'])?>?name=" + data['name'];
+                layerOpen(
+                    "编辑" + data["name"] + "(" + data["description"] + ") 信息",
+                    "<?=Url::toRoute(['role/edit'])?>?name=" + data['name']
+                );
             }
         })
     })

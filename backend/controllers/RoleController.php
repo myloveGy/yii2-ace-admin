@@ -234,7 +234,9 @@ class RoleController extends Controller
     protected function getPermissions()
     {
         $uid    = Yii::$app->user->id;
-        $models = $uid == 1 ? Auth::find()->where(['type' => Auth::TYPE_PERMISSION])->all() : Yii::$app->getAuthManager()->getPermissionsByUser($uid);
+        $models = $uid == 1 ? Auth::find()->where([
+            'type' => Auth::TYPE_PERMISSION
+        ])->orderBy(['name' => SORT_ASC])->all() : Yii::$app->getAuthManager()->getPermissionsByUser($uid);
         $permissions = [];
         foreach($models as $model) $permissions[$model->name] = $model->name . ' (' . $model->description . ')';
         return $permissions;
