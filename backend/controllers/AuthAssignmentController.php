@@ -31,8 +31,12 @@ class AuthAssignmentController extends Controller
     public function where($params)
     {
         return [
-            'user_id' => '=',
-            'item_name' => '='
+            'user_id' => function($value) {
+                return ['in', 'user_id', $value];
+            },
+            'item_name' => function($value) {
+                return ['in', 'item_name', $value];
+            }
         ];
     }
 

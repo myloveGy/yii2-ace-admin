@@ -36,7 +36,8 @@ $this->registerCssFile('@web/public/assets/css/chosen.css', ['depends' => 'backe
                     "value": aAdmins,
                     "edit": {"type": "select", "required": true},
                     "bSortable": false,
-                    "createdCell": mt.adminString
+                    "createdCell": mt.adminString,
+                    "search": {"type": "select", "multiple": true, "id": "search-select"}
                 },
                 {"title": "对应角色", "data": "item_name", "sName": "item_name",
                     "value": roles,
@@ -51,7 +52,8 @@ $this->registerCssFile('@web/public/assets/css/chosen.css', ['depends' => 'backe
                     "bSortable": false,
                     "createdCell": function(td, data) {
                         $(td).html(roles[data] ? roles[data] : data);
-                    }
+                    },
+                    "search": {"type": "select", "multiple": true, "id": "search-select"}
                 },
                 {"title": "最初分配时间", "data": "created_at", "sName": "created_at",
                     "createdCell" : meTables.dateTimeString

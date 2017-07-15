@@ -85,7 +85,7 @@ class Helper
                     // 判断不能查询请求的数据不能为空，且定义了查询参数对应查询处理方式
                     if ($value !== '' && isset($where[$key])) {
                         // 根据定义查询处理方式，拼接查询数组
-                        switch ($where[$key]) {
+                        switch (gettype($where[$key])) {
                             // 字符串
                             case 'string':
                                 $arrReturn[] = [$where[$key], $key, $value];

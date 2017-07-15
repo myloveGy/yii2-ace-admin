@@ -54,7 +54,13 @@
                             var data = $(meTables.fn.options.searchForm).serializeArray(),request_params = [];
                             for (var i in data) {
                                 if (data[i]["value"] !== "" && data[i]["value"]) {
-                                    request_params.push({"name": "params[" + data[i]["value"] + "]", "value": data[i]["value"]});
+                                    console.info(/\[\]/.test(data[i]["value"]));
+                                    if (/\[\]/.test(data[i]["value"])) {
+                                        request_params.push({"name": "params[" + data[i]["value"].replace("[]", "") + "][]", "value": data[i]["value"]});
+                                    } else {
+                                        request_params.push({"name": "params[" + data[i]["value"] + "]", "value": data[i]["value"]});
+                                    }
+
                                 }
                             }
 
@@ -330,7 +336,11 @@
             var data = $(meTables.fn.options.searchForm).serializeArray();
             for (i in data) {
                 if (!meTables.empty(data[i]["value"]) && data[i]["value"] != "All") {
-                    aoData.push({"name": "params[" + data[i]['name'] + "]", "value": data[i]["value"]});
+                    if (/\[\]/.test(data[i]['name'])) {
+                        aoData.push({"name": "params[" + data[i]['name'].replace("[]", "") + "][]", "value": data[i]["value"]});
+                    } else {
+                        aoData.push({"name": "params[" + data[i]['name'] + "]", "value": data[i]["value"]});
+                    }
                 }
             }
 
@@ -1057,6 +1067,7 @@
                 }
             }
 
+            if (params.multiple) params.name += "[]";
             return '<select ' + this.handleParams(params) + '>' + html + '</select>';
         },
 

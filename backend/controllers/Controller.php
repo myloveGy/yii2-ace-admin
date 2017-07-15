@@ -154,7 +154,6 @@ class Controller extends \common\controllers\UserController
         $search['where'] = Helper::handleWhere($search['params'], $this->where($search['params']));
 
         // 查询之前的处理
-
         /* @var $model \yii\db\ActiveRecord */
         $model = $this->modelClass;
         $query = $model::find()->where($search['where']);
