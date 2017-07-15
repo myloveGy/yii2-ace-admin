@@ -54,19 +54,13 @@
                             var data = $(meTables.fn.options.searchForm).serializeArray(),request_params = [];
                             for (var i in data) {
                                 if (data[i]["value"] !== "" && data[i]["value"]) {
-                                    console.info(/\[\]/.test(data[i]["value"]));
-                                    if (/\[\]/.test(data[i]["value"])) {
-                                        request_params.push({"name": "params[" + data[i]["value"].replace("[]", "") + "][]", "value": data[i]["value"]});
-                                    } else {
-                                        request_params.push({"name": "params[" + data[i]["value"] + "]", "value": data[i]["value"]});
-                                    }
-
+                                    var strName = meTables.getAttributeName(data[i]["name"], "params");
+                                    request_params.push({"name": strName, "value": data[i]["value"]});
                                 }
                             }
 
                             // 添加其他字段信息
-                            meTables.fn.push(request_params, self.options.params, "params");
-
+                            meTables.fn.push(request_params, self.options.params, "params")
                             return request_params;
                         }
                     };
@@ -205,8 +199,6 @@
             if (this.options.searchType == "middle") {
                 $(this.options.sTable + "_filter").html('<form id="' +
                     this.options.searchForm.replace("#", "") + '">' + this.options.searchHtml + '</form>');
-                $(this.options.searchForm + ' input').on("blur", function () { self.table.draw();}); 						// 搜索事件
-                $(this.options.searchForm + ' select').on("change", function () { self.table.draw();}); 						// 搜索事件
                 $(this.options.sTable + "_wrapper div.row div.col-xs-6:first")
                     .removeClass("col-xs-6")
                     .addClass("col-xs-2")
@@ -226,6 +218,16 @@
                         $(this.options.searchForm).append(this.options.searchHtml);
                     }
                 }
+            }
+
+            // 搜索表单的事件
+            if (this.options.bEvent) {
+                $(this.options.searchForm + ' input').on(this.options.searchInputEvent, function () {
+                    self.table.draw();
+                });
+                $(this.options.searchForm + ' select').on(this.options.searchSelectEvent, function () {
+                    self.table.draw();
+                });
             }
 
             // 添加按钮
@@ -335,12 +337,9 @@
             // 添加查询条件
             var data = $(meTables.fn.options.searchForm).serializeArray();
             for (i in data) {
-                if (!meTables.empty(data[i]["value"]) && data[i]["value"] != "All") {
-                    if (/\[\]/.test(data[i]['name'])) {
-                        aoData.push({"name": "params[" + data[i]['name'].replace("[]", "") + "][]", "value": data[i]["value"]});
-                    } else {
-                        aoData.push({"name": "params[" + data[i]['name'] + "]", "value": data[i]["value"]});
-                    }
+                if (!meTables.empty(data[i]["value"]) && data[i]["value"] !== "All") {
+                    var strName = meTables.getAttributeName(data[i]["name"], "params");
+                    aoData.push({"name": strName, "value": data[i]["value"]});
                 }
             }
 
@@ -569,8 +568,10 @@
             // 添加查询条件
             var value = $(self.options.searchForm).serializeArray();
             for (var i in value) {
-                if (meTables.empty(value[i]["value"]) || value[i]["value"] === "All") continue;
-                html += '<input type="hidden" name="params[' + value[i]['name'] + ']" value="' + value[i]["value"] + '"/>';
+                if (!meTables.empty(value[i]["value"]) && value[i]["value"] !== "All") {
+                    var strName = meTables.getAttributeName(value[i]["name"], "params");
+                    html += '<input type="hidden" name="' + strName + '" value="' + value[i]["value"] + '"/>';
+                }
             }
 
             // 表单提交
@@ -819,6 +820,23 @@
     };
 
     meTables.extend({
+        /**
+         * 获取字段名称
+         * @param strAttributes string
+         * @param params string
+         */
+        getAttributeName: function(strAttributes, params) {
+            if (/\[/.test(strAttributes)) {
+                var iIndex = strAttributes.indexOf("["),
+                    prefix = strAttributes.substring(0, iIndex),
+                    suffix = strAttributes.substring(iIndex);
+            } else {
+                var prefix = strAttributes,
+                    suffix = "";
+            }
+
+            return params + "[" + prefix + "]" + suffix;
+        },
         // 扩展AJAX
         ajax: function (params) {
             mixLoading = layer.load();
@@ -967,8 +985,8 @@
         // 搜索框表单元素创建
         searchInputCreate: function(k, v, searchType) {
             // 默认值
-            k.search.name = k.sName;
-            k.search.title = k.title;
+            if (!k.search.name) k.search.name = k.sName;
+            if (!k.search.title) k.search.title = k.title;
 
             // 类型处理
             if (!k.search.type) k.search.type = "text";
@@ -1314,6 +1332,9 @@
             searchHtml: "",				// 搜索信息额外HTML
             searchType: "middle",		// 搜索表单位置
             searchForm: "#search-form",	// 搜索表单选择器
+            bEvent: true,               // 是否监听事件
+            searchInputEvent: "blur",   // 搜索表单input事件
+            searchSelectEvent: "change",// 搜索表单select事件
 
             // 搜索信息(只对searchType !== "middle") 情况
             search: {

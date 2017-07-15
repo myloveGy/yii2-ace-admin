@@ -157,13 +157,13 @@ class Controller extends \common\controllers\UserController
         /* @var $model \yii\db\ActiveRecord */
         $model = $this->modelClass;
         $query = $model::find()->where($search['where']);
+        $this->arrJson['other'] = $query->createCommand()->getRawSql();
 
         // 查询数据条数
         $total = $query->count();
         if ($total) {
             $array = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->all();
             if ($array) $this->afterSearch($array);
-            $this->arrJson['other'] = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->createCommand()->getRawSql();
         } else {
             $array = [];
         }

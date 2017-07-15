@@ -1,7 +1,12 @@
 <?php
 // 定义标题和面包屑信息
 $this->title = '管理员信息';
-$this->params['breadcrumbs'][] = $this->title;
+$this->registerJsFile('@web/public/assets/js/chosen.jquery.min.js', [
+    'depends' => 'backend\assets\AppAsset'
+]);
+$this->registerCssFile('@web/public/assets/css/chosen.css', [
+    'depends' => 'backend\assets\AppAsset'
+]);
 ?>
 <!-- 表格按钮 -->
 <p id="me-table-buttons"></p>
@@ -32,9 +37,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     {"title": "邮箱", "data": "email", "sName": "email", "edit": {"type": "text", "required":true,"rangelength":"[2, 255]", "email": true}, "search": {"type": "text"}, "bSortable": false},
                     {"title": "角色", "data": "role", "sName": "role", "value": aRoles, "edit": {"type": "select", "required":true}, "bSortable": false},
-                    {"title": "状态", "data": "status", "sName": "status", "value": aStatus, "edit": {"type": "radio", "default": 1, "required":true,"number":true}, "bSortable": false, "createdCell":function(td, data) {
-                        $(td).html(mt.valuesString(aStatus, aStatusColor, data));
-                    }},
+                    {"title": "状态", "data": "status", "sName": "status", "value": aStatus,
+                        "edit": {"type": "radio", "default": 1, "required":true,"number":true},
+                        "bSortable": false,
+                        "search": {"type": "select"},
+                        "createdCell":function(td, data) {
+                            $(td).html(mt.valuesString(aStatus, aStatusColor, data));
+                        }
+                    },
                     {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell" : meTables.dateTimeString},
                     {"title": "创建用户", "data": "created_id", "sName": "created_id", "bSortable": false, "createdCell": mt.adminString},
                     {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell" : mt.dateTimeString},

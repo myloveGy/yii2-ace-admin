@@ -40,10 +40,11 @@ class AdminController extends Controller
         }
 
         return [
-            'id'       => '=',
+            'id' => '=',
             'username' => 'like',
-            'email'    => 'like',
-            'where'    => $where,
+            'email' => 'like',
+            'where' => $where,
+            'status' => '='
         ];
     }
 

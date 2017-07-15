@@ -60,7 +60,6 @@ class AuthAssignmentController extends Controller
         return $this->render('index', [
             'arrRoles' => $arrRoles,
             'roles' => Json::encode($arrRoles),
-            'model' => new AuthAssignment()
         ]);
     }
 
