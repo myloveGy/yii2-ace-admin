@@ -94,33 +94,44 @@ class Helper
 
             // 处理其他查询
             if ($where && $params) {
-                foreach ($where as $key => $value) {
-                    // 判断不能查询请求的数据不能为空
-                    if (isset($params[$key]) && $params[$key] !== '') {
-                        // 根据定义的查询类型处理查询
-                        switch (gettype($value)) {
-                            case 'string':  // 字符串
-                                $arrReturn[] = [$value, $key, $params[$key]];
+                /**
+                 * 循环使用$params,前端处理了空值的情况(提交查询时候，空值不提交进查询参数中)
+                 * $params 的个数小于等于$where 个数
+                 */
+                foreach ($params as $key => $value) {
+                    // 判断不能查询请求的数据不能为空，且定义了查询参数对应查询处理方式
+                    if ($value !== '' && isset($where[$key])) {
+                        // 根据定义查询处理方式，拼接查询数组
+                        switch ($where[$key]) {
+                            // 字符串
+                            case 'string':
+                                $arrReturn[] = [$where[$key], $key, $value];
                                 break;
-                            case 'array':   // 数组
+
+                            // 数组
+                            case 'array':
                                 // 处理函数
-                                if (isset($value['func']) && function_exists($value['func'])) {
-                                    $params[$key] = $value['func']($params[$key]);
+                                if (isset($where[$key]['func']) && function_exists($where[$key]['func'])) {
+                                    $value = $where[$key]['func']($value);
                                 }
 
                                 // 对应字段
-                                if (empty($value['field'])) $value['field'] = $key;
+                                if (empty($where[$key]['field'])) $where[$key]['field'] = $key;
 
                                 // 查询连接类型
-                                if (empty($value['and'])) $value['and'] = '=';
+                                if (empty($where[$key]['and'])) $where[$key]['and'] = '=';
 
-                                $arrReturn[] = [$value['and'], $value['field'], $params[$key]];
+                                $arrReturn[] = [$where[$key]['and'], $where[$key]['field'], $value];
                                 break;
-                            case 'object':  // 匿名函数类型
-                                $arrReturn[] = $value($params[$key]);
+
+                            // 对象(匿名函数)
+                            case 'object':
+                                $arrReturn[] = $where[$key]($value);
                                 break;
+
+                            // 其他类型
                             default:
-                                $arrReturn[] = ['=', $key, $params[$key]];
+                                $arrReturn[] = ['=', $key, $value];
                         }
                     }
                 }
