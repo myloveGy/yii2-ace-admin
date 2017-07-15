@@ -932,6 +932,9 @@
             if (d && this.isObject(d)) {
                 var c = params.default;
                 delete params.default;
+                if (params.multiple) {
+                    params.name +=  "[]";
+                }
                 html += "<select " + this.handleParams(params) + ">";
                 for (i in d){
                     html += '<option value="' + i + '" ' + (i == c ? ' selected="selected" ' : "") + " >" + d[i] + "</option>";

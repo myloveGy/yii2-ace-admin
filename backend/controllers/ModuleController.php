@@ -9,9 +9,11 @@
 // 引入命名空间
 namespace backend\controllers;
 
+use common\helpers\Helper;
 use Yii;
 use backend\models\Menu;
 use backend\models\Auth;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 /**
@@ -26,7 +28,12 @@ class ModuleController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        // 查询到库里面全部的表
+        $tables = Yii::$app->db->getSchema()->getTableSchemas();
+        $tables = ArrayHelper::map($tables, 'name', 'name');
+        return $this->render('index', [
+            'tables' => $tables,
+        ]);
     }
 
     /**
@@ -82,9 +89,9 @@ class ModuleController extends Controller
                 if ($table && ($name = ltrim($table, Yii::$app->db->tablePrefix))) {
                     // 拼接字符串
                     $dirName  = Yii::$app->basePath.'/';
-                    $strCName = ucfirst($name).'Controller.php';
+                    $strCName = Helper::strToUpperWords($name).'Controller.php';
                     $strVName = 'index.php';
-                    $strVPath = $dirName.'views/'.$name.'/';     // 视图目录
+                    $strVPath = $dirName.'views/'.str_replace('_', '-', $name).'/';     // 视图目录
 
                     // 生成目录
                     if ( ! file_exists($strVPath)) mkdir($strVPath, 644, true);
@@ -123,19 +130,23 @@ class ModuleController extends Controller
             if ($attr && $table && $title && $html && $php) {
                 $this->arrJson['errCode'] = 217;
                 if ($table && ($name = trim($table, Yii::$app->db->tablePrefix))) {
+                    // 试图文件目录、导航栏目、权限名称使用字符串
+                    $strName = str_replace('_', '-', $name);
+
                     // 拼接字符串
                     $dirName  = Yii::$app->basePath.'/';
-                    $strCName = $dirName.'Controllers/'.(stripos($php, '.php') ? $php : $php.'.php');
-                    $strVName = $dirName.'views/'.$name.'/'.(stripos($html, '.php') ? $html : $html.'.php');
+                    $strCName = $dirName.'Controllers/'.(stripos(Helper::strToUpperWords($php), '.php') ? $php : $php.'.php');
+                    $strVName = $dirName.'views/'.$strName.'/'.(stripos($html, '.php') ? $html : $html.'.php');
+
 
                     // 验证文件不存在
                     $this->arrJson['errCode'] = 219;
-                    if ($allow === 1 ||  (! file_exists($strCName) && ! file_exists($strVName))) {
+                    if ($allow === 1 ||  (!file_exists($strCName) && !file_exists($strVName))) {
                         // 生成权限
-                        if ($auth == 1) $this->createAuth($name, $title);
+                        if ($auth == 1) $this->createAuth($strName, $title);
 
                         // 生成导航栏目
-                        if ($menu == 1) $this->createMenu($name, $title);
+                        if ($menu == 1) $this->createMenu($strName, $title);
 
                         // 生成视图文件
                         $strWhere = $this->createPHP($attr, $title, $strVName);
@@ -367,7 +378,7 @@ html;
         $strFile  = trim(strrchr($path, '/'), '/');
         $strDate  = date('Y-m-d H:i:s');
         $strName  = trim($strFile, '.class.php');
-        $strModel = ucfirst($name);
+        $strModel = Helper::strToUpperWords($name);
         $strControllers = <<<Html
 <?php
 namespace backend\controllers;
@@ -379,10 +390,9 @@ namespace backend\controllers;
 class {$strName} extends Controller
 {
     /**
-     * 定义使用的model
-     * @var string
+     * @var string 定义使用的model
      */
-    public \$modelClass = 'backend\models\{$strModel}';
+    public \$modelClass = 'backend\models\\{$strModel}';
      
     /**
      * where() 查询处理

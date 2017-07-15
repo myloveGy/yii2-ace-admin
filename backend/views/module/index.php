@@ -2,14 +2,16 @@
 use yii\helpers\Url;
 // 定义标题和面包屑信息
 $this->title = '模块生成';
-$this->params['breadcrumbs'][] = $this->title;
 
 // 注入需要的JS
 $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.spinner.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.wizard.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depends' => 'backend\assets\AppAsset']);
-?>
+$this->registerJsFile('@web/public/assets/js/chosen.jquery.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerCssFile('@web/public/assets/css/chosen.css', ['depends' => 'backend\assets\AppAsset']);
 
+
+?>
 <div class="widget-box widget-color-blue">
     <div class="widget-header widget-header-blue  widget-header-flat">
         <h4 class="widget-title lighter">模块生成自动向导</h4>
@@ -65,10 +67,13 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
                         <div class="form-group has-success">
                             <label for="me-table" class="col-xs-12 col-sm-3 control-label no-padding-right">数据库表名</label>
                             <div class="col-xs-12 col-sm-5">
-                                <span class="block input-icon input-icon-right">
-                                    <input type="text" id="me-table" name="table" required="true" rangelength="[2, 20]" class="width-100" />
-                                    <i class="ace-icon fa fa-check-circle"></i>
-                                </span>
+                                <?php $tables[''] = '';?>
+                                <?=\yii\helpers\Html::dropDownList('table', '', $tables, [
+                                        'id' => 'select-table',
+                                        'class' => 'chosen-select',
+                                        'required' => true,
+                                        'data-placeholder' => '请选择一个数据表',
+                                ])?>
                             </div>
                             <div class="help-block col-xs-12 col-sm-reset inline text-danger">( * 控制器、模型、权限都基于该字段命名 ) </div>
                         </div>
@@ -197,6 +202,19 @@ $this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depend
     var file       = null,
         controller = null;
     $(function(){
+        // 选择表
+        $("#select-table").chosen({allow_single_deselect:true});
+
+        $(window)
+            .off('resize.chosen')
+            .on('resize.chosen', function() {
+                $('#select-table').each(function() {
+                    var $this = $(this);
+                    $this.next().css({'width': $this.parent().width()});
+                })
+            }).trigger('resize.chosen');
+
+
         $('#fuelux-wizard')
             .ace_wizard()
             .on('change' , function(e, info){

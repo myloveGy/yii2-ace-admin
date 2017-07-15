@@ -19,6 +19,9 @@ use yii\rbac\Rule;
  */
 class AdminRule extends Rule
 {
+    /**
+     * @var string 定义名称
+     */
     public $name = 'admin';
 
     /**
@@ -47,5 +50,4 @@ class AdminRule extends Rule
 
         return false;
     }
-
 }

@@ -59,23 +59,6 @@ class Helper
     }
 
     /**
-     * create() 根据类名和命名空间创建对象
-     * @param string $strClassName
-     * @param string $namespace
-     * @return null
-     */
-    public static function create($strClassName, $namespace = 'payments')
-    {
-        $objReturn = null;
-        if ($strClassName) {
-            $strClassName = '\\common\\'.$namespace.'\\'.ucfirst(trim($strClassName));
-            if (class_exists($strClassName)) $objReturn = new $strClassName;
-        }
-
-        return $objReturn;
-    }
-
-    /**
      * 处理通过请求参数对应yii2 where 查询条件
      * @param array $params 请求参数数组
      * @param array $where  定义查询处理方式数组
@@ -159,5 +142,30 @@ class Helper
         }
 
         return $str;
+    }
+
+    /**
+     * 通过指定字符串拆分数组，然后各个元素首字母，最后拼接
+     *
+     * @example $strName = 'yii_user_log',$and = '_', return YiiUserLog
+     * @param string $strName 字符串
+     * @param string $and 拆分的字符串(默认'_')
+     * @return string
+     */
+    public static function strToUpperWords($strName, $and = '_')
+    {
+        // 通过指定字符串拆分为数组
+        $value = explode($and, $strName);
+        if ($value) {
+            // 首字母大写，然后拼接
+            $strReturn = '';
+            foreach ($value as $val) {
+                $strReturn .= ucfirst($val);
+            }
+        } else {
+            $strReturn = ucfirst($strName);
+        }
+
+        return $strReturn;
     }
 }
