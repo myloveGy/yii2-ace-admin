@@ -18,13 +18,12 @@ use backend\models\Arrange;
 class ArrangeController extends Controller
 {
     /**
-     * 定义使用的model
-     * @var string
+     * @var string 定义使用的model
      */
     public $modelClass = 'backend\models\Arrange';
 
     /**
-     * where() 查询参数配置
+     * 查询参数配置
      * @param array $params
      * @return array
      */
@@ -39,7 +38,7 @@ class ArrangeController extends Controller
     }
 
     /**
-     * actionIndex() 首页显示
+     * 首页显示
      * @return string
      */
     public function actionIndex()
@@ -53,7 +52,7 @@ class ArrangeController extends Controller
     }
 
     /**
-     * actionCalendar()管理日程
+     * 管理日程
      * @return string
      */
     public function actionCalendar()
@@ -76,7 +75,7 @@ class ArrangeController extends Controller
     }
 
     /**
-     * actionArrange 查询管理员日程信息
+     * 查询管理员日程信息
      * @return array|\yii\db\ActiveRecord[]
      */
     public function actionArrange()
