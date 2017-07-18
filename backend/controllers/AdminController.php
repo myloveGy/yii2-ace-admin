@@ -15,19 +15,17 @@ use common\models\China;
 class AdminController extends Controller
 {
     /**
-     * 定义使用的model
-     * @var string
+     * @var string 定义使用的model
      */
     public $modelClass = 'backend\models\Admin';
 
     /**
-     * 定义上传文件的目录
-     * @var string
+     * @var string 定义上传文件的目录
      */
     public $strUploadPath = './public/assets/avatars/';
 
     /**
-     * where() 搜索配置
+     * 搜索配置
      * @param  array $params 查询参数
      * @return array
      */
@@ -49,7 +47,7 @@ class AdminController extends Controller
     }
 
     /**
-     * actionIndex() 首页显示
+     * 首页显示
      * @return string
      */
     public function actionIndex()
@@ -63,7 +61,7 @@ class AdminController extends Controller
     }
 
     /**
-     * actionView() 查看个人信息
+     * 查看个人信息
      * @return string
      */
     public function actionView()
@@ -92,7 +90,7 @@ class AdminController extends Controller
     }
 
     /**
-     * afterUpload() 上传文件之后的处理
+     * 上传文件之后的处理
      * @param object $objFile
      * @param string $strFilePath
      * @param string $strField
@@ -135,7 +133,8 @@ class AdminController extends Controller
     }
 
     /**
-     * actionAddress() 获取地址信息
+     * 获取地址信息
+     * @return array 
      */
     public function actionAddress()
     {
