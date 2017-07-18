@@ -1,17 +1,10 @@
 <?php
+
 use backend\assets\AppAsset;
 use yii\helpers\Url;
 
 // 定义标题和面包屑信息
 $this->title = '我的日程管理';
-$this->params['breadcrumbs'] = [
-    [
-        'label' => '日程管理',
-        'url'   => ['/arrange/index']
-    ],
-
-    $this->title
-];
 
 AppAsset::loadTimeJavascript($this, 'datetime');
 $this->registerCssFile('@web/public/assets/css/fullcalendar.css', ['depends' => 'backend\assets\AppAsset']);

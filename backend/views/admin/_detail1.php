@@ -262,7 +262,7 @@ use yii\helpers\Url;
     // 选择县
     function selectAddress(iPid, sName)
     {
-        if (mt.empty(sName)) sName = '选择县';
+        if (empty(sName)) sName = '选择县';
         var address = $('#address').removeAttr('id').show().get(0);
         $(address).clone().attr('id', 'address').text(sName).editable({
             type: 'select2',
@@ -280,7 +280,7 @@ use yii\helpers\Url;
                 var arr = $(this).data('editable').input.sourceData, value = params.value;
                 for (var i in arr){if (arr[i].id == value) {value = arr[i].text;break;}}
                 // 没有选择数据
-                if (mt.empty(value)) return false;
+                if (empty(value)) return false;
                 params.value = $('#country').html() + "," + $('#city').html() + "," + value;
                 return params;
             },
@@ -300,7 +300,7 @@ use yii\helpers\Url;
     // 选择市函数
     function selectCity(iPid, sName)
     {
-        if (mt.empty(sName)) sName = '选择市';
+        if (empty(sName)) sName = '选择市';
         var city = $('#city').removeAttr('id').get(0);
         $(city).clone().attr('id', 'city').text(sName).editable({
             type: 'select2',
@@ -312,7 +312,7 @@ use yii\helpers\Url;
             },
             success: function(response, newValue) {
                 // 没有选择数据
-                if (mt.empty(newValue)) {
+                if (empty(newValue)) {
                     layer.alert('你没有选择您所在的地址信息', {
                         title: "温馨提醒",
                         icon: 5

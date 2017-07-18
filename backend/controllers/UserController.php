@@ -18,8 +18,7 @@ use backend\models\User;
 class UserController extends Controller
 {
     /**
-     * 定义使用的model
-     * @var string
+     * @var string 定义使用的model
      */
     public $modelClass = 'backend\models\User';
 
