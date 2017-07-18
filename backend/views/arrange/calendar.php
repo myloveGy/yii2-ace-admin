@@ -157,6 +157,18 @@ $this->registerJsFile('@web/public/assets/js/fullcalendar.min.js', ['depends' =>
         }
     }
 
+    var oLoading = null;
+
+    function alwaysClose()
+    {
+        layer.close(oLoading);
+    }
+
+    function ajaxFail()
+    {
+        layer.msg("服务器繁忙,请稍后再试");
+    }
+
     var aColors     = <?=json_encode($statusColors)?>;
     jQuery(function($) {
         // 时间选项

@@ -3,7 +3,7 @@
  */
 
 function empty(value) {
-    return value == undefined || value == null || value == "";
+    return value === undefined || value === null || value === "";
 }
 
 function validateFile(info) {

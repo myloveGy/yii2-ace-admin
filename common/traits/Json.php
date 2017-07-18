@@ -30,19 +30,12 @@ trait Json
     /**
      * 响应ajax 返回
      * @param string $array    其他返回参数(默认null)
-     * @param bool   $response 响应参数
      * @return mixed|string
      */
-    protected function returnJson($array = null, $response = false)
+    protected function returnJson($array = null)
     {
         // 判断是否覆盖之前的值
-        if ($array) {
-            if ($response === false) {
-                $this->arrJson = array_merge($this->arrJson, $array);
-            } else {
-                $this->arrJson = $array;
-            } 
-        }
+        if ($array) $this->arrJson = array_merge($this->arrJson, $array);
 
         // 没有错误信息使用code 确定错误信息
         if (empty($this->arrJson['errMsg'])) {

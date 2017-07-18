@@ -9,16 +9,26 @@ use backend\assets\AppAsset;
 
 AppAsset::loadTimeJavascript($this, 'datetime');
 $this->title = '管理员个人信息';
-$this->registerCssFile('@web/public/assets/css/bootstrap-editable.css', ['depends' => 'backend\assets\AppAsset']);
+
 $this->registerCssFile('@web/public/assets/css/jquery-ui.custom.min.css', ['depends' => 'backend\assets\AppAsset']);
-$this->registerCssFile('@web/public/assets/css/select2.css', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jquery-ui.custom.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/x-editable/bootstrap-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
+
 $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.spinner.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/select2.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jquery.easypiechart.min.js', ['depends' => 'backend\assets\AppAsset']);
 $this->registerJsFile('@web/public/assets/js/jquery.maskedinput.min.js', ['depends' => 'backend\assets\AppAsset']);
+
+// 行内编辑
+$this->registerCssFile('@web/public/assets/css/bootstrap-editable.css', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/x-editable/bootstrap-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
+
+// select 选择
+$this->registerCssFile('@web/public/assets/css/select2.css', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/select2.min.js', ['depends' => 'backend\assets\AppAsset']);
+
+// 消息通知
+$this->registerCssFile('@web/public/assets/css/jquery.gritter.css', ['depends' => 'backend\assets\AppAsset']);
+$this->registerJsFile('@web/public/assets/js/jquery.gritter.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
 <div class="clearfix">
     <div class="pull-left alert alert-success no-margin">

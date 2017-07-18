@@ -111,7 +111,7 @@ class ArrangeController extends Controller
             }
         }
 
-        return $this->returnJson($arrUserArrange);
+        return $this->asJson($arrUserArrange);
     }
 
     /**
