@@ -10,9 +10,10 @@ use yii\helpers\ArrayHelper;
  */
 class ChinaController extends Controller
 {
+    public $strategy = 'JqGrid';
+
     /**
-     * 定义使用的model
-     * @var string
+     * @var string 定义使用的model
      */
     public $modelClass = '\common\models\China';
 
@@ -25,7 +26,7 @@ class ChinaController extends Controller
     {
         return [
             'id' => ['and' => '=', 'func' => 'intval'],
-            'name' => function($key, $value) {
+            'name' => function($value) {
                 return ['like', 'name', trim($value)];
             },
             'pid'  => '='
@@ -39,7 +40,7 @@ class ChinaController extends Controller
     public function actionIndex()
     {
         // 加载视图
-        return $this->render('index', [
+        return $this->render('grid', [
             'parent' => ArrayHelper::map(China::find()->where(['pid' => 0])->all(), 'id', 'name'),
         ]);
     }
