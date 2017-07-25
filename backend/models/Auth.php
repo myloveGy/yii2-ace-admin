@@ -57,7 +57,7 @@ class Auth extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'type'], 'required'],
+            [['name', 'type', 'newName', 'description'], 'required'],
             ['name', 'match', 'pattern' => '/^([a-zA-Z0-9_-]|([a-zA-z0-9_-]\\/[0-9_-a-zA-z]))+$/'],
             ['name', 'string', 'min' => 3],
             ['type', 'integer'],
