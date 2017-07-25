@@ -177,14 +177,19 @@ class Admin extends \common\models\Admin
         // 只有在新增或者修改了角色信息，那么才要修改角色信息
         if ($insert || !empty($changedAttributes['role'])) {
             $auth = Yii::$app->authManager;
-
+            $isInsert = true;
             // 修改了角色信息，删除之前的角色信息
             if (!empty($changedAttributes['role'])) {
                 $auth->revoke($auth->getRole($changedAttributes['role']), $this->id);
+                if (in_array($this->id, $auth->getUserIdsByRole($this->role))) {
+                    $isInsert = false;
+                }
             }
 
             // 添加角色
-            $auth->assign($auth->getRole($this->role), $this->id);
+            if ($isInsert) {
+                $auth->assign($auth->getRole($this->role), $this->id);
+            }
         }
 
         parent::afterSave($insert, $changedAttributes);
