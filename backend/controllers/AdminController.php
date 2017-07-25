@@ -153,6 +153,6 @@ class AdminController extends Controller
             }
         }
 
-        return $this->returnJson($array);
+        return $this->asJson($array);
     }
 }

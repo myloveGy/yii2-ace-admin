@@ -76,7 +76,8 @@ class ArrangeController extends Controller
 
     /**
      * 查询管理员日程信息
-     * @return array|\yii\db\ActiveRecord[]
+     *
+     * @return \yii\web\Response
      */
     public function actionArrange()
     {

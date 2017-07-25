@@ -86,7 +86,7 @@ class ModuleController extends Controller
             $table = $request->post('table');
             if ($attr) {
                 $this->arrJson['errCode'] = 217;
-                if ($table && ($name = ltrim($table, Yii::$app->db->tablePrefix))) {
+                if ($table && ($name = str_replace(Yii::$app->db->tablePrefix, '', $table))) {
                     // 拼接字符串
                     $dirName  = Yii::$app->basePath.'/';
                     $strCName = Helper::strToUpperWords($name).'Controller.php';
@@ -129,7 +129,7 @@ class ModuleController extends Controller
 
             if ($attr && $table && $title && $html && $php) {
                 $this->arrJson['errCode'] = 217;
-                if ($table && ($name = trim($table, Yii::$app->db->tablePrefix))) {
+                if ($table && ($name = str_replace(Yii::$app->db->tablePrefix, '', $table))) {
                     // 试图文件目录、导航栏目、权限名称使用字符串
                     $strName = str_replace('_', '-', $name);
 
@@ -381,6 +381,7 @@ html;
         $strModel = Helper::strToUpperWords($name);
         $strControllers = <<<Html
 <?php
+
 namespace backend\controllers;
 
 /**
