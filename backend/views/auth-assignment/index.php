@@ -23,6 +23,7 @@ $this->registerCssFile('@web/public/assets/css/chosen.css', ['depends' => 'backe
                             [
                                 'multiple' => 'multiple',
                                 'class' => 'chosen-select tag-input-style',
+                                'data-placeholder' => '请选择管理员',
                             ]
                         )?>
                     </div>
@@ -35,6 +36,7 @@ $this->registerCssFile('@web/public/assets/css/chosen.css', ['depends' => 'backe
                         <?=Html::dropDownList('item_name', null, $arrRoles, [
                             'multiple' => 'multiple',
                             'class' => 'chosen-select tag-input-style',
+                            'data-placeholder' => '请选择角色',
                         ])?>
                     </div>
                 </div>

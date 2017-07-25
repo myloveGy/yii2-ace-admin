@@ -215,18 +215,23 @@
                     last  = $('#form-field-last').val();
                 data.push({"name":"actionType", "value": "update"});
                 if (!empty(first) && ! empty(last)) data.push({"name": "nickname", "value": first + last});
-                oLoading = layer.load();
+                var oLoading = layer.load();
                 $.ajax({
                     url:      "<?=\yii\helpers\Url::toRoute(['admin/update'])?>",
                     type:     "POST",
                     dataType: "json",
                     data:     data
                 })
-                .always(alwaysClose)
+                .always(function(){
+                    layer.close(oLoading);
+                })
                 .done(function(json){
                     layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
+                    $("div.btn-toolbar div.btn-group label:first").trigger("click")
                 })
-                .fail(ajaxFail);
+                .fail(function(){
+                    layer.msg("服务器繁忙，请稍后再试...");
+                });
             }
 
             return false;
