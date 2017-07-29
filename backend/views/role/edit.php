@@ -70,7 +70,7 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
 
             <div class="widget-body">
                 <div class="widget-main">
-                    <div id="tree1" class="tree tree-selectable"></div>
+                    <div id="tree-one" class="tree tree-selectable"></div>
                 </div>
             </div>
         </div>
@@ -125,14 +125,12 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     $(function(){
-        var data = <?=yii\helpers\Json::encode($trees)?>;
-
-        $("#tree1").jstree({
+        $("#tree-one").jstree({
             "plugins" : ["checkbox" ],
             core: {
                 "animation" : 0,
                 "check_callback" : true,
-                data: data
+                data: <?=yii\helpers\Json::encode($trees)?>
             }
         }).on('changed.jstree', function(e, data){
             var i, j, str;

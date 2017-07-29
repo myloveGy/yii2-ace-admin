@@ -115,11 +115,13 @@ class RoleController extends Controller
 
         // 显示视图
         $permissions = $this->getPermissions();
+
+        // 获取权限信息
+        $arrHaves = array_keys($objAuth->getPermissionsByRole($name));
+
         $model->loadRolePermissions($name);
         $menus = Menu::findAll(['status' => 1]);
         $trees = [];
-        // 获取权限信息
-        $arrHaves = array_keys($objAuth->getPermissionsByRole($name));
         if ($menus) {
             // 获取一级目录
             foreach ($menus as $value) {
@@ -156,7 +158,7 @@ class RoleController extends Controller
         return $this->render('edit', [
             'model'       => $model,        // 模型对象
             'permissions' => $permissions,  // 权限信息
-            'trees'       => $trees,        // 导航栏树
+            'trees'       => $trees,        // 导航栏树,
         ]);
 
     }
