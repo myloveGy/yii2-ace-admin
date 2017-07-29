@@ -140,7 +140,7 @@ class RoleController extends Controller
 
                 // 判断添加数据
                 if ($value->pid == 0) {
-                    $array['icon'] = 'menu-icon fa fa-list green';
+                    $array['icon'] = 'menu-icon fa fa-list orange';
                     $trees[$id] = array_merge($trees[$id], $array);
                 } else {
                     $array['icon'] = false;
