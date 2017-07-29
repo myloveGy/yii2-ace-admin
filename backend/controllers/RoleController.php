@@ -125,21 +125,31 @@ class RoleController extends Controller
             foreach ($menus as $value) {
                 // 初始化的判断数据
                 $id    = $value->pid == 0 ? $value->id : $value->pid;
-                $array = ['name' => $value->menu_name, 'id' => $value->id, 'type' => 'item', 'data' => $value->url];
+                $array = [
+                    'text' => $value->menu_name,
+                    'id' => $value->id,
+                    'data' => $value->url,
+                    'state' => [],
+                ];
 
                 // 默认选中
-                $array['additionalParameters'] = ['item-selected' => in_array($value->url, $arrHaves)];
-                if ( ! isset($trees[$id])) $trees[$id] = ['child' => []];
+                $array['state']['selected'] = in_array($value->url, $arrHaves);
+                if (!isset($trees[$id])) {
+                    $trees[$id] = ['children' => []];
+                }
 
                 // 判断添加数据
                 if ($value->pid == 0) {
+                    $array['icon'] = 'menu-icon fa fa-list green';
                     $trees[$id] = array_merge($trees[$id], $array);
                 } else {
-                    $trees[$id]['child'][] = $array;
-                    $trees[$id]['type']  = 'folder';
+                    $array['icon'] = false;
+                    $trees[$id]['children'][] = $array;
                 }
             }
         }
+
+        $trees = array_values($trees);
 
         // 加载视图返回
         return $this->render('edit', [

@@ -3,8 +3,10 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use common\widgets\Alert;
 $this->title = '角色信息分配权限';
-// 注册fuelux.trer.min.js
-$this->registerJsFile('@web/public/assets/js/fuelux/fuelux.tree.min.js');
+
+$depends = ['depends' => 'backend\assets\AppAsset'];
+$this->registerJsFile('@web/public/assets/js/jstree/jstree.min.js', $depends);
+$this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depends);
 ?>
 <?=Alert::widget()?>
 <?php $form = ActiveForm::begin(['enableClientValidation' => true]);?>
@@ -123,30 +125,47 @@ $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.tree.min.js');
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     $(function(){
-        var DataSourceTree = function(options) {
-            this._data 	= options.data; // 数据信息
-            this._delay = options.delay;
-        };
+        var data = <?=yii\helpers\Json::encode($trees)?>;
 
-        DataSourceTree.prototype.data = function(options, callback) {
-            var self = this;
-            var $data = null;
-
-            // 首先显示数据
-            if ( ! ("name" in options) && ! ("type" in options)) {
-                $data = this._data;
-                callback({data:$data});
-                return;
-
-                // 点击选择类型
-            } else if ("type" in options && options.type == "folder") {
-                $data = options.child != undefined ? options.child : {};
+        $("#tree1").jstree({
+            "plugins" : ["checkbox" ],
+            core: {
+                "animation" : 0,
+                "check_callback" : true,
+                data: data
+            }
+        }).on('changed.jstree', function(e, data){
+            var i, j, str;
+            for(i = 0, j = data.selected.length; i < j; i++) {
+                str = data.instance.get_node(data.selected[i]).data;
+                if (str) {
+                    var arr = str.split("/");
+                    $("input[value^=" + arr[0] + "]").attr('checked', true).each(function(){
+                        this.checked = true;
+                    });
+                }
+            }
+        }).on('deselect_node.jstree', function(obj, data, event) {
+            var str = data.node.data;
+            if (str) {
+                str = str.split("/");
+                $("input[value^=" + str[0] + "]").attr('checked', false).each(function(){
+                    this.checked = false;
+                })
             }
 
-            if ($data != null) setTimeout(function(){callback({ data: $data });} , parseInt(Math.random() * 500) + 200);
-        };
-
-        var treeDataSource = new DataSourceTree({data: <?=yii\helpers\Json::encode($trees)?>});
+            var i, j, str;
+            for(i = 0, j = data.selected.length; i < j; i++) {
+                str = data.instance.get_node(data.selected[i]).data;
+                console.info(str);
+                if (str) {
+                    var arr = str.split("/");
+                    $("input[value^=" + arr[0] + "]").attr('checked', false).each(function(){
+                        this.checked = false;
+                    });
+                }
+            }
+        });
 
         // 全部选择
         $('.allChecked').click(function(){
@@ -154,34 +173,7 @@ $this->registerJsFile('@web/public/assets/js/fuelux/fuelux.tree.min.js');
             $('input[type=checkbox]').each(function(){if ($(this).attr('checked', isChecked).get(0)) $(this).get(0).checked = isChecked;});
         });
 
-        // 导航树
-        $('#tree1').ace_tree({
-            dataSource :treeDataSource ,
-            multiSelect:true,
-            loadingHTML:'<div class="tree-loading"><i class="ace-icon fa fa-refresh fa-spin blue"></i></div>',
-            'open-icon' : 'ace-icon tree-minus',
-            'close-icon' : 'ace-icon tree-plus',
-            'selectable' : true,
-            'selected-icon' : 'ace-icon fa fa-check',
-            'unselected-icon' : 'ace-icon fa fa-check'
-        });
 
-        // 导航数的显示
-        $('#tree1').on('selected', function(e, data) {
-            console.log('sub-folder select: ', data);
-            if (data['info'] && data['info'])
-            {
-                for (var i in data['info'])
-                {
-                    if ( ! empty(data['info'][i]['data']))
-                    {
-                        var s  = data['info'][i]['data'].replace(/\//g, '\\/'),
-                            $o = $('input[value=' + s + ']').attr('checked', true);
-                        if ($o.get(0)) $o.get(0).checked = true;
-                    }
-                }
-            }
-        });
     });
 </script>
 <?php $this->endBlock(); ?>
