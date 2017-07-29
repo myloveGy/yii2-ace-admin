@@ -149,6 +149,7 @@ class RoleController extends Controller
             }
         }
 
+        // 导航信息
         $trees = array_values($trees);
 
         // 加载视图返回
