@@ -75,7 +75,6 @@ class ChinaController extends Controller
          * 匿名函数 'name' => function($value) {
          *   return ['like', 'name', trim($value)];
          * }
-         * @param string $key 查询的字段
          * @param string $value 查询的值
          * @return array 需要返回一个数组
          */
