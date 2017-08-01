@@ -108,13 +108,13 @@ class m170801_081237_insert_rabc extends Migration
         $this->batchInsert($this->ruleTable, ['name', 'data', 'created_at', 'updated_at'], [
             [
                 'admin',
-                'O:23:\"backend\\rules\\AdminRule\":3:{s:4:\"name\";s:5:\"admin\";s:9:\"createdAt\";i:1499006069;s:9:\"updatedAt\";i:1499006069;}',
+                serialize(unserialize('O:23:"backend\rules\AdminRule":3:{s:4:"name";s:5:"admin";s:9:"createdAt";i:1499006069;s:9:"updatedAt";i:1499006069;}')),
                 $time,
                 $time
             ],
             [
                 'auth-assignment',
-                'O:32:\"backend\\rules\\AuthAssignmentRule\":5:{s:4:\"name\";s:15:\"auth-assignment\";s:47:\"\0backend\\rules\\AuthAssignmentRule\0adminRoleName\";s:13:\"administrator\";s:43:\"\0backend\\rules\\AuthAssignmentRule\0intUserId\";i:1;s:9:\"createdAt\";i:1500105238;s:9:\"updatedAt\";i:1500105238;}',
+                serialize(unserialize('O:32:"backend\rules\AuthAssignmentRule":5:{s:4:"name";s:15:"auth-assignment";s:47:" backend\rules\AuthAssignmentRule adminRoleName";s:13:"administrator";s:43:" backend\rules\AuthAssignmentRule intUserId";i:1;s:9:"createdAt";i:1500105238;s:9:"updatedAt";i:1500105238;}')),
                 $time,
                 $time
             ],
