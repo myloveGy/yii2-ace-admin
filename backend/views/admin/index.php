@@ -38,7 +38,7 @@ $this->registerCssFile('@web/public/assets/css/chosen.css', [
                     {"title": "邮箱", "data": "email", "sName": "email", "edit": {"type": "text", "required":true,"rangelength":"[2, 255]", "email": true}, "search": {"type": "text"}, "bSortable": false},
                     {"title": "角色", "data": "role", "sName": "role", "value": aRoles, "edit": {"type": "select", "required":true}, "bSortable": false},
                     {"title": "状态", "data": "status", "sName": "status", "value": aStatus,
-                        "edit": {"type": "radio", "default": 1, "required":true,"number":true},
+                        "edit": {"type": "radio", "default": 10, "required":true,"number":true},
                         "bSortable": false,
                         "search": {"type": "select"},
                         "createdCell":function(td, data) {

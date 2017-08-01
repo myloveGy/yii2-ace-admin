@@ -173,8 +173,7 @@ class RoleController extends Controller
         // 查询角色信息
         /* @var $model \backend\models\Auth */
         $model = $this->findModel($name);
-        $model->loadRolePermissions($name);
-        $permissions = $this->getPermissions();
+        $permissions = Yii::$app->authManager->getPermissionsByRole($name);
 
         // 查询导航栏信息
         $menus = $parent = [];

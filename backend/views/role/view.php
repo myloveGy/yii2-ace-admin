@@ -1,19 +1,10 @@
 <?php
-
-use yii\helpers\Html;
-use kartik\icons\Icon;
 use yii\widgets\DetailView;
 
 $this->title = '角色信息详情';
-$this->params['breadcrumbs'] = [
-    [
-        'label' => '角色信息',
-        'url'   => ['/role/index']
-    ],
 
-    '角色信息详情'
-];
-$this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js');
+$this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js', ['depends' => \backend\assets\AppAsset::className()]);
+/* @var $model \backend\models\Auth */
 ?>
 <div class="col-xs-12 col-sm-4">
     <div class="col-xs-12 col-sm-12 widget-container-col  ui-sortable">
@@ -142,11 +133,11 @@ $this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js');
                 <div class="widget-main">
                     <div class="row">
                         <div class="col-xs-12 col-sm-12">
-                            <?php foreach($model->_permissions as $key): ?>
+                            <?php foreach($permissions as $value): ?>
                             <div class="col-xs-12 col-sm-6">
                                 <div class="alert alert-success"  style="padding:5px; margin:3px;">
                                     <i class="ace-icon fa fa-check bigger-110 green"></i>
-                                    <?= $permissions[$key]?>
+                                    <?= $value->name.$value->description?>
                                 </div>
                             </div>
                             <?php endforeach; ?>

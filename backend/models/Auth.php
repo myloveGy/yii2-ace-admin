@@ -15,7 +15,7 @@ use yii\db\ActiveRecord;
  * @property string $data
  * @property integer $created_at
  * @property integer $updated_at
- * @property string  $menus
+ * @property string $menus
  *
  * @property AuthAssignment[] $authAssignments
  * @property AuthRule $ruleName
@@ -88,13 +88,13 @@ class Auth extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'name'        => '名称',
+            'name' => '名称',
             'description' => '说明',
             'rule_name' => '规则名称',
             'data' => '数据',
             'newName' => '名称',
-            'created_at'  => '创建时间',
-            'updated_at'  => '修改时间',
+            'created_at' => '创建时间',
+            'updated_at' => '修改时间',
         ];
     }
 
@@ -199,7 +199,7 @@ class Auth extends ActiveRecord
 
                 // 请求这个角色的所有权限
                 $permissions = $auth->getPermissionsByRole($this->name);
-                foreach($permissions as $permission) {
+                foreach ($permissions as $permission) {
                     $auth->removeChild($role, $permission);
                 }
                 // 删除角色成功
@@ -208,7 +208,7 @@ class Auth extends ActiveRecord
                 $this->addError('name', '角色还在使用');
             }
 
-        // 权限
+            // 权限
         } else {
             $item = $auth->getPermission($this->name);
             return $item ? $auth->remove($item) : false;
@@ -253,7 +253,7 @@ class Auth extends ActiveRecord
             if ($auth->update($name, $role)) {
                 // remove old permissions
                 $oldPermissions = $auth->getPermissionsByRole($name);
-                foreach($oldPermissions as $permission) {
+                foreach ($oldPermissions as $permission) {
                     $auth->removeChild($role, $permission);
                 }
 
@@ -269,26 +269,29 @@ class Auth extends ActiveRecord
         return false;
     }
 
-    public function loadRolePermissions($name) {
+    public function loadRolePermissions($name)
+    {
         $models = Yii::$app->authManager->getPermissionsByRole($name);
-        foreach($models as $model) {
+        foreach ($models as $model) {
             $this->_permissions[] = $model->name;
         }
     }
 
-    public static function hasUsersByRole($name) {
+    public static function hasUsersByRole($name)
+    {
         $tablePrefix = Yii::$app->getDb()->tablePrefix;
         return Auth::find()
-                ->where(['name' => $name])
-                ->InnerJoin("{$tablePrefix}auth_assignment", ['item_name' => $name])
-                ->count();
+            ->where(['name' => $name])
+            ->InnerJoin("{$tablePrefix}auth_assignment", ['item_name' => $name])
+            ->count();
     }
 
-    public static function hasRolesByPermission($name) {
+    public static function hasRolesByPermission($name)
+    {
         $tablePrefix = Yii::$app->getDb()->tablePrefix;
         return Auth::find()
-                ->where(['name' => $name])
-                ->InnerJoin("{$tablePrefix}auth_item_child", ['child' => $name])
-                ->count();
+            ->where(['name' => $name])
+            ->InnerJoin("{$tablePrefix}auth_item_child", ['child' => $name])
+            ->count();
     }
 }
