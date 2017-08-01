@@ -4,8 +4,8 @@ Yii2 ace Admin 后台模板
 ### 简介
 系统基于yii2高级版本开发，后台模板使用的ace admin。对于一般的后台开发，比较方便; 对于数据表的CURL操作都有封装，且所有操作都有有权限控制。
 #### 特点
-* 基于RBAC权限管理
-* 视图使用JS控制，数据显示使用的DataTables
+* 使用RBAC权限管理，所有操作基于权限控制
+* 视图使用JS控制，数据显示使用的jquery.DataTables
 * 基于数据表的增、删、改、查都有封装，添加新的数据表操作方便
 ### 安装要求
 * PHP >= 5.4
@@ -19,11 +19,25 @@ git clone https://github.com/myloveGy/yii2-ace-admin.git
 ```angular2html
 composer install
 ```
-3. 执行该目录下的 init 初始化配置（生成本地配置文件） 
+3. 执行该目录下的 init 初始化配置（生成本地配置文件）
 
-4. 浏览器进入该目录的下执行index.php （项目根目录下的index.php）进行数据库数据的导入
+4. 配置好数据库配置后,导入数据表结构
 
-5. 配置虚拟机,设置路径为 bacekend/web/ 下，配置好路由重写 
+需要顺序执行
+* 导入rbac migration 权限控制数据表
+```php
+php yii migrate --migrationPath=@yii/rbac/migrations
+``` 
+* 导入admin migration 后台基础数据
+```php
+php yii migrate 
+```
+
+或者执行安装文件
+
+1. 浏览器进入该目录的下执行index.php （项目根目录下的index.php）进行数据库数据的导入
+
+2. 配置虚拟机,设置路径为 bacekend/web/ 下，配置好路由重写 
 ### 使用说明
 1. 后台控制器配置
 ```php
