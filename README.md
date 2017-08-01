@@ -72,7 +72,7 @@ class ChinaController extends Controller
          *           'func' => 'intval'  // 对查询数值的处理函数，一般如果是时间查询转时间戳比较好用
          *           // 'field' => 'cid', // 改变查询的字段
          *      ]
-         * 匿名函数 'name' => function($key, $value) {
+         * 匿名函数 'name' => function($value) {
          *   return ['like', 'name', trim($value)];
          * }
          * @param string $key 查询的字段
@@ -81,7 +81,7 @@ class ChinaController extends Controller
          */
         return [
             'id' => ['and' => '=', 'func' => 'intval'],
-            'name' => function($key, $value) {
+            'name' => function($value) {
                 return ['like', 'name', trim($value)];
             },
             'pid'  => '='
