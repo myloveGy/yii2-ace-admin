@@ -67,7 +67,7 @@
                                     <div class="profile-info-name"> 年龄 </div>
 
                                     <div class="profile-info-value">
-                                        <span><?=$this->params['user']->age?></span>
+                                        <span>20</span>
                                     </div>
                                 </div>
 
@@ -94,7 +94,7 @@
                                 <div class="profile-info-row">
                                     <div class="profile-info-name"> 个人主页 </div>
                                     <div class="profile-info-value">
-                                        <a target="_blank" href="<?=$this->params['user']->home_url?>"><?=$this->params['user']->home_url?></a>
+                                        <a target="_blank" href="#">821901008@qq.com</a>
                                     </div>
                                 </div>
                                 <div class="profile-info-row">
@@ -102,7 +102,7 @@
                                         <i class="middle ace-icon fa fa-facebook-square bigger-150 blue"></i>
                                     </div>
                                     <div class="profile-info-value">
-                                        <a href="<?=$this->params['user']->facebook?>" target="_blank"><?=$this->params['user']->facebook?></a>
+                                        <a href="#" target="_blank"></a>
                                     </div>
                                 </div>
                             </div>

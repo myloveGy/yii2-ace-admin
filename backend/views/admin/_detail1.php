@@ -144,7 +144,7 @@ use yii\helpers\Url;
                     <div class="profile-info-name"> 年龄 </div>
 
                     <div class="profile-info-value">
-                        <span id="age" class="editable editable-click"><?=$this->params['user']->age?></span>
+                        <span id="age" class="editable editable-click">20</span>
                     </div>
                 </div>
 
@@ -175,7 +175,7 @@ use yii\helpers\Url;
                     <div class="profile-info-name"> 座右铭 </div>
 
                     <div class="profile-info-value">
-                        <span id="about" class="editable editable-click"><?=$this->params['user']->maxim ? $this->params['user']->maxim : '这个家伙很懒, 什么也没有留下'?></span>
+                        <span id="about" class="editable editable-click">这个家伙很懒, 什么也没有留下</span>
                     </div>
                 </div>
             </div>

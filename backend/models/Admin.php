@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
  * @property string $auth_key
  * @property integer $role
  * @property integer $status
+ * @property string $address
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $updated_id
@@ -102,7 +103,7 @@ class Admin extends \common\models\Admin
             ['username', 'string', 'min' => 3, 'max' => 30],
             // E-mail
             [['email'], 'string', 'max' => 64],
-            [['face'], 'string', 'max' => 100],
+            [['face', 'address'], 'string', 'max' => 100],
             ['email', 'email'],
             [['age', 'sex'], 'integer'],
             // Repassword
@@ -120,7 +121,7 @@ class Admin extends \common\models\Admin
         return [
             'default' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
             'create' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
-            'update' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face']
+            'update' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face', 'address']
         ];
     }
 

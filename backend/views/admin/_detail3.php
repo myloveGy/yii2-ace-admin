@@ -46,17 +46,8 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label no-padding-right" for="form-field-first">真实姓名</label>
                                     <div class="col-sm-8">
-                                        <?php
-                                            $strFirst = $strLast = '';
-                                            if ($this->params['user']->nickname)
-                                            {
-                                                $intLength = mb_strlen($this->params['user']->nickname) > 3 ? 2 : 1;
-                                                $strFirst  = mb_substr($this->params['user']->nickname, 0, $intLength);
-                                                $strLast   = mb_substr($this->params['user']->nickname, $intLength);
-                                            }
-                                        ?>
-                                        <input class="input-small" type="text" name="firstName" id="form-field-first" placeholder="性" rangelength="[1, 2]" value="<?=$strFirst?>" />
-                                        <input class="input-small" type="text" name="lastName" id="form-field-last" placeholder="名" rangelength="[1, 2]" value="<?=$strLast?>" />
+                                        <input class="input-small" type="text" name="firstName" id="form-field-first" placeholder="性" rangelength="[1, 2]" value="" />
+                                        <input class="input-small" type="text" name="lastName" id="form-field-last" placeholder="名" rangelength="[1, 2]" value="" />
                                     </div>
                                 </div>
                             </div>
@@ -69,7 +60,7 @@
                             <div class="col-sm-9">
                                 <div class="input-medium">
                                     <div class="input-group">
-                                        <input class="input-medium" id="form-field-date" type="text" value="<?=$this->params['user']->birthday?>" name="birthday"  placeholder="2016-06-01" />
+                                        <input class="input-medium" id="form-field-date" type="text" value="" name="birthday"  placeholder="2016-06-01" />
                                         <span class="input-group-addon">
                                             <i class="ace-icon fa fa-calendar"></i>
                                         </span>
@@ -82,13 +73,13 @@
                             <label class="col-sm-3 control-label no-padding-right">性别</label>
                             <div class="col-sm-9">
                                 <label class="inline">
-                                    <input type="radio" name="sex" value="1" <?=$this->params['user']->sex == 1 ? 'checked="true"' : ''?> required="true" number="true" class="ace" />
+                                    <input type="radio" name="sex" value="1" checked="true" required="true" number="true" class="ace" />
                                     <span class="lbl middle"> 男 </span>
                                 </label>
 
                                 &nbsp; &nbsp; &nbsp;
                                 <label class="inline">
-                                    <input  type="radio" name="sex" value="0" <?=$this->params['user']->sex == 0 ? 'checked="true"' : ''?> required="true" number="true" class="ace" />
+                                    <input  type="radio" name="sex" value="0"  required="true" number="true" class="ace" />
                                     <span class="lbl middle"> 女 </span>
                                 </label>
                             </div>
@@ -97,7 +88,7 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right" for="form-field-comment">座右铭</label>
                             <div class="col-sm-9">
-                                <textarea id="form-field-comment" name="maxim" rows="3" cols="50" rangelength="[2, 255]"><?=$this->params['user']->maxim?></textarea>
+                                <textarea id="form-field-comment" name="maxim" rows="3" cols="50" rangelength="[2, 255]"></textarea>
                             </div>
                         </div>
                         <div class="space"></div>
@@ -116,7 +107,7 @@
                             <label class="col-sm-3 control-label no-padding-right" for="form-field-website">个人主页</label>
                             <div class="col-sm-9">
                                 <span class="input-icon input-icon-right">
-                                    <input type="url" id="form-field-website" name="home_url" rangelength="[2, 50]" url="true" value="<?=$this->params['user']->home_url?>" />
+                                    <input type="url" id="form-field-website" name="home_url" rangelength="[2, 50]" url="true" value="" />
                                     <i class="ace-icon fa fa-globe"></i>
                                 </span>
                             </div>
@@ -126,7 +117,7 @@
                             <label class="col-sm-3 control-label no-padding-right" for="form-field-facebook">Facebook</label>
                             <div class="col-sm-9">
                                 <span class="input-icon">
-                                    <input type="text" value="<?=$this->params['user']->facebook?>" name="facebook" rangelength="[2, 50]" id="form-field-facebook" />
+                                    <input type="text" value="" name="facebook" rangelength="[2, 50]" id="form-field-facebook" />
                                     <i class="ace-icon fa fa-facebook blue"></i>
                                 </span>
                             </div>
