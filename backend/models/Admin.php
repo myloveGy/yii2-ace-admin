@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\models;
 
 use Yii;
@@ -36,9 +37,9 @@ class Admin extends \common\models\Admin
     public static function getArrayStatus($intStatus = null)
     {
         $array = [
-            self::STATUS_ACTIVE   => Yii::t('app', 'STATUS_ACTIVE'),
+            self::STATUS_ACTIVE => Yii::t('app', 'STATUS_ACTIVE'),
             self::STATUS_INACTIVE => Yii::t('app', 'STATUS_INACTIVE'),
-            self::STATUS_DELETED  => Yii::t('app', 'STATUS_DELETED'),
+            self::STATUS_DELETED => Yii::t('app', 'STATUS_DELETED'),
         ];
 
         if ($intStatus !== null && isset($array[$intStatus])) {
@@ -56,9 +57,9 @@ class Admin extends \common\models\Admin
     public static function getStatusColor($intStatus = null)
     {
         $array = [
-            self::STATUS_ACTIVE   => 'label-success',
+            self::STATUS_ACTIVE => 'label-success',
             self::STATUS_INACTIVE => 'label-warning',
-            self::STATUS_DELETED  => 'label-danger',
+            self::STATUS_DELETED => 'label-danger',
         ];
 
         if ($intStatus !== null && isset($array[$intStatus])) {
@@ -70,7 +71,7 @@ class Admin extends \common\models\Admin
 
     public static function getArrayRole()
     {
-        $uid  = Yii::$app->user->id;    // 用户ID
+        $uid = Yii::$app->user->id;    // 用户ID
         $auth = Yii::$app->authManager; // 权限对象
         // 管理员
         $roles = $uid == 1 ? $auth->getRoles() : $auth->getRolesByUser($uid);
@@ -96,14 +97,12 @@ class Admin extends \common\models\Admin
             [['password', 'repassword'], 'string', 'min' => 6, 'max' => 30],
             // Unique
             [['username', 'email'], 'unique'],
-            [['home_url', 'facebook'], 'string', 'min' => 2, 'max' => 50],
-            ['home_url', 'url'],
-            ['birthday', 'string', 'min' => 2, 'max' => 20],
             // Username
             ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/'],
             ['username', 'string', 'min' => 3, 'max' => 30],
             // E-mail
-            [['email', 'face'], 'string', 'max' => 100],
+            [['email'], 'string', 'max' => 64],
+            [['face'], 'string', 'max' => 100],
             ['email', 'email'],
             [['age', 'sex'], 'integer'],
             // Repassword
@@ -121,7 +120,7 @@ class Admin extends \common\models\Admin
         return [
             'default' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
             'create' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face'],
-            'update' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face', 'nickname', 'home_url', 'facebook', 'maxim', 'birthday', 'sex', 'age']
+            'update' => ['username', 'email', 'password', 'repassword', 'status', 'role', 'face']
         ];
     }
 
@@ -133,19 +132,11 @@ class Admin extends \common\models\Admin
         return array_merge(
             $labels,
             [
-                'face'       => '头像信息',
-                'last_time'  => '上一次登录时间',
-                'last__ip'   => '上一次登录的IP',
-                'password'   => '密码',
+                'face' => '头像信息',
+                'last_time' => '上一次登录时间',
+                'last__ip' => '上一次登录的IP',
+                'password' => '密码',
                 'repassword' => '确认密码',
-                'home_url'   => '主页地址',
-                'birthday'   => '生日',
-                'facebook'   => 'FaceBook账号',
-                'sex'        => '性别',
-                'age'        => '年龄',
-                'address'    => '地址',
-                'maxim'      => '座右铭',
-                'nickname'   => '真实姓名',
             ]
         );
     }
@@ -169,8 +160,8 @@ class Admin extends \common\models\Admin
 
     /**
      * afterSave() 修改之后的处理
-     * @param bool  $insert             是否是新增数据
-     * @param array $changedAttributes  修改的字段
+     * @param bool $insert 是否是新增数据
+     * @param array $changedAttributes 修改的字段
      */
     public function afterSave($insert, $changedAttributes)
     {

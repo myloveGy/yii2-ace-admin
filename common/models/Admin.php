@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use Yii;
@@ -11,11 +12,11 @@ use common\behaviors\UpdateBehavior;
  * User model
  *
  * @property integer $id
- * @property string  $username
- * @property string  $password_hash
- * @property string  $password_reset_token
- * @property string  $email
- * @property string  $auth_key
+ * @property string $username
+ * @property string $password_hash
+ * @property string $password_reset_token
+ * @property string $email
+ * @property string $auth_key
  * @property integer $role
  * @property integer $status
  * @property integer $create_id
@@ -26,9 +27,9 @@ use common\behaviors\UpdateBehavior;
  */
 class Admin extends \yii\db\ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED = -1;
-    const STATUS_INACTIVE = 0;
-    const STATUS_ACTIVE = 1;
+    const STATUS_DELETED = 0;
+    const STATUS_INACTIVE = 20;
+    const STATUS_ACTIVE = 10;
     const ROLE_USER = 10;
 
     /**
@@ -69,19 +70,19 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'id'          => 'Id',
-            'username'    => '管理员账号',
-            'password'    => '管理员密码',
-            'email'       => '管理员邮箱',
-            'role'        => '管理员角色',
-            'auth_key'             => '登录密钥',
-            'password_hash'        => '密码的哈希值',
+            'id' => 'Id',
+            'username' => '管理员账号',
+            'password' => '管理员密码',
+            'email' => '管理员邮箱',
+            'role' => '管理员角色',
+            'auth_key' => '登录密钥',
+            'password_hash' => '密码的哈希值',
             'password_reset_token' => '重新登录密钥',
-            'status'      => '状态',
+            'status' => '状态',
             'create_time' => '创建时间',
-            'create_id'   => '创建用户',
+            'create_id' => '创建用户',
             'update_time' => '修改时间',
-            'update_id'   => '修改用户',
+            'update_id' => '修改用户',
         ];
     }
 
@@ -143,7 +144,7 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
         }
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         $parts = explode('_', $token);
-        $timestamp = (int) end($parts);
+        $timestamp = (int)end($parts);
         return $timestamp + $expire >= time();
     }
 

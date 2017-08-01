@@ -94,7 +94,7 @@ class Controller extends \common\controllers\UserController
 
             // 处理获取数据
             if (!in_array($action->id, ['create', 'update', 'delete'])) {
-                $this->admins = ArrayHelper::map(Admin::findAll(['status' => 1]), 'id', 'username');
+                $this->admins = ArrayHelper::map(Admin::findAll(['status' => Admin::STATUS_ACTIVE]), 'id', 'username');
                 // 注入变量信息
                 Yii::$app->view->params['admins'] = $this->admins;
                 Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
