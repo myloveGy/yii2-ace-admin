@@ -38,6 +38,8 @@ php yii migrate
 1. 浏览器进入该目录的下执行index.php （项目根目录下的index.php）进行数据库数据的导入
 
 2. 配置虚拟机,设置路径为 bacekend/web/ 下，配置好路由重写 
+
+* 后台默认管理员账号： super 密码 admin123
 ### 使用说明
 1. 后台控制器配置
 ```php
