@@ -12,11 +12,11 @@ Yii2 ace Admin 后台模板
 * MySQL
 ### 安装
 1. 克隆项目
-```angular2html
+```
 git clone https://github.com/myloveGy/yii2-ace-admin.git
 ```
 2. 执行 composer 安装Yii2
-```angular2html
+```
 composer install
 ```
 3. 执行该目录下的 init 初始化配置（生成本地配置文件）
@@ -25,11 +25,11 @@ composer install
 
 需要顺序执行
 * 导入rbac migration 权限控制数据表
-```php
+```
 php yii migrate --migrationPath=@yii/rbac/migrations
 ``` 
 * 导入admin migration 后台基础数据
-```php
+```
 php yii migrate 
 ```
 
