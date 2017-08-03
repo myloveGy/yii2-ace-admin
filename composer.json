@@ -1,10 +1,16 @@
 {
-    "name": "yiisoft/yii2-app-advanced",
-    "description": "Yii 2 Advanced Project Template",
-    "keywords": ["yii2", "framework", "advanced", "project template"],
+    "name": "liujx/yii2-app-advanced",
+    "description": "Yii2 ace-admin RBAC management background",
+    "keywords": ["yii2", "framework", "advanced", "project template", "yii2", "admin", "auth", "rbac", "yii2-admin", "liujx"],
     "homepage": "http://www.yiiframework.com/",
     "type": "project",
     "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "liujinxing",
+            "email": "jinxing.liu@qq.com"
+        }
+    ],
     "support": {
         "issues": "https://github.com/yiisoft/yii2/issues?state=open",
         "forum": "http://www.yiiframework.com/forum/",
