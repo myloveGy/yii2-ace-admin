@@ -87,23 +87,23 @@ class ArrangeController extends Controller
             // 查询条件
             $where = ['and', ['=', 'admin_id', Yii::$app->user->id]];
             $strStart = $request->get('start');
-            $strEnd   = $request->get('end');
+            $strEnd = $request->get('end');
             if ($strStart) $where[] = ['>=', 'created_at', strtotime($strStart)];
-            if ($strEnd)   $where[] = ['<',  'created_at', strtotime($strEnd)];
+            if ($strEnd) $where[] = ['<', 'created_at', strtotime($strEnd)];
             // 查询管理员的日程
-            $arrUserArrange = Arrange::find()->where($where)->all();
+            $arrUserArrange = Arrange::find()->where($where)->asArray()->all();
             if ($arrUserArrange) {
                 $arrTmp = [];
                 foreach ($arrUserArrange as $value) {
                     $arrTmp[] = [
-                        'id'          => $value->id,
-                        'title'       => $value->title,
-                        'start'       => date('Y-m-d H:i:s', $value->start_at),
-                        'desc'        => $value->desc,
-                        'status'      => $value->status,
-                        'end'         => date('Y-m-d H:i:s', $value->end_at),
-                        'time_status' => $value->time_status,
-                        'className'   => Arrange::getStatusColors($value->status),
+                        'id' => $value['id'],
+                        'title' => $value['title'],
+                        'start' => date('Y-m-d H:i:s', $value['start_at']),
+                        'desc' => $value['desc'],
+                        'status' => $value['status'],
+                        'end' => date('Y-m-d H:i:s', $value['end_at']),
+                        'time_status' => $value['time_status'],
+                        'className' => Arrange::getStatusColors($value['status']),
                     ];
                 }
 
@@ -116,13 +116,13 @@ class ArrangeController extends Controller
 
     /**
      * 导出数据显示问题(时间问题可以通过Excel自动转换)
-     * @param \backend\models\Arrange $objModel
+     * @param array $array
      */
-    public function handleExport(&$objModel)
+    public function handleExport(&$array)
     {
-        $objModel->start_at   = date('Y-m-d H:i:s', $objModel->start_at);
-        $objModel->end_at     = date('Y-m-d H:i:s', $objModel->end_at);
-        $objModel->created_at = date('Y-m-d H:i:s', $objModel->created_at);
-        $objModel->updated_at = date('Y-m-d H:i:s', $objModel->updated_at);
+        $array['start_at'] = date('Y-m-d H:i:s', $array['start_at']);
+        $array['end_at'] = date('Y-m-d H:i:s', $array['end_at']);
+        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
+        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
     }
 }

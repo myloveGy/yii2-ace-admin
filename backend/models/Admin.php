@@ -22,6 +22,8 @@ use yii\helpers\ArrayHelper;
  * @property integer $updated_at
  * @property integer $updated_id
  * @property integer $created_id
+ * @property integer $last_time
+ * @property string $last_ip
  * @property string $password write-only password
  */
 class Admin extends \common\models\Admin

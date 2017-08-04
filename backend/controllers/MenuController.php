@@ -47,4 +47,14 @@ class MenuController extends Controller
             'parents' => Json::encode(Helper::map($parents, 'id', 'menu_name', ['顶级分类']))
         ]);
     }
+
+    /**
+     * 处理导出显示数据
+     * @param array $array
+     */
+    public function handleExport(&$array)
+    {
+        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
+        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
+    }
 }

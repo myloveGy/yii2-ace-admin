@@ -39,9 +39,11 @@ class ChinaController extends Controller
      */
     public function actionIndex()
     {
+        $china = China::find()->where(['pid' => 0])->asArray()->all();
+
         // 加载视图
         return $this->render('grid', [
-            'parent' => ArrayHelper::map(China::find()->where(['pid' => 0])->all(), 'id', 'name'),
+            'parent' => ArrayHelper::map($china, 'id', 'name'),
         ]);
     }
 }

@@ -439,7 +439,7 @@ class Controller extends \common\controllers\UserController
                 $model = $this->modelClass;
                 $query = $model::find()
                     ->where(Helper::handleWhere($params, $this->where($params)))
-                    ->orderBy([$this->sort => SORT_DESC]);
+                    ->orderBy([$this->sort => SORT_DESC])->asArray();
 
                 $intCount = $query->count();
                 // 判断数据是否存在
@@ -481,7 +481,10 @@ class Controller extends \common\controllers\UserController
                             // 写入信息数据
                             foreach ($arrLetter as $intKey => $strValue) {
                                 $tmpAttribute = $arrKeys[$intKey];
-                                $objPHPExcel->getActiveSheet()->setCellValue($strValue.$intNum, $value->$tmpAttribute);
+                                $objPHPExcel->getActiveSheet()->setCellValue(
+                                    $strValue.$intNum,
+                                    isset($value[$tmpAttribute]) ? $value[$tmpAttribute] : ''
+                                );
                             }
 
                             $intNum ++;

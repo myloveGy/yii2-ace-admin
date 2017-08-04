@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\models\Admin;
 use common\models\China;
+use yii\image\drivers\Image;
 
 /**
  * file: AdminController.php
@@ -74,7 +75,7 @@ class AdminController extends Controller
             if ($arrAddress) {
                 if (isset($arrAddress[2])) $address = $arrAddress[2];
                 // 查询省市信息
-                $arrChina = \common\models\China::find()
+                $arrChina = China::find()
                     ->where(['name' => array_slice($arrAddress, 0, 2)])
                     ->orderBy(['pid' => SORT_ASC])
                     ->all();
@@ -111,8 +112,8 @@ class AdminController extends Controller
             $strTmpPath = dirname($strFilePath).'/thumb_'.basename($strFilePath);
             /* @var $image \yii\image\drivers\Kohana_Image */
             $image = Yii::$app->image->load($strFilePath);
-            $image->resize(180, 180, \yii\image\drivers\Image::CROP)->save($strTmpPath);
-            $image->resize(48, 48, \yii\image\drivers\Image::CROP)->save();
+            $image->resize(180, 180, Image::CROP)->save($strTmpPath);
+            $image->resize(48, 48, Image::CROP)->save();
 
             // 管理员页面修改头像
             $admin = Admin::findOne(Yii::$app->user->id);
@@ -134,7 +135,7 @@ class AdminController extends Controller
 
     /**
      * 获取地址信息
-     * @return array 
+     * @return \yii\web\Response
      */
     public function actionAddress()
     {
@@ -145,14 +146,27 @@ class AdminController extends Controller
             $intPid  = (int)$request->get('iPid', 0);   // 父类ID
             $where   = ['and', ['pid' => $intPid], ['<>', 'id', 0]];
             if ( ! empty($strName)) array_push($where, ['like', 'name', $strName]);
-            $arrCountry = China::find()->select(['id', 'name'])->where($where)->all();
+            $arrCountry = China::find()->select(['id', 'name'])->where($where)->asArray()->all();
             if ($arrCountry) {
                 foreach ($arrCountry as $value) {
-                    $array[] = ['id' => $value->id, 'text' => $value->name];
+                    $array[] = [
+                        'id' => $value['id'],
+                        'text' => $value['name']
+                    ];
                 }
             }
         }
 
         return $this->asJson($array);
+    }
+
+    /**
+     * 处理导出数据显示
+     * @param array $arrObject
+     */
+    public function handleExport(&$arrObject)
+    {
+        $arrObject['created_at'] = date('Y-m-d H:i:s', $arrObject['created_at']);
+        $arrObject['updated_at'] = date('Y-m-d H:i:s', $arrObject['updated_at']);
     }
 }

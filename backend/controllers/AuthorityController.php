@@ -32,18 +32,18 @@ class AuthorityController extends RoleController
     public function actionIndex()
     {
         // 查询出全部的规则
-        $rules = AuthRule::find()->all();
+        $rules = AuthRule::find()->asArray()->all();
         $arrRules = ['' => '请选择'];
         if ($rules) {
-            foreach ($rules as &$value) {
-                if ($value->data) {
-                    $tmp = unserialize($value->data);
+            foreach ($rules as $value) {
+                if ($value['data']) {
+                    $tmp = unserialize($value['data']);
                     if ($tmp) {
-                        $value->data = get_class($tmp);
+                        $value['data'] = get_class($tmp);
                     }
                 }
 
-                $arrRules[$value->name] = $value->name.' - '.$value->data;
+                $arrRules[$value['name']] = $value['name'].' - '.$value['data'];
             }
         }
 
@@ -52,15 +52,5 @@ class AuthorityController extends RoleController
             'type' => Auth::TYPE_PERMISSION, // 权限类型
             'rules' => yii\helpers\Json::encode($arrRules) // 所有规则
         ]);
-    }
-
-    /**
-     * 导出数据显示问题(时间问题可以通过Excel自动转换)
-     * @param \backend\models\Auth $objModel
-     */
-    public function handleExport(&$objModel)
-    {
-        $objModel->created_at = date('Y-m-d H:i:s', $objModel->created_at);
-        $objModel->updated_at = date('Y-m-d H:i:s', $objModel->updated_at);
     }
 }

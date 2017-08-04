@@ -1,11 +1,5 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: funson
- * Date: 14-9-9
- * Time: 下午4:54
- * To change this template use File | Settings | File Templates.
- */
+
 namespace backend\controllers;
 
 use common\helpers\Helper;
@@ -13,6 +7,7 @@ use Yii;
 use backend\models\Auth;
 use backend\models\Menu;
 use yii\web\HttpException;
+use \yii\web\UnauthorizedHttpException;
 
 /**
  * Class RoleController 角色管理类
@@ -75,7 +70,7 @@ class RoleController extends Controller
     }
 
     /**
-     * actionEdit() 修改角色权限信息
+     * 修改角色权限信息
      * @param  string $name 角色名
      * @return string|\yii\web\Response
      * @throws \yii\web\UnauthorizedHttpException
@@ -90,10 +85,10 @@ class RoleController extends Controller
 
         // 判断自己是否有这个权限
         $uid = Yii::$app->user->id;                     // 用户ID
-        $objAuth  = Yii::$app->getAuthManager();             // 权限对象
+        $objAuth = Yii::$app->getAuthManager();             // 权限对象
         $mixRoles = $objAuth->getAssignment($name, $uid);    // 获取用户是否有改权限
         if (!$mixRoles && $uid != 1) {
-            throw new \yii\web\UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
+            throw new UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
         }
 
         // 添加权限
@@ -120,28 +115,28 @@ class RoleController extends Controller
         $arrHaves = array_keys($objAuth->getPermissionsByRole($name));
 
         $model->loadRolePermissions($name);
-        $menus = Menu::findAll(['status' => 1]);
+        $menus = Menu::find()->where(['status' => 1])->asArray()->all();
         $trees = [];
         if ($menus) {
             // 获取一级目录
             foreach ($menus as $value) {
                 // 初始化的判断数据
-                $id    = $value->pid == 0 ? $value->id : $value->pid;
+                $id = $value['pid'] == 0 ? $value['id'] : $value['pid'];
                 $array = [
-                    'text' => $value->menu_name,
-                    'id' => $value->id,
-                    'data' => $value->url,
+                    'text' => $value['menu_name'],
+                    'id' => $value['id'],
+                    'data' => $value['url'],
                     'state' => [],
                 ];
 
                 // 默认选中
-                $array['state']['selected'] = in_array($value->url, $arrHaves);
+                $array['state']['selected'] = in_array($value['url'], $arrHaves);
                 if (!isset($trees[$id])) {
                     $trees[$id] = ['children' => []];
                 }
 
                 // 判断添加数据
-                if ($value->pid == 0) {
+                if ($value['pid'] == 0) {
                     $array['icon'] = 'menu-icon fa fa-list orange';
                     $trees[$id] = array_merge($trees[$id], $array);
                 } else {
@@ -156,15 +151,14 @@ class RoleController extends Controller
 
         // 加载视图返回
         return $this->render('edit', [
-            'model'       => $model,        // 模型对象
+            'model' => $model,        // 模型对象
             'permissions' => $permissions,  // 权限信息
-            'trees'       => $trees,        // 导航栏树,
+            'trees' => $trees,        // 导航栏树,
         ]);
-
     }
 
     /**
-     * actionView() 查看角色权限信息
+     * 查看角色权限信息
      * @param  string $name 角色名称
      * @return string
      */
@@ -177,44 +171,43 @@ class RoleController extends Controller
 
         // 查询导航栏信息
         $menus = $parent = [];
-        $child = Menu::find()->where(['url' => array_keys($permissions)])->all();
+        $child = Menu::find()->where(['url' => array_keys($permissions)])->asArray()->all();
         if ($child) {
             // 处理数据
             foreach ($child as $key => $value) {
-                if ($value->pid == 0) {
-                    $menus[$value->id]  = ['name' => $value->menu_name, 'child' => []];
+                if ($value['pid'] == 0) {
+                    $menus[$value->id] = ['name' => $value['menu_name'], 'child' => []];
                     unset($child[$key]);
                 } else {
-                    $parent[] = $value->pid;
+                    $parent[] = $value['pid'];
                 }
             }
 
             // 查询父类数据
-            $parents = Menu::find()->where(['id' => $parent, 'pid' => 0])->all();
+            $parents = Menu::find()->where(['id' => $parent, 'pid' => 0])->asArray()->all();
             if ($parents) {
                 foreach ($parents as $value) {
-                    $menus[$value->id] = ['name' => $value->menu_name, 'child' => []];
+                    $menus[$value['id']] = ['name' => $value['menu_name'], 'child' => []];
                 }
             }
 
             // 最后处理数据
             foreach ($child as $value) {
                 if (isset($menus[$value->pid])) {
-                    $menus[$value->pid]['child'][] = ['name' => $value->menu_name];
+                    $menus[$value->pid]['child'][] = ['name' => $value['menu_name']];
                 }
             }
         }
 
-
         return $this->render('view', [
-            'menus'       => $menus,
-            'model'       => $model,
+            'menus' => $menus,
+            'model' => $model,
             'permissions' => $permissions,
         ]);
     }
 
     /**
-     * findModel() 查询单个model
+     * 查询单个model
      * @param  string $name
      * @return \backend\models\Auth
      * @throws \yii\web\HttpException
@@ -240,7 +233,7 @@ class RoleController extends Controller
     }
 
     /**
-     * getPermissions() 获取用户对应的权限信息
+     * 获取用户对应的权限信息
      * @return array
      */
     protected function getPermissions()
@@ -255,7 +248,7 @@ class RoleController extends Controller
     }
 
     /**
-     * preparePermissions() 加载权限信息
+     * 加载权限信息
      * @param  array $post 提交参数
      * @return array
      */
@@ -263,5 +256,15 @@ class RoleController extends Controller
     {
         return (isset($post['Auth']['_permissions']) &&
             is_array($post['Auth']['_permissions'])) ? $post['Auth']['_permissions'] : [];
+    }
+
+    /**
+     * 处理导出数据显示的问题
+     * @param array $array
+     */
+    public function handleExport(&$array)
+    {
+        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
+        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
     }
 }

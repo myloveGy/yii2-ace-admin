@@ -23,7 +23,7 @@ class UserController extends Controller
     public $modelClass = 'backend\models\User';
 
     /**
-     * where() 查询处理
+     * 查询处理
      * @param  array $params
      * @return array 返回数组
      */
@@ -45,5 +45,15 @@ class UserController extends Controller
             'status' => User::getArrayStatus(),
             'statusColor' => User::getStatusColor(),
         ]);
+    }
+
+    /**
+     * 处理导出数据显示的问题
+     * @param array $array
+     */
+    public function handleExport(&$array)
+    {
+        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
+        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
     }
 }

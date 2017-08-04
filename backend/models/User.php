@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\models;
 
 use Yii;
@@ -22,19 +23,26 @@ use Yii;
  */
 class User extends \common\models\User
 {
+    /**
+     * @var string 定义密码
+     */
     public $password;
+
+    /**
+     * @var string 定义确认密码
+     */
     public $repassword;
 
     /**
-     * getArrayStatus() 获取状态说明信息
+     * 获取状态说明信息
      * @param  int $intStatus 状态
      * @return array|string
      */
     public static function getArrayStatus($intStatus = null)
     {
         $array = [
-            self::STATUS_ACTIVE   => Yii::t('app', 'STATUS_ACTIVE'),
-            self::STATUS_DELETED  => Yii::t('app', 'STATUS_DELETED'),
+            self::STATUS_ACTIVE => Yii::t('app', 'STATUS_ACTIVE'),
+            self::STATUS_DELETED => Yii::t('app', 'STATUS_DELETED'),
         ];
 
         if ($intStatus !== null && isset($array[$intStatus])) {
@@ -45,15 +53,15 @@ class User extends \common\models\User
     }
 
     /**
-     * getStatusColor() 获取状态值对应的颜色信息
+     * 获取状态值对应的颜色信息
      * @param  int $intStatus 状态值
      * @return array|string
      */
     public static function getStatusColor($intStatus = null)
     {
         $array = [
-            self::STATUS_ACTIVE   => 'label-success',
-            self::STATUS_DELETED  => 'label-danger',
+            self::STATUS_ACTIVE => 'label-success',
+            self::STATUS_DELETED => 'label-danger',
         ];
 
         if ($intStatus !== null && isset($array[$intStatus])) {
@@ -64,7 +72,7 @@ class User extends \common\models\User
     }
 
     /**
-     * rules() 定义验证规则
+     * 定义验证规则
      * @return array
      */
     public function rules()
@@ -80,30 +88,30 @@ class User extends \common\models\User
             ['username', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/'],
             ['username', 'string', 'min' => 3, 'max' => 30],
             // E-mail
-            [['email', 'face'], 'string', 'max' => 100],
+            [['email'], 'string', 'max' => 100],
             ['email', 'email'],
             // Repassword
             ['repassword', 'compare', 'compareAttribute' => 'password'],
             //['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE,  self::STATUS_DELETED]],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
         ];
     }
 
     /**
-     * scenarios() 定义验证场景
+     * 定义验证场景
      * @return array
      */
     public function scenarios()
     {
         return [
-            'default'     => ['username', 'email', 'password', 'repassword', 'status'],
-            'create' => ['username', 'email', 'password', 'repassword', 'status', 'face'],
-            'update' => ['username', 'email', 'password', 'repassword', 'status', 'face']
+            'default' => ['username', 'email', 'password', 'repassword', 'status'],
+            'create' => ['username', 'email', 'password', 'repassword', 'status'],
+            'update' => ['username', 'email', 'password', 'repassword', 'status']
         ];
     }
 
     /**
-     * attributeLabels() 获取字段信息
+     * 获取字段信息
      * @return array
      */
     public function attributeLabels()
@@ -113,10 +121,7 @@ class User extends \common\models\User
         return array_merge(
             $labels,
             [
-                'face'       => '头像信息',
-                'last_time'  => '上一次登录时间',
-                'last__ip'   => '上一次登录的IP',
-                'password'   => '密码',
+                'password' => '密码',
                 'repassword' => '确认密码',
             ]
         );
