@@ -176,7 +176,7 @@ class RoleController extends Controller
             // 处理数据
             foreach ($child as $key => $value) {
                 if ($value['pid'] == 0) {
-                    $menus[$value->id] = ['name' => $value['menu_name'], 'child' => []];
+                    $menus[$value['id']] = ['name' => $value['menu_name'], 'child' => []];
                     unset($child[$key]);
                 } else {
                     $parent[] = $value['pid'];
@@ -193,8 +193,8 @@ class RoleController extends Controller
 
             // 最后处理数据
             foreach ($child as $value) {
-                if (isset($menus[$value->pid])) {
-                    $menus[$value->pid]['child'][] = ['name' => $value['menu_name']];
+                if (isset($menus[$value['pid']])) {
+                    $menus[$value['pid']]['child'][] = ['name' => $value['menu_name']];
                 }
             }
         }

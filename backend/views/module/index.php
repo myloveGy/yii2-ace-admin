@@ -238,7 +238,7 @@ $this->registerCssFile($url.'/css/chosen.css', $depends);
                             }
                         }).form()) {
 
-                        mt.ajax({
+                        $.ajax({
                             'async': false,
                             'url': f.attr('action'),
                             'data': $('form').serialize(),
@@ -283,7 +283,7 @@ $this->registerCssFile($url.'/css/chosen.css', $depends);
                     // 自己验证
                     if ($('input[name=allow]:checked').val() == 1 || ($('#input-html').val() != file && $('#input-controller').val() != controller))
                     {
-                        mt.ajax({
+                        $.ajax({
                             url: "<?=Url::toRoute('module/produce')?>",
                             data: $('form').serialize(),
                             dataType: "json",

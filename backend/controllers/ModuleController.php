@@ -23,7 +23,7 @@ use yii\helpers\Url;
 class ModuleController extends Controller
 {
     /**
-     * actionIndex() 首页显示
+     * 首页显示
      * @return string
      */
     public function actionIndex()
@@ -37,7 +37,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * actionCreate() 第一步接收标题和数据表数据生成表单配置信息
+     * 第一步接收标题和数据表数据生成表单配置信息
      * @return mixed|string
      */
     public function actionCreate()
@@ -47,7 +47,7 @@ class ModuleController extends Controller
         if ($request->isAjax) {
             $strTitle = $request->post('title'); // 标题
             $strTable = $request->post('table'); // 数据库表
-            if ( ! empty($strTable) && ! empty($strTitle)) {
+            if (!empty($strTable) && !empty($strTitle)) {
                 // 获取表信息
                 $db = Yii::$app->db;
                 $this->arrJson['errCode'] = 217;
@@ -63,7 +63,7 @@ class ModuleController extends Controller
 
                     if ($isHave) {
                         // 查询表结构信息
-                        $arrTables = $db->createCommand('SHOW FULL COLUMNS FROM `'.$strTable.'`')->queryAll();
+                        $arrTables = $db->createCommand('SHOW FULL COLUMNS FROM `' . $strTable . '`')->queryAll();
                         $this->arrJson['errCode'] = 218;
                         if ($arrTables) $this->handleJson($this->createForm($arrTables));
                     }
@@ -75,32 +75,32 @@ class ModuleController extends Controller
     }
 
     /**
-     * actionUpdate() 第二步生成预览HTML文件
+     * 第二步生成预览HTML文件
      * @return mixed|string
      */
     public function actionUpdate()
     {
         $request = Yii::$app->request;
         if ($request->isAjax) {
-            $attr  = $request->post('attr');
+            $attr = $request->post('attr');
             $table = $request->post('table');
             if ($attr) {
                 $this->arrJson['errCode'] = 217;
                 if ($table && ($name = str_replace(Yii::$app->db->tablePrefix, '', $table))) {
                     // 拼接字符串
-                    $dirName  = Yii::$app->basePath.'/';
-                    $strCName = Helper::strToUpperWords($name).'Controller.php';
+                    $dirName = Yii::$app->basePath . '/';
+                    $strCName = Helper::strToUpperWords($name) . 'Controller.php';
                     $strVName = 'index.php';
-                    $strVPath = $dirName.'views/'.str_replace('_', '-', $name).'/';     // 视图目录
+                    $strVPath = $dirName . 'views/' . str_replace('_', '-', $name) . '/';     // 视图目录
 
                     // 生成目录
-                    if ( ! file_exists($strVPath)) mkdir($strVPath, 644, true);
+                    if (!file_exists($strVPath)) mkdir($strVPath, 644, true);
 
                     // 返回数据
                     $this->handleJson([
-                        'html'       => highlight_string($this->createPHP($attr, $request->post('title')), true),
-                        'file'       => [$strVName, file_exists($strVPath . $strVName)],
-                        'controller' => [$strCName, file_exists($dirName . 'Controllers/'.$strCName)],
+                        'html' => highlight_string($this->createPHP($attr, $request->post('title')), true),
+                        'file' => [$strVName, file_exists($strVPath . $strVName)],
+                        'controller' => [$strCName, file_exists($dirName . 'Controllers/' . $strCName)],
                     ]);
                 }
             }
@@ -110,7 +110,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * actionProduce() 第三步开始生成文件
+     * 第三步开始生成文件
      * @return mixed|string
      */
     public function actionProduce()
@@ -118,13 +118,13 @@ class ModuleController extends Controller
         $request = Yii::$app->request;
         if ($request->isAjax) {
             // 接收参数
-            $attr  = $request->post('attr');       // 表单信息
+            $attr = $request->post('attr');       // 表单信息
             $table = $request->post('table');      // 操作表
             $title = $request->post('title');      // 标题信息
-            $html  = $request->post('html');       // HTML 文件名
-            $php   = $request->post('controller'); // PHP  文件名
-            $auth  = (int)$request->post('auth');  // 生成权限
-            $menu  = (int)$request->post('menu');  // 生成导航
+            $html = $request->post('html');       // HTML 文件名
+            $php = $request->post('controller'); // PHP  文件名
+            $auth = (int)$request->post('auth');  // 生成权限
+            $menu = (int)$request->post('menu');  // 生成导航
             $allow = (int)$request->post('allow'); // 允许文件覆盖
 
             if ($attr && $table && $title && $html && $php) {
@@ -134,14 +134,14 @@ class ModuleController extends Controller
                     $strName = str_replace('_', '-', $name);
 
                     // 拼接字符串
-                    $dirName  = Yii::$app->basePath.'/';
-                    $strCName = $dirName.'Controllers/'.(stripos(Helper::strToUpperWords($php), '.php') ? $php : $php.'.php');
-                    $strVName = $dirName.'views/'.$strName.'/'.(stripos($html, '.php') ? $html : $html.'.php');
+                    $dirName = Yii::$app->basePath . '/';
+                    $strCName = $dirName . 'Controllers/' . (stripos(Helper::strToUpperWords($php), '.php') ? $php : $php . '.php');
+                    $strVName = $dirName . 'views/' . $strName . '/' . (stripos($html, '.php') ? $html : $html . '.php');
 
 
                     // 验证文件不存在
                     $this->arrJson['errCode'] = 219;
-                    if ($allow === 1 ||  (!file_exists($strCName) && !file_exists($strVName))) {
+                    if ($allow === 1 || (!file_exists($strCName) && !file_exists($strVName))) {
                         // 生成权限
                         if ($auth == 1) $this->createAuth($strName, $title);
 
@@ -155,7 +155,7 @@ class ModuleController extends Controller
                         $this->createController($name, $title, $strCName, $strWhere);
 
                         // 返回数据
-                        $this->handleJson(Url::toRoute([$name.'/index']));
+                        $this->handleJson(Url::toRoute([$name . '/index']));
                     }
                 }
             }
@@ -165,49 +165,50 @@ class ModuleController extends Controller
     }
 
     /**
-     * createAuth()生成权限操作
+     * 生成权限操作
      * @access private
      * @param  string $prefix 前缀名称
-     * @param  string $title  标题
+     * @param  string $title 标题
      * @return void
      */
     private function createAuth($prefix, $title)
     {
-        $strPrefix = trim($prefix, '/').'/';
-        $arrAuth   = [
-            'index'  => '显示',
+        $strPrefix = trim($prefix, '/') . '/';
+        $arrAuth = [
+            'index' => '显示',
             'search' => '搜索',
             'create' => '创建',
             'update' => '修改',
             'delete' => '删除',
+            'delete-all' => '多删除',
             'export' => '导出'
         ];
 
         foreach ($arrAuth as $key => $value) {
             $model = new Auth();
-            $model->name = $model->newName =  $strPrefix.$key;
+            $model->name = $model->newName = $strPrefix . $key;
             $model->type = Auth::TYPE_PERMISSION;
-            $model->description = $value.$title;
+            $model->description = $value . '-' . $title;
             $model->save();
         }
     }
 
     /**
-     * createMenu() 生成导航栏信息
+     * 生成导航栏信息
      * @access private
-     * @param  string $name  权限名称
+     * @param  string $name 权限名称
      * @param  string $title 导航栏目标题
      * @return void
      */
     private function createMenu($name, $title)
     {
-        if ( ! Menu::find()->where(['menu_name' => $title])->one()) {
+        if (!Menu::find()->where(['menu_name' => $title])->one()) {
             $model = new Menu();
-            $model->menu_name   = $title;
-            $model->pid         = 0;
-            $model->icons       = 'icon-cog';
-            $model->url         = $name.'/index';
-            $model->status      = 1;
+            $model->menu_name = $title;
+            $model->pid = 0;
+            $model->icons = 'icon-cog';
+            $model->url = $name . '/index';
+            $model->status = 1;
             $model->save(false);
         }
     }
@@ -224,13 +225,13 @@ class ModuleController extends Controller
     <strong>填写配置表格信息!</strong>
 </div>';
         foreach ($array as $value) {
-            $key     = $value['Field'];
-            $sTitle  = isset($value['Comment']) && ! empty($value['Comment']) ? $value['Comment'] : $value['Field'];
+            $key = $value['Field'];
+            $sTitle = isset($value['Comment']) && !empty($value['Comment']) ? $value['Comment'] : $value['Field'];
             $sOption = isset($value['Null']) && $value['Null'] == 'NO' ? '"required": true,' : '';
             if (stripos($value['Type'], 'int(') !== false) $sOption .= '"number": true,';
             if (stripos($value['Type'], 'varchar(') !== false) {
                 $sLen = trim(str_replace('varchar(', '', $value['Type']), ')');
-                $sOption .= '"rangelength": "[2, '.$sLen.']"';
+                $sOption .= '"rangelength": "[2, ' . $sLen . ']"';
             }
 
             $sOther = stripos($value['Field'], '_at') !== false ? 'meTables.dateTimeString' : '';
@@ -275,14 +276,14 @@ HTML;
     /**
      * createHtml() 生成预览HTML文件
      * @access private
-     * @param  array  $array 接收表单配置文件
+     * @param  array $array 接收表单配置文件
      * @param  string $title 标题信息
-     * @param  string $path  文件地址
+     * @param  string $path 文件地址
      * @return string 返回 字符串
      */
     private function createPHP($array, $title, $path = '')
     {
-        $strHtml = $strWhere =  '';
+        $strHtml = $strWhere = '';
         if ($array) {
             foreach ($array as $key => $value) {
                 $html = "\t\t\t{\"title\": \"{$value['title']}\", \"data\": \"{$key}\", \"sName\": \"{$key}\", ";
@@ -292,7 +293,7 @@ HTML;
 
                 // 搜索
                 if ($value['search'] == 1) {
-                    $html     .= "\"search\": {\"type\": \"text\"}, ";
+                    $html .= "\"search\": {\"type\": \"text\"}, ";
                     $strWhere .= "\t\t\t'{$key}' => '=', \n";
                 }
 
@@ -300,21 +301,18 @@ HTML;
                 if ($value['bSortable'] == 0) $html .= '"bSortable": false, ';
 
                 // 回调
-                if (!empty($value['createdCell'])) $html .= '"createdCell" : '.$value['createdCell'].', ';
+                if (!empty($value['createdCell'])) $html .= '"createdCell" : ' . $value['createdCell'] . ', ';
 
-                $strHtml .= trim($html, ', ')."}, \n";
+                $strHtml .= trim($html, ', ') . "}, \n";
             }
         }
 
-        $sHtml =  <<<html
+        $sHtml = <<<html
 <?php
 // 定义标题和面包屑信息
 \$this->title = '{$title}';
 ?>
-<!-- 表格按钮 -->
-<p id="me-table-buttons"></p>
-<!-- 表格数据 -->
-<table class="table table-striped table-bordered table-hover" id="show-table"></table>
+<?=\backend\widgets\MeTable::widget()?>
 
 <?php \$this->beginBlock('javascript') ?>
 <script type="text/javascript">
@@ -354,7 +352,7 @@ HTML;
 <?php \$this->endBlock(); ?>
 html;
         // 生成文件
-        if ( ! empty($path)) {
+        if (!empty($path)) {
             $dirName = dirname($path);
             if (!file_exists($dirName)) mkdir($dirName, 0755, true);
             file_put_contents($path, $sHtml);
@@ -367,17 +365,17 @@ html;
     /**
      * createController()生成控制器文件
      * @access private
-     * @param  string $name  控制器名
+     * @param  string $name 控制器名
      * @param  string $title 标题
-     * @param  string $path  文件名
+     * @param  string $path 文件名
      * @param  string $where 查询条件
      * @return void
      */
     private function createController($name, $title, $path, $where)
     {
-        $strFile  = trim(strrchr($path, '/'), '/');
-        $strDate  = date('Y-m-d H:i:s');
-        $strName  = trim($strFile, '.class.php');
+        $strFile = trim(strrchr($path, '/'), '/');
+        $strDate = date('Y-m-d H:i:s');
+        $strName = trim($strFile, '.class.php');
         $strModel = Helper::strToUpperWords($name);
         $strControllers = <<<Html
 <?php
