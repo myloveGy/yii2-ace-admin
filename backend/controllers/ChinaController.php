@@ -18,7 +18,7 @@ class ChinaController extends Controller
     public $modelClass = '\common\models\China';
 
     /**
-     * where() 查询参数配置
+     * 查询参数配置
      * @param array $params
      * @return array
      */
@@ -34,7 +34,7 @@ class ChinaController extends Controller
     }
 
     /**
-     * actionIndex() 首页显示
+     * 首页显示
      * @return string
      */
     public function actionIndex()

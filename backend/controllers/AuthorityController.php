@@ -12,7 +12,7 @@ use backend\models\Auth;
 class AuthorityController extends RoleController
 {
     /**
-     * where() 查询参数配置
+     * 查询参数配置
      * @param array $params
      * @return array
      */

@@ -24,49 +24,37 @@ class Controller extends \common\controllers\UserController
     use \common\traits\Json;
 
     /**
-     * 定义是否关闭CSRF
-     * @var bool
-     */
-    // public $enableCsrfValidation = true;
-
-    /**
-     * 定义使用的model
-     * @var string
+     * @var string 定义使用的model
      */
     protected $modelClass = '\backend\models\Admin';
 
     /**
-     * pk 定义表使用的主键名称
-     * @var string
+     * @var string pk 定义表使用的主键名称
      */
     protected $pk = 'id';
 
     /**
-     * sort 定义默认排序条件
-     * @var string
+     * @var string sort 定义默认排序条件
      */
     protected $sort   = 'id';
 
     /**
-     * 定义上传文件的保存的路径
-     * @var string
+     * @var string 定义上传文件的保存的路径
      */
     protected $strUploadPath = './public/uploads/';
 
     /**
-     * 定义使用资源的策略类名
-     * @var string
+     * @var string 定义使用资源的策略类名
      */
     protected $strategy = 'DataTables';
 
     /**
-     * admins 定义管理员信息
-     * @var null
+     * @var null admins 定义管理员信息
      */
     protected $admins = null;
 
     /**
-     * beforeAction() 请求之前的数据验证
+     * 请求之前的数据验证
      * @param \yii\base\Action $action
      * @return bool
      * @throws UnauthorizedHttpException
@@ -107,7 +95,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * actionIndex() 首页显示
+     * 首页显示
      * @return string
      */
     public function actionIndex()
@@ -116,7 +104,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * where() 获取查询的配置信息(查询参数)
+     * 获取查询的配置信息(查询参数)
      * @access protected
      * @param  array $params 查询的请求参数
      * @return array 返回一个数组用来查询
@@ -127,7 +115,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * afterSearch() 查询之后的数据处理函数
+     * 查询之后的数据处理函数
      * @access protected
      * @param  mixed $array 查询出来的数组对象
      * @return void  对数据进行处理
@@ -138,7 +126,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * actionSearch() 处理查询数据
+     * 处理查询数据
      * @return mixed|string
      */
     public function actionSearch()
@@ -210,7 +198,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * actionUpdate() 处理修改数据
+     * 处理修改数据
      * @return mixed|string
      */
     public function actionUpdate()
@@ -250,7 +238,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * actionDelete() 处理删除数据
+     * 处理删除数据
      * @return mixed|string
      */
     public function actionDelete()
@@ -299,7 +287,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * actionEditable 处理行内编辑
+     * 处理行内编辑
      * @return mixed|string
      */
     public function actionEditable()
@@ -338,7 +326,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * afterUpload() 文件上传成功的处理信息
+     * 文件上传成功的处理信息
      * @access protected
      * @param  object $object     文件上传类
      * @param  string $strFilePath 文件保存路径
@@ -351,7 +339,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * actionUpload() 处理文件上传操作
+     * 处理文件上传操作
      * @return mixed|string
      */
     public function actionUpload()
@@ -409,16 +397,16 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * handleExport() 处理需要导出的数据显示问题
-     * @param array $arrObject 查询到的对象数组
+     * 处理需要导出的数据显示问题
+     * @param array $array 查询到的对象数组
      */
-    protected function handleExport(&$arrObject)
+    protected function handleExport(&$array)
     {
 
     }
 
     /**
-     * actionExport() 文件导出处理
+     * 文件导出处理
      * @return mixed|string
      */
     public function actionExport()

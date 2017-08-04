@@ -24,7 +24,7 @@ class AuthRuleController extends Controller
     public $modelClass = 'backend\models\AuthRule';
      
     /**
-     * where() 查询处理
+     * 查询处理
      * @param  array $params
      * @return array 返回数组
      */
