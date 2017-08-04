@@ -24,7 +24,7 @@ class AuthAssignmentController extends Controller
     public $modelClass = 'backend\models\AuthAssignment';
      
     /**
-     * where() 查询处理
+     * 查询处理
      * @param  array $params
      * @return array 返回数组
      */
@@ -49,11 +49,10 @@ class AuthAssignmentController extends Controller
         // 查询出全部角色
         $roles = Auth::find()->where([
             'type' => Auth::TYPE_ROLE
-        ])->orderBy(['created_at' => SORT_DESC])->all();
+        ])->orderBy(['created_at' => SORT_DESC])->asArray()->all();
         $arrRoles = [];
         foreach ($roles as $value) {
-            /* @var $value \backend\models\Auth */
-            $arrRoles[$value->name] = $value->name.' - '.$value->description;
+            $arrRoles[$value['name']] = $value['name'].' - '.$value['description'];
         }
 
         // 载入视图

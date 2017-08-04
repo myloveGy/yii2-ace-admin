@@ -1,5 +1,4 @@
 <?php
-
 namespace backend\controllers;
 
 use common\helpers\Helper;
@@ -21,19 +20,17 @@ class RoleController extends Controller
     public $pk = 'name';
 
     /**
-     * 定义使用的model
-     * @var string
+     * @var string 定义使用的model
      */
     public $modelClass = 'backend\models\Auth';
 
     /**
-     * 定义排序字段
-     * @var string
+     * @var string 定义排序字段
      */
     public $sort = 'created_at';
 
     /**
-     * where() 设置查询参数
+     * 设置查询参数
      * @param array $params
      * @return array
      */

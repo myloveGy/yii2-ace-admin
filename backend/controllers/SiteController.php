@@ -1,5 +1,4 @@
 <?php
-
 namespace backend\controllers;
 
 use Yii;
@@ -57,7 +56,7 @@ class SiteController extends \yii\web\Controller
     }
 
     /**
-     * actionIndex() 管理员登录欢迎页
+     * 管理员登录欢迎页
      * @return string
      * @throws UnauthorizedHttpException
      */

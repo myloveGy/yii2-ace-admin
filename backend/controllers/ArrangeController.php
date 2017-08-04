@@ -1,11 +1,4 @@
 <?php
-/**
- * file: ArrangeController.php
- * desc: 管理员日程安排 执行操作控制器
- * user: liujx
- * date: 2016-09-19 14:39:17
- */
-
 namespace backend\controllers;
 
 use Yii;
@@ -30,9 +23,9 @@ class ArrangeController extends Controller
     public function where($params)
     {
         return [
-            'id'       => '=',
-			'title'    => 'like',
-			'status'   => '=',
+            'id' => '=',
+            'title' => 'like',
+            'status' => '=',
             'admin_id' => '='
         ];
     }
@@ -44,10 +37,10 @@ class ArrangeController extends Controller
     public function actionIndex()
     {
         return $this->render('index', [
-            'status'       => Arrange::getStatus(),         // 状态
-            'timeStatus'   => Arrange::getTimeStatus(),     // 时间状态
+            'status' => Arrange::getStatus(),         // 状态
+            'timeStatus' => Arrange::getTimeStatus(),     // 时间状态
             'statusColors' => Arrange::getStatusColors(),   // 状态颜色
-            'timeColors'   => Arrange::getTimeColors(),     // 时间状态颜色
+            'timeColors' => Arrange::getTimeColors(),     // 时间状态颜色
         ]);
     }
 
@@ -66,17 +59,16 @@ class ArrangeController extends Controller
 
         // 载入视图
         return $this->render('calendar', [
-            'status'       => Arrange::getStatus(),         // 状态
-            'timeStatus'   => Arrange::getTimeStatus(),     // 时间状态
-            'arrange'      => $arrArrange,                  // 没有委派的事件
+            'status' => Arrange::getStatus(),         // 状态
+            'timeStatus' => Arrange::getTimeStatus(),     // 时间状态
+            'arrange' => $arrArrange,                  // 没有委派的事件
             'statusColors' => Arrange::getStatusColors(),   // 状态颜色
-            'timeColors'   => Arrange::getTimeColors(),     // 时间状态颜色
+            'timeColors' => Arrange::getTimeColors(),     // 时间状态颜色
         ]);
     }
 
     /**
      * 查询管理员日程信息
-     *
      * @return \yii\web\Response
      */
     public function actionArrange()

@@ -1,5 +1,4 @@
 <?php
-
 namespace backend\controllers;
 
 use Yii;
@@ -8,10 +7,8 @@ use common\models\China;
 use yii\image\drivers\Image;
 
 /**
- * file: AdminController.php
- * desc: 管理员操作控制器
- * user: liujinxing
- * date: 2016-0-21
+ * Class AdminController 后台管理员操作控制器
+ * @package backend\controllers
  */
 class AdminController extends Controller
 {
@@ -162,11 +159,11 @@ class AdminController extends Controller
 
     /**
      * 处理导出数据显示
-     * @param array $arrObject
+     * @param array $array
      */
-    public function handleExport(&$arrObject)
+    public function handleExport(&$array)
     {
-        $arrObject['created_at'] = date('Y-m-d H:i:s', $arrObject['created_at']);
-        $arrObject['updated_at'] = date('Y-m-d H:i:s', $arrObject['updated_at']);
+        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
+        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
     }
 }

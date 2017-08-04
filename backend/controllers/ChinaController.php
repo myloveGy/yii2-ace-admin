@@ -5,7 +5,7 @@ use common\models\China;
 use yii\helpers\ArrayHelper;
 
 /**
- * Class ChinaController
+ * Class ChinaController 地址信息处理控制器
  * @package backend\controllers
  */
 class ChinaController extends Controller

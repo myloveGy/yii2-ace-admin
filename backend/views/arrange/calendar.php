@@ -35,7 +35,13 @@ $this->registerJsFile($url.'/js/validate.message.js', $depends);
                     <div id="external-events">
                         <?php if ($arrange) : ?>
                         <?php foreach ($arrange as $value) : ?>
-                        <div class="external-event <?=$timeColors[$value->time_status]?>" sTitle="<?=$value->title?>" iVal="<?=$value->id?>" iEnd="<?=$value->end_at?>" sDesc="<?=$value->desc?>" iTimeStatus="<?=$value->time_status?>" data-class="<?=$timeColors[$value->time_status]?>">
+                        <div class="external-event <?=$timeColors[$value->time_status]?>"
+                             sTitle="<?=$value->title?>"
+                             iVal="<?=$value->id?>"
+                             iEnd="<?=$value->end_at?>"
+                             sDesc="<?=$value->desc?>"
+                             iTimeStatus="<?=$value->time_status?>"
+                             data-class="<?=$timeColors[$value->time_status]?>">
                             <i class="ace-icon fa fa-arrows"></i>
                             <?=$value->title?>
                         </div>

@@ -1,12 +1,4 @@
 <?php
-/**
- * file: ModuleController.php
- * Desc: 模块生成
- * user: liujx
- * date: 2016-07-20
- */
-
-// 引入命名空间
 namespace backend\controllers;
 
 use common\helpers\Helper;
@@ -274,7 +266,7 @@ HTML;
     }
 
     /**
-     * createHtml() 生成预览HTML文件
+     * 生成预览HTML文件
      * @access private
      * @param  array $array 接收表单配置文件
      * @param  string $title 标题信息
@@ -313,7 +305,6 @@ HTML;
 \$this->title = '{$title}';
 ?>
 <?=\backend\widgets\MeTable::widget()?>
-
 <?php \$this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var m = meTables({
@@ -363,7 +354,7 @@ html;
     }
 
     /**
-     * createController()生成控制器文件
+     * 生成控制器文件
      * @access private
      * @param  string $name 控制器名
      * @param  string $title 标题
@@ -374,7 +365,6 @@ html;
     private function createController($name, $title, $path, $where)
     {
         $strFile = trim(strrchr($path, '/'), '/');
-        $strDate = date('Y-m-d H:i:s');
         $strName = trim($strFile, '.class.php');
         $strModel = Helper::strToUpperWords($name);
         $strControllers = <<<Html
