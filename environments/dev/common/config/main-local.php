@@ -1,16 +1,13 @@
 <?php
 return [
     'components' => [
-        // 数据库配置
         'db' => [
-            'class'    => 'yii\db\Connection',
-            'dsn'      => 'mysql:host=localhost;dbname=yii2advanced',
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;dbname=yii2advanced',
             'username' => 'root',
             'password' => '',
-            'charset'  => 'utf8',
+            'charset' => 'utf8',
         ],
-
-        // 邮件配置
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             'viewPath' => '@common/mail',
