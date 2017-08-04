@@ -3,7 +3,10 @@ use yii\widgets\DetailView;
 
 $this->title = '角色信息详情';
 
-$this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js', ['depends' => \backend\assets\AppAsset::className()]);
+$this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js', [
+        'depends' => 'backend\assets\AdminAsset'
+]);
+
 /* @var $model \backend\models\Auth */
 ?>
 <div class="col-xs-12 col-sm-4">

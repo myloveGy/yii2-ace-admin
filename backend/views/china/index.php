@@ -1,18 +1,7 @@
 <?php
-
-// 定义标题和面包屑信息
 $this->title = '地址信息';
-$this->params['breadcrumbs'][] = $this->title;
-$this->registerJsFile('@web/public/assets/js/colResizable.min.js', ['depends' => 'backend\assets\AppAsset']);
 ?>
-<!-- 表格按钮 -->
-<p id="me-table-buttons"></p>
-<!-- 搜索表单 -->
-<!--<div class="well well-sm" style="margin-bottom: 0">-->
-<!--    <form class="form-inline" role="form" id="table-search-form"></form>-->
-<!--</div>-->
-<!--表格数据-->
-<table class="table table-striped table-bordered table-hover" id="show-table"></table>
+<?=\backend\widgets\MeTable::widget()?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var arrParent = <?=\yii\helpers\Json::encode($parent)?>,

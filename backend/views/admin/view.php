@@ -1,34 +1,34 @@
 <?php
-/**
- * Created by PhpStorm.
- * Date: 2016/7/21
- * Time: 18:29
- */
-
-use backend\assets\AppAsset;
-
-AppAsset::loadTimeJavascript($this, 'datetime');
 
 $this->title = '管理员个人信息';
-$depends = ['depends' => 'backend\assets\AppAsset'];
-$this->registerCssFile('@web/public/assets/css/bootstrap-editable.css', $depends);
-$this->registerCssFile('@web/public/assets/css/jquery-ui.custom.min.css', $depends);
-$this->registerCssFile('@web/public/assets/css/select2.css', $depends);
-$this->registerCssFile('@web/public/assets/css/jquery.gritter.css', $depends);
-$this->registerJsFile('@web/public/assets/js/jquery-ui.custom.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/jquery.ui.touch-punch.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/jquery.gritter.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/bootbox.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/jquery.easypiechart.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/jquery.hotkeys.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/select2.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/fuelux/fuelux.spinner.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/x-editable/bootstrap-editable.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/jquery.maskedinput.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/jquery.validate.min.js', $depends);
-$this->registerJsFile('@web/public/assets/js/validate.message.js', $depends);
+
+$url = '@web/public/assets';
+$depends = ['depends' => 'backend\assets\AdminAsset'];
+
+$this->registerCssFile($url.'/css/bootstrap-editable.css', $depends);
+$this->registerCssFile($url.'/css/jquery-ui.custom.min.css', $depends);
+$this->registerCssFile($url.'/css/select2.css', $depends);
+$this->registerCssFile($url.'/css/jquery.gritter.css', $depends);
+$this->registerJsFile($url.'/js/date-time/moment.min.js', $depends);
+$this->registerJsFile($url.'/js/date-time/bootstrap-datepicker.min.js', $depends);
+$this->registerJsFile($url.'/js/date-time/locales/bootstrap-datepicker.zh-CN.js', $depends);
+$this->registerJsFile($url.'/js/date-time/bootstrap-timepicker.min.js', $depends);
+$this->registerJsFile($url.'/js/date-time/bootstrap-datetimepicker.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery-ui.custom.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.ui.touch-punch.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.gritter.min.js', $depends);
+$this->registerJsFile($url.'/js/bootbox.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.easypiechart.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.hotkeys.min.js', $depends);
+$this->registerJsFile($url.'/js/bootstrap-wysiwyg.min.js', $depends);
+$this->registerJsFile($url.'/js/select2.min.js', $depends);
+$this->registerJsFile($url.'/js/fuelux/fuelux.spinner.min.js', $depends);
+$this->registerJsFile($url.'/js/x-editable/bootstrap-editable.min.js', $depends);
+$this->registerJsFile($url.'/js/x-editable/ace-editable.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.maskedinput.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.validate.min.js', $depends);
+$this->registerJsFile($url.'/js/validate.message.js', $depends);
+
 ?>
 <div class="clearfix">
     <div class="pull-left alert alert-success no-margin">

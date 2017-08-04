@@ -4,12 +4,17 @@ use yii\helpers\Url;
 $this->title = '模块生成';
 
 // 注入需要的JS
-$this->registerJsFile('@web/public/assets/js/fuelux/fuelux.spinner.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/fuelux/fuelux.wizard.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/chosen.jquery.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerCssFile('@web/public/assets/css/chosen.css', ['depends' => 'backend\assets\AppAsset']);
+$url = '@web/public/assets';
+$depends = ['depends' => 'backend\assets\AdminAsset'];
 
+$this->registerJsFile($url.'/js/fuelux/fuelux.spinner.min.js', $depends);
+$this->registerJsFile($url.'/js/fuelux/fuelux.wizard.min.js', $depends);
+$this->registerJsFile($url.'/js/bootstrap-wysiwyg.min.js', $depends);
+$this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.validate.min.js', $depends);
+$this->registerJsFile($url.'/js/validate.message.js', $depends);
+$this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
+$this->registerCssFile($url.'/css/chosen.css', $depends);
 
 ?>
 <div class="widget-box widget-color-blue">

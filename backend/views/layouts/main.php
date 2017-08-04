@@ -1,10 +1,10 @@
 <?php
 
-use backend\assets\AppAsset;
+use backend\assets\AdminAsset;
 use yii\helpers\Html;
 
-AppAsset::register($this);
-AppAsset::registerCommon($this);
+AdminAsset::register($this);
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

@@ -1,10 +1,12 @@
 <?php
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use common\widgets\Alert;
+
 $this->title = '角色信息分配权限';
 
-$depends = ['depends' => 'backend\assets\AppAsset'];
+$depends = ['depends' => 'backend\assets\AdminAsset'];
 $this->registerJsFile('@web/public/assets/js/jstree/jstree.min.js', $depends);
 $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depends);
 ?>

@@ -1,18 +1,22 @@
 <?php
 
-use backend\assets\AppAsset;
 use yii\helpers\Url;
 
 // 定义标题和面包屑信息
 $this->title = '我的日程管理';
 
-AppAsset::loadTimeJavascript($this, 'datetime');
-$this->registerCssFile('@web/public/assets/css/fullcalendar.css', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/jquery-ui.custom.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/jquery.ui.touch-punch.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/date-time/moment.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/fuelux/fuelux.spinner.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/fullcalendar.min.js', ['depends' => 'backend\assets\AppAsset']);
+$url = '@web/public/assets';
+$depends = ['depends' => 'backend\assets\AdminAsset'];
+
+$this->registerCssFile($url.'/css/fullcalendar.css', $depends);
+$this->registerJsFile($url.'/js/jquery-ui.custom.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.ui.touch-punch.min.js', $depends);
+$this->registerJsFile($url.'/js/date-time/moment.min.js', $depends);
+$this->registerJsFile($url.'/js/date-time/bootstrap-datetimepicker.min.js', $depends);
+$this->registerJsFile($url.'/js/fuelux/fuelux.spinner.min.js', $depends);
+$this->registerJsFile($url.'/js/fullcalendar.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.validate.min.js', $depends);
+$this->registerJsFile($url.'/js/validate.message.js', $depends);
 ?>
 <div class="row">
     <div class="col-sm-9">

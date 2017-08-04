@@ -1,17 +1,13 @@
 <?php
 // 定义标题和面包屑信息
 $this->title = '管理员信息';
-$this->registerJsFile('@web/public/assets/js/chosen.jquery.min.js', [
-    'depends' => 'backend\assets\AppAsset'
-]);
-$this->registerCssFile('@web/public/assets/css/chosen.css', [
-    'depends' => 'backend\assets\AppAsset'
-]);
+
+$url = '@web/public/assets';
+$depends = ['depends' => 'backend\assets\AdminAsset'];
+$this->registerCssFile($url.'/css/chosen.css', $depends);
+$this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
 ?>
-<!-- 表格按钮 -->
-<p id="me-table-buttons"></p>
-<!-- 表格数据 -->
-<table class="table table-striped table-bordered table-hover" id="show-table"></table>
+<?=\backend\widgets\MeTable::widget()?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var aStatus = <?=\yii\helpers\Json::encode($status)?>,
@@ -21,11 +17,6 @@ $this->registerCssFile('@web/public/assets/css/chosen.css', [
         m = meTables({
             title: "管理员信息",
             fileSelector: ["#file"],
-//            editFormParams: {
-//                bMultiCols: true,
-//                iColsLength: 2,
-//                aCols: [2, 4]
-//            },
             table: {
                 "aoColumns":[
                     {"title": "管理员ID", "data": "id", "sName": "id", "edit": {"type": "hidden"}, "search": {"type": "text"}, "defaultOrder": "desc"},
@@ -69,11 +60,6 @@ $this->registerCssFile('@web/public/assets/css/chosen.css', [
         }
     });
 
-    /**
-      * 编辑的前置和后置操作
-      * myTable.beforeSave(array data) return true 前置
-      * myTable.afterSave(array data)  return true 后置
-      */
     $(function(){
         m.init();
         $file = $("#file");

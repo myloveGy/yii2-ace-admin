@@ -2,10 +2,7 @@
 // 定义标题
 $this->title = '权限信息';
 ?>
-<!-- 表格按钮 -->
-<p id="me-table-buttons"></p>
-<!-- 表格数据 -->
-<table class="table table-striped table-bordered table-hover" id="show-table"></table>
+<?=\backend\widgets\MeTable::widget()?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var rules = <?=$rules?>,

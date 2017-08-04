@@ -1,26 +1,22 @@
 <?php
-use backend\assets\AppAsset;
-
-AppAsset::loadTimeJavascript($this, 'datetime');
 
 // 定义标题和面包屑信息
 $this->title = '管理员日程安排';
-$this->params['breadcrumbs'][] = $this->title;
-$this->registerCssFile('@web/public/assets/css/jquery-ui.custom.min.css', ['depends' => 'backend\assets\AppAsset']);
-$this->registerCssFile('@web/public/assets/css/bootstrap-editable.css', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/jquery-ui.custom.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/jquery.ui.touch-punch.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/markdown/markdown.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/markdown/bootstrap-markdown.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/jquery.hotkeys.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/bootstrap-wysiwyg.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/x-editable/bootstrap-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['depends' => 'backend\assets\AppAsset']);
+$url = '@web/public/assets';
+$depends = ['depends' => 'backend\assets\AdminAsset'];
+
+$this->registerCssFile($url.'/css/jquery-ui.custom.min.css', $depends);
+$this->registerCssFile($url.'/css/bootstrap-editable.css', $depends);
+$this->registerCssFile($url.'/css/bootstrap-datetimepicker.css', $depends);
+$this->registerJsFile($url.'/js/jquery-ui.custom.min.js', $depends);
+$this->registerJsFile($url.'/js/jquery.ui.touch-punch.min.js', $depends);
+$this->registerJsFile($url.'/js/x-editable/bootstrap-editable.min.js', $depends);
+$this->registerJsFile($url.'/js/x-editable/ace-editable.min.js', $depends);
+$this->registerJsFile($url.'/js/date-time/moment.min.js', $depends);
+$this->registerJsFile($url.'/js/date-time/bootstrap-datetimepicker.min.js', $depends);
+
 ?>
-<!--前面导航信息-->
-<p id="me-table-buttons"></p>
-<!--表格数据-->
-<table class="table table-striped table-bordered table-hover" id="show-table"></table>
+<?=\backend\widgets\MeTable::widget()?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
@@ -71,7 +67,7 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
                     "title": "事件描述",
                     "data": "desc",
                     "sName": "desc",
-                    "edit": {"type": "div", "id": "me-desc", "class": "wysiwyg-editor", "rows": 5, "required": true, "rangelength": "[2, 255]"},
+                    "edit": {"type": "textarea", "rows": 5, "required": true, "rangelength": "[2, 255]"},
                     "bSortable": false
                 },
                 {
@@ -143,76 +139,12 @@ $this->registerJsFile('@web/public/assets/js/x-editable/ace-editable.min.js', ['
         }
     });
 
-    mt.fn.extend({
-        afterShow: function(data) {
-            var html = this.action == "create" ? "" : data.desc;
-            $('#me-desc').html(html);
-            return true;
-        },
-
-        beforeSave: function(data) {
-            if (this.action != 'delete' && this.action != 'deleteAll') {
-                data.push({"name": "desc", "value": $('#me-desc').html()});
-            }
-            return true;
-        }
-    });
-
-    $(function(){
+    $(function () {
         m.init();
-
         // 时间选项
         $('.datetime-picker').datetimepicker({
-            format: 'YYYY-MM-DD H:mm:s'
+            format: 'YYYY-MM-DD H:mm:ss'
         });
-
-        function showErrorAlert (reason, detail) {
-            var msg='';
-            if (reason==='unsupported-file-type') { msg = "Unsupported format " +detail; }
-            else {
-                //console.log("error uploading file", reason, detail);
-            }
-            $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>'+
-                '<strong>File upload error</strong> '+msg+' </div>').prependTo('#alerts');
-        }
-
-        $('#me-desc').ace_wysiwyg({
-            toolbar:
-                [
-                    'font',
-                    null,
-                    'fontSize',
-                    null,
-                    {name:'bold', className:'btn-info'},
-                    {name:'italic', className:'btn-info'},
-                    {name:'strikethrough', className:'btn-info'},
-                    {name:'underline', className:'btn-info'},
-                    null,
-                    {name:'insertunorderedlist', className:'btn-success'},
-                    {name:'insertorderedlist', className:'btn-success'},
-                    {name:'outdent', className:'btn-purple'},
-                    {name:'indent', className:'btn-purple'},
-                    null,
-                    {name:'justifyleft', className:'btn-primary'},
-                    {name:'justifycenter', className:'btn-primary'},
-                    {name:'justifyright', className:'btn-primary'},
-                    {name:'justifyfull', className:'btn-inverse'},
-                    null,
-                    {name:'createLink', className:'btn-pink'},
-                    {name:'unlink', className:'btn-pink'},
-                    null,
-                    {name:'insertImage', className:'btn-success'},
-                    null,
-                    'foreColor',
-                    null,
-                    {name:'undo', className:'btn-grey'},
-                    {name:'redo', className:'btn-grey'}
-                ],
-            'wysiwyg': {
-                fileUploadError: showErrorAlert
-            }
-        }).prev().addClass('wysiwyg-style2');
-
     });
 </script>
 <?php $this->endBlock() ?>

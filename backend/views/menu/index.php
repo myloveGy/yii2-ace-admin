@@ -1,14 +1,8 @@
 <?php
 // 定义标题和面包屑信息
 $this->title = '导航栏目信息';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
-<!-- 表格按钮 -->
-<p id="me-table-buttons"></p>
-
-<!-- 表格数据 -->
-<table class="table table-striped table-bordered table-hover" id="show-table"></table>
-
+<?=\backend\widgets\MeTable::widget()?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var aAdmins  = <?=\yii\helpers\Json::encode($this->params['admins'])?>,

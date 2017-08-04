@@ -2,11 +2,7 @@
 // 定义标题和面包屑信息
 $this->title = '规则管理';
 ?>
-<!-- 表格按钮 -->
-<p id="me-table-buttons"></p>
-<!-- 表格数据 -->
-<table class="table table-striped table-bordered table-hover" id="show-table"></table>
-
+<?=\backend\widgets\MeTable::widget()?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var m = meTables({

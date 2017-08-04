@@ -4,11 +4,14 @@ use \yii\helpers\Html;
 
 // 定义标题和面包屑信息
 $this->title = '角色分配';
-$this->registerJsFile('@web/public/assets/js/chosen.jquery.min.js', ['depends' => 'backend\assets\AppAsset']);
-$this->registerCssFile('@web/public/assets/css/chosen.css', ['depends' => 'backend\assets\AppAsset']);
+
+$url = '@web/public/assets';
+$depends = ['depends' => 'backend\assets\AdminAsset'];
+
+$this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
+$this->registerCssFile($url.'/css/chosen.css', $depends);
 ?>
-<!-- 表格按钮 -->
-<!--<p id="me-table-buttons"></p>-->
+
 <div class="well">
     <form id="search-form">
         <div class="row">
@@ -54,7 +57,11 @@ $this->registerCssFile('@web/public/assets/css/chosen.css', ['depends' => 'backe
     </form>
 </div>
 <!-- 表格数据 -->
-<table class="table table-striped table-bordered table-hover" id="show-table"></table>
+<?=\backend\widgets\MeTable::widget([
+    'buttons' => [
+        'id' => 'me-buttons'
+    ],
+])?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var roles = <?=$roles?>,
