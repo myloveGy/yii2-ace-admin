@@ -141,10 +141,17 @@ class m170801_081237_insert_rabc extends Migration
                 $time,
                 $time
             ],
+            [
+                'admin-delete',
+                serialize(unserialize('O:29:"backend\rules\AdminDeleteRule":3:{s:4:"name";s:12:"admin-delete";s:9:"createdAt";i:1501919066;s:9:"updatedAt";i:1501919066;}')),
+                $time,
+                $time
+            ],
         ]);
 
         // 第三步修改权限对应的规则
         $this->update($this->table, ['rule_name' => 'admin'], ['name' => 'admin/update']);
+        $this->update($this->table, ['rule_name' => 'admin-delete'], ['name' => 'admin/delete']);
         $this->update($this->table, ['rule_name' => 'auth-assignment'], ['name' => 'auth-assignment/delete']);
 
         // 第四步写入分配信息

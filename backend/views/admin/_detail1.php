@@ -332,7 +332,7 @@ use yii\helpers\Url;
                     } else {
                         $('#address').hide();
                         // 修改数据
-                        mt.ajax({
+                        $.ajax({
                             url:        sBaseUrl,
                             type:       "POST",
                             dataType:   "json",

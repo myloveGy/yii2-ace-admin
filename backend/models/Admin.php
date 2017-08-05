@@ -218,6 +218,11 @@ class Admin extends \common\models\Admin
             return false;
         }
 
+        if ($this->id == Yii::$app->user->id) {
+            $this->addError('username', '不能删除自己');
+            return false;
+        }
+
         return parent::beforeDelete();
     }
 

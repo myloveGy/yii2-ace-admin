@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liujinxing
- * Date: 2017/7/2
- * Time: 20:14
- */
 
 namespace backend\rules;
 
@@ -13,7 +7,7 @@ use yii;
 use yii\rbac\Rule;
 
 /**
- * Class AdminRule 管理员的权限控制
+ * Class AdminRule 管理员编辑权限控制
  * 只能修改自己或者自己添加的管理员信息
  * @package backend\rules
  */
