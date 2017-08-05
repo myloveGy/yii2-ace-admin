@@ -77,13 +77,18 @@ class Admin extends \common\models\Admin
         return $array;
     }
 
-    public static function getArrayRole()
+    /**
+     * 获取角色信息
+     * @param bool $isDelete
+     * @return array
+     */
+    public static function getArrayRole($isDelete = true)
     {
         $uid = Yii::$app->user->id;    // 用户ID
         $auth = Yii::$app->authManager; // 权限对象
         // 管理员
         $roles = $uid == self::SUPER_ADMIN_ID ? $auth->getRoles() : $auth->getRolesByUser($uid);
-        if ($roles && isset($roles[Auth::SUPER_ADMIN_NAME])) {
+        if ($roles && $isDelete && isset($roles[Auth::SUPER_ADMIN_NAME])) {
             unset($roles[Auth::SUPER_ADMIN_NAME]);
         }
 
@@ -122,7 +127,7 @@ class Admin extends \common\models\Admin
             //['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
             // Status
-            ['role', 'in', 'range' => array_keys(self::getArrayRole())],
+            ['role', 'in', 'range' => array_keys(self::getArrayRole(false))],
         ];
     }
 
@@ -183,7 +188,12 @@ class Admin extends \common\models\Admin
             $isInsert = true;
             // 修改了角色信息，删除之前的角色信息
             if (!empty($changedAttributes['role'])) {
-                $auth->revoke($auth->getRole($changedAttributes['role']), $this->id);
+                // 不删除超级管理员的角色
+                if ($this->id != Admin::SUPER_ADMIN_ID) {
+                    $auth->revoke($auth->getRole($changedAttributes['role']), $this->id);
+                }
+
+                // 没有存在这个角色才新增
                 if (in_array($this->id, $auth->getUserIdsByRole($this->role))) {
                     $isInsert = false;
                 }
