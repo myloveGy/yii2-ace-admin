@@ -122,15 +122,12 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
         });
     var $file = null;
     mt.fn.extend({
-        afterShow: function(data) {
-            if (this.action == "crate") {
-                // 新增
-                $file.ace_file_input("reset_input");
-            } else {
-                // 修改复值
-                if (this.action == "update" && ! empty(data.face)) {
-                    $file.ace_file_input("show_file_list", [data.face]);
-                }
+        beforeShow: function(data) {
+            $file.ace_file_input("reset_input");
+
+            // 修改复值
+            if (this.action == "update" && ! empty(data.face)) {
+                $file.ace_file_input("show_file_list", [data.face]);
             }
 
             return true;

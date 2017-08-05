@@ -384,7 +384,7 @@ class {$strName} extends Controller
     public \$modelClass = 'backend\models\\{$strModel}';
      
     /**
-     * where() 查询处理
+     * 查询处理
      * @param  array \$params
      * @return array 返回数组
      */

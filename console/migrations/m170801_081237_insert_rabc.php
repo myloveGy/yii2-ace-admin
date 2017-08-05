@@ -98,6 +98,15 @@ class m170801_081237_insert_rabc extends Migration
             ['user/index', 2, '用户信息-显示', $time, $time],
             ['user/search', 2, '用户信息-搜索', $time, $time],
             ['user/update', 2, '用户信息-修改', $time, $time],
+            ['user/create', 2, '用户信息-创建', $time, $time],
+            ['user/delete', 2, '用户信息-删除', $time, $time],
+            ['user/delete-all', 2, '用户信息-批量删除', $time, $time],
+            ['user/export', 2, '用户信息-导出', $time, $time],
+            ['admin-log/index', 2, '操作日志-显示', $time, $time],
+            ['admin-log/search', 2, '操作日志-搜索', $time, $time],
+            ['admin-log/delete', 2, '操作日志-删除', $time, $time],
+            ['admin-log/delete-all', 2, '操作日志-批量删除', $time, $time],
+            ['admin-log/export', 2, '操作日志-导出', $time, $time],
         ]);
 
         // 管理员信息
@@ -110,7 +119,7 @@ class m170801_081237_insert_rabc extends Migration
             'authority/index', 'authority/search', 'authority/update',
             'menu/create', 'menu/delete', 'menu/delete-all',
             'menu/export', 'menu/index', 'menu/search',
-            'auth-assignment/create',
+            'auth-assignment/create', 'admin-log/delete', 'admin-log/delete-all'
         ];
 
         // 第二步写入超级管理员的权限
@@ -193,7 +202,9 @@ class m170801_081237_insert_rabc extends Migration
             'role/index', 'role/search', 'role/update',
             'role/view', 'user/create', 'user/delete',
             'user/delete-all', 'user/export', 'user/index',
-            'user/search', 'user/update'
+            'user/search', 'user/update', 'admin-log/index',
+            'admin-log/search', 'admin-log/delete', 'admin-log/delete-all',
+            'admin-log/export',
         ]]);
         return false;
     }

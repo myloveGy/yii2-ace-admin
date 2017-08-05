@@ -1,12 +1,8 @@
 <?php
 
 use yii\helpers\Url;
-/**
- * Created by PhpStorm.
- * User: liujinxing
- * Date: 2016/7/21
- * Time: 18:33
- */
+use \backend\models\AdminLog;
+
 ?>
 <div>
     <div class="user-profile row" id="user-profile-1">
@@ -206,13 +202,13 @@ use yii\helpers\Url;
                             <?php if ($logs) : foreach ($logs as $value) : ?>
                             <div class="profile-activity clearfix">
                                 <div>
-                                    <img class="pull-left" alt="Alex Doe's avatar" src="<?=$this->params['user']->face?>" />
-                                    <a class="user" href="#"> <?=$value['action']?> </a>
-                                    <?=implode(',', $value['data'])?>
-                                    <a href="#"><?=$value['type']?></a>
+                                    <img class="pull-left" alt="用户头像" src="<?=$this->params['user']->face?>" />
+                                    <a class="user" href="#"> <?=AdminLog::getTypeDescription($value['type'])?> -- <?=$value['index']?> </a>
+                                    <?=$value['params']?>
+                                    <a href="#"><?=$value['url']?></a>
                                     <div class="time">
                                         <i class="ace-icon fa fa-clock-o bigger-110"></i>
-                                        <?=$value['time']?>
+                                        <?=date('Y-m-d H:i:s', $value['created_at'])?>
                                     </div>
                                 </div>
 

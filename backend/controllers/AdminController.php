@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\AdminLog;
 use Yii;
 use backend\models\Admin;
 use common\models\China;
@@ -79,11 +80,20 @@ class AdminController extends Controller
             }
         }
 
+        // 操作日志
+        $logs = AdminLog::find()->where([
+            'created_id' => $user->id
+        ])
+            ->orderBy(['id' => SORT_DESC])
+            ->limit(100)
+            ->asArray()
+            ->all();
+
         // 载入视图文件
         return $this->render('view', [
             'address' => $address,  // 县
             'china'   => $arrChina, // 省市信息
-            'logs'    => [],  // 日志信息
+            'logs'    => $logs,  // 日志信息
         ]);
     }
 

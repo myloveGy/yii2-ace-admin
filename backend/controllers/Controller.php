@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\AdminLog;
 use Yii;
 use common\models\Admin;
 use common\models\UploadForm;
@@ -185,6 +186,8 @@ class Controller extends \common\controllers\UserController
                 // 判断修改返回数据
                 if ($model->save()) {
                     $this->handleJson($model);
+                    $pk = $this->pk;
+                    AdminLog::create(AdminLog::TYPE_CREATE, $data, $this->pk.'='.$model->$pk);
                 } else {
                     $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                 }
@@ -224,6 +227,7 @@ class Controller extends \common\controllers\UserController
                     // 修改数据成功
                     if ($model->save()) {
                         $this->handleJson($model);
+                        AdminLog::create(AdminLog::TYPE_UPDATE, $data, $this->pk.'='.$data[$this->pk]);
                     } else {
                         $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                     }
@@ -252,6 +256,7 @@ class Controller extends \common\controllers\UserController
                 // 删除数据成功
                 if ($model->delete()) {
                     $this->handleJson($model);
+                    AdminLog::create(AdminLog::TYPE_DELETE, $data, $this->pk.'='.$data[$this->pk]);
                 } else {
                     $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                 }
@@ -276,6 +281,7 @@ class Controller extends \common\controllers\UserController
                 $this->arrJson['errCode'] = 220;
                 if ($model::deleteAll([$this->pk => $arrIds])) {
                     $this->handleJson($ids);
+                    AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk.'='.$ids);
                 }
             }
 
@@ -312,6 +318,7 @@ class Controller extends \common\controllers\UserController
                     $this->arrJson['errCode'] = 206;
                     if ($model->save()) {
                         $this->handleJson($model);
+                        AdminLog::create(AdminLog::TYPE_UPDATE, $request->post(), $this->pk.'='.$mixPk);
                     } else {
                         $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                     }
@@ -377,10 +384,14 @@ class Controller extends \common\controllers\UserController
                                 if ($objFile->saveAs($strFilePath)
                                     && $this->afterUpload($objFile, $strFilePath, $strField)
                                 ) {
-                                    $this->handleJson([
+                                    $mixReturn = [
                                         'sFilePath' => trim($strFilePath, '.'),
                                         'sFileName' => $objFile->baseName.'.'.$objFile->extension,
-                                    ]);
+                                    ];
+
+                                    $this->handleJson($mixReturn);
+
+                                    AdminLog::create(AdminLog::TYPE_UPLOAD, $mixReturn, $strField);
                                 }
                             }
                         }
