@@ -6,7 +6,8 @@ $this->title = '操作日志';
 <?php $this->beginBlock('javascript') ?>
     <script type="text/javascript">
         var oTypes = <?=\yii\helpers\Json::encode(\backend\models\AdminLog::getTypeDescription())?>,
-        isShow = <?=Yii::$app->user->id == \backend\models\Admin::SUPER_ADMIN_ID ? 'true' : 'false'?>;
+            isShow = <?=Yii::$app->user->id == \backend\models\Admin::SUPER_ADMIN_ID ? 'true' : 'false'?>,
+            aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>;
         var m = meTables({
             title: "操作日志",
             buttons: {
@@ -27,19 +28,18 @@ $this->title = '操作日志';
                         bShow: false
                     },
                     delete: {
-                      bShow: isShow
+                        bShow: isShow
                     }
                 }
             },
             table: {
                 "aoColumns": [
                     {
-                        "title": "日志ID",
-                        "data": "id",
-                        "sName": "id",
+                        "title": "操作人",
+                        "data": "created_id",
+                        "sName": "created_id",
                         "edit": {"type": "text", "required": true, "number": true},
-                        "bSortable": false,
-                        "defaultOrder": "desc"
+                        "createdCell": mt.adminString
                     },
                     {
                         "title": "类型",
@@ -49,7 +49,7 @@ $this->title = '操作日志';
                         "value": oTypes,
                         "search": {"type": "select"},
                         "bSortable": false,
-                        "createdCell": function(td, data) {
+                        "createdCell": function (td, data) {
                             $(td).html(oTypes[data] ? oTypes[data] : data);
                         }
                     },
@@ -91,13 +91,13 @@ $this->title = '操作日志';
                         "edit": {"type": "text"},
                         "bSortable": false,
                         "isHide": true,
-                        "createdCell": function(td, data) {
+                        "createdCell": function (td, data) {
                             var json = data, x, html = "[ <br/>";
                             try {
                                 json = JSON.parse(data);
                                 if (typeof json == 'object') {
-                                    for(x in json) {
-                                        html += "   " +  x + " => " + json[x] + "<br/>";
+                                    for (x in json) {
+                                        html += "   " + x + " => " + json[x] + "<br/>";
                                     }
                                 }
                             } catch (e) {
@@ -110,17 +110,12 @@ $this->title = '操作日志';
                         }
                     },
                     {
-                        "title": "操作人",
-                        "data": "created_id",
-                        "sName": "created_id",
-                        "edit": {"type": "text", "required": true, "number": true}
-                    },
-                    {
                         "title": "创建时间",
                         "data": "created_at",
                         "sName": "created_at",
                         "edit": {"type": "text", "required": true, "number": true},
-                        "createdCell": meTables.dateTimeString
+                        "createdCell": meTables.dateTimeString,
+                        "defaultOrder": "desc"
                     }
                 ]
             }
