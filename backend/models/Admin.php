@@ -33,6 +33,11 @@ class Admin extends \common\models\Admin
     private $_roleLabel;
 
     /**
+     * @var integer 超级管理员ID
+     */
+    const SUPER_ADMIN_ID = 1;
+
+    /**
      * getArrayStatus() 获取状态说明信息
      * @param integer|null $intStatus
      * @return array|string
@@ -77,7 +82,11 @@ class Admin extends \common\models\Admin
         $uid = Yii::$app->user->id;    // 用户ID
         $auth = Yii::$app->authManager; // 权限对象
         // 管理员
-        $roles = $uid == 1 ? $auth->getRoles() : $auth->getRolesByUser($uid);
+        $roles = $uid == self::SUPER_ADMIN_ID ? $auth->getRoles() : $auth->getRolesByUser($uid);
+        if ($roles && isset($roles[Auth::SUPER_ADMIN_NAME])) {
+            unset($roles[Auth::SUPER_ADMIN_NAME]);
+        }
+
         return ArrayHelper::map($roles, 'name', 'description');
     }
 
@@ -194,7 +203,7 @@ class Admin extends \common\models\Admin
      */
     public function beforeDelete()
     {
-        if ($this->id == 1) {
+        if ($this->id == self::SUPER_ADMIN_ID) {
             $this->addError('username', '不能删除超级管理员');
             return false;
         }

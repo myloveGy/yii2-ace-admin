@@ -2,6 +2,8 @@
 
 namespace backend\rules;
 
+use backend\models\Admin;
+use backend\models\Auth;
 use yii;
 use yii\rbac\Rule;
 
@@ -17,16 +19,6 @@ class AuthAssignmentRule extends Rule
     public $name = 'auth-assignment';
 
     /**
-     * @var string 超级管理员角色名称
-     */
-    private $adminRoleName = 'administrator';
-
-    /**
-     * @var int 超级管理员ID
-     */
-    private $intUserId = 1;
-
-    /**
      * 执行验证
      * @param int|string $user
      * @param \yii\rbac\Item $item
@@ -37,7 +29,7 @@ class AuthAssignmentRule extends Rule
     {
         $isReturn = false;
         $strItemName = empty($params['item_name']) ? Yii::$app->request->post('item_name') : $params['item_name'];
-        if ($strItemName !== $this->adminRoleName || $user !== 1) {
+        if ($strItemName !== Auth::SUPER_ADMIN_NAME || $user !== Admin::SUPER_ADMIN_ID) {
             $isReturn = true;
         }
 

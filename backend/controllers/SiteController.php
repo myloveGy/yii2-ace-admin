@@ -63,17 +63,11 @@ class SiteController extends \yii\web\Controller
     public function actionIndex()
     {
         $this->layout = false;
-
         // 获取用户导航栏信息
         $menus = Menu::getUserMenus(Yii::$app->user->id);
-        if ($menus) {
-            Yii::$app->view->params['user'] = Yii::$app->getUser()->identity;
-            Yii::$app->view->params['menus'] = $menus;
-            // 加载视图
-            return $this->render('index');
-        } else {
-            throw new UnauthorizedHttpException('对不起，您还没获得显示导航栏目权限!');
-        }
+        Yii::$app->view->params['user'] = Yii::$app->getUser()->identity;
+        Yii::$app->view->params['menus'] = $menus ? $menus : [];
+        return $this->render('index');
     }
 
     /**

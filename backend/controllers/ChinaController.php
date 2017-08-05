@@ -10,6 +10,9 @@ use yii\helpers\ArrayHelper;
  */
 class ChinaController extends Controller
 {
+    /**
+     * @var string 使用JqGrid 显示数据
+     */
     public $strategy = 'JqGrid';
 
     /**

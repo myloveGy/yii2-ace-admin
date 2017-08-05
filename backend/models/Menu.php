@@ -103,7 +103,7 @@ class Menu extends AdminModel
         $menus = [];
 
         // 管理员登录
-        if ($intUserId == 1) {
+        if ($intUserId == Admin::SUPER_ADMIN_ID) {
             $menus = self::find()
                 ->where(['status' => self::STATUS_ACTIVE])
                 ->orderBy(['sort' => SORT_ASC])
@@ -116,6 +116,10 @@ class Menu extends AdminModel
                 $menus = self::getMenusByPermissions($permissions);
             }
         }
+
+        // 将导航栏信息添加到缓存
+        $cache = Yii::$app->cache;
+        $index = self::CACHE_KEY . $intUserId;
 
         // 处理导航栏信息
         if ($menus) {
@@ -134,13 +138,11 @@ class Menu extends AdminModel
                 }
             }
 
-            // 将导航栏信息添加到缓存
-            $cache = Yii::$app->cache;
-            $index = self::CACHE_KEY . $intUserId;
-
             // 存在先删除
             if ($cache->get($index)) $cache->delete($index);
             return $cache->set($index, $navigation, Yii::$app->params['cacheTime']);
+        } else {
+            $cache->delete($index);
         }
 
         return false;

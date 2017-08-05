@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\Admin;
 use common\helpers\Helper;
 use Yii;
 use backend\models\Auth;
@@ -40,7 +41,7 @@ class RoleController extends Controller
         $where = [['=', 'type', Auth::TYPE_ROLE]]; // 查询角色信息
 
         // 不是管理员
-        if ($uid != 1) {
+        if ($uid != Admin::SUPER_ADMIN_ID) {
             $name = [];
             // 获取用户的所有角色
             $roles = Yii::$app->authManager->getRolesByUser($uid);
@@ -78,7 +79,7 @@ class RoleController extends Controller
         if ($name === Auth::SUPER_ADMIN_NAME) {
             Yii::$app->session->setFlash(
                 'warning',
-                Yii::t('app', 'The Administrator has all permissions')
+                Yii::t('app', 'You can not modify the super administrator privileges')
             );
             return $this->redirect(['view', 'name' => $name]);
         }
@@ -87,7 +88,7 @@ class RoleController extends Controller
         $uid = Yii::$app->user->id;                     // 用户ID
         $objAuth = Yii::$app->getAuthManager();             // 权限对象
         $mixRoles = $objAuth->getAssignment($name, $uid);    // 获取用户是否有改权限
-        if (!$mixRoles && $uid != 1) {
+        if (!$mixRoles && $uid != Admin::SUPER_ADMIN_ID) {
             throw new UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
         }
 

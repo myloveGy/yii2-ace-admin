@@ -156,7 +156,7 @@ class Auth extends ActiveRecord
                 } else {
                     // 将角色添加给用户
                     $uid = (int)Yii::$app->user->id;
-                    if ($uid !== 1) {
+                    if ($uid !== Admin::SUPER_ADMIN_ID) {
                         $auth->assign($item, $uid);
                     }
                 }

@@ -52,7 +52,7 @@ $this->title = $name;
                 回去
             </a>
 
-            <a href="<?php echo Url::to(['site/index']); ?>" class="btn btn-primary">
+            <a href="javascript: window.parent ? window.parent.location.reload() : window.location.href = '<?=Url::to(['site/system'])?>'" class="btn btn-primary">
                 <i class="ace-icon fa fa-desktop"></i>
                 首页
             </a>

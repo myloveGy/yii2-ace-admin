@@ -14,6 +14,7 @@ return [
     'The file "{file}" is not an image.' => '文件 "{file}" 不是一个图像文件。',
     'Hello, {name}' => '你好,{name}',
     'The Administrator has all permissions' => '该管理员拥有所有权限',
+    'You can not modify the super administrator privileges' => '不能修改超级管理员权限',
     'successfully updated' => '更新成功',
     'successfully removed' => '删除成功',
     'still used' => '还在使用',

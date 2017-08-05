@@ -31,7 +31,7 @@ class AdminController extends Controller
     {
         $where  = [];
         $intUid = (int)Yii::$app->user->id;
-        if ($intUid !== 1) {
+        if ($intUid !== Admin::SUPER_ADMIN_ID) {
             $where = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
         }
 

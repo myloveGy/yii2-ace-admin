@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\Admin;
 use backend\models\Auth;
 use backend\models\AuthAssignment;
 use yii\helpers\Json;
@@ -47,13 +48,7 @@ class AuthAssignmentController extends Controller
     public function actionIndex()
     {
         // 查询出全部角色
-        $roles = Auth::find()->where([
-            'type' => Auth::TYPE_ROLE
-        ])->orderBy(['created_at' => SORT_DESC])->asArray()->all();
-        $arrRoles = [];
-        foreach ($roles as $value) {
-            $arrRoles[$value['name']] = $value['name'].' - '.$value['description'];
-        }
+        $arrRoles = Admin::getArrayRole();
 
         // 载入视图
         return $this->render('index', [

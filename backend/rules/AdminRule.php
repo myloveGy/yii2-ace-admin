@@ -34,7 +34,7 @@ class AdminRule extends Rule
     public function execute($user, $item, $params)
     {
         // 管理员不做验证
-        if ($user === 1) {
+        if ($user === Admin::SUPER_ADMIN_ID) {
             return true;
         } else {
             // 先使用传递的值，再使用请求的值

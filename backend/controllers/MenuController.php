@@ -40,7 +40,7 @@ class MenuController extends Controller
     {
         // 查询父级分类信息
         $parents = Menu::find()->select(['id', 'menu_name'])->where([
-            'status' => 1,
+            'status' => Menu::STATUS_ACTIVE,
             'pid' => 0
         ])->indexBy('id')->asArray()->all();
 
