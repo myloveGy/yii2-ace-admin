@@ -153,7 +153,8 @@ class m170801_081237_insert_rabc extends Migration
             'user_id',
             'created_at'
         ], [
-            ['administrator', 1, $time]
+            ['administrator', 1, $time],
+            ['admin', 2, $time]
         ]);
     }
 
