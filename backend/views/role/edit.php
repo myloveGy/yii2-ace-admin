@@ -112,7 +112,12 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
                     <?php foreach ($permissions as $key => $value) : ?>
                         <div class="checkbox col-sm-4" style="padding:5px;">
                             <label>
-                                <input class="ace ace-checkbox-2" type="checkbox" name="Auth[_permissions][]"  value="<?= $key ?>" <?php echo in_array($key, $model->_permissions) ? 'checked="checked"' : ''; ?>/>
+                                <input class="ace ace-checkbox-2"
+                                       type="checkbox"
+                                       name="Auth[_permissions][]"
+                                       value="<?= $key ?>"
+                                    <?=in_array($key, $model->_permissions) ? 'checked="checked"' : ''?>
+                                />
                                 <span class="lbl"> <?= $value ?></span>
                             </label>
                         </div>

@@ -34,6 +34,11 @@ class Auth extends ActiveRecord
     const TYPE_PERMISSION = 2;
 
     /**
+     * @var string 定义超级管理员角色
+     */
+    const SUPER_ADMIN_NAME = 'administrator';
+
+    /**
      * @var array 权限信息
      */
     public $_permissions = [];

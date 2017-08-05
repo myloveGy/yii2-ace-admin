@@ -1,5 +1,7 @@
 <?php
+
 use yii\widgets\DetailView;
+use common\widgets\Alert;
 
 $this->title = '角色信息详情';
 
@@ -9,6 +11,7 @@ $this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js', [
 
 /* @var $model \backend\models\Auth */
 ?>
+<?=Alert::widget()?>
 <div class="col-xs-12 col-sm-4">
     <div class="col-xs-12 col-sm-12 widget-container-col  ui-sortable">
         <!-- #section:custom/widget-box -->

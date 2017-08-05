@@ -75,8 +75,11 @@ class RoleController extends Controller
     public function actionEdit($name)
     {
         // 管理员直接返回
-        if ($name == Yii::$app->params['adminRoleName']) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'The Administrator has all permissions'));
+        if ($name === Auth::SUPER_ADMIN_NAME) {
+            Yii::$app->session->setFlash(
+                'warning',
+                Yii::t('app', 'The Administrator has all permissions')
+            );
             return $this->redirect(['view', 'name' => $name]);
         }
 
@@ -98,21 +101,26 @@ class RoleController extends Controller
             // 修改权限
             $permissions = $this->preparePermissions($array);
             if ($model->updateRole($name, $permissions)) {
-                Yii::$app->session->setFlash('success', " '$model->name' " . Yii::t('app', 'successfully updated'));
+                Yii::$app->session->setFlash(
+                    'success',
+                    " '$model->name' " . Yii::t('app', 'successfully updated')
+                );
                 return $this->redirect(['view', 'name' => $name]);
             } else {
                 Yii::$app->session->setFlash('error', Helper::arrayToString($model->getErrors()));
             }
         }
 
-        // 显示视图
+        // 自己的权限
         $permissions = $this->getPermissions();
 
-        // 获取权限信息
-        $arrHaves = array_keys($objAuth->getPermissionsByRole($name));
+        // 权限对应的导航栏目
+        $menus = Menu::getMenusByPermissions($permissions);
 
         $model->loadRolePermissions($name);
-        $menus = Menu::find()->where(['status' => 1])->asArray()->all();
+
+        $arrHaves = $model->_permissions;
+
         $trees = [];
         if ($menus) {
             // 获取一级目录
@@ -164,34 +172,24 @@ class RoleController extends Controller
         // 查询角色信息
         /* @var $model \backend\models\Auth */
         $model = $this->findModel($name);
+
+        // 获取角色权限信息
         $permissions = Yii::$app->authManager->getPermissionsByRole($name);
 
         // 查询导航栏信息
-        $menus = $parent = [];
-        $child = Menu::find()->where(['url' => array_keys($permissions)])->asArray()->all();
+        $menus = [];
+        $child = Menu::getMenusByPermissions($permissions);
         if ($child) {
-            // 处理数据
-            foreach ($child as $key => $value) {
-                if ($value['pid'] == 0) {
-                    $menus[$value['id']] = ['name' => $value['menu_name'], 'child' => []];
-                    unset($child[$key]);
-                } else {
-                    $parent[] = $value['pid'];
-                }
-            }
-
-            // 查询父类数据
-            $parents = Menu::find()->where(['id' => $parent, 'pid' => 0])->asArray()->all();
-            if ($parents) {
-                foreach ($parents as $value) {
-                    $menus[$value['id']] = ['name' => $value['menu_name'], 'child' => []];
-                }
-            }
-
-            // 最后处理数据
             foreach ($child as $value) {
-                if (isset($menus[$value['pid']])) {
-                    $menus[$value['pid']]['child'][] = ['name' => $value['menu_name']];
+                $key = $value['pid'] == 0 ? $value['id'] : $value['pid'];
+                if (!isset($menus[$key])) {
+                    $menus[$key] = ['child' => []];
+                }
+
+                if ($value['pid'] == 0) {
+                    $menus[$key]['name'] = $value['menu_name'];
+                } else {
+                    $menus[$key]['child'][] = ['name' => $value['menu_name']];
                 }
             }
         }

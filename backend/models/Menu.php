@@ -9,10 +9,10 @@ use common\models\AdminModel;
  * This is the model class for table "{{%menu}}".
  *
  * @property integer $id
- * @property string  $pid
- * @property string  $menu_name
- * @property string  $icons
- * @property string  $url
+ * @property string $pid
+ * @property string $menu_name
+ * @property string $icons
+ * @property string $url
  * @property integer $status
  * @property integer $sort
  * @property integer $created_at
@@ -24,6 +24,12 @@ class Menu extends AdminModel
 {
     // 缓存key
     const CACHE_KEY = 'navigation';
+
+    /**
+     * 状态
+     */
+    const STATUS_ACTIVE = 1; // 启用
+    const STATUS_DELETE = 0; // 关闭
 
     /**
      * @inheritdoc
@@ -51,13 +57,13 @@ class Menu extends AdminModel
     public function attributeLabels()
     {
         return [
-            'id'         => 'ID',
-            'pid'        => '上级分类',
-            'menu_name'  => '栏目名称',
-            'icons'      => '图标',
-            'url'        => '访问地址',
-            'status'     => '状态',
-            'sort'       => '排序字段',
+            'id' => 'ID',
+            'pid' => '上级分类',
+            'menu_name' => '栏目名称',
+            'icons' => '图标',
+            'url' => '访问地址',
+            'status' => '状态',
+            'sort' => '排序字段',
             'created_at' => '创建时间',
             'created_id' => '创建用户',
             'updated_at' => '修改时间',
@@ -87,47 +93,38 @@ class Menu extends AdminModel
     }
 
     /**
-     * setNavigation() 设置用户导航栏信息
+     * 设置用户导航栏信息
      * @param  int $intUserId 用户ID
      * @return bool
      */
     public static function setNavigation($intUserId)
     {
-        $menus = $navigation =  [];                              // 初始化定义导航栏信息
-        $sort  = ['sort' => SORT_ASC];                           // 排序条件
-        $field = ['id', 'pid', 'menu_name', 'icons', 'url'];     // 查询字段信息
+        // 初始化定义导航栏信息
+        $menus = [];
 
         // 管理员登录
         if ($intUserId == 1) {
-            $menus = self::find()->select($field)->where(['status' => 1])->orderBy($sort)->asArray()->all();
+            $menus = self::find()
+                ->where(['status' => self::STATUS_ACTIVE])
+                ->orderBy(['sort' => SORT_ASC])
+                ->asArray()
+                ->all();
         } else {
             // 其他用户登录成功获取权限
-            $arrAuth = Yii::$app->getAuthManager()->getPermissionsByUser($intUserId);
-            if ($arrAuth) {
-                $menus = self::find()->select($field)->where(['status' => 1, 'url' => array_keys($arrAuth)])->orderBy($sort)->indexBy('id')->asArray()->all();
-                // 有导航栏信息
-                if ($menus) {
-                    $parent = [];
-                    // 获取父类信息
-                    foreach ($menus as $key => $value) {
-                        if ($value['pid'] != 0) {
-                            $parent[] = $value['pid'];
-                        }
-                    }
-
-                    // 获取主要栏目信息
-                    $parent = self::find()->select($field)->where(['status' => 1, 'pid' => 0, 'id' => $parent])->orderBy($sort)->indexBy('id')->asArray()->all();
-                    $menus  = $menus + $parent;
-                }
+            $permissions = Yii::$app->getAuthManager()->getPermissionsByUser($intUserId);
+            if ($permissions) {
+                $menus = self::getMenusByPermissions($permissions);
             }
         }
 
         // 处理导航栏信息
         if ($menus) {
+            $navigation = [];
+
             foreach ($menus as $value) {
                 // 判断是否存在
                 $id = $value['pid'] == 0 ? $value['id'] : $value['pid'];
-                if ( ! isset($navigation[$id])) $navigation[$id] = ['child' => []];
+                if (!isset($navigation[$id])) $navigation[$id] = ['child' => []];
 
                 // 添加数据
                 if ($value['pid'] == 0) {
@@ -139,7 +136,8 @@ class Menu extends AdminModel
 
             // 将导航栏信息添加到缓存
             $cache = Yii::$app->cache;
-            $index = self::CACHE_KEY.$intUserId;
+            $index = self::CACHE_KEY . $intUserId;
+
             // 存在先删除
             if ($cache->get($index)) $cache->delete($index);
             return $cache->set($index, $navigation, Yii::$app->params['cacheTime']);
@@ -149,18 +147,66 @@ class Menu extends AdminModel
     }
 
     /**
-     * getUserMenus() 获取用户导航栏信息
+     *  获取用户导航栏信息
      * @param  int $intUserId 用户ID
      * @return mixed
      */
     public static function getUserMenus($intUserId)
     {
         // 查询导航栏信息
-        $menus = Yii::$app->cache->get(self::CACHE_KEY.$intUserId);
-        if ( ! $menus) {
+        $menus = Yii::$app->cache->get(self::CACHE_KEY . $intUserId);
+        if (!$menus) {
             // 生成缓存导航栏文件
             Menu::setNavigation($intUserId);
-            $menus = Yii::$app->cache->get(self::CACHE_KEY.$intUserId);
+            $menus = Yii::$app->cache->get(self::CACHE_KEY . $intUserId);
+        }
+
+        return $menus;
+    }
+
+    /**
+     * 通过权限获取导航栏目
+     * @param array $permissions 权限信息
+     * @return array
+     */
+    public static function getMenusByPermissions($permissions)
+    {
+        $menus = [];
+        $child = self::find()->where([
+            'url' => array_keys($permissions),
+            'status' => self::STATUS_ACTIVE
+        ])->orderBy([
+            'sort' => SORT_ASC
+        ])
+            ->asArray()
+            ->indexBy('id')
+            ->all();
+
+        if ($child) {
+            $arrParentIds = [];
+            foreach ($child as $value) {
+                if ($value['pid'] != 0) {
+                    $arrParentIds[] = $value['pid'];
+                }
+
+                $menus[] = $value;
+            }
+
+            // 查询父类的信息
+            if ($arrParentIds) {
+                $parents = self::find()
+                    ->where(['id' => $arrParentIds])
+                    ->orderBy(['sort' => SORT_ASC])
+                    ->asArray()
+                    ->all();
+                if ($parents) {
+                    foreach ($parents as $value) {
+                        if (!isset($child[$value['id']])) {
+                            $menus[] = $value;
+                        }
+                    }
+                }
+            }
         }
 
         return $menus;
