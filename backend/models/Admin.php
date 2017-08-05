@@ -227,6 +227,24 @@ class Admin extends \common\models\Admin
     }
 
     /**
+     * 批量删除数据
+     * @param null $condition 查询条件
+     * @param array $params 其他参数
+     * @return bool 是否成功
+     */
+    public static function deleteAll($condition = null, $params = [])
+    {
+        $all = self::find()->where($condition)->all();
+        if ($all) {
+            foreach ($all as $value) {
+                $value->delete();
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * afterDelete() 删除之后的处理
      */
     public function afterDelete()

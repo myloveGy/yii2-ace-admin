@@ -449,7 +449,7 @@
                 icon: 0
                 // 确认删除
             }, function(){
-                self.save({"ids":data.join(',')});
+                self.save({"id": data.join(',')});
                 $(self.options.sTable + " input:checkbox:checked").prop("checked", false);
                 // 取消删除
             }, function(){

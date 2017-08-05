@@ -272,7 +272,7 @@ class Controller extends \common\controllers\UserController
      */
     public function actionDeleteAll()
     {
-        $ids = Yii::$app->request->post('ids');
+        $ids = Yii::$app->request->post('id');
         if ($ids) {
             $arrIds = explode(',', $ids);
             if ($arrIds) {
