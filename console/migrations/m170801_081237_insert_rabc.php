@@ -68,6 +68,7 @@ class m170801_081237_insert_rabc extends Migration
             ['authority/update', 2, '修改权限信息', $time, $time],
             ['china/create', 2, '创建地址信息', $time, $time],
             ['china/delete', 2, '删除地址信息', $time, $time],
+            ['china/delete-all', 2, '地址信息-批量删除', $time, $time],
             ['china/export', 2, '地址信息导出', $time, $time],
             ['china/index', 2, '显示地址信息', $time, $time],
             ['china/search', 2, '搜索地址信息', $time, $time],
