@@ -100,12 +100,28 @@ class m170801_081237_insert_rabc extends Migration
             ['user/update', 2, '用户信息-修改', $time, $time],
         ]);
 
+        // 管理员信息
+        $admin = [
+            'auth-assignment/delete', 'auth-assignment/export', 'auth-assignment/index',
+            'auth-assignment/search', 'auth-rule/create', 'auth-rule/delete',
+            'auth-rule/delete-all', 'auth-rule/export', 'auth-rule/index',
+            'auth-rule/search', 'auth-rule/update', 'authority/create',
+            'authority/delete', 'authority/delete-all', 'authority/export',
+            'authority/index', 'authority/search', 'authority/update',
+            'menu/create', 'menu/delete', 'menu/delete-all',
+            'menu/export', 'menu/index', 'menu/search',
+            'auth-assignment/create',
+        ];
+
         // 第二步写入超级管理员的权限
         $all = $this->db->createCommand('SELECT `name` FROM '.$this->table.' WHERE `type` = 2')->queryAll();
         if ($all) {
             $insert = [];
             foreach ($all as $value) {
                 $insert[] = ['administrator', $value['name']];
+                if (!in_array($value['name'], $admin)) {
+                    $insert[] = ['admin', $value['name']];
+                }
             }
 
             $this->batchInsert($this->itemTable, ['parent', 'child'], $insert);

@@ -85,7 +85,7 @@ AppAsset::register($this);
 
                     <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                         <li>
-                            <a class="window-iframe" data-id="index" title="登录信息" data-url="<?=Url::toRoute(['site/index'])?>" href="<?=Url::toRoute(['site/index'])?>">
+                            <a class="window-iframe" data-id="index" title="登录信息" data-url="<?=Url::toRoute(['site/system'])?>" href="<?=Url::toRoute(['site/system'])?>">
                                 <i class="ace-icon fa fa-desktop"></i>登录信息
                             </a>
                         </li>

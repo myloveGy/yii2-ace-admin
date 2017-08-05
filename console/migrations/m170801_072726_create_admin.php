@@ -71,6 +71,20 @@ class m170801_072726_create_admin extends Migration
                 $time,
                 1
             ],
+            [
+                'admin',
+                'admin@admin.com',
+                'administrator',
+                'tArp_Kv4z1JlzBUZYCL33N24AZL-_77p',
+                '$2y$13$RNrJ7GK1A5iZRxBpho6sbeCJKfNRxzy5axCeRjZLqvA5W6RuVYBRW',
+                'CgScbf1E96N3pqH01b0mVi_Z58j8QsRV_1501916190',
+                $time,
+                '127.0.0.1',
+                $time,
+                1,
+                $time,
+                1
+            ],
         ]);
     }
 

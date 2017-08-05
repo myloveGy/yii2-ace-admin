@@ -63,7 +63,7 @@ class Auth extends ActiveRecord
     {
         return [
             [['name', 'type', 'newName', 'description'], 'required'],
-            ['name', 'match', 'pattern' => '/^([a-zA-Z0-9_-]|([a-zA-z0-9_-]\\/[0-9_-a-zA-z]))+$/'],
+            [['name', 'newName'], 'match', 'pattern' => '/^([a-zA-Z0-9_-]|([a-zA-z0-9_-]\\/[0-9_-a-zA-z]))+$/'],
             ['name', 'string', 'min' => 3],
             ['type', 'integer'],
             ['type', 'in', 'range' => [self::TYPE_PERMISSION, self::TYPE_ROLE]],
