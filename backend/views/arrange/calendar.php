@@ -9,6 +9,7 @@ $url = '@web/public/assets';
 $depends = ['depends' => 'backend\assets\AdminAsset'];
 
 $this->registerCssFile($url.'/css/fullcalendar.css', $depends);
+$this->registerCssFile($url.'/css/bootstrap-datetimepicker.css', $depends);
 $this->registerJsFile($url.'/js/jquery-ui.custom.min.js', $depends);
 $this->registerJsFile($url.'/js/jquery.ui.touch-punch.min.js', $depends);
 $this->registerJsFile($url.'/js/date-time/moment.min.js', $depends);

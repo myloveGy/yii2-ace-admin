@@ -67,11 +67,6 @@ CREATE TABLE `yii2_admin_log` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='管理员信息表';
 
 -- ----------------------------
--- Records of yii2_admin_log
--- ----------------------------
-INSERT INTO `yii2_admin_log` VALUES ('1', '1', 'china', 'create', '/china/create', 'id=11111111111111', '{\"id\":\"11111111111111\",\"name\":\"cesss\",\"pid\":\"0\",\"oper\":\"add\"}', '1501930382', '2');
-
--- ----------------------------
 -- Table structure for yii2_arrange
 -- ----------------------------
 DROP TABLE IF EXISTS `yii2_arrange`;
