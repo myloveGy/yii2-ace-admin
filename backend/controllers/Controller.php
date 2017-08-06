@@ -267,7 +267,7 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * actionDeleteAll()批量删除操作
+     * 批量删除操作
      * @return mixed|string
      */
     public function actionDeleteAll()

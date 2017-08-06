@@ -199,30 +199,31 @@
 
         // 表单提交
         $form.add('#sUserPass').submit(function(){
-            if ($(this).validate(validatorError).form())
-            {
-                var data  = $(this).serializeArray(),
+            var self = $(this);
+            if ($(this).validate(validatorError).form()) {
+                var data = $(this).serializeArray(),
                     first = $('#form-field-first').val(),
-                    last  = $('#form-field-last').val();
-                data.push({"name":"actionType", "value": "update"});
-                if (!empty(first) && ! empty(last)) data.push({"name": "nickname", "value": first + last});
+                    last = $('#form-field-last').val();
+                data.push({"name": "actionType", "value": "update"});
+                if (!empty(first) && !empty(last)) data.push({"name": "nickname", "value": first + last});
                 var oLoading = layer.load();
                 $.ajax({
-                    url:      "<?=\yii\helpers\Url::toRoute(['admin/update'])?>",
-                    type:     "POST",
+                    url: "<?=\yii\helpers\Url::toRoute(['admin/update'])?>",
+                    type: "POST",
                     dataType: "json",
-                    data:     data
+                    data: data
                 })
-                .always(function(){
-                    layer.close(oLoading);
-                })
-                .done(function(json){
-                    layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
-                    $("div.btn-toolbar div.btn-group label:first").trigger("click")
-                })
-                .fail(function(){
-                    layer.msg("服务器繁忙，请稍后再试...");
-                });
+                    .always(function () {
+                        layer.close(oLoading);
+                    })
+                    .done(function (json) {
+                        self.get(0).reset();
+                        layer.msg(json.errMsg, {icon: json.errCode == 0 ? 6 : 5});
+                        $("div.btn-toolbar div.btn-group label:first").trigger("click")
+                    })
+                    .fail(function () {
+                        layer.msg("服务器繁忙，请稍后再试...");
+                    });
             }
 
             return false;
