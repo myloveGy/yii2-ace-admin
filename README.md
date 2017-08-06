@@ -51,13 +51,12 @@ Yii2 ace Admin 后台模板
     class ChinaController extends Controller 
     {
         /**
-         * 定义使用的model
-         * @var string
+         * @var string 定义使用的model
          */
         protected $modelClass = '\common\models\China';
             
         /**
-         * where() 处理查询信息(主要查询、数据导出时候使用)
+         * 处理查询信息(主要查询、数据导出时候使用)
          * @param array $params 查询时候请求的参数信息（一个数组）
          * @return array 需要返回一个数组
          */
