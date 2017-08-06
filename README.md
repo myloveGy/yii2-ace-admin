@@ -37,7 +37,8 @@ Yii2 ace Admin 后台模板
 
 2. 配置虚拟机,设置路径为 bacekend/web/ 下，配置好路由重写 
 
-* 后台默认管理员账号： super 密码 admin123
+* 后台默认超级管理员账号：super 密码：admin123
+* 管理员账号：admin 密码：admin888
 ### 使用说明
 1. 后台控制器配置
     ```php
