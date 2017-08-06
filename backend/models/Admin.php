@@ -159,7 +159,7 @@ class Admin extends \common\models\Admin
     }
 
     /**
-     * beforeSave() 新增之前的处理
+     * 新增之前的处理
      * @param  bool $insert 是否是新增数据
      * @return bool 处理是否成功
      */
@@ -176,7 +176,7 @@ class Admin extends \common\models\Admin
     }
 
     /**
-     * afterSave() 修改之后的处理
+     * 修改之后的处理
      * @param bool $insert 是否是新增数据
      * @param array $changedAttributes 修改的字段
      */
@@ -209,7 +209,7 @@ class Admin extends \common\models\Admin
     }
 
     /**
-     * beforeDelete()删除之前的处理
+     * 删除之前的处理-验证不能删除超级管理员和自己
      */
     public function beforeDelete()
     {
@@ -227,25 +227,7 @@ class Admin extends \common\models\Admin
     }
 
     /**
-     * 批量删除数据
-     * @param null $condition 查询条件
-     * @param array $params 其他参数
-     * @return bool 是否成功
-     */
-    public static function deleteAll($condition = null, $params = [])
-    {
-        $all = self::find()->where($condition)->all();
-        if ($all) {
-            foreach ($all as $value) {
-                $value->delete();
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * afterDelete() 删除之后的处理
+     * 删除之后的处理删除缓存
      */
     public function afterDelete()
     {

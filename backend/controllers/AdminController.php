@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use backend\models\AdminLog;
+use common\helpers\Helper;
 use Yii;
 use backend\models\Admin;
 use common\models\China;
@@ -175,5 +176,38 @@ class AdminController extends Controller
     {
         $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
         $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
+    }
+
+    /**
+     * 重写批量删除处理
+     * @return mixed|string
+     */
+    public function actionDeleteAll()
+    {
+        $ids = Yii::$app->request->post('id');
+        if ($ids) {
+            $arrIds = explode(',', $ids);
+            if ($arrIds) {
+                /* @var $model \yii\db\ActiveRecord */
+                $model = $this->modelClass;
+                $this->arrJson['errCode'] = 220;
+                $all = Admin::findAll([$this->pk => $arrIds]);
+                if ($all) {
+                    $message = '处理成功! <br>';
+                    foreach ($all as $value) {
+                        if ($value->delete()) {
+                            $message .= $value->username.' 删除成功; <br>';
+                        } else {
+                            $message .= $value->username. '删除失败：'.Helper::arrayToString($value->getErrors()).' <br>';
+                        }
+                    }
+
+                    AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk.'='.$ids);
+                    $this->handleJson($arrIds, 0, $message);
+                }
+            }
+        }
+
+        return $this->returnJson();
     }
 }
