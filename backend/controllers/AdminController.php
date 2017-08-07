@@ -118,10 +118,12 @@ class AdminController extends Controller
 
             // 处理图片
             $strTmpPath = dirname($strFilePath).'/thumb_'.basename($strFilePath);
-            $image = Yii::$app->get('image');
-            if ($image) {
-                /* @var $image \yii\image\drivers\Kohana_Image */
-                $image->load($strFilePath);
+
+            /* @var $image yii\image\ImageDriver */
+            $imageComponent = Yii::$app->get('image');
+            if ($imageComponent) {
+                /* @var $image yii\image\drivers\Kohana_Image_GD */
+                $image = $imageComponent->load($strFilePath);
                 $image->resize(180, 180, Image::CROP)->save($strTmpPath);
                 $image->resize(48, 48, Image::CROP)->save();
 

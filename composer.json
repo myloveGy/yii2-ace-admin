@@ -24,10 +24,8 @@
         "yiisoft/yii2": ">=2.0.6",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
-        "yiisoft/yii2-imagine": "^2.0",
         "yurkinx/yii2-image": "^1.1",
-        "phpoffice/phpexcel": "*",
-        "yiisoft/yii2-redis": "^2.0"
+        "phpoffice/phpexcel": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
