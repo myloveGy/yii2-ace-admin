@@ -188,10 +188,10 @@ class AdminController extends Controller
         if ($ids) {
             $arrIds = explode(',', $ids);
             if ($arrIds) {
-                /* @var $model \yii\db\ActiveRecord */
+                /* @var $model \backend\models\Admin */
                 $model = $this->modelClass;
                 $this->arrJson['errCode'] = 220;
-                $all = Admin::findAll([$this->pk => $arrIds]);
+                $all = $model::findAll([$this->pk => $arrIds]);
                 if ($all) {
                     $message = '处理成功! <br>';
                     foreach ($all as $value) {
