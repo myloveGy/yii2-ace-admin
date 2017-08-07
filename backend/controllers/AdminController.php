@@ -118,23 +118,26 @@ class AdminController extends Controller
 
             // 处理图片
             $strTmpPath = dirname($strFilePath).'/thumb_'.basename($strFilePath);
-            /* @var $image \yii\image\drivers\Kohana_Image */
-            $image = Yii::$app->image->load($strFilePath);
-            $image->resize(180, 180, Image::CROP)->save($strTmpPath);
-            $image->resize(48, 48, Image::CROP)->save();
+            $image = Yii::$app->get('image');
+            if ($image) {
+                /* @var $image \yii\image\drivers\Kohana_Image */
+                $image->load($strFilePath);
+                $image->resize(180, 180, Image::CROP)->save($strTmpPath);
+                $image->resize(48, 48, Image::CROP)->save();
 
-            // 管理员页面修改头像
-            $admin = Admin::findOne(Yii::$app->user->id);
-            if ($admin && $strField === 'avatar') {
-                // 删除之前的图像信息
-                if ($admin->face && file_exists('.'.$admin->face)) {
-                    @unlink('.'.$admin->face);
-                    @unlink('.'.dirname($admin->face).'/thumb_'.basename($admin->face));
+                // 管理员页面修改头像
+                $admin = Admin::findOne(Yii::$app->user->id);
+                if ($admin && $strField === 'avatar') {
+                    // 删除之前的图像信息
+                    if ($admin->face && file_exists('.'.$admin->face)) {
+                        @unlink('.'.$admin->face);
+                        @unlink('.'.dirname($admin->face).'/thumb_'.basename($admin->face));
+                    }
+
+                    $admin->face = ltrim($strFilePath, '.');
+                    $admin->save();
+                    $strFilePath = $strTmpPath;
                 }
-
-                $admin->face = ltrim($strFilePath, '.');
-                $admin->save();
-                $strFilePath = $strTmpPath;
             }
         }
 
