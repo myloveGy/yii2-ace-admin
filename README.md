@@ -64,11 +64,12 @@ Yii2 ace Admin 后台模板
         {
             /**
              * 数组配置说明
+             * where 配置默认查询条件,没有可以不用填写
              * 键对应查询字段
              * 值对应查询配置处理
              * 字符串 'pid' => '=' 处理为 model 查询数组 ['=', 'pid', '查询数值']
              * 数组 'id' => [
-             *           'and' => '=',       // 查询类型(默认=)， 其他（>=, 'like', '<='， ...）
+             *           'and' => '=',       // 查询类型(默认=)， 其他（>=, 'like', '<=', ...）
              *           'func' => 'intval'  // 对查询数值的处理函数，一般如果是时间查询转时间戳比较好用
              *           // 'field' => 'cid', // 改变查询的字段
              *      ]
@@ -79,6 +80,7 @@ Yii2 ace Admin 后台模板
              * @return array 需要返回一个数组
              */
             return [
+                'where' => [['=', 'status', 1]], // 默认查询条件(查询数组),没有不用填写
                 'id' => ['and' => '=', 'func' => 'intval'],
                 'name' => function($value) {
                     return ['like', 'name', trim($value)];
