@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use Yii;
 use yii\base\InvalidParamException;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -68,11 +69,7 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        $redis = Yii::$app->redis;
-        $name = $redis->get('myname');
-        var_dump($name);
-        var_dump($redis);exit;
-//        return $this->render('index');
+        return $this->render('index');
     }
 
     /**

@@ -21,8 +21,13 @@ return [
         // 资源管理修改
         'assetManager' => [
             'bundles' => [
+                // 去掉自己的bootstrap 资源
+                'yii\bootstrap\BootstrapAsset' => [
+                    'css' => []
+                ],
                 // 去掉自己加载的Jquery
                 'yii\web\JqueryAsset' => [
+                    'sourcePath' => null,
                     'js' => [],
                 ],
             ],

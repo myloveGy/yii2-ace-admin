@@ -15,14 +15,6 @@ return [
             'identityClass'   => 'common\models\User',
             'enableAutoLogin' => true,
         ],
-
-        // 路由重写
-        'urlManager' => [
-            'rules' => [
-                '<gameName:\w+>/<payType:\w+>/payment' => 'pay/payment', // 支付的路由
-                'games/<gameName:\w+>/play'            => 'games/index', // 游戏选择
-            ],
-        ],
     ],
     'params' => $params,
 ];
