@@ -14,9 +14,9 @@ class Helper
 {
     /**
      * map() 使用ArrayHelper 处理数组, 并添加其他信息
-     * @param  mixed  $array 需要处理的数据
-     * @param  string $id    键名
-     * @param  string $name  键值
+     * @param  mixed $array 需要处理的数据
+     * @param  string $id 键名
+     * @param  string $name 键值
      * @param  array $params 其他数据
      * @return array
      */
@@ -61,8 +61,8 @@ class Helper
     /**
      * 处理通过请求参数对应yii2 where 查询条件
      * @param array $params 请求参数数组
-     * @param array $where  定义查询处理方式数组
-     * @param string $join  默认查询方式是and
+     * @param array $where 定义查询处理方式数组
+     * @param string $join 默认查询方式是and
      * @return array
      */
     public static function handleWhere($params, $where, $join = 'and')
@@ -222,10 +222,10 @@ class Helper
             // 写入数据信息
             $intNum = 2;
             foreach ($query->batch(1000) as $array) {
-                if (is_object($function)) {
-                    $function($array);
-                }
+                // 函数处理
+                if (is_object($function)) $function($array);
 
+                // 处理每一行的数据
                 foreach ($array as $value) {
                     // 写入信息数据
                     foreach ($arrLetter as $intKey => $strValue) {

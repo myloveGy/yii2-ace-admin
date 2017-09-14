@@ -436,7 +436,8 @@ class Controller extends \common\controllers\UserController
                 $model = $this->modelClass;
                 $query = $model::find()
                     ->where(Helper::handleWhere($params, $this->where($params)))
-                    ->orderBy([$this->sort => SORT_DESC])->asArray();
+                    ->orderBy([$this->sort => SORT_DESC])
+                    ->asArray();
 
                 $intCount = $query->count();
                 // 判断数据是否存在
