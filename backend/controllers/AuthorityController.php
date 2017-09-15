@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use backend\models\AuthRule;
@@ -20,7 +21,7 @@ class AuthorityController extends RoleController
     {
         return [
             'name' => 'like',
-			'description' => 'like',
+            'description' => 'like',
             'where' => [['=', 'type', Auth::TYPE_PERMISSION]],
         ];
     }
@@ -43,7 +44,7 @@ class AuthorityController extends RoleController
                     }
                 }
 
-                $arrRules[$value['name']] = $value['name'].' - '.$value['data'];
+                $arrRules[$value['name']] = $value['name'] . ' - ' . $value['data'];
             }
         }
 

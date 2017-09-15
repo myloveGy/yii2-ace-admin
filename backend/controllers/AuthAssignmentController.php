@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use backend\models\Admin;
@@ -23,7 +24,7 @@ class AuthAssignmentController extends Controller
      * @var string 定义使用的model
      */
     public $modelClass = 'backend\models\AuthAssignment';
-     
+
     /**
      * 查询处理
      * @param  array $params
@@ -32,10 +33,10 @@ class AuthAssignmentController extends Controller
     public function where($params)
     {
         return [
-            'user_id' => function($value) {
+            'user_id' => function ($value) {
                 return ['in', 'user_id', $value];
             },
-            'item_name' => function($value) {
+            'item_name' => function ($value) {
                 return ['in', 'item_name', $value];
             }
         ];
@@ -71,9 +72,9 @@ class AuthAssignmentController extends Controller
                     $model->item_name = $name;
                     $model->user_id = $data['user_id'];
                     if ($model->save()) {
-                        $this->arrJson['errMsg'] .= $model->item_name.': 处理成功';
+                        $this->arrJson['errMsg'] .= $model->item_name . ': 处理成功';
                     } else {
-                        $this->arrJson['errMsg'] .= $model->item_name.': ';
+                        $this->arrJson['errMsg'] .= $model->item_name . ': ';
                         $this->arrJson['errMsg'] .= Helper::arrayToString($model->getErrors());
                     }
                 }

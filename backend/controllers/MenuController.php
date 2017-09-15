@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use backend\models\Menu;
@@ -51,11 +52,14 @@ class MenuController extends Controller
 
     /**
      * 处理导出显示数据
-     * @param array $array
+     * @return array
      */
-    public function handleExport(&$array)
+    public function getExportHandleParams()
     {
-        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
-        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
+        $array['created_at'] = $array['updated_at'] = function ($value) {
+            return date('Y-m-d H:i:s', $value);
+        };
+
+        return $array;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use backend\models\AdminLog;
@@ -31,7 +32,7 @@ class AdminController extends Controller
      */
     public function where($params)
     {
-        $where  = [];
+        $where = [];
         $intUid = (int)Yii::$app->user->id;
         if ($intUid !== Admin::SUPER_ADMIN_ID) {
             $where = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
@@ -54,7 +55,7 @@ class AdminController extends Controller
     {
         // 查询用户数据
         return $this->render('index', [
-            'roles'  => Admin::getArrayRole(),      // 用户角色
+            'roles' => Admin::getArrayRole(),      // 用户角色
             'status' => Admin::getArrayStatus(),    // 状态
             'statusColor' => Admin::getStatusColor(), // 状态对应颜色
         ]);
@@ -66,8 +67,8 @@ class AdminController extends Controller
      */
     public function actionView()
     {
-        $address  = '选择县';
-        $user     = Yii::$app->view->params['user'];
+        $address = '选择县';
+        $user = Yii::$app->view->params['user'];
         $arrChina = [];
         if ($user->address) {
             $arrAddress = explode(',', $user->address);
@@ -93,8 +94,8 @@ class AdminController extends Controller
         // 载入视图文件
         return $this->render('view', [
             'address' => $address,  // 县
-            'china'   => $arrChina, // 省市信息
-            'logs'    => $logs,  // 日志信息
+            'china' => $arrChina, // 省市信息
+            'logs' => $logs,  // 日志信息
         ]);
     }
 
@@ -112,12 +113,12 @@ class AdminController extends Controller
             // 删除之前的缩略图
             $strFace = Yii::$app->request->post('face');
             if ($strFace) {
-                $strFace = dirname($strFace).'/thumb_'.basename($strFace);
-                if (file_exists('.'.$strFace)) @unlink('.'.$strFace);
+                $strFace = dirname($strFace) . '/thumb_' . basename($strFace);
+                if (file_exists('.' . $strFace)) @unlink('.' . $strFace);
             }
 
             // 处理图片
-            $strTmpPath = dirname($strFilePath).'/thumb_'.basename($strFilePath);
+            $strTmpPath = dirname($strFilePath) . '/thumb_' . basename($strFilePath);
 
             /* @var $image yii\image\ImageDriver */
             $imageComponent = Yii::$app->get('image');
@@ -131,9 +132,9 @@ class AdminController extends Controller
                 $admin = Admin::findOne(Yii::$app->user->id);
                 if ($admin && $strField === 'avatar') {
                     // 删除之前的图像信息
-                    if ($admin->face && file_exists('.'.$admin->face)) {
-                        @unlink('.'.$admin->face);
-                        @unlink('.'.dirname($admin->face).'/thumb_'.basename($admin->face));
+                    if ($admin->face && file_exists('.' . $admin->face)) {
+                        @unlink('.' . $admin->face);
+                        @unlink('.' . dirname($admin->face) . '/thumb_' . basename($admin->face));
                     }
 
                     $admin->face = ltrim($strFilePath, '.');
@@ -153,12 +154,12 @@ class AdminController extends Controller
     public function actionAddress()
     {
         $request = Yii::$app->request;
-        $array   = [];
+        $array = [];
         if ($request->isGet) {
             $strName = $request->get('query');          // 查询参数
-            $intPid  = (int)$request->get('iPid', 0);   // 父类ID
-            $where   = ['and', ['pid' => $intPid], ['<>', 'id', 0]];
-            if ( ! empty($strName)) array_push($where, ['like', 'name', $strName]);
+            $intPid = (int)$request->get('iPid', 0);   // 父类ID
+            $where = ['and', ['pid' => $intPid], ['<>', 'id', 0]];
+            if (!empty($strName)) array_push($where, ['like', 'name', $strName]);
             $arrCountry = China::find()->select(['id', 'name'])->where($where)->asArray()->all();
             if ($arrCountry) {
                 foreach ($arrCountry as $value) {
@@ -174,13 +175,17 @@ class AdminController extends Controller
     }
 
     /**
-     * 处理导出数据显示
-     * @param array $array
+     * 导出数据显示处理
+     *
+     * @return array
      */
-    public function handleExport(&$array)
+    public function getExportHandleParams()
     {
-        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
-        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
+        $array['created_at'] = $array['updated_at'] = function ($value) {
+            return date('Y-m-d H:i:s', $value);
+        };
+
+        return $array;
     }
 
     /**
@@ -201,13 +206,13 @@ class AdminController extends Controller
                     $message = '处理成功! <br>';
                     foreach ($all as $value) {
                         if ($value->delete()) {
-                            $message .= $value->username.' 删除成功; <br>';
+                            $message .= $value->username . ' 删除成功; <br>';
                         } else {
-                            $message .= $value->username. '删除失败：'.Helper::arrayToString($value->getErrors()).' <br>';
+                            $message .= $value->username . '删除失败：' . Helper::arrayToString($value->getErrors()) . ' <br>';
                         }
                     }
 
-                    AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk.'='.$ids);
+                    AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk . '=' . $ids);
                     $this->handleJson($arrIds, 0, $message);
                 }
             }

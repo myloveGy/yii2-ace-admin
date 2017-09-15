@@ -173,7 +173,13 @@ class Helper
      * model 导出excel
      * @param string $title excel 标题
      * @param array $columns 列对应的字段名称 ['id' => 'ID']
+     * ['id' => 'id', 'title' => '标题', 'content' => '内容']
+     * 导出查询数据
+     * ['id' => 1, 'title' => 123, 'content' => 'test']
+     * 其中 key 对应的是查询出来数据的 key,数据导填充的值通过这个key获取
+     * 其中 value 对应的是导出第一列对应的标题内容
      * @param $query \yii\db\Query 查询对象
+     * 注意对象查询结果一定要转数组 asArray()
      * @param array $handleParams 处理参数
      * @param null|object|string $function 处理函数
      */
@@ -230,7 +236,7 @@ class Helper
                     // 写入信息数据
                     foreach ($arrLetter as $intKey => $strValue) {
                         $tmpAttribute = $keys[$intKey];
-                        $tmpValue = is_array($value) && isset($value[$tmpAttribute]) ? $value[$tmpAttribute] : ArrayHelper::getValue($value, $tmpAttribute);
+                        $tmpValue = isset($value[$tmpAttribute]) ? $value[$tmpAttribute] : null;
                         if (isset($handleParams[$tmpAttribute])) {
                             $tmpValue = $handleParams[$tmpAttribute]($tmpValue);
                         }

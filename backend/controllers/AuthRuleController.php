@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 /**
@@ -22,7 +23,7 @@ class AuthRuleController extends Controller
      * @var string
      */
     public $modelClass = 'backend\models\AuthRule';
-     
+
     /**
      * 查询处理
      * @param  array $params
@@ -54,11 +55,14 @@ class AuthRuleController extends Controller
 
     /**
      * 导出数据显示问题(时间问题可以通过Excel自动转换)
-     * @param array $array
+     * @return array $array
      */
-    public function handleExport(&$array)
+    public function getExportHandleParams()
     {
-        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
-        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
+        $array['created_at'] = $array['updated_at'] = function ($value) {
+            return date('Y-m-d H:i:s', $value);
+        };
+
+        return $array;
     }
 }

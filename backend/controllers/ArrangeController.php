@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use Yii;
@@ -108,13 +109,14 @@ class ArrangeController extends Controller
 
     /**
      * 导出数据显示问题(时间问题可以通过Excel自动转换)
-     * @param array $array
+     * @return  array
      */
-    public function handleExport(&$array)
+    public function getExportHandleParams()
     {
-        $array['start_at'] = date('Y-m-d H:i:s', $array['start_at']);
-        $array['end_at'] = date('Y-m-d H:i:s', $array['end_at']);
-        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
-        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
+        $array['start_at'] = $array['end_at'] = $array['created_at'] = $array['updated_at'] = function ($value) {
+            return date('Y-m-d H:i:s', $value);
+        };
+
+        return $array;
     }
 }

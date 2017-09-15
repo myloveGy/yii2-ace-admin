@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use backend\models\User;
@@ -23,7 +24,7 @@ class UserController extends Controller
     {
         return [
             'username' => 'like',
-			'email' => 'like',
+            'email' => 'like',
         ];
     }
 
@@ -41,11 +42,14 @@ class UserController extends Controller
 
     /**
      * 处理导出数据显示的问题
-     * @param array $array
+     * @return array
      */
-    public function handleExport(&$array)
+    public function getExportHandleParams()
     {
-        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
-        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
+        $array['created_at'] = $array['updated_at'] = function ($value) {
+            return date('Y-m-d H:i:s', $value);
+        };
+
+        return $array;
     }
 }

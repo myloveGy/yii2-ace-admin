@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use backend\models\AdminLog;
@@ -35,7 +36,7 @@ class Controller extends \common\controllers\UserController
     /**
      * @var string sort 定义默认排序条件
      */
-    protected $sort   = 'id';
+    protected $sort = 'id';
 
     /**
      * @var string 定义上传文件的保存的路径
@@ -63,7 +64,7 @@ class Controller extends \common\controllers\UserController
         // 主控制器验证
         if (parent::beforeAction($action)) {
             // 验证权限
-            if(!Yii::$app->user->can($action->controller->id . '/' . $action->id)
+            if (!Yii::$app->user->can($action->controller->id . '/' . $action->id)
                 && Yii::$app->getErrorHandler()->exception === null
             ) {
                 // 没有权限AJAX返回
@@ -84,7 +85,7 @@ class Controller extends \common\controllers\UserController
                 $this->admins = ArrayHelper::map(Admin::findAll(['status' => Admin::STATUS_ACTIVE]), 'id', 'username');
                 // 注入变量信息
                 Yii::$app->view->params['admins'] = $this->admins;
-                Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
+                Yii::$app->view->params['user'] = Yii::$app->getUser()->identity;
             }
 
             return true;
@@ -187,7 +188,7 @@ class Controller extends \common\controllers\UserController
                 if ($model->save()) {
                     $this->handleJson($model);
                     $pk = $this->pk;
-                    AdminLog::create(AdminLog::TYPE_CREATE, $data, $this->pk.'='.$model->$pk);
+                    AdminLog::create(AdminLog::TYPE_CREATE, $data, $this->pk . '=' . $model->$pk);
                 } else {
                     $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                 }
@@ -227,7 +228,7 @@ class Controller extends \common\controllers\UserController
                     // 修改数据成功
                     if ($model->save()) {
                         $this->handleJson($model);
-                        AdminLog::create(AdminLog::TYPE_UPDATE, $data, $this->pk.'='.$data[$this->pk]);
+                        AdminLog::create(AdminLog::TYPE_UPDATE, $data, $this->pk . '=' . $data[$this->pk]);
                     } else {
                         $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                     }
@@ -256,7 +257,7 @@ class Controller extends \common\controllers\UserController
                 // 删除数据成功
                 if ($model->delete()) {
                     $this->handleJson($model);
-                    AdminLog::create(AdminLog::TYPE_DELETE, $data, $this->pk.'='.$data[$this->pk]);
+                    AdminLog::create(AdminLog::TYPE_DELETE, $data, $this->pk . '=' . $data[$this->pk]);
                 } else {
                     $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                 }
@@ -281,7 +282,7 @@ class Controller extends \common\controllers\UserController
                 $this->arrJson['errCode'] = 220;
                 if ($model::deleteAll([$this->pk => $arrIds])) {
                     $this->handleJson($ids);
-                    AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk.'='.$ids);
+                    AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk . '=' . $ids);
                 }
             }
 
@@ -318,7 +319,7 @@ class Controller extends \common\controllers\UserController
                     $this->arrJson['errCode'] = 206;
                     if ($model->save()) {
                         $this->handleJson($model);
-                        AdminLog::create(AdminLog::TYPE_UPDATE, $request->post(), $this->pk.'='.$mixPk);
+                        AdminLog::create(AdminLog::TYPE_UPDATE, $request->post(), $this->pk . '=' . $mixPk);
                     } else {
                         $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
                     }
@@ -333,9 +334,9 @@ class Controller extends \common\controllers\UserController
     /**
      * 文件上传成功的处理信息
      * @access protected
-     * @param  object $object     文件上传类
+     * @param  object $object 文件上传类
      * @param  string $strFilePath 文件保存路径
-     * @param  string $strField    上传文件表单名
+     * @param  string $strField 上传文件表单名
      * @return bool 上传成功返回true
      */
     protected function afterUpload($object, &$strFilePath, $strField)
@@ -356,8 +357,8 @@ class Controller extends \common\controllers\UserController
             $strField = $request->get('sField');    // 上传文件表单名称
             if (!empty($strField)) {
                 // 判断删除之前的文件
-                $strFile  = $request->post($strField);   // 旧的地址
-                if (!empty($strFile) && file_exists('.'.$strFile)) unlink('.'.$strFile);
+                $strFile = $request->post($strField);   // 旧的地址
+                if (!empty($strFile) && file_exists('.' . $strFile)) unlink('.' . $strFile);
 
                 // 初始化上次表单model对象，并定义好验证场景
                 $model = new UploadForm(['scenario' => $strField]);
@@ -377,7 +378,7 @@ class Controller extends \common\controllers\UserController
                             if (file_exists($dirName)) {
                                 // 生成文件随机名
                                 $strFileName = uniqid() . '.';
-                                $strFilePath = $dirName. $strFileName. $objFile->extension;
+                                $strFilePath = $dirName . $strFileName . $objFile->extension;
                                 $this->arrJson['errCode'] = 204;
 
                                 // 执行文件上传保存，并且处理自己定义上传之后的处理
@@ -386,7 +387,7 @@ class Controller extends \common\controllers\UserController
                                 ) {
                                     $mixReturn = [
                                         'sFilePath' => trim($strFilePath, '.'),
-                                        'sFileName' => $objFile->baseName.'.'.$objFile->extension,
+                                        'sFileName' => $objFile->baseName . '.' . $objFile->extension,
                                     ];
 
                                     $this->handleJson($mixReturn);
@@ -406,16 +407,18 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * 处理需要导出的数据显示问题
-     * @param array $array 查询到的对象数组
+     * 导出数据的处理
+     *
+     * @return array
      */
-    protected function handleExport(&$array)
+    protected function getExportHandleParams()
     {
-
+        return [];
     }
 
     /**
      * 文件导出处理
+     *
      * @return mixed|string
      */
     public function actionExport()
@@ -424,14 +427,11 @@ class Controller extends \common\controllers\UserController
         if ($request->isPost) {
             // 接收参数
             $arrFields = $request->post('fields');    // 字段信息
-            $strTitle  = $request->post('title');     // 标题信息
+            $strTitle = $request->post('title');     // 标题信息
             $params = $request->post('params');       // 查询条件信息
 
             // 判断数据的有效性
             if ($arrFields && $strTitle) {
-                // 获取数据
-                $arrKeys = array_keys($arrFields);        // 所有的字段
-
                 /* @var $model \yii\db\ActiveRecord */
                 $model = $this->modelClass;
                 $query = $model::find()
@@ -439,75 +439,8 @@ class Controller extends \common\controllers\UserController
                     ->orderBy([$this->sort => SORT_DESC])
                     ->asArray();
 
-                $intCount = $query->count();
-                // 判断数据是否存在
-                $this->arrJson['errCode'] = 220;
-                if ($intCount > 0) {
-                    ob_end_clean();
-                    ob_start();
-                    $objPHPExcel = new \PHPExcel();
-                    $objPHPExcel->getProperties()->setCreator("Liujx Admin")
-                        ->setLastModifiedBy("Liujx Admin")
-                        ->setTitle("Office 2007 XLSX Test Document")
-                        ->setSubject("Office 2007 XLSX Test Document")
-                        ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
-                        ->setKeywords("office 2007 openxml php")
-                        ->setCategory("Test result file");
-                    $objPHPExcel->setActiveSheetIndex(0);
-
-                    // 获取显示列的信息
-                    $intLength = count($arrFields);
-                    $arrLetter = range('A', 'Z');
-                    if ($intLength > 26) {
-                        $arrLetters = array_slice($arrLetter, 0, $intLength - 26);
-                        if ($arrLetters) foreach ($arrLetters as $value) array_push($arrLetter, 'A'.$value);
-                    }
-
-                    $arrLetter = array_slice($arrLetter, 0, $intLength);
-
-                    // 确定第一行信息
-                    foreach ($arrLetter as $key => $value) {
-                        $objPHPExcel->getActiveSheet()->setCellValue($value.'1', $arrFields[$arrKeys[$key]]);
-                    }
-
-                    // 写入数据信息
-                    $intNum = 2;
-                    foreach ($query->batch(1000) as $array) {
-                        foreach ($array as $value) {
-                            // 处理查询到的数据
-                            $this->handleExport($value);
-                            // 写入信息数据
-                            foreach ($arrLetter as $intKey => $strValue) {
-                                $tmpAttribute = $arrKeys[$intKey];
-                                $objPHPExcel->getActiveSheet()->setCellValue(
-                                    $strValue.$intNum,
-                                    isset($value[$tmpAttribute]) ? $value[$tmpAttribute] : ''
-                                );
-                            }
-
-                            $intNum ++;
-                        }
-                    }
-
-                    // 设置sheet 标题信息
-                    $objPHPExcel->getActiveSheet()->setTitle($strTitle);
-                    $objPHPExcel->setActiveSheetIndex(0);
-
-                    // 设置头信息
-                    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                    header('Content-Disposition: attachment;filename="'.$strTitle.'.xlsx"');
-                    header('Cache-Control: max-age=0');
-                    header('Cache-Control: max-age=1');
-                    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');           // Date in the past
-                    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');  // always modified
-                    header('Cache-Control: cache, must-revalidate');            // HTTP/1.1
-                    header('Pragma: public');                                   // HTTP/1.0
-
-                    // 直接输出文件
-                    $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-                    $objWriter->save('php://output');
-                    Yii::$app->end();
-                }
+                // 数据导出
+                Helper::excel($strTitle, $arrFields, $query, $this->getExportHandleParams());
             }
         }
 

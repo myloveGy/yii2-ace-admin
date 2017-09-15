@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use common\models\China;
@@ -29,10 +30,10 @@ class ChinaController extends Controller
     {
         return [
             'id' => ['and' => '=', 'func' => 'intval'],
-            'name' => function($value) {
+            'name' => function ($value) {
                 return ['like', 'name', trim($value)];
             },
-            'pid'  => '='
+            'pid' => '='
         ];
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use backend\models\Admin;
@@ -45,7 +46,9 @@ class RoleController extends Controller
             $name = [];
             // 获取用户的所有角色
             $roles = Yii::$app->authManager->getRolesByUser($uid);
-            if ($roles){ foreach ($roles as $key => $value) $name[] = $key;}
+            if ($roles) {
+                foreach ($roles as $key => $value) $name[] = $key;
+            }
             if (!empty($name)) $where[] = ['in', 'name', $name];
         }
 
@@ -211,15 +214,15 @@ class RoleController extends Controller
     protected function findModel($name)
     {
         if ($name) {
-            $auth  = Yii::$app->getAuthManager();
+            $auth = Yii::$app->getAuthManager();
             $model = new Auth();
-            $role  = $auth->getRole($name);
+            $role = $auth->getRole($name);
             if ($role) {
-                $model->name        = $role->name;
+                $model->name = $role->name;
                 $model->type = $role->type;
                 $model->description = $role->description;
-                $model->created_at  = $role->createdAt;
-                $model->updated_at  = $role->updatedAt;
+                $model->created_at = $role->createdAt;
+                $model->updated_at = $role->updatedAt;
                 $model->setIsNewRecord(false);
                 return $model;
             }
@@ -234,12 +237,12 @@ class RoleController extends Controller
      */
     protected function getPermissions()
     {
-        $uid    = Yii::$app->user->id;
+        $uid = Yii::$app->user->id;
         $models = $uid == 1 ? Auth::find()->where([
             'type' => Auth::TYPE_PERMISSION
         ])->orderBy(['name' => SORT_ASC])->all() : Yii::$app->getAuthManager()->getPermissionsByUser($uid);
         $permissions = [];
-        foreach($models as $model) $permissions[$model->name] = $model->name . ' (' . $model->description . ')';
+        foreach ($models as $model) $permissions[$model->name] = $model->name . ' (' . $model->description . ')';
         return $permissions;
     }
 
@@ -256,11 +259,14 @@ class RoleController extends Controller
 
     /**
      * 处理导出数据显示的问题
-     * @param array $array
+     * @return array $array
      */
-    public function handleExport(&$array)
+    public function getExportHandleParams()
     {
-        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
-        $array['updated_at'] = date('Y-m-d H:i:s', $array['updated_at']);
+        $array['created_at'] = $array['updated_at'] = function ($value) {
+            date('Y-m-d H:i:s', $value);
+        };
+
+        return $array;
     }
 }

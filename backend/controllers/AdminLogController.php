@@ -15,7 +15,7 @@ class AdminLogController extends Controller
      * @var string 定义使用的model
      */
     public $modelClass = 'backend\models\AdminLog';
-     
+
     /**
      * 查询处理
      * @param  array $params
@@ -25,9 +25,9 @@ class AdminLogController extends Controller
     {
         $where = [
             'type' => '=',
-			'controller' => 'like',
-			'action' => 'like',
-			'url' => 'like',
+            'controller' => 'like',
+            'action' => 'like',
+            'url' => 'like',
             'created_id' => '=',
             'where' => [],
         ];
@@ -43,10 +43,14 @@ class AdminLogController extends Controller
 
     /**
      * 导出创建时间显示处理
-     * @param array $array
+     * @return array
      */
-    public function handleExport(&$array)
+    public function getExportHandleParams()
     {
-        $array['created_at'] = date('Y-m-d H:i:s', $array['created_at']);
+        return [
+            'created_at' => function ($value) {
+                return date('Y-m-d H:i:s', $value);
+            }
+        ];
     }
 }
