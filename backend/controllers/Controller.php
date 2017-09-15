@@ -75,9 +75,9 @@ class Controller extends \common\controllers\UserController
                             'errMsg' => '对不起，您现在还没获得该操作的权限!',
                             'data' => []]
                     ));
-                } else {
-                    throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
                 }
+
+                throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
             }
 
             // 处理获取数据
@@ -115,19 +115,26 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * 查询之后的数据处理函数
-     * @access protected
-     * @param  mixed $array 查询出来的数组对象
-     * @return void  对数据进行处理
+     * 获取查询对象(查询结果一定要为数组)
+     *
+     * @param mixed|array $where 查询条件
+     * @return \yii\db\ActiveQuery 返回查询对象
+     * @see actionSearch()
+     * @see actionExport()
      */
-    protected function afterSearch(&$array)
+    protected function getQuery($where)
     {
-
+        /* @var $model \yii\db\ActiveRecord */
+        $model = $this->modelClass;
+        return $model::find()->where($where)->asArray();
     }
 
     /**
      * 处理查询数据
      * @return mixed|string
+     * @see where()
+     * @see getQuery()
+     * @see afterSearch()
      */
     public function actionSearch()
     {
@@ -141,11 +148,9 @@ class Controller extends \common\controllers\UserController
         $search['orderBy'] = [$search['field'] => $search['sort'] == 'asc' ? SORT_ASC : SORT_DESC];
         $search['where'] = Helper::handleWhere($search['params'], $this->where($search['params']));
 
-        // 查询之前的处理
-        /* @var $model \yii\db\ActiveRecord */
-        $model = $this->modelClass;
-        $query = $model::find()->where($search['where']);
-        $this->arrJson['other'] = $query->createCommand()->getRawSql();
+        // 查询数据
+        $query = $this->getQuery($search['where']);
+        if (YII_DEBUG) $this->arrJson['other'] = $query->createCommand()->getRawSql();
 
         // 查询数据条数
         $total = $query->count();
@@ -161,6 +166,18 @@ class Controller extends \common\controllers\UserController
 
         // 返回JSON数据
         return $this->returnJson();
+    }
+
+    /**
+     * 查询之后的数据处理函数
+     * @access protected
+     * @param  mixed $array 查询出来的数组对象
+     * @return void  对数据进行处理
+     * @see actionSearch()
+     */
+    protected function afterSearch(&$array)
+    {
+
     }
 
     /**
@@ -347,6 +364,7 @@ class Controller extends \common\controllers\UserController
     /**
      * 处理文件上传操作
      * @return mixed|string
+     * @see afterUpload()
      */
     public function actionUpload()
     {
@@ -377,8 +395,7 @@ class Controller extends \common\controllers\UserController
                             $this->arrJson['data'] = $dirName;
                             if (file_exists($dirName)) {
                                 // 生成文件随机名
-                                $strFileName = uniqid() . '.';
-                                $strFilePath = $dirName . $strFileName . $objFile->extension;
+                                $strFilePath = $dirName . uniqid() . '.' . $objFile->extension;
                                 $this->arrJson['errCode'] = 204;
 
                                 // 执行文件上传保存，并且处理自己定义上传之后的处理
@@ -420,6 +437,9 @@ class Controller extends \common\controllers\UserController
      * 文件导出处理
      *
      * @return mixed|string
+     * @see where()
+     * @see getQuery()
+     * @see getExportHandleParams()
      */
     public function actionExport()
     {
@@ -432,12 +452,8 @@ class Controller extends \common\controllers\UserController
 
             // 判断数据的有效性
             if ($arrFields && $strTitle) {
-                /* @var $model \yii\db\ActiveRecord */
-                $model = $this->modelClass;
-                $query = $model::find()
-                    ->where(Helper::handleWhere($params, $this->where($params)))
-                    ->orderBy([$this->sort => SORT_DESC])
-                    ->asArray();
+                $query = $this->getQuery(Helper::handleWhere($params, $this->where($params)));
+                $query->orderBy([$this->sort => SORT_DESC]);
 
                 // 数据导出
                 Helper::excel($strTitle, $arrFields, $query, $this->getExportHandleParams());

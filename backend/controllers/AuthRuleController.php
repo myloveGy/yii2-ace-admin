@@ -43,11 +43,10 @@ class AuthRuleController extends Controller
     public function afterSearch(&$array)
     {
         foreach ($array as &$value) {
-            /* @var $value \backend\models\AuthRule */
-            if ($value->data) {
-                $tmp = unserialize($value->data);
+            if ($value['data']) {
+                $tmp = unserialize($value['data']);
                 if (is_object($tmp)) {
-                    $value->data = get_class($tmp);
+                    $value['data'] = get_class($tmp);
                 }
             }
         }
