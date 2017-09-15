@@ -259,12 +259,13 @@ class RoleController extends Controller
 
     /**
      * 处理导出数据显示的问题
+     *
      * @return array $array
      */
     public function getExportHandleParams()
     {
         $array['created_at'] = $array['updated_at'] = function ($value) {
-            date('Y-m-d H:i:s', $value);
+            return date('Y-m-d H:i:s', $value);
         };
 
         return $array;
