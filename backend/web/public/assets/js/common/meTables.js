@@ -356,7 +356,7 @@
                 type: meTables.fn.options.sMethod,
                 dataType: 'json'
             }).done(function(data){
-                if (data.errCode != 0) {
+                if (data.errCode !== 0) {
                     return layer.msg(meTables.fn.getLanguage("sAppearError") + data.errMsg, {
                         time:2000,
                         icon:5
@@ -554,6 +554,7 @@
         export: function() {
             this.action = "export";
             var self = this,
+                i = null,
                 html = '<form action="' + this.getUrl("export") + '" target="_blank" method="POST" class="me-export" style="display:none">';
             html += '<input type="hidden" name="title" value="' + self.options.title + '"/>';
             html += '<input type="hidden" name="_csrf" value="' + $('meta[name=csrf-token]').attr('content') + '"/>';
@@ -567,11 +568,16 @@
 
             // 添加查询条件
             var value = $(self.options.searchForm).serializeArray();
-            for (var i in value) {
+            for (i in value) {
                 if (!meTables.empty(value[i]["value"]) && value[i]["value"] !== "All") {
                     var strName = meTables.getAttributeName(value[i]["name"], "params");
                     html += '<input type="hidden" name="' + strName + '" value="' + value[i]["value"] + '"/>';
                 }
+            }
+
+            // 默认查询参数添加
+            for (i in this.options.params) {
+                html += '<input type="hidden" name="params[' + i + ']" value="' + this.options.params[i] + '"/>';
             }
 
             // 表单提交
@@ -602,7 +608,7 @@
                 if (result) {
                     try {
                         result = $.parseJSON(result);
-                        layer.msg(result.errMsg, {icon: result.errCode == 0 ? 6 : 5});
+                        layer.msg(result.errMsg, {icon: result.errCode === 0 ? 6 : 5});
                     } catch (e) {
                         layer.msg(self.getLanguage("sServerError"), {icon: 5});
                     }
@@ -1299,7 +1305,7 @@
 
         // 状态信息
         statusString: function(td, data) {
-            $(td).html('<span class="label label-' + (data == 1 ? 'success">启用' : 'warning">禁用') + '</span>');
+            $(td).html('<span class="label label-' + (parseInt(data) === 1 ? 'success">启用' : 'warning">禁用') + '</span>');
         },
 
         // 用户显示
@@ -1309,7 +1315,7 @@
 
         // 显示标签
         valuesString: function(data, color, value, defaultClass) {
-            if (defaultClass == undefined) defaultClass = 'label label-sm ';
+            if (!defaultClass) defaultClass = 'label label-sm ';
             return '<span class="' + defaultClass + ' ' + (color[value] ? color[value] : '') + '"> ' + (data[value] ? data[value] : value) + ' </span>';
         }
 
@@ -1557,7 +1563,7 @@
                     "refresh": "刷新",
                     "export": "导出",
                     "pleaseInput": "请输入",
-                    "all": "全部",
+                    "all": "全部"
                 },
 
                 // dataTables 表格
@@ -1589,7 +1595,7 @@
                     "title": meTables.fn.getLanguage("sOperation"),
                     "bSortable": false,
                     "width": "120px",
-                    "createdCell": function (td, data, rowArr, row, col) {
+                    "createdCell": function (td, data, rowArr, row) {
                         $(td).html(meTables.buttonsCreate(row, [
                             {
                                 "data": row,
