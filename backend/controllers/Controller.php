@@ -8,6 +8,7 @@ use common\models\Admin;
 use common\models\UploadForm;
 use common\strategy\Substance;
 use common\helpers\Helper;
+use yii\db\Query;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
@@ -118,7 +119,7 @@ class Controller extends \common\controllers\UserController
      * 获取查询对象(查询结果一定要为数组)
      *
      * @param mixed|array $where 查询条件
-     * @return \yii\db\ActiveQuery 返回查询对象
+     * @return \yii\db\Query 返回查询对象
      * @see actionSearch()
      * @see actionExport()
      */
@@ -126,7 +127,7 @@ class Controller extends \common\controllers\UserController
     {
         /* @var $model \yii\db\ActiveRecord */
         $model = $this->modelClass;
-        return $model::find()->where($where)->asArray();
+        return (new Query())->from($model::tableName())->where($where);
     }
 
     /**

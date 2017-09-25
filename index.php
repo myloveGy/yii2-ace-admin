@@ -96,7 +96,7 @@ if (!empty($_POST) && isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
         }
     }
 
-    exit(json_encode($arrError));
+    exit(json_encode($arrError, 320));
 }
 ?>
 <!doctype html>
