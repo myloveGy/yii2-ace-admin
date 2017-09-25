@@ -136,7 +136,7 @@
             if (this.options.bChildTables) {
                 this.options.childTables.table.oLanguage = this.options.table.oLanguage;
                 if (!this.options.childTables.table.sAjaxSource) this.options.childTables.table.sAjaxSource = this.options.childTables.url.search;
-                if (this.options.childTables.table.fnServerData == undefined) {
+                if (this.options.childTables.table.fnServerData === undefined) {
                     this.options.childTables.table.fnServerData = function(sSource, aoData, fnCallback) {
                         if (self.data.childParams) {
 
@@ -150,7 +150,7 @@
                                 type: "post",
                                 dataType: "json"
                             }).done(function (data) {
-                                if (data.errCode != 0) {
+                                if (data.errCode !== 0) {
                                     return layer.msg(self.getLanguage("sAppearError") + data.errMsg, {
                                         time: 2000,
                                         icon: 5
@@ -174,7 +174,7 @@
 
             // 处理按钮
             for (var i in this.options.buttons) {
-                if (this.options.buttons[i] != null && this.options.buttons[i].bShow == true) {
+                if (this.options.buttons[i] !== null && this.options.buttons[i].bShow === true) {
                     if (!this.options.buttons[i].text) {
                         this.options.buttons[i].text = this.getLanguage(i);
                     }
@@ -196,7 +196,7 @@
             this.table = $(this.options.sTable).DataTable(this.options.table);	// 初始化主要表格
             var self = this;
             // 判断初始化处理(搜索添加位置)
-            if (this.options.searchType == "middle") {
+            if (this.options.searchType === "middle") {
                 $(this.options.sTable + "_filter").html('<form id="' +
                     this.options.searchForm.replace("#", "") + '">' + this.options.searchHtml + '</form>');
                 $(this.options.sTable + "_wrapper div.row div.col-xs-6:first")
@@ -635,17 +635,17 @@
             // 处理生成表单
             this.options.table.aoColumns.forEach(function(k, v) {
                 if (k.bViews !== false) views += meTables.detailTableCreate(k.title, k.data, v, self.options.detailTable);// 查看详情信息
-                if (k.edit != undefined) form += meTables.formCreate(k, self.options.editFormParams);	// 编辑表单信息
-                if (k.search != undefined) self.options.searchHtml += meTables.searchInputCreate(k, v, self.options.searchType);  // 搜索信息
+                if (k.edit !== undefined) form += meTables.formCreate(k, self.options.editFormParams);	// 编辑表单信息
+                if (k.search !== undefined) self.options.searchHtml += meTables.searchInputCreate(k, v, self.options.searchType);  // 搜索信息
                 if (k.defaultOrder) aOrders.push([v, k.defaultOrder]);							// 默认排序
                 if (k.isHide) aTargets.push(v);													// 是否隐藏
 
                 // 判断行内编辑
-                if (self.options.editable && k.editable != undefined) {
+                if (self.options.editable && k.editable !== undefined) {
                     // 默认修改参数
                     self.options.editable[k.sName] = {
                         name: k.sName,
-                        type: k.edit.type == "radio" ? "select" : k.edit.type,
+                        type: k.edit.type === "radio" ? "select" : k.edit.type,
                         source: k.value,
                         send: "always",
                         url: self.getUrl("editable"),
@@ -747,7 +747,7 @@
         initForm: function(data, child) {
             layer.close(this.options.oLoading);
             // 显示之前的处理
-            if (typeof this.beforeShow == 'function' && ! this.beforeShow(data, child)) return false;
+            if (typeof this.beforeShow === 'function' && ! this.beforeShow(data, child)) return false;
 
             // 确定操作的表单和模型
             var f = this.options.sFormId, m = this.options.sModal, t = this.options.title;
@@ -759,11 +759,11 @@
                 t += this.getLanguage("sInfo");
             }
 
-            $(m).find('h4').html(t + this.getLanguage(this.action == "create" ? "sCreate": "sUpdate"));
+            $(m).find('h4').html(t + this.getLanguage(this.action === "create" ? "sCreate": "sUpdate"));
             meTables.initForm(f, data);
 
             // 显示之后的处理
-            if (typeof this.afterShow == 'function' && ! this.afterShow(data, child)) return false;
+            if (typeof this.afterShow === 'function' && ! this.afterShow(data, child)) return false;
 
             $(m).modal({backdrop: "static"});   // 弹出信息
         },
@@ -771,7 +771,7 @@
         // 获取语言配置信息
         getLanguage: function() {
             if (arguments.length > 1 && this.language[this.options.language][arguments[0]]) {
-                return arguments[1] == "*" ?
+                return arguments[1] === "*" ?
                     this.language[this.options.language][arguments[0]] :
                     this.language[this.options.language][arguments[0]][arguments[1]];
             }
@@ -781,7 +781,7 @@
 
         push: function(obj, value, name) {
               if (value !== undefined && !meTables.empty(value)) {
-                  if (name == undefined) {
+                  if (name === undefined) {
                       for (i in value) {
                           obj.push({"name": i, "value": value[i]});
                       }
@@ -813,7 +813,7 @@
                         continue;
                     }
 
-                    if (typeof target[name] == "object") {
+                    if (typeof target[name] === "object") {
                         target[name] = this.extend(target[name], options[name]);
                     } else if (options[name] !== undefined) {
                         target[name] = options[name];
@@ -1165,18 +1165,18 @@
         initForm: function(select, data) {
             var $fm = $(select);
             objForm = $fm.get(0); // 获取表单对象
-            if (objForm != undefined) {
+            if (objForm !== undefined) {
                 $fm.find('input[type=hidden]').val('');
                 $fm.find('input[type=checkbox]').each(function(){$(this).attr('checked', false);if ($(this).get(0)) $(this).get(0).checked = false;});                                                                             // 多选菜单
                 objForm.reset();                                                                // 表单重置
-                if (data != undefined) {
+                if (data !== undefined) {
                     for (var i in data) {
                         // 多语言处理 以及多选配置
-                        if (typeof data[i]  ==  'object') {
+                        if (typeof data[i]  ===  'object') {
                             for (var x in data[i]){
                                 var key = i + '[' + x + ']';
                                 // 对语言
-                                if (objForm[key] != undefined) {
+                                if (objForm[key] !== undefined) {
                                     objForm[key].value = data[i][x];
                                 } else {
                                     // 多选按钮
@@ -1188,7 +1188,7 @@
                         }
 
                         // 其他除密码的以外的数据
-                        if (objForm[i] != undefined && objForm[i].type != "password") {
+                        if (objForm[i] !== undefined && objForm[i].type !== "password") {
                             var obj = $(objForm[i]), tmp = data[i];
                             // 时间处理
                             if (obj.hasClass('time-format')) {
