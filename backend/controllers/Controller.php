@@ -72,10 +72,10 @@ class Controller extends \common\controllers\UserController
                 if (Yii::$app->request->isAjax) {
                     header('application/json; charset=utf-8');
                     exit(Json::encode([
-                            'errCode' => 216,
-                            'errMsg' => '对不起，您现在还没获得该操作的权限!',
-                            'data' => []]
-                    ));
+                        'errCode' => 216,
+                        'errMsg' => '对不起，您现在还没获得该操作的权限!',
+                        'data' => []
+                    ]));
                 }
 
                 throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
