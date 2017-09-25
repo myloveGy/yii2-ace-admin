@@ -298,9 +298,10 @@ class Controller extends \common\controllers\UserController
                 /* @var $model \yii\db\ActiveRecord */
                 $model = $this->modelClass;
                 $this->arrJson['errCode'] = 220;
-                if ($model::deleteAll([$this->pk => $arrIds])) {
+                $where = [$this->pk => $arrIds];
+                if ($model::deleteAll($where)) {
                     $this->handleJson($ids);
-                    AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk . '=' . $ids);
+                    AdminLog::create(AdminLog::TYPE_DELETE, $where, $this->pk . '=all');
                 }
             }
 
