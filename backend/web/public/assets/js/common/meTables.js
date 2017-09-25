@@ -26,7 +26,7 @@
 
         for (var k in o) {
             if (new RegExp("("+k+")").test(fmt)) {
-                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]):(("00"+o[k]).substr((""+o[k]).length)));
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]):(("00"+o[k]).substr((""+o[k]).length)));
             }
         }
 
@@ -60,7 +60,7 @@
                             }
 
                             // 添加其他字段信息
-                            meTables.fn.push(request_params, self.options.params, "params")
+                            meTables.fn.push(request_params, self.options.params, "params");
                             return request_params;
                         }
                     };
@@ -467,7 +467,6 @@
                 c = '.data-detail-',
                 i = "#data-detail";
             if (child) {
-                t += self.getLanguage("sInfo");
                 data = this.childTable.data()[row];
                 obj  = this.options.childTables.table.aoColumns;
                 t = '';
@@ -476,7 +475,7 @@
             }
 
             // 处理的数据
-            if (data != undefined) {
+            if (data !== undefined) {
                 meTables.detailTable(obj, data, c, row);
                 // 弹出显示
                 this.options.oLoading = layer.open({
@@ -522,7 +521,7 @@
                 // 数据验证
                 if (data) {
                     // 执行之前的数据处理
-                    if (typeof self.beforeSave != 'function' || self.beforeSave(data, child)) {
+                    if (typeof self.beforeSave !== 'function' || self.beforeSave(data, child)) {
                         // ajax提交数据
                         meTables.ajax({
                             url: u,
@@ -530,11 +529,11 @@
                             data: data,
                             dataType: "json"
                         }).done(function(json){
-                            layer.msg(json.errMsg, {icon:json.errCode == 0 ? 6 : 5});
+                            layer.msg(json.errMsg, {icon:json.errCode === 0 ? 6 : 5});
                             // 判断操作成功
-                            if (json.errCode == 0) {
+                            if (json.errCode === 0) {
                                 // 执行之后的数据处理
-                                if (typeof self.afterSave != 'function' || self.afterSave(json.data, child)) {
+                                if (typeof self.afterSave !== 'function' || self.afterSave(json.data, child)) {
                                     child ? self.childTable.draw(false) : self.table.draw(false);
                                     if (self.action !== "delete") $(m).modal('hide');
                                     self.action = "save";
@@ -561,7 +560,7 @@
 
             // 添加字段信息
             this.options.table.aoColumns.forEach(function(k, v){
-                if (k.data != null && (k.isExport === undefined)) {
+                if (k.data && (k.isExport === undefined)) {
                     html += '<input type="hidden" name="fields[' + k.data + ']" value="' + k.title + '"/>';
                 }
             });
@@ -688,7 +687,7 @@
                 self.options.editFormParams.modalDialogClass = "modal-lg";
             }
 
-            if (self.options.editFormParams.bMultiCols && self.options.editFormParams.index % self.options.editFormParams.iCols != (self.options.editFormParams.iCols - 1)) {
+            if (self.options.editFormParams.bMultiCols && self.options.editFormParams.index % self.options.editFormParams.iCols !== (self.options.editFormParams.iCols - 1)) {
                 form += '</div>';
             }
 
@@ -711,7 +710,7 @@
                 // 处理生成表单
                 this.options.childTables.table.aoColumns.forEach(function(k, v) {
                     views += meTables.detailTableCreate(k.title, 'child-' + k.data, v, self.options.childTables.detailTable);// 查看详情信息
-                    if (k.edit != undefined) form += meTables.formCreate(k, self.options.childTables.editFormParams);		// 编辑表单信息
+                    if (k.edit !== undefined) form += meTables.formCreate(k, self.options.childTables.editFormParams);		// 编辑表单信息
                 });
 
                 // 添加详情输入框
@@ -807,7 +806,7 @@
         }
 
         for (; i < length; i++) {
-            if ((options = arguments[i]) != null) {
+            if ((options = arguments[i]) !== null) {
                 for (name in options) {
                     if (options[name] === target[name]) {
                         continue;
@@ -855,7 +854,7 @@
 
         // 判断是否存在数组中
         inArray: function (value, array) {
-            if (typeof array == "object") {
+            if (typeof array === "object") {
                 for (var i in array) {
                     if (array[i] === value) return true;
                 }
@@ -870,13 +869,13 @@
         },
 
         isObject: function(value) {
-            return typeof value == "object";
+            return typeof value === "object";
         },
 
         // 处理参数
         handleParams: function (params, prefix) {
             other = "";
-            if (params != undefined && typeof params == "object") {
+            if (params !== undefined && typeof params === "object") {
                 prefix = prefix ? prefix : '';
                 for (var i in params) {
                     other += " " + i + '="' + prefix + params[i] + '"'
@@ -997,9 +996,9 @@
             // 类型处理
             if (!k.search.type) k.search.type = "text";
             // select 默认选中
-            var defaultObject = k.search.type == "select" ? {"All": meTables.fn.getLanguage("all")} : null;
+            var defaultObject = k.search.type === "select" ? {"All": meTables.fn.getLanguage("all")} : null;
 
-            if (searchType == "middle") {
+            if (searchType === "middle") {
                 try {
                     html = this[k.search.type + "SearchMiddleCreate"](k.search, k.value, defaultObject);
                 } catch (e) {
@@ -1020,7 +1019,7 @@
             var div1   = '<div class="hidden-sm hidden-xs btn-group">',
                 div2   = '<div class="hidden-md hidden-lg"><div class="inline position-relative"><button data-position="auto" data-toggle="dropdown" class="btn btn-minier btn-primary dropdown-toggle"><i class="ace-icon fa fa-cog icon-only bigger-110"></i></button><ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">';
             // 添加按钮信息
-            if(data != undefined && typeof data == "object") {
+            if(data !== undefined && typeof data === "object") {
                 for(var i in data) {
                     div1 += ' <button class="btn ' + data[i]['className'] + ' '+  data[i]['cClass'] + ' btn-xs" table-data="' + index + '"><i class="ace-icon fa ' + data[i]["icon"] + ' bigger-120"></i> ' + (data[i]["button-title"] ? data[i]["button-title"] : '') + '</button> ';
                     div2 += '<li><a title="' + data[i]['title'] + '" data-rel="tooltip" class="tooltip-info ' + data[i]['cClass'] + '" href="javascript:;" data-original-title="' + data[i]['title'] + '" table-data="' + index + '"><span class="' + data[i]['sClass'] + '"><i class="ace-icon fa ' + data[i]['icon'] + ' bigger-120"></i></span></a></li>';
@@ -1038,7 +1037,7 @@
             if (!k.edit.type) k.edit.type = "text";
             if (!k.edit.name) k.edit.name = k.sName;
 
-            if (k.edit.type == "hidden" ) {
+            if (k.edit.type === "hidden" ) {
                 form += this.inputCreate(k.edit);
             } else {
                 k.edit["class"] = "form-control " + (k.edit["class"] ? k.edit["class"] : "");
@@ -1050,7 +1049,7 @@
                     oParams.aCols[1] =  iLength - oParams.aCols[0];
                 }
 
-                if (!oParams.bMultiCols || (oParams.iColsLength > 1 && oParams.index % oParams.iColsLength == 0)) {
+                if (!oParams.bMultiCols || (oParams.iColsLength > 1 && oParams.index % oParams.iColsLength === 0)) {
                     form += '<div class="form-group">';
                 }
 
@@ -1067,7 +1066,7 @@
 
                 form += '</div>';
 
-                if (!oParams.bMultiCols || (oParams.iColsLength > 1 && oParams.index % oParams.iColsLength == (oParams.iColsLength - 1))) {
+                if (!oParams.bMultiCols || (oParams.iColsLength > 1 && oParams.index % oParams.iColsLength === (oParams.iColsLength - 1))) {
                     form += '</div>';
                 }
 
@@ -1248,21 +1247,21 @@
             // 循环处理显示信息
             object.forEach(function(k) {
                 var tmpKey = k.data,tmpValue = data[tmpKey],dataInfo = $(tClass + tmpKey);
-                if (k.edit != undefined && k.edit.type == 'password') tmpValue = "******";
-                (k.createdCell != undefined && typeof k.createdCell == "function") ? k.createdCell(dataInfo, tmpValue, data, row, undefined) : dataInfo.html(tmpValue);
+                if (k.edit !== undefined && k.edit.type === 'password') tmpValue = "******";
+                (k.createdCell !== undefined && typeof k.createdCell === "function") ? k.createdCell(dataInfo, tmpValue, data, row, undefined) : dataInfo.html(tmpValue);
             });
         },
 
         detailTableCreate: function(title, data, iKey,  aParams) {
             html = '';
             if (aParams && aParams.bMultiCols) {
-                if (aParams.iColsLength > 1 && iKey % aParams.iColsLength == 0) {
+                if (aParams.iColsLength > 1 && iKey % aParams.iColsLength === 0) {
                     html += '<tr>';
                 }
 
                 html += '<td width="25%">' + title + '</td><td class="views-info data-detail-' + data + '"></td>';
 
-                if (aParams.iColsLength > 1 && iKey % aParams.iColsLength == (aParams.iColsLength - 1)) {
+                if (aParams.iColsLength > 1 && iKey % aParams.iColsLength === (aParams.iColsLength - 1)) {
                     html += '</tr>';
                 }
             } else {
