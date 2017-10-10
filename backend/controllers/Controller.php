@@ -82,7 +82,7 @@ class Controller extends \common\controllers\UserController
             }
 
             // 处理获取数据(默认不提前注入)
-            if (!in_array($action->id, ['create', 'update', 'delete', 'delete-all', 'editeable', 'upload', 'export'])) {
+            if (!in_array($action->id, ['create', 'update', 'delete', 'delete-all', 'editable', 'upload', 'export'])) {
                 $this->admins = ArrayHelper::map(Admin::findAll(['status' => Admin::STATUS_ACTIVE]), 'id', 'username');
                 // 注入变量信息
                 Yii::$app->view->params['admins'] = $this->admins;
