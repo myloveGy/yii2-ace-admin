@@ -70,7 +70,7 @@ class Controller extends \common\controllers\UserController
             ) {
                 // 没有权限AJAX返回
                 if (Yii::$app->request->isAjax) {
-                    header('application/json; charset=utf-8');
+                    header('Content-Type: application/json; charset=UTF-8');
                     exit(Json::encode([
                         'errCode' => 216,
                         'errMsg' => '对不起，您现在还没获得该操作的权限!',
