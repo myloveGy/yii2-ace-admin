@@ -66,7 +66,7 @@ AppAsset::register($this);
         </button>
 
         <div class="navbar-header pull-left">
-            <a href="/site" class="navbar-brand">
+            <a href="/" class="navbar-brand">
                 <small><?=Yii::$app->params['projectName']?></small>
             </a>
         </div>
@@ -190,26 +190,26 @@ AppAsset::register($this);
             </script>
             <div class="me-breadcrumb pull-left">
                 <div class="prev options hide" id="window-prev">
-                    <a href="javascript:;"><i class="ace-icon fa fa-backward"></i></a>
+                    <a href="#"><i class="ace-icon fa fa-backward"></i></a>
                 </div>
                 <div class="me-window" id="me-window">
                     <div class="me-div active" data-id="iframe-index">
                         <i class="ace-icon fa fa-home home-icon"></i>
                         <span>首页</span>
-                        <a href="javascript:;" class="me-window-close">
+                        <a href="#" class="me-window-close">
                             <i class="ace-icon fa fa-times "></i>
                         </a>
                     </div>
                 </div>
                 <div class="next options hide" id="window-next">
-                    <a href="javascript:;"><i class="ace-icon fa fa-forward"></i></a>
+                    <a href="#"><i class="ace-icon fa fa-forward"></i></a>
                 </div>
             </div>
 
             <!--搜索-->
             <div class="nav-search" id="nav-search">
                 <span class="input-icon">
-                    <a id="window-refresh" href="javascript:;">
+                    <a id="window-refresh" href="#">
                         <i class="ace-icon fa fa-refresh  bigger-110 icon-only"></i>
                     </a>
                 </span>
