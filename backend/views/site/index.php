@@ -96,9 +96,12 @@ AppAsset::register($this);
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="<?=Url::toRoute(['site/logout'])?>" id="user-logout">
-                                <i class="ace-icon fa fa-power-off"></i>退出
-                            </a>
+                            <?=Html::beginForm(['/site/logout'], 'post'); ?>
+                            <?=Html::submitButton(
+                                '<i class="ace-icon fa fa-power-off"></i> 退出登录 ',
+                                ['class' => 'btn btn-link logout']
+                            )?>
+                            <?=Html::endForm(); ?>
                         </li>
                     </ul>
                 </li>
