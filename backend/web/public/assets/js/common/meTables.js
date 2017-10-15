@@ -465,7 +465,7 @@
                 obj = this.options.table.aoColumns,
                 t = self.options.title,
                 c = '.data-detail-',
-                i = "#data-detail";
+                i = "#data-detail-" + self.options.sTable.replace("#", "");
             if (child) {
                 data = this.childTable.data()[row];
                 obj  = this.options.childTables.table.aoColumns;
@@ -700,7 +700,7 @@
                     "modalDialogClass": self.options.editFormParams.modalDialogClass
                 },
                 {
-                    "params": {"id":"data-detail"}, "html":views
+                    "params": {"id":"data-detail-" + self.options.sTable.replace("#", "")}, "html":views
                 });
 
             // 处理详情编辑信息
