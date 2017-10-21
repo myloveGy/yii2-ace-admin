@@ -47,8 +47,8 @@ class AdminLog extends ActiveRecord
         return [
             [['type', 'created_id'], 'integer'],
             [['params'], 'string'],
-            [['controller', 'action'], 'string', 'max' => 32],
-            [['url'], 'string', 'max' => 64],
+            [['controller', 'action'], 'string', 'max' => 64],
+            [['url', 'index'], 'string', 'max' => 100],
         ];
     }
 
