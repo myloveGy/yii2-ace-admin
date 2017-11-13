@@ -232,6 +232,13 @@ $this->registerJsFile($url.'/js/validate.message.js', $depends);
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay'
             },
+
+            buttonText: {
+                today: "今天",
+                month: "月",
+                week: "周",
+                day: "日"
+            },  
             /**
              * 字段内容 {title: '长期代办事务', start: new Date(y, m, d - 5),  end: new Date(y, m, d - 2), className: 'label-success'}
              * 字段内容可以追加其他字段信息

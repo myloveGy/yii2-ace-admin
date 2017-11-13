@@ -1,5 +1,8 @@
 <?php
 namespace common\models;
+
+use \yii\base\Model;
+
 /**
  * Class    UploadForm
  * @package backend\models
@@ -7,11 +10,13 @@ namespace common\models;
  * @User    liujx
  * @Date    2016-4-7
  */
-class UploadForm extends \yii\base\Model
+class UploadForm extends Model
 {
     // 定义字段
     public $avatar;  // 管理员个人页面上传头像
     public $face;    // 管理员信息页面上传头像
+
+    public $url;
 
     // 设置应用场景
     public function scenarios()
@@ -19,6 +24,7 @@ class UploadForm extends \yii\base\Model
         return [
             'avatar' => ['avatar'],
             'face'   => ['face'],
+            'url' => ['url']
         ];
     }
 
@@ -28,6 +34,7 @@ class UploadForm extends \yii\base\Model
         return [
             [['avatar'], 'image', 'extensions' => ['png', 'jpg', 'gif', 'jpeg'], 'on' => 'avatar'],
             [['face'], 'image', 'extensions' => ['png', 'jpg', 'gif', 'jpeg'], 'on' => 'face'],
+            [['url'], 'image', 'extensions' => ['png', 'jpg', 'gif', 'jpeg'], 'on' => 'url'],
         ];
     }
 }

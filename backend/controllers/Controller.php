@@ -378,7 +378,7 @@ class Controller extends \common\controllers\UserController
             if (!empty($strField)) {
                 // 判断删除之前的文件
                 $strFile = $request->post($strField);   // 旧的地址
-                if (!empty($strFile) && file_exists('.' . $strFile)) unlink('.' . $strFile);
+                //if (!empty($strFile) && file_exists('.' . $strFile)) unlink('.' . $strFile);
 
                 // 初始化上次表单model对象，并定义好验证场景
                 $model = new UploadForm(['scenario' => $strField]);
