@@ -82,6 +82,7 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
             // 显示的前置和后置操作
             beforeShow: function(data, child) {
                 myDropzone.removeAllFiles();
+                $("#edit-form").find("input[name='url[]']").remove();
                 return true;
             }
         });
