@@ -18,17 +18,15 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
              * edit 里面配置的信息都通过 params 传递给函数
              */
             "dropzoneCreate": function (params) {
-                return '<div class="fallback">\n' +
-                    '            <input name="file" type="file" multiple="" />\n' +
-                    '        </div>';
+                return '<div id="dropzone" class="dropzone"></div>';
             }
         });
             var m = meTables({
             title: "上传文件",
-//            fileSelector: ["#file-url"],
-                form: {
-                    class: "dropzone",
-                },
+////            fileSelector: ["#file-url"],
+//                form: {
+//                    "class": "dropzone"
+//                },
             table: {
                 "aoColumns": [
                     {
@@ -49,17 +47,7 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
                         "title": "文件访问地址",
                         "data": "url",
                         "sName": "url",
-                        "edit": {
-                            "type": "dropzone"
-//                            options: {
-//                                "id": "file-url",
-//                                "name": "UploadForm[url]",
-//                                "input-name": "url",
-//                                "input-type": "ace_input",
-//                                "file-name": "url",
-//                                "multiple": "multiple"
-//                            }
-                        },
+                        "edit": {"type": "dropzone"},
                         "bSortable": false
                     },
                     {
@@ -103,7 +91,7 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
 
                 Dropzone.autoDiscover = false;
                 try {
-                    var myDropzone = new Dropzone("#edit-form" , {
+                    var myDropzone = new Dropzone("#dropzone" , {
                         url: "<?=\yii\helpers\Url::toRoute(['uploads/upload', 'sField' => 'url'])?>",
                         paramName: "UploadForm[url]", // The name that will be used to transfer the file
                         params:  {
