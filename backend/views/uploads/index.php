@@ -93,7 +93,8 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
                 try {
                     var myDropzone = new Dropzone("#dropzone" , {
                         url: "<?=\yii\helpers\Url::toRoute(['uploads/upload', 'sField' => 'url'])?>",
-                        paramName: "UploadForm[url]", // The name that will be used to transfer the file
+                        // The name that will be used to transfer the file
+                        paramName: "UploadForm[url]",
                         params:  {
                             "_csrf": $('meta[name=csrf-token]').attr('content')
                         },
@@ -119,26 +120,8 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
                     });
                 } catch(e) {
                     console.error(e);
-                    //    alert('Dropzone.js does not support older browsers!');
                 }
 
         });
-
-
-//        // 上传图片
-//            var dropzoneMain = new Dropzone("#file-url", {
-//                maxFilesize: 1,
-//                acceptedFiles: "image/*,application/pdf",
-//                init: function () {
-//                    // 完成就删除
-//                    this.on("complete", function (file) {
-//                        this.removeFile(file);
-//                    });
-//
-                    // 成功处理
-
-//                }
-//            });
-//        });
     </script>
 <?php $this->endBlock(); ?>
