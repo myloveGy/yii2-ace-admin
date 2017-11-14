@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use \yii\db\ActiveRecord;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "{{%uploads}}".
@@ -43,7 +44,7 @@ class Uploads extends ActiveRecord
     {
         return [
             [['title', 'url'], 'required'],
-            [['url'], 'string'],
+//            [['url'], 'string'],
             [['title'], 'string', 'max' => 250],
         ];
     }
@@ -60,5 +61,17 @@ class Uploads extends ActiveRecord
             'created_at' => '创建时间',
             'updated_at' => '修改时间',
         ];
+    }
+
+    /**
+     * 修改之前的处理
+     *
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (is_array($this->url)) $this->url = Json::encode($this->url);
+        return parent::beforeSave($insert);
     }
 }

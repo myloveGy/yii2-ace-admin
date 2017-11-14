@@ -10,7 +10,7 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
 <?= \backend\widgets\MeTable::widget() ?>
 <?php $this->beginBlock('javascript') ?>
     <script type="text/javascript">
-
+        var myDropzone = null;
         meTables.extend({
             /**
              * 定义编辑表单(函数后缀名Create)
@@ -48,7 +48,19 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
                         "data": "url",
                         "sName": "url",
                         "edit": {"type": "dropzone"},
-                        "bSortable": false
+                        "bSortable": false,
+                        "createdCell": function(td, data) {
+                            var html = '';
+                            if (data) {
+                                try {
+                                    data = JSON.parse(data);
+                                    for (var i in data) {
+                                        html += "<img src='" + data[i] + "' width='40px' height='40px'> ";
+                                    }
+                                } catch (e) {}
+                            }
+                            $(td).html(html);
+                        }
                     },
                     {
                         "title": "创建时间",
@@ -66,32 +78,20 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
             }
         });
 
-        /**
-         meTables.fn.extend({
-        // 显示的前置和后置操作
-        beforeShow: function(data, child) {
-            return true;
-        },
-        afterShow: function(data, child) {
-            return true;
-        },
-        
-        // 编辑的前置和后置操作
-        beforeSave: function(data, child) {
-            return true;
-        },
-        afterSave: function(data, child) {
-            return true;
-        }
-    });
-         */
+        meTables.fn.extend({
+            // 显示的前置和后置操作
+            beforeShow: function(data, child) {
+                myDropzone.removeAllFiles();
+                return true;
+            }
+        });
 
         $(function () {
             m.init();
 
                 Dropzone.autoDiscover = false;
                 try {
-                    var myDropzone = new Dropzone("#dropzone" , {
+                    myDropzone = new Dropzone("#dropzone" , {
                         url: "<?=\yii\helpers\Url::toRoute(['uploads/upload', 'sField' => 'url'])?>",
                         // The name that will be used to transfer the file
                         paramName: "UploadForm[url]",
@@ -114,6 +114,7 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
                                     $("#edit-form").append('<input type="hidden" name="url[]" value="' + response.data.sFilePath + '">');
                                 } else {
                                     this.removeFile(file);
+                                    layer.msg(response.errMsg, {icon: 5, time: 1000});
                                 }
                             });
                         }
