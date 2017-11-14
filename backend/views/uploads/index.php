@@ -1,11 +1,14 @@
 <?php
+
+use \yii\helpers\Url;
+
 // 定义标题和面包屑信息
 $this->title = '上传文件';
 $url = '@web/public/assets';
 $depends = ['depends' => 'backend\assets\AdminAsset'];
 
-$this->registerCssFile($url.'/css/dropzone.css', $depends);
-$this->registerJsFile($url.'/js/dropzone.min.js', $depends);
+$this->registerCssFile($url . '/css/dropzone.css', $depends);
+$this->registerJsFile($url . '/js/dropzone.min.js', $depends);
 ?>
 <?= \backend\widgets\MeTable::widget() ?>
 <?php $this->beginBlock('javascript') ?>
@@ -21,7 +24,7 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
                 return '<div id="dropzone" class="dropzone"></div>';
             }
         });
-            var m = meTables({
+        var m = meTables({
             title: "上传文件",
 ////            fileSelector: ["#file-url"],
 //                form: {
@@ -49,7 +52,7 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
                         "sName": "url",
                         "edit": {"type": "dropzone"},
                         "bSortable": false,
-                        "createdCell": function(td, data) {
+                        "createdCell": function (td, data) {
                             var html = '';
                             if (data) {
                                 try {
@@ -57,7 +60,8 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
                                     for (var i in data) {
                                         html += "<img src='" + data[i] + "' width='40px' height='40px'> ";
                                     }
-                                } catch (e) {}
+                                } catch (e) {
+                                }
                             }
                             $(td).html(html);
                         }
@@ -78,51 +82,79 @@ $this->registerJsFile($url.'/js/dropzone.min.js', $depends);
             }
         });
 
+        var $form = null;
         meTables.fn.extend({
             // 显示的前置和后置操作
-            beforeShow: function(data, child) {
+            afterShow: function (data, child) {
+                if (!$form) $form = $("#edit-form");
                 myDropzone.removeAllFiles();
-                $("#edit-form").find("input[name='url[]']").remove();
+                $("#dropzone").find("div.dz-image-preview").remove();
+                $form.find("input[name='url[]']").remove();
+                if (this.action === "update" && data["url"]) {
+                    try {
+                        var imgs = JSON.parse(data["url"]);
+                        for (var i in imgs) {
+                            var mockFile = { name: "Filename" + i, size: 12345 };
+                            myDropzone.emit("addedfile", mockFile);
+                            myDropzone.emit("thumbnail", mockFile, imgs[i]);
+                            myDropzone.emit("complete", mockFile);
+                            addInput(mockFile.name, imgs[i]);
+                        }
+                    } catch (e) {
+                        console.error(e)
+                    }
+                }
                 return true;
             }
         });
 
+        function addInput(name, url) {
+            $form.append('<input type="hidden" data-name="' + name + '" name="url[]" value="' + url + '">');
+        }
+
         $(function () {
             m.init();
 
-                Dropzone.autoDiscover = false;
-                try {
-                    myDropzone = new Dropzone("#dropzone" , {
-                        url: "<?=\yii\helpers\Url::toRoute(['uploads/upload', 'sField' => 'url'])?>",
-                        // The name that will be used to transfer the file
-                        paramName: "UploadForm[url]",
-                        params:  {
-                            "_csrf": $('meta[name=csrf-token]').attr('content')
-                        },
-                        maxFilesize: 0.5, // MB
-                        addRemoveLinks : true,
-                        dictDefaultMessage :
-                            '<span class="bigger-150 bolder"><i class="ace-icon fa fa-caret-right red"></i> Drop files</span> to upload \
-                            <span class="smaller-80 grey">(or click)</span> <br /> \
-                            <i class="upload-icon ace-icon fa fa-cloud-upload blue fa-3x"></i>'
-                        ,
-                        dictResponseError: 'Error while uploading file!',
-                        //change the previewTemplate to use Bootstrap progress bars
-                        previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"progress progress-small progress-striped active\"><div class=\"progress-bar progress-bar-success\" data-dz-uploadprogress></div></div>\n  <div class=\"dz-success-mark\"><span></span></div>\n  <div class=\"dz-error-mark\"><span></span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>"
-                        ,init: function() {
-                            this.on("success", function (file, response) {
-                                if (response.errCode === 0) {
-                                    $("#edit-form").append('<input type="hidden" name="url[]" value="' + response.data.sFilePath + '">');
-                                } else {
-                                    this.removeFile(file);
-                                    layer.msg(response.errMsg, {icon: 5, time: 1000});
-                                }
-                            });
-                        }
-                    });
-                } catch(e) {
-                    console.error(e);
-                }
+            $form = $("#edit-form");
+
+            Dropzone.autoDiscover = false;
+
+            try {
+                myDropzone = new Dropzone("#dropzone", {
+                    url: "<?=Url::toRoute(['uploads/upload', 'sField' => 'url'])?>",
+                    // The name that will be used to transfer the file
+                    paramName: "UploadForm[url]",
+                    params: {
+                        "_csrf": $('meta[name=csrf-token]').attr('content')
+                    },
+                    maxFilesize: 2, // MB
+                    addRemoveLinks: true,
+                    dictDefaultMessage:
+                        '<span class="bigger-150 bolder"><i class="ace-icon fa fa-caret-right red"></i> Drop files</span> to upload \
+                        <span class="smaller-80 grey">(or click)</span> <br /> \
+                        <i class="upload-icon ace-icon fa fa-cloud-upload blue fa-3x"></i>'
+                    ,
+                    dictResponseError: 'Error while uploading file!',
+                    //change the previewTemplate to use Bootstrap progress bars
+                    previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n<div class=\"dz-details\">\n<div class=\"dz-filename\"><span data-dz-name></span></div>\n<div class=\"dz-size\" data-dz-size></div>\n<img data-dz-thumbnail />\n</div>\n<div class=\"progress progress-small progress-striped active\"><div class=\"progress-bar progress-bar-success\" data-dz-uploadprogress></div></div>\n<div class=\"dz-success-mark\"><span></span></div>\n<div class=\"dz-error-mark\"><span></span></div>\n<div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>"
+                    , init: function () {
+                        this.on("success", function (file, response) {
+                            if (response.errCode === 0) {
+                                addInput(file.name, response.data.sFilePath);
+                            } else {
+                                this.removeFile(file);
+                                layer.msg(response.errMsg, {icon: 5, time: 1000});
+                            }
+                        });
+
+                        this.on("removedfile", function(file){
+                            $form.find("input[data-name='" + file.name + "']").remove();
+                        })
+                    }
+                });
+            } catch (e) {
+                console.error(e);
+            }
 
         });
     </script>
