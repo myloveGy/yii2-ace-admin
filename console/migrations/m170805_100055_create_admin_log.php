@@ -20,7 +20,7 @@ class m170805_100055_create_admin_log extends Migration
         // 创建表
         $this->createTable($this->table, [
             'id' => $this->primaryKey()->notNull()->comment('日志ID'),
-            'type' => $this->smallInteger(2)->notNull()->defaultValue(1)->comment('日志类型'),
+            'type' => $this->boolean()->notNull()->defaultValue(1)->comment('日志类型'),
             'controller' => $this->string(64)->notNull()->defaultValue('')->comment('控制器'),
             'action' => $this->string(64)->notNull()->defaultValue('')->comment('方法'),
             'url' => $this->string(100)->notNull()->defaultValue('')->comment('请求地址'),

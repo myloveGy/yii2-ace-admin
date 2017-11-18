@@ -61,6 +61,7 @@ class m170801_061245_create_menu extends Migration
             [0, '地址信息', 'menu-icon fa fa-bank', 'china/index', 4, $time, 1, $time, 1],
             [0, '用户信息', 'menu-icon fa fa-user', 'user/index', 3, $time, 1, $time, 1],
             [0, '日程管理', 'menu-icon fa fa-calendar', 'arrange/index', 1, $time, 1, $time, 1],
+            [0, '上传文件', 'menu-icon fa fa-upload', 'uploads/index', 9, $time, 1, $time, 1],
         ]);
     }
 
