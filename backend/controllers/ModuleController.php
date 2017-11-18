@@ -232,7 +232,7 @@ class ModuleController extends Controller
             $strHtml .= <<<HTML
 <div class="alert alert-success me-alert-su">
     <span class="label label-success me-label-sp">{$key}</span>
-    <label class="me-label">标题: <input type="text" name="attr[{$key}][title]" value="{$sTitle}" required="true" /></label>
+    <label class="me-label">标题: <input type="text" name="attr[{$key}][title]" value="{$sTitle}" required="required" /></label>
     <label class="me-label">编辑：
         <select class="is-hide" name="attr[{$key}][edit]">
             <option value="1" selected="selected">开启</option>

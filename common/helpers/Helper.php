@@ -182,90 +182,94 @@ class Helper
      * 注意对象查询结果一定要转数组 asArray()
      * @param array $handleParams 处理参数
      * @param null|object|string $function 处理函数
+     * @return mixed
      */
     public static function excel($title, $columns, $query, $handleParams = [], $function = null)
     {
-        set_time_limit(0);
         $intCount = $query->count();
         // 判断数据是否存在
-        if ($intCount > 0) {
-            ob_end_clean();
-            ob_start();
-            $objPHPExcel = new \PHPExcel();
-            if ($intCount > 3000) {
-                $cacheMethod = \PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
-                $cacheSettings = array('memoryCacheSize' => '8MB');
-                \PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
-            }
+        if ($intCount <= 0) {
+            return;
+        }
 
-            $objPHPExcel->getProperties()->setCreator("yii2.com")
-                ->setLastModifiedBy("yii2.com")
-                ->setTitle("Office 2007 XLSX Test Document")
-                ->setSubject("Office 2007 XLSX Test Document")
-                ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
-                ->setKeywords("office 2007 openxml php")
-                ->setCategory("Test result file");
-            $objPHPExcel->setActiveSheetIndex(0);
+        set_time_limit(0);
+        ob_end_clean();
+        ob_start();
+        $objPHPExcel = new \PHPExcel();
+        if ($intCount > 3000) {
+            $cacheMethod = \PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
+            $cacheSettings = array('memoryCacheSize' => '8MB');
+            \PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+        }
 
-            // 获取显示列的信息
-            $intLength = count($columns);
-            $arrLetter = range('A', 'Z');
-            if ($intLength > 26) {
-                $arrLetters = array_slice($arrLetter, 0, $intLength - 26);
-                if ($arrLetters) foreach ($arrLetters as $value) array_push($arrLetter, 'A' . $value);
-            }
+        $objPHPExcel->getProperties()->setCreator("yii2.com")
+            ->setLastModifiedBy("yii2.com")
+            ->setTitle("Office 2007 XLSX Test Document")
+            ->setSubject("Office 2007 XLSX Test Document")
+            ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+            ->setKeywords("office 2007 openxml php")
+            ->setCategory("Test result file");
+        $objPHPExcel->setActiveSheetIndex(0);
 
-            $arrLetter = array_slice($arrLetter, 0, $intLength);
+        // 获取显示列的信息
+        $intLength = count($columns);
+        $arrLetter = range('A', 'Z');
+        if ($intLength > 26) {
+            $arrLetters = array_slice($arrLetter, 0, $intLength - 26);
+            if ($arrLetters) foreach ($arrLetters as $value) array_push($arrLetter, 'A' . $value);
+        }
 
-            $keys = array_keys($columns);
-            $values = array_values($columns);
+        $arrLetter = array_slice($arrLetter, 0, $intLength);
 
-            // 确定第一行信息
-            foreach ($arrLetter as $key => $value) {
-                $objPHPExcel->getActiveSheet()->setCellValue($value . '1', $values[$key]);
-            }
+        $keys = array_keys($columns);
+        $values = array_values($columns);
 
-            // 写入数据信息
-            $intNum = 2;
-            foreach ($query->batch(1000) as $array) {
-                // 函数处理
-                if (is_object($function)) $function($array);
+        // 确定第一行信息
+        foreach ($arrLetter as $key => $value) {
+            $objPHPExcel->getActiveSheet()->setCellValue($value . '1', $values[$key]);
+        }
 
-                // 处理每一行的数据
-                foreach ($array as $value) {
-                    // 写入信息数据
-                    foreach ($arrLetter as $intKey => $strValue) {
-                        $tmpAttribute = $keys[$intKey];
-                        $tmpValue = isset($value[$tmpAttribute]) ? $value[$tmpAttribute] : null;
-                        if (isset($handleParams[$tmpAttribute])) {
-                            $tmpValue = $handleParams[$tmpAttribute]($tmpValue);
-                        }
+        // 写入数据信息
+        $intNum = 2;
+        foreach ($query->batch(1000) as $array) {
+            // 函数处理
+            if (is_object($function)) $function($array);
 
-                        $objPHPExcel->getActiveSheet()->setCellValue($strValue . $intNum, $tmpValue);
+            // 处理每一行的数据
+            foreach ($array as $value) {
+                // 写入信息数据
+                foreach ($arrLetter as $intKey => $strValue) {
+                    $tmpAttribute = $keys[$intKey];
+                    $tmpValue = isset($value[$tmpAttribute]) ? $value[$tmpAttribute] : null;
+                    if (isset($handleParams[$tmpAttribute])) {
+                        $tmpValue = $handleParams[$tmpAttribute]($tmpValue);
                     }
 
-                    $intNum++;
+                    $objPHPExcel->getActiveSheet()->setCellValue($strValue . $intNum, $tmpValue);
                 }
+
+                $intNum++;
             }
-
-            // 设置sheet 标题信息
-            $objPHPExcel->getActiveSheet()->setTitle($title);
-            $objPHPExcel->setActiveSheetIndex(0);
-
-            // 设置头信息
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="' . $title . '.xlsx"');
-            header('Cache-Control: max-age=0');
-            header('Cache-Control: max-age=1');
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');           // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');  // always modified
-            header('Cache-Control: cache, must-revalidate');            // HTTP/1.1
-            header('Pragma: public');                                   // HTTP/1.0
-
-            // 直接输出文件
-            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-            $objWriter->save('php://output');
-            \Yii::$app->end();
         }
+
+        // 设置sheet 标题信息
+        $objPHPExcel->getActiveSheet()->setTitle($title);
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // 设置头信息
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $title . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');           // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');  // always modified
+        header('Cache-Control: cache, must-revalidate');            // HTTP/1.1
+        header('Pragma: public');                                   // HTTP/1.0
+
+        // 直接输出文件
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        \Yii::$app->end();
+        return;
     }
 }

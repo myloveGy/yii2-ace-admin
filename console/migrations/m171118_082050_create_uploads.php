@@ -21,7 +21,7 @@ class m171118_082050_create_uploads extends Migration
         $this->createTable($this->table, [
             'id' => $this->primaryKey()->notNull()->comment('主键ID'),
             'title' => $this->string(64)->notNull()->comment('文件名称'),
-            'url' => $this->string(64)->notNull()->defaultValue('site/index')->comment('访问地址[可以是json字符串]'),
+            'url' => $this->text()->notNull()->comment('访问地址[可以是json字符串]'),
             'multiple' => $this->boolean()->notNull()->defaultValue(0)->comment('是否为多图片上传'),
             'created_at' => $this->integer(11)->notNull()->defaultValue(0)->comment('创建时间'),
             'updated_at' => $this->integer(11)->notNull()->defaultValue(0)->comment('修改时间'),

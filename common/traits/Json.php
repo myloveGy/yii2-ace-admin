@@ -9,6 +9,7 @@
 namespace common\traits;
 
 use yii;
+use \yii\web\Response;
 
 /**
  * Trait Json
@@ -44,7 +45,7 @@ trait Json
         }
 
         // 设置JSON返回
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        Yii::$app->response->format = Response::FORMAT_JSON;
         return $this->arrJson;
     }
 
@@ -52,14 +53,63 @@ trait Json
      * handleJson() 处理返回数据
      * @param mixed $data     返回数据
      * @param integer   $errCode  返回状态码
-     * @param null  $errMsg   提示信息
+     * @param string  $errMsg   提示信息
      */
-    protected function handleJson($data, $errCode = 0, $errMsg = null)
+    protected function handleJson($data, $errCode = 0, $errMsg = '')
     {
         $this->arrJson['errCode'] = $errCode;
         $this->arrJson['data']    = $data;
-        if ($errMsg !== null) {
-            $this->arrJson['errMsg'] = $errMsg;
-        }
+        $this->arrJson['errMsg'] = $errMsg;
+    }
+
+    /**
+     * 处理成功返回
+     *
+     * @param mixed $data 返回结果信息
+     * @param string $message
+     * @return mixed|string
+     */
+    protected function success($data = [], $message = '')
+    {
+        return $this->returnJson([
+            'errCode' => 0,
+            'errMsg' => $message,
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * 处理错误返回
+     *
+     * @param integer $code 错误码
+     * @param string $message
+     * @return mixed|string
+     */
+    protected function error($code = 201, $message = '')
+    {
+        return $this->returnJson([
+            'errCode' => $code,
+            'errMsg' => $message,
+        ]);
+    }
+
+    /**
+     * 设置错误码
+     *
+     * @param int $errCode
+     */
+    public function setCode($errCode = 201)
+    {
+        $this->arrJson['errCode'] = $errCode;
+    }
+
+    /**
+     * 设置错误信息
+     *
+     * @param string $message
+     */
+    public function setMessage($message = '')
+    {
+        $this->arrJson['errMsg'] = $message;
     }
 }

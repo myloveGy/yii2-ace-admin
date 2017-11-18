@@ -9,6 +9,7 @@ use common\models\UploadForm;
 use common\strategy\Substance;
 use common\helpers\Helper;
 use yii\db\Query;
+use yii\helpers\FileHelper;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
@@ -70,12 +71,8 @@ class Controller extends \common\controllers\UserController
             ) {
                 // 没有权限AJAX返回
                 if (Yii::$app->request->isAjax) {
-                    header('Content-Type: application/json; charset=UTF-8');
-                    exit(Json::encode([
-                        'errCode' => 216,
-                        'errMsg' => '对不起，您现在还没获得该操作的权限!',
-                        'data' => []
-                    ]));
+                    Yii::$app->response->content = Json::encode($this->error(216));
+                    return false;
                 }
 
                 throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
@@ -188,33 +185,35 @@ class Controller extends \common\controllers\UserController
     public function actionCreate()
     {
         $data = Yii::$app->request->post();
-        if ($data) {
-            // 实例化出查询的model
-            /* @var $model \yii\db\ActiveRecord */
-            $model = new $this->modelClass();
-
-            // 验证是否定义了创建对象的验证场景
-            $arrScenarios = $model->scenarios();
-            if (isset($arrScenarios['create'])) {
-                $model->scenario = 'create';
-            }
-
-            // 对model对象各个字段进行赋值
-            $this->arrJson['errCode'] = 205;
-            if ($model->load($data, '')) {
-                // 判断修改返回数据
-                if ($model->save()) {
-                    $this->handleJson($model);
-                    $pk = $this->pk;
-                    AdminLog::create(AdminLog::TYPE_CREATE, $data, $this->pk . '=' . $model->$pk);
-                } else {
-                    $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
-                }
-            }
+        if (empty($data)) {
+            return $this->error(201);
         }
 
-        // 返回数据
-        return $this->returnJson();
+        // 实例化出查询的model
+        /* @var $model \yii\db\ActiveRecord */
+        $model = new $this->modelClass();
+
+        // 验证是否定义了创建对象的验证场景
+        $arrScenarios = $model->scenarios();
+        if (isset($arrScenarios['create'])) {
+            $model->scenario = 'create';
+        }
+
+        // 对model对象各个字段进行赋值
+        $this->arrJson['errCode'] = 205;
+        if (!$model->load($data, '')) {
+            return $this->error(205);
+        }
+
+        // 判断修改返回数据
+        if ($model->save()) {
+            $this->handleJson($model);
+            $pk = $this->pk;
+            AdminLog::create(AdminLog::TYPE_CREATE, $data, $this->pk . '=' . $model->$pk);
+            return $this->success($model);
+        } else {
+            return $this->error(1001, Helper::arrayToString($model->getErrors()));
+        }
     }
 
     /**
@@ -225,37 +224,29 @@ class Controller extends \common\controllers\UserController
     {
         // 接收参数判断
         $data = Yii::$app->request->post();
-        if ($data && !empty($data[$this->pk])) {
-
-            // 通过传递过来的唯一主键值查询数据
-            /* @var $model \yii\db\ActiveRecord */
-            $model = $this->modelClass;
-            $model = $model::findOne($data[$this->pk]);
-
-            // 存在数据
-            if ($model) {
-                // 判断是否存在指定的验证场景，有则使用，没有默认
-                $arrScenarios = $model->scenarios();
-                if (isset($arrScenarios['update'])) {
-                    $model->scenario = 'update';
-                }
-
-                // 对model对象各个字段进行赋值
-                $this->arrJson['errCode'] = 205;
-                if ($model->load($data, '')) {
-                    // 修改数据成功
-                    if ($model->save()) {
-                        $this->handleJson($model);
-                        AdminLog::create(AdminLog::TYPE_UPDATE, $data, $this->pk . '=' . $data[$this->pk]);
-                    } else {
-                        $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
-                    }
-                }
-            }
+        $model = $this->findOne();
+        if (!$model) {
+            return $this->returnJson();
         }
 
-        // 返回数据
-        return $this->returnJson();
+        // 判断是否存在指定的验证场景，有则使用，没有默认
+        $arrScenarios = $model->scenarios();
+        if (isset($arrScenarios['update'])) {
+            $model->scenario = 'update';
+        }
+
+        // 对model对象各个字段进行赋值
+        if (!$model->load($data, '')) {
+            return $this->error(205);
+        }
+
+        // 修改数据成功
+        if ($model->save()) {
+            AdminLog::create(AdminLog::TYPE_UPDATE, $data, $this->pk . '=' . $data[$this->pk]);
+            return $this->success($model);
+        } else {
+            return $this->error(1003, Helper::arrayToString($model->getErrors()));
+        }
     }
 
     /**
@@ -264,25 +255,46 @@ class Controller extends \common\controllers\UserController
      */
     public function actionDelete()
     {
+        // 接收参数判断
         $data = Yii::$app->request->post();
-        if ($data && !empty($data[$this->pk])) {
-            // 通过传递过来的唯一主键值查询数据
-            /* @var $model \yii\db\ActiveRecord */
-            $model = $this->modelClass;
-            $model = $model::findOne($data[$this->pk]);
-            $this->arrJson['errCode'] = 222;
-            if ($model) {
-                // 删除数据成功
-                if ($model->delete()) {
-                    $this->handleJson($model);
-                    AdminLog::create(AdminLog::TYPE_DELETE, $data, $this->pk . '=' . $data[$this->pk]);
-                } else {
-                    $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
-                }
-            }
+        $model = $this->findOne();
+        if (!$model) {
+            return $this->returnJson();
         }
 
-        return $this->returnJson();
+        // 删除数据成功
+        if ($model->delete()) {
+            AdminLog::create(AdminLog::TYPE_DELETE, $data, $this->pk . '=' . $data[$this->pk]);
+            return $this->success($model);
+        } else {
+            return $this->error(1004, Helper::arrayToString($model->getErrors()));
+        }
+    }
+
+    /**
+     * 查询单个数据
+     *
+     * @return boolean|\yii\db\ActiveRecord
+     */
+    private function findOne()
+    {
+        // 接收参数判断
+        $data = Yii::$app->request->post();
+        if (empty($data[$this->pk]) || !$data) {
+            $this->setCode(201);
+            return false;
+        }
+
+        // 通过传递过来的唯一主键值查询数据
+        /* @var $model \yii\db\ActiveRecord */
+        $model = $this->modelClass;
+        $model = $model::findOne($data[$this->pk]);
+        if (!$model) {
+            $this->setCode(220);
+            return false;
+        }
+
+        return $model;
     }
 
     /**
@@ -292,62 +304,55 @@ class Controller extends \common\controllers\UserController
     public function actionDeleteAll()
     {
         $ids = Yii::$app->request->post('id');
-        if ($ids) {
-            $arrIds = explode(',', $ids);
-            if ($arrIds) {
-                /* @var $model \yii\db\ActiveRecord */
-                $model = $this->modelClass;
-                $this->arrJson['errCode'] = 220;
-                $where = [$this->pk => $arrIds];
-                if ($model::deleteAll($where)) {
-                    $this->handleJson($ids);
-                    AdminLog::create(AdminLog::TYPE_DELETE, $where, $this->pk . '=all');
-                }
-            }
-
+        if (empty($ids) || !($arrIds = explode(',', $ids))) {
+            return $this->error(201);
         }
 
-        return $this->returnJson();
+        /* @var $model \yii\db\ActiveRecord */
+        $model = $this->modelClass;
+        $where = [$this->pk => $arrIds];
+        if ($model::deleteAll($where)) {
+            AdminLog::create(AdminLog::TYPE_DELETE, $where, $this->pk . '=all');
+            return $this->success($ids);
+        } else {
+            return $this->error(1004);
+        }
     }
 
     /**
      * 处理行内编辑
+     *
      * @return mixed|string
      */
     public function actionEditable()
     {
+        // 接收参数
         $request = Yii::$app->request;
-        if ($request->isAjax) {
-            // 接收参数
-            $mixPk = $request->post('pk');    // 主键值
-            $strAttr = $request->post('name');  // 字段名
-            $mixValue = $request->post('value'); // 字段值
+        $mixPk = $request->post('pk');    // 主键值
+        $strAttr = $request->post('name');  // 字段名
+        $mixValue = $request->post('value'); // 字段值
 
-            // 主键值、修改字段、修改的值不能为空字符串
-            $this->arrJson['errCode'] = 207;
-            if ($mixPk && $strAttr && $mixValue !== '') {
-
-                // 通过主键查询数据
-                /* @var $model \yii\db\ActiveRecord */
-                $model = $this->modelClass;
-                $model = $model::findOne($mixPk);
-                $this->arrJson['errCode'] = 220;
-                if ($model) {
-                    // 修改对应的字段
-                    $model->$strAttr = $mixValue;
-                    $this->arrJson['errCode'] = 206;
-                    if ($model->save()) {
-                        $this->handleJson($model);
-                        AdminLog::create(AdminLog::TYPE_UPDATE, $request->post(), $this->pk . '=' . $mixPk);
-                    } else {
-                        $this->arrJson['errMsg'] = Helper::arrayToString($model->getErrors());
-                    }
-                }
-            }
+        // 第一步验证： 主键值、修改字段、修改的值不能为空字符串
+        if (empty($mixPk) || empty($strAttr) || $mixValue === '') {
+            return $this->error(207);
         }
 
-        // 返回数据
-        return $this->returnJson();
+        // 通过主键查询数据
+        /* @var $model \yii\db\ActiveRecord */
+        $model = $this->modelClass;
+        $model = $model::findOne($mixPk);
+        if (empty($model)) {
+            return $this->error(220);
+        }
+
+        // 修改对应的字段
+        $model->$strAttr = $mixValue;
+        if ($model->save()) {
+            AdminLog::create(AdminLog::TYPE_UPDATE, $request->post(), $this->pk . '=' . $mixPk);
+            return $this->success($model);
+        } else {
+            return $this->error(206, Helper::arrayToString($model->getErrors()));
+        }
     }
 
     /**
@@ -370,59 +375,59 @@ class Controller extends \common\controllers\UserController
      */
     public function actionUpload()
     {
-        // 定义请求数据
+        // 接收参数
         $request = Yii::$app->request;
-        if ($request->isPost) {
-            // 接收参数
-            $strField = $request->get('sField');    // 上传文件表单名称
-            if (!empty($strField)) {
-                // 判断删除之前的文件
-                $strFile = $request->post($strField);   // 旧的地址
-                //if (!empty($strFile) && file_exists('.' . $strFile)) unlink('.' . $strFile);
-
-                // 初始化上次表单model对象，并定义好验证场景
-                $model = new UploadForm(['scenario' => $strField]);
-
-                try {
-                    $objFile = $model->$strField = UploadedFile::getInstance($model, $strField);
-                    $this->arrJson['errCode'] = 221;
-                    if ($objFile) {
-                        $isTrue = $model->validate();
-                        $this->arrJson['errMsg'] = $model->getFirstError($strField);
-                        if ($isTrue) {
-                            // 定义好保存文件目录，目录不存在那么创建
-                            $dirName = $this->strUploadPath;
-                            if (!file_exists($dirName)) mkdir($dirName, 0777, true);
-                            $this->arrJson['errCode'] = 202;
-                            $this->arrJson['data'] = $dirName;
-                            if (file_exists($dirName)) {
-                                // 生成文件随机名
-                                $strFilePath = $dirName . uniqid() . '.' . $objFile->extension;
-                                $this->arrJson['errCode'] = 204;
-
-                                // 执行文件上传保存，并且处理自己定义上传之后的处理
-                                if ($objFile->saveAs($strFilePath)
-                                    && $this->afterUpload($objFile, $strFilePath, $strField)
-                                ) {
-                                    $mixReturn = [
-                                        'sFilePath' => trim($strFilePath, '.'),
-                                        'sFileName' => $objFile->baseName . '.' . $objFile->extension,
-                                    ];
-
-                                    $this->handleJson($mixReturn);
-
-                                    AdminLog::create(AdminLog::TYPE_UPLOAD, $mixReturn, $strField);
-                                }
-                            }
-                        }
-                    }
-                } catch (\Exception $e) {
-                    $this->handleJson([], 203, $e->getMessage());
-                }
-            }
+        $strField = $request->get('sField');    // 上传文件表单名称
+        if (empty($strField)) {
+            return $this->error(201);
         }
 
-        return $this->returnJson();
+        // 判断删除之前的文件
+        $strFile = (string)$request->post($strField);   // 旧的地址
+        if (!empty($strFile) && file_exists('.' . $strFile)) unlink('.' . $strFile);
+
+        // 初始化上次表单model对象，并定义好验证场景
+        $model = new UploadForm(['scenario' => $strField]);
+
+        try {
+            // 上传文件
+            $objFile = $model->$strField = UploadedFile::getInstance($model, $strField);
+            if (empty($objFile)) {
+                throw new \UnexpectedValueException('没有文件上传');
+            }
+
+            // 验证
+            if (!$model->validate()) {
+                throw new \UnexpectedValueException($model->getFirstError($strField));
+            }
+
+            // 定义好保存文件目录，目录不存在那么创建
+            $dirName = $this->strUploadPath;
+            FileHelper::createDirectory($dirName);
+            if (!file_exists($dirName)) {
+                throw new \UnexpectedValueException('目录创建失败:' . $dirName);
+            }
+
+            // 生成文件随机名
+            $strFilePath = $dirName . uniqid() . '.' . $objFile->extension;
+            // 执行文件上传保存，并且处理自己定义上传之后的处理
+            if ($objFile->saveAs($strFilePath) && $this->afterUpload($objFile, $strFilePath, $strField)) {
+                $mixReturn = [
+                    'sFilePath' => trim($strFilePath, '.'),
+                    'sFileName' => $objFile->baseName . '.' . $objFile->extension,
+                ];
+
+                $this->handleJson($mixReturn);
+
+                AdminLog::create(AdminLog::TYPE_UPLOAD, $mixReturn, $strField);
+            } else {
+                $this->setCode(204);
+            }
+
+            return $this->returnJson();
+        } catch (\Exception $e) {
+            return $this->error(203, $e->getMessage());
+        }
     }
 
     /**
@@ -445,23 +450,21 @@ class Controller extends \common\controllers\UserController
      */
     public function actionExport()
     {
+        // 接收参数
         $request = Yii::$app->request;
-        if ($request->isPost) {
-            // 接收参数
-            $arrFields = $request->post('fields');    // 字段信息
-            $strTitle = $request->post('title');     // 标题信息
-            $params = $request->post('params');       // 查询条件信息
+        $arrFields = $request->post('fields');    // 字段信息
+        $strTitle = $request->post('title');     // 标题信息
+        $params = $request->post('params');       // 查询条件信息
 
-            // 判断数据的有效性
-            if ($arrFields && $strTitle) {
-                $query = $this->getQuery(Helper::handleWhere($params, $this->where($params)));
-                $query->orderBy([$this->sort => SORT_DESC]);
-
-                // 数据导出
-                Helper::excel($strTitle, $arrFields, $query, $this->getExportHandleParams());
-            }
+        // 判断数据的有效性
+        if (empty($arrFields) || empty($strTitle)) {
+            return $this->error(201);
         }
 
-        return $this->returnJson();
+        $query = $this->getQuery(Helper::handleWhere($params, $this->where($params)));
+        $query->orderBy([$this->sort => SORT_DESC]);
+
+        // 数据导出
+        return Helper::excel($strTitle, $arrFields, $query, $this->getExportHandleParams());
     }
 }
