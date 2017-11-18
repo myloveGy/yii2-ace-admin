@@ -168,13 +168,13 @@ class ModuleController extends Controller
     {
         $strPrefix = trim($prefix, '/') . '/';
         $arrAuth = [
-            'index' => '显示',
-            'search' => '搜索',
-            'create' => '创建',
-            'update' => '修改',
-            'delete' => '删除',
-            'delete-all' => '多删除',
-            'export' => '导出'
+            'index' => '显示数据',
+            'search' => '搜索数据',
+            'create' => '添加数据',
+            'update' => '修改数据',
+            'delete' => '删除数据',
+            'delete-all' => '批量删除',
+            'export' => '导出数据'
         ];
 
         foreach ($arrAuth as $key => $value) {
