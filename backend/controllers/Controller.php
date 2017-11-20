@@ -159,11 +159,7 @@ class Controller extends \common\controllers\UserController
             $array = [];
         }
 
-        // 处理返回数据
-        $this->handleJson($strategy->handleResponse($array, $total));
-
-        // 返回JSON数据
-        return $this->returnJson();
+        return $this->success($strategy->handleResponse($array, $total));
     }
 
     /**
