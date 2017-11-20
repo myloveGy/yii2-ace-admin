@@ -149,29 +149,22 @@ class AdminController extends Controller
 
     /**
      * 获取地址信息
+     *
      * @return \yii\web\Response
      */
     public function actionAddress()
     {
         $request = Yii::$app->request;
-        $array = [];
-        if ($request->isGet) {
-            $strName = $request->get('query');          // 查询参数
-            $intPid = (int)$request->get('iPid', 0);   // 父类ID
-            $where = ['and', ['pid' => $intPid], ['<>', 'id', 0]];
-            if (!empty($strName)) array_push($where, ['like', 'name', $strName]);
-            $arrCountry = China::find()->select(['id', 'name'])->where($where)->asArray()->all();
-            if ($arrCountry) {
-                foreach ($arrCountry as $value) {
-                    $array[] = [
-                        'id' => $value['id'],
-                        'text' => $value['name']
-                    ];
-                }
-            }
-        }
+        $strName = $request->get('query');                     // 查询参数
+        $intPid = (int)$request->get('iPid', 0);   // 父类ID
+        $arrCountry = China::find()->select(['id', 'name as text'])
+            ->where([
+                'and',
+                ['pid' => $intPid],
+                ['>', 'id', 0]
+            ])->andFilterWhere(['like', 'name', $strName])->asArray()->all();
 
-        return $this->asJson($array);
+        return $this->asJson($arrCountry);
     }
 
     /**
@@ -190,34 +183,34 @@ class AdminController extends Controller
 
     /**
      * 重写批量删除处理
+     *
      * @return mixed|string
      */
     public function actionDeleteAll()
     {
         $ids = Yii::$app->request->post('id');
-        if ($ids) {
-            $arrIds = explode(',', $ids);
-            if ($arrIds) {
-                /* @var $model \backend\models\Admin */
-                $model = $this->modelClass;
-                $this->arrJson['errCode'] = 220;
-                $all = $model::findAll([$this->pk => $arrIds]);
-                if ($all) {
-                    $message = '处理成功! <br>';
-                    foreach ($all as $value) {
-                        if ($value->delete()) {
-                            $message .= $value->username . ' 删除成功; <br>';
-                        } else {
-                            $message .= $value->username . '删除失败：' . Helper::arrayToString($value->getErrors()) . ' <br>';
-                        }
-                    }
+        if (empty($ids) || !($arrIds = explode(',', $ids))) {
+            return $this->error(201);
+        }
 
-                    AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk . '=' . $ids);
-                    $this->handleJson($arrIds, 0, $message);
-                }
+        /* @var $model \backend\models\Admin */
+        $model = $this->modelClass;
+        $this->arrJson['errCode'] = 220;
+        $admins = $model::findAll([$this->pk => $arrIds]);
+        if (empty($admins)) {
+            return $this->error(220);
+        }
+
+        $message = '处理成功! <br>';
+        foreach ($admins as $admin) {
+            if ($admin->delete()) {
+                $message .= $admin->username . ' 删除成功; <br>';
+            } else {
+                $message .= $admin->username . '删除失败：' . Helper::arrayToString($admin->getErrors()) . ' <br>';
             }
         }
 
-        return $this->returnJson();
+        AdminLog::create(AdminLog::TYPE_DELETE, $ids, $this->pk . '=' . $ids);
+        return $this->success($arrIds, $message);
     }
 }

@@ -43,13 +43,11 @@ class RoleController extends Controller
 
         // 不是管理员
         if ($uid != Admin::SUPER_ADMIN_ID) {
-            $name = [];
             // 获取用户的所有角色
             $roles = Yii::$app->authManager->getRolesByUser($uid);
             if ($roles) {
-                foreach ($roles as $key => $value) $name[] = $key;
+                $where[] = ['in', 'name', array_keys($roles)];
             }
-            if (!empty($name)) $where[] = ['in', 'name', $name];
         }
 
         return [
@@ -242,7 +240,10 @@ class RoleController extends Controller
             'type' => Auth::TYPE_PERMISSION
         ])->orderBy(['name' => SORT_ASC])->all() : Yii::$app->getAuthManager()->getPermissionsByUser($uid);
         $permissions = [];
-        foreach ($models as $model) $permissions[$model->name] = $model->name . ' (' . $model->description . ')';
+        foreach ($models as $model) {
+            $permissions[$model->name] = $model->name . ' (' . $model->description . ')';
+        }
+
         return $permissions;
     }
 
