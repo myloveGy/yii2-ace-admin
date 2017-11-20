@@ -27,7 +27,7 @@ class m170801_061245_create_menu extends Migration
             'menu_name' => $this->string(64)->notNull()->comment('导航栏目'),
             'icons' => $this->string(32)->notNull()->defaultValue('icon-desktop')->comment('使用的小图标'),
             'url' => $this->string(64)->notNull()->defaultValue('site/index')->comment('访问地址'),
-            'status' => $this->smallInteger(2)->notNull()->defaultValue(1)->comment('状态'),
+            'status' => $this->boolean()->notNull()->defaultValue(1)->comment('状态'),
             'sort' => $this->smallInteger(6)->defaultValue(100)->notNull()->comment('排序'),
             'created_at' => $this->integer(11)->notNull()->defaultValue(0)->comment('创建时间'),
             'created_id' => $this->integer(11)->notNull()->defaultValue(0)->comment('创建用户'),

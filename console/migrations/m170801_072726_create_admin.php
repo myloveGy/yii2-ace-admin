@@ -27,7 +27,7 @@ class m170801_072726_create_admin extends Migration
             'email' => $this->string(64)->notNull()->comment('管理员邮箱')->unique(),
             'face' => $this->string(100)->notNull()->defaultValue('')->comment('管理员头像'),
             'role' => $this->string(64)->notNull()->defaultValue('')->comment('管理员角色'),
-            'status' => $this->smallInteger(2)->notNull()->defaultValue(10)->comment('状态'),
+            'status' => $this->boolean()->notNull()->defaultValue(10)->comment('状态'),
             'auth_key' => $this->string(32)->notNull()->defaultValue(''),
             'password_hash' => $this->string(255)->notNull(),
             'password_reset_token' => $this->string(255)->unique(),
