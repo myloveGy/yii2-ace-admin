@@ -7,6 +7,7 @@ use Yii;
 use backend\models\Menu;
 use backend\models\Auth;
 use yii\helpers\ArrayHelper;
+use yii\helpers\FileHelper;
 use yii\helpers\Url;
 
 /**
@@ -17,6 +18,7 @@ class ModuleController extends Controller
 {
     /**
      * 首页显示
+     *
      * @return string
      */
     public function actionIndex()
@@ -31,37 +33,44 @@ class ModuleController extends Controller
 
     /**
      * 第一步接收标题和数据表数据生成表单配置信息
+     *
      * @return mixed|string
      */
     public function actionCreate()
     {
-        // 接收参数
+        // 1、接收参数并验证
         $request = Yii::$app->request;
-        if ($request->isAjax) {
-            $strTitle = $request->post('title'); // 标题
-            $strTable = $request->post('table'); // 数据库表
-            if (!empty($strTable) && !empty($strTitle)) {
-                // 获取表信息
-                $db = Yii::$app->db;
-                $this->arrJson['errCode'] = 217;
-                $tables = $db->createCommand('SHOW TABLES')->queryAll();
-                if ($tables) {
-                    $isHave = false;
-                    foreach ($tables as $value) {
-                        if (in_array($strTable, $value)) {
-                            $isHave = true;
-                            break;
-                        }
-                    }
+        $strTitle = $request->post('title'); // 标题
+        $strTable = $request->post('table'); // 数据库表
+        if (empty($strTable) || empty($strTitle)) {
+            return $this->error(201);
+        }
 
-                    if ($isHave) {
-                        // 查询表结构信息
-                        $arrTables = $db->createCommand('SHOW FULL COLUMNS FROM `' . $strTable . '`')->queryAll();
-                        $this->arrJson['errCode'] = 218;
-                        if ($arrTables) $this->handleJson($this->createForm($arrTables));
-                    }
-                }
+        // 获取表信息
+        $db = Yii::$app->db;
+        $tables = $db->createCommand('SHOW TABLES')->queryAll();
+        if (empty($tables)) {
+            return $this->error(217);
+        }
+
+        $isHave = false;
+        foreach ($tables as $value) {
+            if (in_array($strTable, $value)) {
+                $isHave = true;
+                break;
             }
+        }
+
+        if ($isHave == false) {
+            return $this->error(217);
+        }
+
+        // 查询表结构信息
+        $arrTables = $db->createCommand('SHOW FULL COLUMNS FROM `' . $strTable . '`')->queryAll();
+        if ($arrTables) {
+            $this->handleJson($this->createForm($arrTables));
+        } else {
+            $this->setCode(218);
         }
 
         return $this->returnJson();
@@ -73,33 +82,34 @@ class ModuleController extends Controller
      */
     public function actionUpdate()
     {
+        // 1、获取验证参数
         $request = Yii::$app->request;
-        if ($request->isAjax) {
-            $attr = $request->post('attr');
-            $table = $request->post('table');
-            if ($attr) {
-                $this->arrJson['errCode'] = 217;
-                if ($table && ($name = str_replace(Yii::$app->db->tablePrefix, '', $table))) {
-                    // 拼接字符串
-                    $dirName = Yii::$app->basePath . '/';
-                    $strCName = Helper::strToUpperWords($name) . 'Controller.php';
-                    $strVName = 'index.php';
-                    $strVPath = $dirName . 'views/' . str_replace('_', '-', $name) . '/';     // 视图目录
-
-                    // 生成目录
-                    if (!file_exists($strVPath)) mkdir($strVPath, 644, true);
-
-                    // 返回数据
-                    $this->handleJson([
-                        'html' => highlight_string($this->createPHP($attr, $request->post('title')), true),
-                        'file' => [$strVName, file_exists($strVPath . $strVName)],
-                        'controller' => [$strCName, file_exists($dirName . 'Controllers/' . $strCName)],
-                    ]);
-                }
-            }
+        $attr = $request->post('attr');
+        $table = $request->post('table');
+        if (empty($table) || empty($attr)) {
+            return $this->error(201);
         }
 
-        return $this->returnJson();
+        $name = str_replace(Yii::$app->db->tablePrefix, '', $table);
+        if (empty($name)) {
+            return $this->error(217);
+        }
+
+        // 拼接字符串
+        $dirName = Yii::$app->basePath . '/';
+        $strCName = Helper::strToUpperWords($name) . 'Controller.php';
+        $strVName = 'index.php';
+        $strVPath = $dirName . 'views/' . str_replace('_', '-', $name) . '/';     // 视图目录
+
+        // 生成目录
+        FileHelper::createDirectory($strVPath, 644);
+
+        // 返回数据
+        return $this->success([
+            'html' => highlight_string($this->createPHP($attr, $request->post('title')), true),
+            'file' => [$strVName, file_exists($strVPath . $strVName)],
+            'controller' => [$strCName, file_exists($dirName . 'Controllers/' . $strCName)],
+        ]);
     }
 
     /**
@@ -108,53 +118,58 @@ class ModuleController extends Controller
      */
     public function actionProduce()
     {
+        // 接收参数
         $request = Yii::$app->request;
-        if ($request->isAjax) {
-            // 接收参数
-            $attr = $request->post('attr');       // 表单信息
-            $table = $request->post('table');      // 操作表
-            $title = $request->post('title');      // 标题信息
-            $html = $request->post('html');       // HTML 文件名
-            $php = $request->post('controller'); // PHP  文件名
-            $auth = (int)$request->post('auth');  // 生成权限
-            $menu = (int)$request->post('menu');  // 生成导航
-            $allow = (int)$request->post('allow'); // 允许文件覆盖
+        $attr = $request->post('attr');       // 表单信息
+        $table = $request->post('table');      // 操作表
+        $title = $request->post('title');      // 标题信息
+        $html = $request->post('html');       // HTML 文件名
+        $php = $request->post('controller'); // PHP  文件名
+        $auth = (int)$request->post('auth');  // 生成权限
+        $menu = (int)$request->post('menu');  // 生成导航
+        $allow = (int)$request->post('allow'); // 允许文件覆盖
 
-            if ($attr && $table && $title && $html && $php) {
-                $this->arrJson['errCode'] = 217;
-                if ($table && ($name = str_replace(Yii::$app->db->tablePrefix, '', $table))) {
-                    // 试图文件目录、导航栏目、权限名称使用字符串
-                    $strName = str_replace('_', '-', $name);
-
-                    // 拼接字符串
-                    $dirName = Yii::$app->basePath . '/';
-                    $strCName = $dirName . 'Controllers/' . (stripos(Helper::strToUpperWords($php), '.php') ? $php : $php . '.php');
-                    $strVName = $dirName . 'views/' . $strName . '/' . (stripos($html, '.php') ? $html : $html . '.php');
-
-
-                    // 验证文件不存在
-                    $this->arrJson['errCode'] = 219;
-                    if ($allow === 1 || (!file_exists($strCName) && !file_exists($strVName))) {
-                        // 生成权限
-                        if ($auth == 1) $this->createAuth($strName, $title);
-
-                        // 生成导航栏目
-                        if ($menu == 1) $this->createMenu($strName, $title);
-
-                        // 生成视图文件
-                        $strWhere = $this->createPHP($attr, $title, $strVName);
-
-                        // 生成控制器
-                        $this->createController($name, $title, $strCName, $strWhere);
-
-                        // 返回数据
-                        $this->handleJson(Url::toRoute([$name . '/index']));
-                    }
-                }
-            }
+        // 第一步验证参数：
+        if (empty($attr) || empty($table) || empty($html) || empty($php)) {
+            return $this->error(201);
         }
 
-        return $this->returnJson();
+        $name = str_replace(Yii::$app->db->tablePrefix, '', $table);
+        if (empty($name)) {
+            return $this->error(217);
+        }
+
+        // 试图文件目录、导航栏目、权限名称使用字符串
+        $strName = str_replace('_', '-', $name);
+
+        // 拼接字符串
+        $dirName = Yii::$app->basePath . '/';
+        $strCName = $dirName . 'Controllers/' . (stripos(Helper::strToUpperWords($php), '.php') ? $php : $php . '.php');
+        $strVName = $dirName . 'views/' . $strName . '/' . (stripos($html, '.php') ? $html : $html . '.php');
+
+        // 验证文件不存在
+        if ($allow !== 1 && (file_exists($strCName) || file_exists($strVName))) {
+            return $this->error(219);
+        }
+
+        // 生成权限
+        if ($auth == 1) {
+            $this->createAuth($strName, $title);
+        }
+
+        // 生成导航栏目
+        if ($menu == 1) {
+            $this->createMenu($strName, $title);
+        }
+
+        // 生成视图文件
+        $strWhere = $this->createPHP($attr, $title, $strVName);
+
+        // 生成控制器
+        $this->createController($name, $title, $strCName, $strWhere);
+
+        // 返回数据
+        return $this->success(Url::toRoute([$name . '/index']));
     }
 
     /**
