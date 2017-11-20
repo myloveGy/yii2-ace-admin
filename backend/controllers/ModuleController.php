@@ -48,32 +48,19 @@ class ModuleController extends Controller
 
         // 获取表信息
         $db = Yii::$app->db;
-        $tables = $db->createCommand('SHOW TABLES')->queryAll();
-        if (empty($tables)) {
-            return $this->error(217);
-        }
-
-        $isHave = false;
-        foreach ($tables as $value) {
-            if (in_array($strTable, $value)) {
-                $isHave = true;
-                break;
-            }
-        }
-
-        if ($isHave == false) {
+        $tables = Yii::$app->db->getSchema()->getTableSchemas();
+        $tables = ArrayHelper::getColumn($tables, 'name');
+        if (empty($tables) || !in_array($strTable, $tables)) {
             return $this->error(217);
         }
 
         // 查询表结构信息
         $arrTables = $db->createCommand('SHOW FULL COLUMNS FROM `' . $strTable . '`')->queryAll();
-        if ($arrTables) {
-            $this->handleJson($this->createForm($arrTables));
-        } else {
-            $this->setCode(218);
+        if (empty($arrTables)) {
+            return $this->error(218);
         }
 
-        return $this->returnJson();
+        return $this->success($this->createForm($arrTables));
     }
 
     /**
