@@ -40,6 +40,20 @@ Yii2 ace Admin 后台模板
 * 后台默认超级管理员账号：super 密码：admin123
 * 管理员账号：admin 密码：admin888
 ### 使用说明
+
+基本操作的权限(以管理员操作为例)：
+
+* admin/index       (显示管理员页面 + 左侧导航显示)
+* admin/search      (管理员数据显示表格数据显示)
+* admin/create      (添加管理员信息)
+* admin/update      (修改管理员信息)
+* admin/delete      (删除管理员信息)
+* admin/delete-all  (批量删除管理员数据)
+* admin/upload      (上传管理员头像)
+* admin/export      (管理员数据信息导出)
+
+每一个请求对应一个权限，请求路径就是权限名称，权限验证在Controller beforeAction 方法中验证
+
 1. 后台控制器配置
     ```php
     namespace backend\controllers;
