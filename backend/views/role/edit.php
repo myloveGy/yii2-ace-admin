@@ -9,6 +9,7 @@ $this->title = '角色信息分配权限';
 $depends = ['depends' => 'backend\assets\AdminAsset'];
 $this->registerJsFile('@web/public/assets/js/jstree/jstree.min.js', $depends);
 $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depends);
+
 ?>
 <?=Alert::widget()?>
 <?php $form = ActiveForm::begin(['enableClientValidation' => true]);?>
@@ -137,38 +138,25 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
             core: {
                 "animation" : 0,
                 "check_callback" : true,
-                data: <?=yii\helpers\Json::encode($trees)?>
+                 data: <?=yii\helpers\Json::encode($trees)?>
             }
         }).on('changed.jstree', function(e, data){
-            var i, j, str;
-            for(i = 0, j = data.selected.length; i < j; i++) {
-                str = data.instance.get_node(data.selected[i]).data;
-                if (str) {
-                    var arr = str.split("/");
-                    $("input[value^=" + arr[0] + "]").attr('checked', true).each(function(){
-                        this.checked = true;
-                    });
+            if (data.action === "select_node" || data.action === "deselect_node") {
+                var isChecked = data.action === "select_node",
+                    // 选中的是目录
+                    length = data.node.children.length,
+                    attributes = [];
+                if (length > 0) {
+                    for (var i = 0; i < length; i ++) {
+                        attributes.push(data.instance.get_node(data.node.children[i]).data.split("/")[0]);
+                    }
+                } else {
+                    attributes.push(data.node.data.split("/")[0]);
                 }
-            }
-        }).on('deselect_node.jstree', function(obj, data, event) {
-            var str = data.node.data;
-            if (str) {
-                str = str.split("/");
-                $("input[value^=" + str[0] + "]").attr('checked', false).each(function(){
-                    this.checked = false;
-                })
-            }
 
-            var i, j, str;
-            for(i = 0, j = data.selected.length; i < j; i++) {
-                str = data.instance.get_node(data.selected[i]).data;
-                console.info(str);
-                if (str) {
-                    var arr = str.split("/");
-                    $("input[value^=" + arr[0] + "]").attr('checked', false).each(function(){
-                        this.checked = false;
-                    });
-                }
+                attributes.forEach(function(attribute) {
+                    $("input[value^='" + attribute + "/']").prop('checked', isChecked);
+                });
             }
         });
 
@@ -177,8 +165,6 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
             var isChecked = this.checked;
             $('input[type=checkbox]').each(function(){if ($(this).attr('checked', isChecked).get(0)) $(this).get(0).checked = isChecked;});
         });
-
-
     });
 </script>
 <?php $this->endBlock(); ?>
