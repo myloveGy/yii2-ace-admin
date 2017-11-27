@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use common\helpers\Tree;
 use Yii;
 use common\models\AdminModel;
 
@@ -123,20 +124,11 @@ class Menu extends AdminModel
 
         // 处理导航栏信息
         if ($menus) {
-            $navigation = [];
-
-            foreach ($menus as $value) {
-                // 判断是否存在
-                $id = $value['pid'] == 0 ? $value['id'] : $value['pid'];
-                if (!isset($navigation[$id])) $navigation[$id] = ['child' => []];
-
-                // 添加数据
-                if ($value['pid'] == 0) {
-                    $navigation[$id] = array_merge($navigation[$id], $value);
-                } else {
-                    $navigation[$id]['child'][] = $value;
-                }
-            }
+            $navigation = (new Tree([
+                'array' => $menus,
+                'childrenName' => 'child',
+                'parentIdName' => 'pid'
+            ]))->getTreeArray(0);
 
             // 存在先删除
             if ($cache->get($index)) $cache->delete($index);
