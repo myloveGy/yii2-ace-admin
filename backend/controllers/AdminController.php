@@ -23,7 +23,7 @@ class AdminController extends Controller
     /**
      * @var string 定义上传文件的目录
      */
-    public $strUploadPath = './public/assets/avatars/';
+    public $strUploadPath = './uploads/avatars/';
 
     /**
      * 搜索配置

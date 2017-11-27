@@ -43,7 +43,7 @@ class Controller extends \common\controllers\UserController
     /**
      * @var string 定义上传文件的保存的路径
      */
-    protected $strUploadPath = './public/uploads/';
+    protected $strUploadPath = './uploads/';
 
     /**
      * @var string 定义使用资源的策略类名
