@@ -124,6 +124,7 @@ class Menu extends AdminModel
 
         // 处理导航栏信息
         if ($menus) {
+            // 生成导航信息
             $navigation = (new Tree([
                 'array' => $menus,
                 'childrenName' => 'child',

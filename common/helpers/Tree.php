@@ -77,8 +77,9 @@ class Tree extends Component
         $pid = $this->array[$pid][$this->parentIdName];
         if (is_array($this->array)) {
             foreach ($this->array as $key => $value) {
-                if ($value[$this->parentIdName] == $pid)
-                    $arrReturn[$id] = $value;
+                if ($value[$this->parentIdName] == $pid) {
+                    $arrReturn[$key] = $value;
+                }
             }
         }
 
@@ -97,7 +98,7 @@ class Tree extends Component
         if (is_array($this->array)) {
             foreach ($this->array as $key => $value) {
                 if ($value[$this->parentIdName] == $id) {
-                    $array[$id] = $value;
+                    $array[$key] = $value;
                 }
             }
         }
