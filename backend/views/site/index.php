@@ -151,7 +151,7 @@ AppAsset::register($this);
             <?php foreach ($this->params['menus'] as $value) : ?>
                 <li>
                     <a <?php if ($value['pid'] == 0 && ! empty($value['child'])) : ?> class="dropdown-toggle" <?php endif; ?> data-id="<?=$value['id']?>" href="<?php echo !empty($value['url']) ? Url::to([$value['url']]) : '#'; ?>">
-                        <i class="menu-icon fa <?=$value['icons']?>"></i>
+                        <i class="<?=$value['icons']?>"></i>
                         <span class="menu-text"> <?=$value['menu_name']?> </span>
                         <?php if ($value['pid'] == 0 && ! empty($value['child'])) : ?><b class="arrow fa fa-angle-down"></b><?php endif;?>
                     </a>
