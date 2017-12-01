@@ -167,15 +167,10 @@ class Menu extends AdminModel
     public static function getMenusByPermissions($permissions)
     {
         $menus = [];
-        $child = self::find()->where([
+        $child = static::find()->where([
             'url' => array_keys($permissions),
-            'status' => self::STATUS_ACTIVE
-        ])->orderBy([
-            'sort' => SORT_ASC
-        ])
-            ->asArray()
-            ->indexBy('id')
-            ->all();
+            'status' => static::STATUS_ACTIVE
+        ])->orderBy(['sort' => SORT_ASC])->asArray()->indexBy('id')->all();
 
         if ($child) {
             $arrParentIds = [];
@@ -189,7 +184,7 @@ class Menu extends AdminModel
 
             // 查询父类的信息
             if ($arrParentIds) {
-                $parents = self::find()
+                $parents = static::find()
                     ->where(['id' => $arrParentIds])
                     ->orderBy(['sort' => SORT_ASC])
                     ->asArray()
@@ -205,5 +200,33 @@ class Menu extends AdminModel
         }
 
         return $menus;
+    }
+
+    /**
+     * 通过子类ID 查询到全部父类ID信息
+     *
+     * @param integer $id 子类ID
+     * @return array
+     */
+    public static function findParentIds($id)
+    {
+        // 查询自己
+        $one = static::findOne($id);
+        if (empty($one)) {
+            return [];
+        }
+
+        $ids = [$one->pid, $one->id];
+        $parent = static::findOne([
+            'status' => static::STATUS_ACTIVE,
+            'id' => $one->pid
+        ]);
+
+        if ($parent && $parent->pid != 0) {
+            $arrIds = static::findParentIds($parent->pid);
+            $ids = array_merge($arrIds, $ids);
+        }
+
+        return $ids;
     }
 }

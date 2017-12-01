@@ -145,32 +145,22 @@ AppAsset::register($this);
                 <span class="btn btn-danger"></span>
             </div>
         </div>
-
         <!--左侧导航栏信息-->
-        <ul class="nav nav-list" id="nav-list-main">
-            <?php foreach ($this->params['menus'] as $value) : ?>
-                <li>
-                    <a <?php if ($value['pid'] == 0 && ! empty($value['child'])) : ?> class="dropdown-toggle" <?php endif; ?> data-id="<?=$value['id']?>" href="<?php echo !empty($value['url']) ? Url::to([$value['url']]) : '#'; ?>">
-                        <i class="<?=$value['icons']?>"></i>
-                        <span class="menu-text"> <?=$value['menu_name']?> </span>
-                        <?php if ($value['pid'] == 0 && ! empty($value['child'])) : ?><b class="arrow fa fa-angle-down"></b><?php endif;?>
-                    </a>
-                    <?php if ($value['pid'] == 0 && ! empty($value['child'])) : ?>
-                        <ul class="submenu">
-                            <?php foreach ($value['child'] as $val) : ?>
-                                <li>
-                                    <a data-id="<?=$val['id']?>" href="<?=Url::toRoute([$val['url']])?>">
-                                        <i class="menu-icon fa fa-caret-right"></i>
-                                        <?=$val['menu_name']?>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+        <?php
+            try {
+                echo \backend\widgets\Nav::widget([
+                    'options' => [
+                        'id' => 'nav-list-main',
+                        'class' => 'nav nav-list',
+                    ],
+                    'labelName' => 'menu_name',
+                    'items' =>  $this->params['menus'],
+                    'itemsName' => 'child'
+                ]);
+            } catch (\Exception $e) {
 
+            }
+        ?>
         <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
             <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
         </div>

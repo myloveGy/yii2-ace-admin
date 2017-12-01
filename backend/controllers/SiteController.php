@@ -5,7 +5,6 @@ namespace backend\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\UnauthorizedHttpException;
 use common\models\AdminForm;
 use common\helpers\Helper;
 use backend\models\Menu;
@@ -31,7 +30,7 @@ class SiteController extends \yii\web\Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'system', 'grid', 'get-data', 'update', 'create'],
+                        'actions' => ['logout', 'index', 'system', 'grid', 'get-data', 'update', 'create', 'test'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -58,8 +57,8 @@ class SiteController extends \yii\web\Controller
 
     /**
      * 管理员登录欢迎页
+     *
      * @return string
-     * @throws UnauthorizedHttpException
      */
     public function actionIndex()
     {
@@ -73,7 +72,9 @@ class SiteController extends \yii\web\Controller
 
     /**
      * 显示首页系统信息
+     *
      * @return string
+     * @throws \yii\db\Exception
      */
     public function actionSystem()
     {
@@ -99,6 +100,7 @@ class SiteController extends \yii\web\Controller
 
     /**
      * 后台管理员登录
+     *
      * @return string|\yii\web\Response
      */
     public function actionLogin()
@@ -121,6 +123,7 @@ class SiteController extends \yii\web\Controller
 
     /**
      * 后台管理员退出
+     *
      * @return \yii\web\Response
      */
     public function actionLogout()
@@ -133,6 +136,7 @@ class SiteController extends \yii\web\Controller
             $admin->save();
         }
 
+        Yii::$app->cache->delete(Menu::CACHE_KEY.Yii::$app->user->id);
         Yii::$app->user->logout();
         return $this->goHome();
     }
