@@ -94,6 +94,11 @@ AppAsset::register($this);
                                 <i class="ace-icon fa fa-user"></i>个人信息
                             </a>
                         </li>
+                        <li>
+                            <a class="window-iframe" data-id="my-arrange" title="我的日程" data-url="<?=Url::toRoute(['arrange/calendar'])?>" href="<?=Url::toRoute(['arrange/calendar'])?>">
+                                <i class="ace-icon fa fa-calendar"></i>我的日程
+                            </a>
+                        </li>
                         <li class="divider"></li>
                         <li>
                             <?=Html::beginForm(['/site/logout'], 'post'); ?>

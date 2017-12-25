@@ -184,9 +184,7 @@ class Menu extends AdminModel
 
             // 查询父类的信息
             if ($arrParentIds) {
-                $parents = static::find()
-                    ->where(['id' => $arrParentIds])
-                    ->orderBy(['sort' => SORT_ASC])
+                $parents = static::find()->where(['id' => $arrParentIds])->orderBy(['sort' => SORT_ASC])
                     ->asArray()
                     ->all();
                 if ($parents) {
