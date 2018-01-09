@@ -14,12 +14,18 @@ $this->title = '导航栏目信息';
         $(td).html(aParents[data] ? aParents[data] : '顶级分类');
     }
 
+    meTables.extend({
+        selectOptionsCreate: function(params) {
+            return '<select ' + mt.handleParams(params) + '><option value="0">顶级分类</option><?=$options?></select>';
+        }
+    });
+
     var m = mt({
         title: "导航栏目",
         table: {
             "aoColumns":[
                 {"data": "id", "sName":"id", "title": "Id", "defaultOrder": "desc", "edit":{"type":"hidden"}, "search":{"type":"text"}},
-                {"data": "pid", "sName":"pid", "title": "上级分类", "value": aParents,  "edit":{"type":"select", "number":1}, "createdCell": parentStatus},
+                {"data": "pid", "sName":"pid", "title": "上级分类", "value": aParents,  "edit":{"type":"selectOptions", "number":1, id: "select-options"}, "createdCell": parentStatus},
                 {"data": "menu_name", "sName":"menu_name", "title":"栏目名称", "edit":{"required":1, "rangelength":"[2, 50]"}, "search":{"type":"text"}, "bSortable": false},
                 {"data": "icons", "sName":"icons", "title":"图标", "edit": {"rangelength":"[2, 50]"}, "bSortable": false},
                 {"data": "url", "sName":"url", "title":"访问地址", "edit": {"rangelength":"[2, 50]"}, "search":{"type": "text"}, "bSortable": false},
@@ -41,6 +47,23 @@ $this->title = '导航栏目信息';
 
     // 添加之前之后处理
     mt.fn.extend({
+        beforeShow: function (data) {
+            $("#select-options option").prop("disabled", false);
+            return true;
+        },
+
+        afterShow: function(data) {
+            if (this.action === "update") {
+                // 自己不能选
+                $("#select-options option[value='" + data.id + "']").prop("disabled", true);
+                if (parseInt(data.pid) === 0) {
+                    // 子类不能选
+                    $("#select-options").find("option[pid='" + data.id + "']").prop("disabled", true);
+                }
+            }
+            return true;
+        },
+
         afterSave: function() {
             window.parent.location.reload();
             return false;
