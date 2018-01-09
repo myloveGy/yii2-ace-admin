@@ -5,6 +5,7 @@ namespace backend\models;
 use common\helpers\Tree;
 use Yii;
 use common\models\AdminModel;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%menu}}".
@@ -166,65 +167,41 @@ class Menu extends AdminModel
      */
     public static function getMenusByPermissions($permissions)
     {
-        $menus = [];
-        $child = static::find()->where([
-            'url' => array_keys($permissions),
-            'status' => static::STATUS_ACTIVE
-        ])->orderBy(['sort' => SORT_ASC])->asArray()->indexBy('id')->all();
-
-        if ($child) {
-            $arrParentIds = [];
-            foreach ($child as $value) {
-                if ($value['pid'] != 0) {
-                    $arrParentIds[] = $value['pid'];
-                }
-
-                $menus[] = $value;
-            }
-
-            // 查询父类的信息
-            if ($arrParentIds) {
-                $parents = static::find()->where(['id' => $arrParentIds])->orderBy(['sort' => SORT_ASC])
-                    ->asArray()
-                    ->all();
-                if ($parents) {
-                    foreach ($parents as $value) {
-                        if (!isset($child[$value['id']])) {
-                            $menus[] = $value;
-                        }
-                    }
-                }
-            }
+        // 查询导航栏目
+        $menus = static::findMenus(['url' => array_keys($permissions), 'status' => static::STATUS_ACTIVE]);
+        if ($menus) {
+            $sort = ArrayHelper::getColumn($menus, 'sort');
+            array_multisort($sort, SORT_ASC, $menus);
         }
 
         return $menus;
     }
 
     /**
-     * 通过子类ID 查询到全部父类ID信息
      *
-     * @param integer $id 子类ID
+     *
+     * @param integer|array $where 查询条件
      * @return array
      */
-    public static function findParentIds($id)
+    public static function findMenus($where)
     {
-        // 查询自己
-        $one = static::findOne($id);
-        if (empty($one)) {
-            return [];
+        $parents = static::find()->where($where)->asArray()->indexBy('id')->all();
+        if ($parents) {
+            $arrParentIds = [];
+            foreach ($parents as $value) {
+                if ($value['pid'] != 0 && !isset($parents[$value['pid']])) {
+                    $arrParentIds[] = $value['pid'];
+                }
+            }
+
+            if ($arrParentIds) {
+                $arrParents = static::findMenus(['id' => $arrParentIds]);
+                if ($arrParents) {
+                    $parents += $arrParents;
+                }
+            }
         }
 
-        $ids = [$one->pid, $one->id];
-        $parent = static::findOne([
-            'status' => static::STATUS_ACTIVE,
-            'id' => $one->pid
-        ]);
-
-        if ($parent && $parent->pid != 0) {
-            $arrIds = static::findParentIds($parent->pid);
-            $ids = array_merge($arrIds, $ids);
-        }
-
-        return $ids;
+        return $parents;
     }
 }

@@ -40,9 +40,8 @@ class MenuController extends Controller
     public function actionIndex()
     {
         // 查询父级分类信息
-        $parents = Menu::find()->select(['id', 'menu_name'])->where([
+        $parents = Menu::find()->select(['id', 'menu_name', 'pid'])->where([
             'status' => Menu::STATUS_ACTIVE,
-            'pid' => 0
         ])->indexBy('id')->asArray()->all();
 
         return $this->render('index', [

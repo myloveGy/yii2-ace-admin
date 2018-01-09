@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\Admin;
 use Yii;
 use backend\models\Arrange;
 
@@ -23,11 +24,19 @@ class ArrangeController extends Controller
      */
     public function where($params)
     {
+        $intUid = (int)Yii::$app->user->id;
+        if ($intUid !== Admin::SUPER_ADMIN_ID) {
+            $where = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
+        } else {
+            $where = [];
+        }
+
         return [
             'id' => '=',
             'title' => 'like',
             'status' => '=',
-            'admin_id' => '='
+            'admin_id' => '=',
+            'where' => $where
         ];
     }
 
