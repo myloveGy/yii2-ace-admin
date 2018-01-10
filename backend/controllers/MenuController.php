@@ -3,8 +3,8 @@
 namespace backend\controllers;
 
 use backend\models\Menu;
-use common\helpers\Helper;
 use common\helpers\Tree;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
@@ -44,27 +44,24 @@ class MenuController extends Controller
         $parents = Menu::find()->select(['id', 'menu_name', 'pid'])->where([
             'status' => Menu::STATUS_ACTIVE,
         ])->indexBy('id')->asArray()->all();
+
+        // 处理显示select
         $tree = new Tree(['array' => $parents, 'parentIdName' => 'pid']);
         $menus = $tree->getTreeArray(0, 2, 1);
         $strOptions = '';
         foreach ($menus as $value) {
-            if (!empty($value['children'])) {
-                $strOptions .= '<optgroup label="' . $value['menu_name'] . '">';
-            }
-
-            $strOptions .= '<option value="' . $value['id'] . '"> ' . $value['menu_name'] . ' </option>';
+            $strOptions .= "<option value=\"{$value['id']}\"> {$value['menu_name']} </option>";
             if (!empty($value['children'])) {
                 foreach ($value['children'] as $val) {
-                    $strOptions .= '<option value="' . $val['id'] . '" pid="' . $val['pid'] . '"> &nbsp;&nbsp;&nbsp;├─ ' . $val['menu_name'] . ' </option>';
+                    $strOptions .= "<option value=\"{$val['id']}\" data-pid=\"{$val['pid']}\">";
+                    $strOptions .= '&nbsp;&nbsp;&nbsp;├─ ' . $val['menu_name'] . ' </option>';
                 }
-
-                $strOptions .= '</optgroup>';
             }
         }
 
         return $this->render('index', [
             'options' => $strOptions,
-            'parents' => Json::encode(Helper::map($parents, 'id', 'menu_name', ['顶级分类']))
+            'parents' => Json::encode(ArrayHelper::map($parents, 'id', 'menu_name'))
         ]);
     }
 
