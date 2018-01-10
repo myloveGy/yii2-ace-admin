@@ -126,7 +126,7 @@ $this->title = '导航栏目信息';
             },
 
             afterSave: function () {
-                window.parent.location.reload();
+                // window.parent.location.reload();
                 return false;
             }
         });
