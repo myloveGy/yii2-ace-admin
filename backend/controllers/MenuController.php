@@ -31,6 +31,7 @@ class MenuController extends Controller
             'url' => '=',
             'action_name' => 'like',
             'status' => '=',
+            'pid' => '='
         ];
     }
 
