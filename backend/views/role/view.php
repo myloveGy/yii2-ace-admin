@@ -2,6 +2,7 @@
 
 use yii\widgets\DetailView;
 use common\widgets\Alert;
+use yii\helpers\ArrayHelper;
 
 $this->title = '角色信息详情';
 
@@ -84,7 +85,7 @@ $this->registerJsFile('@web/public/assets/js/jquery.nestable.min.js', [
 
                             <li data-id="<?=$key?>" class="dd-item">
                                 <div class="dd-handle">
-                                    <?=$value['name']?>
+                                    <?=ArrayHelper::getValue($value, 'name')?>
                                     <span class="sticker">
                                         <span class="label label-success arrowed-in">
                                             <i class="ace-icon fa fa-check bigger-110"></i>
