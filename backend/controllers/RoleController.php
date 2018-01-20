@@ -72,9 +72,11 @@ class RoleController extends Controller
 
     /**
      * 修改角色权限信息
+     *
      * @param  string $name 角色名
      * @return string|\yii\web\Response
      * @throws \yii\web\UnauthorizedHttpException
+     * @throws HttpException
      */
     public function actionEdit($name)
     {
@@ -88,19 +90,16 @@ class RoleController extends Controller
         }
 
         // 判断自己是否有这个权限
-        $uid = Yii::$app->user->id;                     // 用户ID
-        $objAuth = Yii::$app->getAuthManager();             // 权限对象
-        $mixRoles = $objAuth->getAssignment($name, $uid);    // 获取用户是否有改权限
+        $uid = Yii::$app->user->id;                             // 用户ID
+        $objAuth = Yii::$app->getAuthManager();                 // 权限对象
+        $mixRoles = $objAuth->getAssignment($name, $uid);       // 获取用户是否有改权限
         if (!$mixRoles && $uid != Admin::SUPER_ADMIN_ID) {
             throw new UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
         }
 
-        // 添加权限
-        $request = Yii::$app->request;       // 请求信息
-
-        /* @var $model \backend\models\Auth */
-        $model = $this->findModel($name);  // 查询对象
-        $array = $request->post();         // 请求参数信息
+        $request = Yii::$app->request;                          // 请求信息
+        $model = $this->findModel($name);                       // 查询对象
+        $array = $request->post();                              // 请求参数信息
         if ($array && $model->load($array, '')) {
             // 修改权限
             $permissions = $this->preparePermissions($array);
@@ -115,48 +114,18 @@ class RoleController extends Controller
             }
         }
 
-        // 自己的权限
         $permissions = $this->getPermissions();
-
-        // 权限对应的导航栏目
         $menus = Menu::getMenusByPermissions($permissions);
-
         $model->loadRolePermissions($name);
-
         $arrHaves = $model->_permissions;
+        $tree = new Tree([
+            'parentIdName' => 'pid',
+            'childrenName' => 'children',
+            'array' => $menus
+        ]);
 
-        $trees = [];
-        if ($menus) {
-            // 获取一级目录
-            foreach ($menus as $value) {
-                // 初始化的判断数据
-                $id = $value['pid'] == 0 ? $value['id'] : $value['pid'];
-                $array = [
-                    'text' => $value['menu_name'],
-                    'id' => $value['id'],
-                    'data' => $value['url'],
-                    'state' => [],
-                ];
-
-                // 默认选中
-                $array['state']['selected'] = in_array($value['url'], $arrHaves);
-                if (!isset($trees[$id])) {
-                    $trees[$id] = ['children' => []];
-                }
-
-                // 判断添加数据
-                if ($value['pid'] == 0) {
-                    $array['icon'] = 'menu-icon fa fa-list orange';
-                    $trees[$id] = array_merge($trees[$id], $array);
-                } else {
-                    $array['icon'] = false;
-                    $trees[$id]['children'][] = $array;
-                }
-            }
-        }
-
-        // 导航信息
-        $trees = array_values($trees);
+        $trees = $tree->getTreeArray(0);
+        $trees = $tree->getJsTree($trees, $arrHaves);
 
         // 加载视图返回
         return $this->render('edit', [
@@ -188,10 +157,8 @@ class RoleController extends Controller
             'array' => Menu::getMenusByPermissions($permissions)
         ]);
 
-        $menus = $tree->getTreeArray(0);
-
         return $this->render('view', [
-            'menus' => $menus,
+            'menus' => $tree->getTreeArray(0),
             'model' => $model,
             'permissions' => $permissions,
         ]);
