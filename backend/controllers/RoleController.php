@@ -4,11 +4,13 @@ namespace backend\controllers;
 
 use backend\models\Admin;
 use common\helpers\Helper;
+use common\helpers\Tree;
 use Yii;
 use backend\models\Auth;
 use backend\models\Menu;
 use yii\web\HttpException;
 use \yii\web\UnauthorizedHttpException;
+use yii\helpers\VarDumper;
 
 /**
  * Class RoleController 角色管理类
@@ -168,6 +170,7 @@ class RoleController extends Controller
      * 查看角色权限信息
      * @param  string $name 角色名称
      * @return string
+     * @throws HttpException
      */
     public function actionView($name)
     {
@@ -179,22 +182,13 @@ class RoleController extends Controller
         $permissions = Yii::$app->authManager->getPermissionsByRole($name);
 
         // 查询导航栏信息
-        $menus = [];
-        $child = Menu::getMenusByPermissions($permissions);
-        if ($child) {
-            foreach ($child as $value) {
-                $key = $value['pid'] == 0 ? $value['id'] : $value['pid'];
-                if (!isset($menus[$key])) {
-                    $menus[$key] = ['child' => []];
-                }
+        $tree = new Tree([
+            'parentIdName' => 'pid',
+            'childrenName' => 'child',
+            'array' => Menu::getMenusByPermissions($permissions)
+        ]);
 
-                if ($value['pid'] == 0) {
-                    $menus[$key]['name'] = $value['menu_name'];
-                } else {
-                    $menus[$key]['child'][] = ['name' => $value['menu_name']];
-                }
-            }
-        }
+        $menus = $tree->getTreeArray(0);
 
         return $this->render('view', [
             'menus' => $menus,

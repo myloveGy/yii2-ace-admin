@@ -938,7 +938,7 @@
                 delete params.all;
                 delete params.divClass;
                 params["class"] = "ace m-checkbox";
-                params = handleParams(params);
+                params = this.handleParams(params);
                 if (o) {
                     html += '<div class="checkbox col-xs-12">' +
                             '<label>' +
@@ -1062,6 +1062,7 @@
                 } catch (e) {
                     k.edit.type = "text";
                     form += this["inputCreate"](k.edit);
+                    console.info(e);
                 }
 
                 form += '</div>';

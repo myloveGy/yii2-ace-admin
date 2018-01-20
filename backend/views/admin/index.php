@@ -89,7 +89,7 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
                     },
                     {
                         "title": "状态", "data": "status", "sName": "status", "value": aStatus,
-                        "edit": {"type": "radio", "default": 10, "required": true, "number": true},
+                        "edit": {"type": "checkbox", "default": 10, "required": true, "number": true},
                         "bSortable": false,
                         "search": {"type": "select"},
                         "createdCell": function (td, data) {
