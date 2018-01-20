@@ -117,10 +117,10 @@ $this->title = '导航栏目信息';
                 if (this.action === "update") {
                     // 自己不能选
                     $("#select-options option[value='" + data.id + "']").prop("disabled", true);
-                    if (parseInt(data.pid) === 0) {
-                        // 子类不能选
-                        $("#select-options option[data-pid='" + data.id + "']").prop("disabled", true);
-                    }
+                    // 子类不能选
+                    $("#select-options option[data-pid='" + data.id + "']").prop("disabled", true).each(function(){
+                        $("#select-options option[data-pid='" + $(this).val() + "']").prop("disabled", true)
+                    });
                 }
                 return true;
             },

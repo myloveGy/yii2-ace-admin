@@ -10,7 +10,6 @@ use backend\models\Auth;
 use backend\models\Menu;
 use yii\web\HttpException;
 use \yii\web\UnauthorizedHttpException;
-use yii\helpers\VarDumper;
 
 /**
  * Class RoleController 角色管理类

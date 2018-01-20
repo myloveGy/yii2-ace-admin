@@ -37,41 +37,10 @@ $this->title = 'Yii2 Admin 登录信息';
 
         <h4 class="blue">
             <span class="middle"><i class="fa fa-desktop light-blue bigger-110"></i></span>
-            系统信息
+            其他信息
         </h4>
 
         <div class="profile-user-info">
-            <div class="profile-info-row">
-                <div class="profile-info-name"> 操作系统  </div>
-                <div class="profile-info-value">
-                    <span><?=$system?></span>
-                </div>
-            </div>
-
-            <div class="profile-info-row">
-                <div class="profile-info-name"> 服务器软件 </div>
-
-                <div class="profile-info-value">
-                    <span><?=$server?></span>
-                </div>
-            </div>
-
-            <div class="profile-info-row">
-                <div class="profile-info-name"> MySQL版本 </div>
-
-                <div class="profile-info-value">
-                    <span><?=$mysql?></span>
-                </div>
-            </div>
-
-            <div class="profile-info-row">
-                <div class="profile-info-name"> PHP版本 </div>
-
-                <div class="profile-info-value">
-                    <span><?=$php?></span>
-                </div>
-            </div>
-
             <div class="profile-info-row">
                 <div class="profile-info-name"> Yii版本 </div>
                 <div class="profile-info-value">
