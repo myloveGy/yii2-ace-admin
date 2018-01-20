@@ -1,13 +1,20 @@
 <?php
+
+use yii\helpers\Json;
+use \backend\models\Auth;
+
+// 获取权限
+$auth = Auth::getDataTableAuth('menus');
+
 // 定义标题和面包屑信息
 $this->title = '导航栏目信息';
 ?>
 <?= \backend\widgets\MeTable::widget() ?>
 <?php $this->beginBlock('javascript') ?>
     <script type="text/javascript">
-        var aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
+        var aAdmins = <?=Json::encode($this->params['admins'])?>,
             aParents = <?= $parents ?>,
-            arrStatus = <?=\yii\helpers\Json::encode(Yii::$app->params['status'])?>;
+            arrStatus = <?=Json::encode(Yii::$app->params['status'])?>;
 
         // 显示上级分类
         function parentStatus(td, data) {
@@ -31,6 +38,10 @@ $this->title = '导航栏目信息';
 
         var m = mt({
             title: "导航栏目",
+            buttons: <?=Json::encode($auth['buttons'])?>,
+            operations: {
+                buttons: <?=Json::encode($auth['operations'])?>
+            },
             table: {
                 "aoColumns": [
                     {

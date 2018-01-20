@@ -121,6 +121,8 @@ class Auth extends ActiveRecord
      * @param bool $runValidation 是否严重
      * @param null $attributeNames 修改字段
      * @return bool
+     * @throws \Exception
+     * @throws \yii\base\Exception
      */
     public function save($runValidation = true, $attributeNames = null)
     {
@@ -247,6 +249,8 @@ class Auth extends ActiveRecord
      * @param string $name
      * @param $permissions
      * @return bool
+     * @throws \Exception
+     * @throws \yii\base\Exception
      */
     public function updateRole($name, $permissions)
     {
@@ -298,5 +302,45 @@ class Auth extends ActiveRecord
             ->where(['name' => $name])
             ->InnerJoin("{$tablePrefix}auth_item_child", ['child' => $name])
             ->count();
+    }
+
+    /**
+     * 获取dataTable 表格需要的权限
+     * @param string $controller 权限对应的控制器名称
+     * @param string $join 链接字符串
+     * @return array
+     */
+    public static function getDataTableAuth($controller, $join = '/')
+    {
+        $controller .= $join;
+        $arrReturn = [
+            'buttons' => [
+                'create' => [
+                    'bShow' => Yii::$app->user->can($controller . 'create')
+                ],
+
+                'deleteAll' => [
+                    'bShow' => Yii::$app->user->can($controller . 'delete-all'),
+                ],
+
+                'export' => [
+                    'bShow' => Yii::$app->user->can($controller . 'export')
+                ]
+            ],
+            'operations' => [
+                'delete' => [
+                    'bShow' => Yii::$app->user->can($controller . 'delete')
+                ]
+            ],
+        ];
+
+        // 修改
+        if (Yii::$app->user->can($controller . 'update')) {
+            $arrReturn['buttons']['updateAll'] = $arrReturn['operations']['update'] = ['bShow' => true];
+        } else {
+            $arrReturn['buttons']['updateAll'] = $arrReturn['operations']['update'] = ['bShow' => false];
+        }
+
+        return $arrReturn;
     }
 }

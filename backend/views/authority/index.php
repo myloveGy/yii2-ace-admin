@@ -1,4 +1,11 @@
 <?php
+
+use yii\helpers\Json;
+use \backend\models\Auth;
+
+// 获取权限
+$auth = Auth::getDataTableAuth('authority');
+
 // 定义标题
 $this->title = '权限信息';
 ?>
@@ -10,6 +17,10 @@ $this->title = '权限信息';
     var m = mt({
         title: "权限信息",
         pk: "name",
+        buttons: <?=Json::encode($auth['buttons'])?>,
+        operations: {
+            buttons: <?=Json::encode($auth['operations'])?>
+        },
         table: {
             "aoColumns":[
                 {"title": "类型", "data": "type", "sName": "type", "isHide": true, "edit": {"type": "hidden", "value": iType}},
