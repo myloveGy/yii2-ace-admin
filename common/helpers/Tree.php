@@ -281,40 +281,6 @@ class Tree extends Component
     }
 
     /**
-     * 获取jstree 需要的数据
-     *
-     * @param array $array 数据信息
-     * @param array $arrHaves  需要选中的数据
-     * @return array
-     */
-    public function getJsTree($array, $arrHaves)
-    {
-        if (empty($array) || !is_array($array)) {
-            return [];
-        }
-
-        $arrReturn = [];
-        foreach ($array as $value) {
-            $array = [
-                'text' => $value['menu_name'],
-                'id' => $value['id'],
-                'data' => $value['url'],
-                'state' => [],
-            ];
-
-            $array['state']['selected'] = in_array($value['url'], $arrHaves);
-            $array['icon'] = $value['pid'] == 0 || !empty($value['children']) ? 'menu-icon fa fa-list orange' : false;
-            if (!empty($value['children'])) {
-                $array['children'] = $this->getJsTree($value['children'], $arrHaves);
-            }
-
-            $arrReturn[] = $array;
-        }
-
-        return $arrReturn;
-    }
-
-    /**
      * 处理分隔符信息
      *
      * @param int $number

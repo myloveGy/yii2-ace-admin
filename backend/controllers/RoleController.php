@@ -115,23 +115,20 @@ class RoleController extends Controller
         }
 
         $permissions = $this->getPermissions();
-        $menus = Menu::getMenusByPermissions($permissions);
         $model->loadRolePermissions($name);
-        $arrHaves = $model->_permissions;
-        $tree = new Tree([
+        $trees = (new Tree([
             'parentIdName' => 'pid',
             'childrenName' => 'children',
-            'array' => $menus
-        ]);
+            'array' => Menu::getMenusByPermissions($permissions)
+        ]))->getTreeArray(0);
 
-        $trees = $tree->getTreeArray(0);
-        $trees = $tree->getJsTree($trees, $arrHaves);
+        $trees = Menu::getJsMenus($trees, $model->_permissions);
 
         // 加载视图返回
         return $this->render('edit', [
-            'model' => $model,        // 模型对象
+            'model' => $model,              // 模型对象
             'permissions' => $permissions,  // 权限信息
-            'trees' => $trees,        // 导航栏树,
+            'trees' => $trees,              // 导航栏树,
         ]);
     }
 
