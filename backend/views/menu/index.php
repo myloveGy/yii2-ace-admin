@@ -4,7 +4,7 @@ use yii\helpers\Json;
 use \backend\models\Auth;
 
 // 获取权限
-$auth = Auth::getDataTableAuth('menus');
+$auth = Auth::getDataTableAuth('menu');
 
 // 定义标题和面包屑信息
 $this->title = '导航栏目信息';
