@@ -198,30 +198,27 @@ class Auth extends ActiveRecord
         $auth = Yii::$app->getAuthManager();
         $this->type = (int)$this->type;
 
-        // 角色
-        if ($this->type === self::TYPE_ROLE) {
-            if (!Auth::hasUsersByRole($this->name) && $this->name != Yii::$app->params['adminRoleName']) {
-
-                $role = $auth->getRole($this->name);
-
-                // 请求这个角色的所有权限
-                $permissions = $auth->getPermissionsByRole($this->name);
-                foreach ($permissions as $permission) {
-                    $auth->removeChild($role, $permission);
-                }
-                // 删除角色成功
-                return $auth->remove($role);
-            } else {
-                $this->addError('name', '角色还在使用');
-            }
-
-            // 权限
-        } else {
+        // 权限
+        if ($this->type === self::TYPE_PERMISSION) {
             $item = $auth->getPermission($this->name);
             return $item ? $auth->remove($item) : false;
         }
 
-        return false;
+        // 角色
+        if (Auth::hasUsersByRole($this->name) || $this->name == Yii::$app->params['adminRoleName']) {
+            $this->addError('name', '角色还在使用');
+            return false;
+        }
+
+        // 清除这个角色的所有权限
+        $role = $auth->getRole($this->name);
+        $permissions = $auth->getPermissionsByRole($this->name);
+        foreach ($permissions as $permission) {
+            $auth->removeChild($role, $permission);
+        }
+
+        // 删除角色成功
+        return $auth->remove($role);
     }
 
     /**
