@@ -61,14 +61,24 @@ $this->title = '角色信息';
                     "title": "角色名称",
                     "data": "name",
                     "sName": "newName",
-                    "edit": {"type": "text", "required": true, "rangelength": "[2, 64]"},
+                    "edit": {
+                        "type": "text",
+                        "required": true,
+                        "rangelength": "[2, 64]",
+                        placeholder: "请输入英文字母、数字、_、/等字符串"
+                    },
                     "bSortable": false
                 },
                 {
                     "title": "说明描述",
                     "data": "description",
                     "sName": "description",
-                    "edit": {"type": "text", "required": true, "rangelength": "[2, 255]"},
+                    "edit": {
+                        "type": "text",
+                        "required": true,
+                        "rangelength": "[2, 255]",
+                        placeholder: "请输入简单描述信息"
+                    },
                     "search": {"type": "text"},
                     "bSortable": false
                 },
