@@ -60,6 +60,7 @@ class Controller extends \common\controllers\UserController
      * @param \yii\base\Action $action
      * @return bool
      * @throws UnauthorizedHttpException
+     * @throws \yii\web\BadRequestHttpException
      */
     public function beforeAction($action)
     {

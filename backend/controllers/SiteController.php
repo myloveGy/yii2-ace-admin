@@ -74,27 +74,15 @@ class SiteController extends \yii\web\Controller
      * 显示首页系统信息
      *
      * @return string
-     * @throws \yii\db\Exception
      */
     public function actionSystem()
     {
         // 用户信息
         Yii::$app->view->params['user'] = Yii::$app->getUser()->identity;
 
-        // 系统信息
-        $system = explode(' ', php_uname());
-        $system = $system[0] . '&nbsp;' . ('/' == DIRECTORY_SEPARATOR ? $system[2] : $system[1]);
-
-        // MySql版本
-        $version = Yii::$app->db->createCommand('SELECT VERSION() AS `version`')->queryOne();
-
         return $this->render('system', [
-            'system' => $system,                                        // 系统信息
             'yii' => 'Yii ' . Yii::getVersion(),                      // Yii 版本
-            'php' => 'PHP ' . PHP_VERSION,                            // PHP 版本
-            'server' => $_SERVER['SERVER_SOFTWARE'],                    // 服务器信息
-            'mysql' => 'MySQL ' . ($version ? $version['version'] : ''), // Mysql版本
-            'upload' => ini_get('upload_max_filesize'),                 // 上传文件大小
+            'upload' => ini_get('upload_max_filesize'),      // 上传文件大小
         ]);
     }
 
@@ -109,6 +97,7 @@ class SiteController extends \yii\web\Controller
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
+
         $model = new AdminForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             // 生成缓存导航栏文件

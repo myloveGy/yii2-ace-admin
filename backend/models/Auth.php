@@ -121,6 +121,8 @@ class Auth extends ActiveRecord
      * @param bool $runValidation 是否严重
      * @param null $attributeNames 修改字段
      * @return bool
+     * @throws \Exception
+     * @throws \yii\base\Exception
      */
     public function save($runValidation = true, $attributeNames = null)
     {
@@ -196,30 +198,27 @@ class Auth extends ActiveRecord
         $auth = Yii::$app->getAuthManager();
         $this->type = (int)$this->type;
 
-        // 角色
-        if ($this->type === self::TYPE_ROLE) {
-            if (!Auth::hasUsersByRole($this->name) && $this->name != Yii::$app->params['adminRoleName']) {
-
-                $role = $auth->getRole($this->name);
-
-                // 请求这个角色的所有权限
-                $permissions = $auth->getPermissionsByRole($this->name);
-                foreach ($permissions as $permission) {
-                    $auth->removeChild($role, $permission);
-                }
-                // 删除角色成功
-                return $auth->remove($role);
-            } else {
-                $this->addError('name', '角色还在使用');
-            }
-
-            // 权限
-        } else {
+        // 权限
+        if ($this->type === self::TYPE_PERMISSION) {
             $item = $auth->getPermission($this->name);
             return $item ? $auth->remove($item) : false;
         }
 
-        return false;
+        // 角色
+        if (Auth::hasUsersByRole($this->name) || $this->name == Yii::$app->params['adminRoleName']) {
+            $this->addError('name', '角色还在使用');
+            return false;
+        }
+
+        // 清除这个角色的所有权限
+        $role = $auth->getRole($this->name);
+        $permissions = $auth->getPermissionsByRole($this->name);
+        foreach ($permissions as $permission) {
+            $auth->removeChild($role, $permission);
+        }
+
+        // 删除角色成功
+        return $auth->remove($role);
     }
 
     /**
@@ -247,6 +246,8 @@ class Auth extends ActiveRecord
      * @param string $name
      * @param $permissions
      * @return bool
+     * @throws \Exception
+     * @throws \yii\base\Exception
      */
     public function updateRole($name, $permissions)
     {
@@ -298,5 +299,45 @@ class Auth extends ActiveRecord
             ->where(['name' => $name])
             ->InnerJoin("{$tablePrefix}auth_item_child", ['child' => $name])
             ->count();
+    }
+
+    /**
+     * 获取dataTable 表格需要的权限
+     * @param string $controller 权限对应的控制器名称
+     * @param string $join 链接字符串
+     * @return array
+     */
+    public static function getDataTableAuth($controller, $join = '/')
+    {
+        $controller .= $join;
+        $arrReturn = [
+            'buttons' => [
+                'create' => [
+                    'bShow' => Yii::$app->user->can($controller . 'create')
+                ],
+
+                'deleteAll' => [
+                    'bShow' => Yii::$app->user->can($controller . 'delete-all'),
+                ],
+
+                'export' => [
+                    'bShow' => Yii::$app->user->can($controller . 'export')
+                ]
+            ],
+            'operations' => [
+                'delete' => [
+                    'bShow' => Yii::$app->user->can($controller . 'delete')
+                ]
+            ],
+        ];
+
+        // 修改
+        if (Yii::$app->user->can($controller . 'update')) {
+            $arrReturn['buttons']['updateAll'] = $arrReturn['operations']['update'] = ['bShow' => true];
+        } else {
+            $arrReturn['buttons']['updateAll'] = $arrReturn['operations']['update'] = ['bShow' => false];
+        }
+
+        return $arrReturn;
     }
 }

@@ -1,4 +1,11 @@
 <?php
+
+use yii\helpers\Json;
+use \backend\models\Auth;
+
+// 获取权限
+$auth = Auth::getDataTableAuth('admin');
+
 // 定义标题和面包屑信息
 $this->title = '管理员信息';
 
@@ -6,17 +13,22 @@ $url = '@web/public/assets';
 $depends = ['depends' => 'backend\assets\AdminAsset'];
 $this->registerCssFile($url.'/css/chosen.css', $depends);
 $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
+
 ?>
 <?=\backend\widgets\MeTable::widget()?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var aStatus = <?=\yii\helpers\Json::encode($status)?>,
-        aStatusColor = <?=\yii\helpers\Json::encode($statusColor)?>,
-        aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
-        aRoles  = <?=\yii\helpers\Json::encode($roles)?>,
+    var aStatus = <?=Json::encode($status)?>,
+        aStatusColor = <?=Json::encode($statusColor)?>,
+        aAdmins = <?=Json::encode($this->params['admins'])?>,
+        aRoles  = <?=Json::encode($roles)?>,
         m = meTables({
             title: "管理员信息",
             fileSelector: ["#file"],
+            buttons: <?=Json::encode($auth['buttons'])?>,
+            operations: {
+                buttons: <?=Json::encode($auth['operations'])?>
+            },
             table: {
                 "aoColumns":[
                     {

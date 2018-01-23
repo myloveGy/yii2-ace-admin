@@ -1,13 +1,20 @@
 <?php
+
+use yii\helpers\Json;
+use \backend\models\Auth;
+
+// 获取权限
+$auth = Auth::getDataTableAuth('menu');
+
 // 定义标题和面包屑信息
 $this->title = '导航栏目信息';
 ?>
 <?= \backend\widgets\MeTable::widget() ?>
 <?php $this->beginBlock('javascript') ?>
     <script type="text/javascript">
-        var aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
+        var aAdmins = <?=Json::encode($this->params['admins'])?>,
             aParents = <?= $parents ?>,
-            arrStatus = <?=\yii\helpers\Json::encode(Yii::$app->params['status'])?>;
+            arrStatus = <?=Json::encode(Yii::$app->params['status'])?>;
 
         // 显示上级分类
         function parentStatus(td, data) {
@@ -31,6 +38,10 @@ $this->title = '导航栏目信息';
 
         var m = mt({
             title: "导航栏目",
+            buttons: <?=Json::encode($auth['buttons'])?>,
+            operations: {
+                buttons: <?=Json::encode($auth['operations'])?>
+            },
             table: {
                 "aoColumns": [
                     {
@@ -117,10 +128,10 @@ $this->title = '导航栏目信息';
                 if (this.action === "update") {
                     // 自己不能选
                     $("#select-options option[value='" + data.id + "']").prop("disabled", true);
-                    if (parseInt(data.pid) === 0) {
-                        // 子类不能选
-                        $("#select-options option[data-pid='" + data.id + "']").prop("disabled", true);
-                    }
+                    // 子类不能选
+                    $("#select-options option[data-pid='" + data.id + "']").prop("disabled", true).each(function(){
+                        $("#select-options option[data-pid='" + $(this).val() + "']").prop("disabled", true)
+                    });
                 }
                 return true;
             },

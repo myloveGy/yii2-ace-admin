@@ -1,36 +1,25 @@
 <?php
+
+use yii\helpers\Json;
+use \backend\models\Auth;
+
+// 获取权限
+$auth = Auth::getDataTableAuth('admin-log');
+
 // 定义标题和面包屑信息
 $this->title = '操作日志';
 ?>
 <?= \backend\widgets\MeTable::widget() ?>
 <?php $this->beginBlock('javascript') ?>
     <script type="text/javascript">
-        var oTypes = <?=\yii\helpers\Json::encode(\backend\models\AdminLog::getTypeDescription())?>,
-            isShow = <?=Yii::$app->user->id == \backend\models\Admin::SUPER_ADMIN_ID ? 'true' : 'false'?>,
-            aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>;
+        var oTypes = <?=Json::encode(\backend\models\AdminLog::getTypeDescription())?>,
+            aAdmins = <?=Json::encode($this->params['admins'])?>;
         var m = meTables({
             title: "操作日志",
-            buttons: {
-                create: {
-                    bShow: false
-                },
-                "updateAll": {
-                    bShow: false
-                },
-                "deleteAll": {
-                    bShow: isShow
-                }
-            },
+            buttons: <?=Json::encode($auth['buttons'])?>,
             operations: {
                 width: "auto",
-                buttons: {
-                    update: {
-                        bShow: false
-                    },
-                    delete: {
-                        bShow: isShow
-                    }
-                }
+                buttons: <?=Json::encode($auth['operations'])?>
             },
             table: {
                 "aoColumns": [

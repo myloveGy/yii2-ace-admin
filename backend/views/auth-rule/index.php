@@ -1,4 +1,11 @@
 <?php
+
+use yii\helpers\Json;
+use \backend\models\Auth;
+
+// 获取权限
+$auth = Auth::getDataTableAuth('auth-rule');
+
 // 定义标题和面包屑信息
 $this->title = '规则管理';
 ?>
@@ -8,6 +15,10 @@ $this->title = '规则管理';
     var m = meTables({
         title: "规则管理",
         pk: "name",
+        buttons: <?=Json::encode($auth['buttons'])?>,
+        operations: {
+            buttons: <?=Json::encode($auth['operations'])?>
+        },
         table: {
             "aoColumns": [
                 {"title": "名称", "data": "name", "defaultOrder": "desc", "sName": "name",

@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\Admin;
 use common\helpers\Helper;
+use common\helpers\Tree;
 use Yii;
 use backend\models\Auth;
 use backend\models\Menu;
@@ -70,9 +71,11 @@ class RoleController extends Controller
 
     /**
      * 修改角色权限信息
+     *
      * @param  string $name 角色名
      * @return string|\yii\web\Response
      * @throws \yii\web\UnauthorizedHttpException
+     * @throws HttpException
      */
     public function actionEdit($name)
     {
@@ -86,19 +89,16 @@ class RoleController extends Controller
         }
 
         // 判断自己是否有这个权限
-        $uid = Yii::$app->user->id;                     // 用户ID
-        $objAuth = Yii::$app->getAuthManager();             // 权限对象
-        $mixRoles = $objAuth->getAssignment($name, $uid);    // 获取用户是否有改权限
+        $uid = Yii::$app->user->id;                             // 用户ID
+        $objAuth = Yii::$app->getAuthManager();                 // 权限对象
+        $mixRoles = $objAuth->getAssignment($name, $uid);       // 获取用户是否有改权限
         if (!$mixRoles && $uid != Admin::SUPER_ADMIN_ID) {
             throw new UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
         }
 
-        // 添加权限
-        $request = Yii::$app->request;       // 请求信息
-
-        /* @var $model \backend\models\Auth */
-        $model = $this->findModel($name);  // 查询对象
-        $array = $request->post();         // 请求参数信息
+        $request = Yii::$app->request;                          // 请求信息
+        $model = $this->findModel($name);                       // 查询对象
+        $array = $request->post();                              // 请求参数信息
         if ($array && $model->load($array, '')) {
             // 修改权限
             $permissions = $this->preparePermissions($array);
@@ -113,54 +113,21 @@ class RoleController extends Controller
             }
         }
 
-        // 自己的权限
         $permissions = $this->getPermissions();
-
-        // 权限对应的导航栏目
-        $menus = Menu::getMenusByPermissions($permissions);
-
         $model->loadRolePermissions($name);
+        $trees = (new Tree([
+            'parentIdName' => 'pid',
+            'childrenName' => 'children',
+            'array' => Menu::getMenusByPermissions($permissions)
+        ]))->getTreeArray(0);
 
-        $arrHaves = $model->_permissions;
-
-        $trees = [];
-        if ($menus) {
-            // 获取一级目录
-            foreach ($menus as $value) {
-                // 初始化的判断数据
-                $id = $value['pid'] == 0 ? $value['id'] : $value['pid'];
-                $array = [
-                    'text' => $value['menu_name'],
-                    'id' => $value['id'],
-                    'data' => $value['url'],
-                    'state' => [],
-                ];
-
-                // 默认选中
-                $array['state']['selected'] = in_array($value['url'], $arrHaves);
-                if (!isset($trees[$id])) {
-                    $trees[$id] = ['children' => []];
-                }
-
-                // 判断添加数据
-                if ($value['pid'] == 0) {
-                    $array['icon'] = 'menu-icon fa fa-list orange';
-                    $trees[$id] = array_merge($trees[$id], $array);
-                } else {
-                    $array['icon'] = false;
-                    $trees[$id]['children'][] = $array;
-                }
-            }
-        }
-
-        // 导航信息
-        $trees = array_values($trees);
+        $trees = Menu::getJsMenus($trees, $model->_permissions);
 
         // 加载视图返回
         return $this->render('edit', [
-            'model' => $model,        // 模型对象
+            'model' => $model,              // 模型对象
             'permissions' => $permissions,  // 权限信息
-            'trees' => $trees,        // 导航栏树,
+            'trees' => $trees,              // 导航栏树,
         ]);
     }
 
@@ -168,6 +135,7 @@ class RoleController extends Controller
      * 查看角色权限信息
      * @param  string $name 角色名称
      * @return string
+     * @throws HttpException
      */
     public function actionView($name)
     {
@@ -179,25 +147,14 @@ class RoleController extends Controller
         $permissions = Yii::$app->authManager->getPermissionsByRole($name);
 
         // 查询导航栏信息
-        $menus = [];
-        $child = Menu::getMenusByPermissions($permissions);
-        if ($child) {
-            foreach ($child as $value) {
-                $key = $value['pid'] == 0 ? $value['id'] : $value['pid'];
-                if (!isset($menus[$key])) {
-                    $menus[$key] = ['child' => []];
-                }
-
-                if ($value['pid'] == 0) {
-                    $menus[$key]['name'] = $value['menu_name'];
-                } else {
-                    $menus[$key]['child'][] = ['name' => $value['menu_name']];
-                }
-            }
-        }
+        $tree = new Tree([
+            'parentIdName' => 'pid',
+            'childrenName' => 'child',
+            'array' => Menu::getMenusByPermissions($permissions)
+        ]);
 
         return $this->render('view', [
-            'menus' => $menus,
+            'menus' => $tree->getTreeArray(0),
             'model' => $model,
             'permissions' => $permissions,
         ]);

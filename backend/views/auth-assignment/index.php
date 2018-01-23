@@ -1,6 +1,11 @@
 <?php
 
 use \yii\helpers\Html;
+use yii\helpers\Json;
+use \backend\models\Auth;
+
+// 获取权限
+$auth = Auth::getDataTableAuth('auth-assignment');
 
 // 定义标题和面包屑信息
 $this->title = '角色分配';
@@ -65,24 +70,25 @@ $this->registerCssFile($url.'/css/chosen.css', $depends);
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
     var roles = <?=$roles?>,
-        aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>;
+        aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
+        oButtons = <?=Json::encode($auth['buttons'])?>,
+        oOperationsButtons = <?=Json::encode($auth['operations'])?>;
+        oButtons.updateAll = {bShow: false};
+        oButtons.deleteAll = {bShow: false};
+        oOperationsButtons.see = {bShow: false};
+        oOperationsButtons.update = {bShow: false};
+
     var m = meTables({
         searchType: "top",
         search: {
             render: false
         },
         title: "角色分配",
-        buttons: {
-            "updateAll": {bShow: false},
-            "deleteAll": {bShow: false}
-        },
         bCheckbox: false,
+        buttons: oButtons,
         operations: {
             "width": "auto",
-            buttons: {
-                "see": {"bShow": false},
-                "update": {"bShow": false}
-            }
+            buttons: oOperationsButtons
         },
         table: {
             "order": [],

@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use common\widgets\Alert;
+use yii\helpers\Json;
 
 $this->title = '角色信息分配权限';
 
@@ -138,7 +139,7 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
             core: {
                 "animation" : 0,
                 "check_callback" : true,
-                 data: <?=yii\helpers\Json::encode($trees)?>
+                 data: <?=Json::encode($trees)?>
             }
         }).on('changed.jstree', function(e, data){
             if (data.action === "select_node" || data.action === "deselect_node") {
@@ -162,8 +163,7 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
 
         // 全部选择
         $('.allChecked').click(function(){
-            var isChecked = this.checked;
-            $('input[type=checkbox]').each(function(){if ($(this).attr('checked', isChecked).get(0)) $(this).get(0).checked = isChecked;});
+            $('input[type=checkbox]').prop('checked', this.checked);
         });
     });
 </script>

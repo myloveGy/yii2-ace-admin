@@ -47,18 +47,8 @@ class MenuController extends Controller
         ])->indexBy('id')->asArray()->all();
 
         // 处理显示select
-        $tree = new Tree(['array' => $parents, 'parentIdName' => 'pid']);
-        $menus = $tree->getTreeArray(0, 2, 1);
-        $strOptions = '';
-        foreach ($menus as $value) {
-            $strOptions .= "<option value=\"{$value['id']}\"> {$value['menu_name']} </option>";
-            if (!empty($value['children'])) {
-                foreach ($value['children'] as $val) {
-                    $strOptions .= "<option value=\"{$val['id']}\" data-pid=\"{$val['pid']}\">";
-                    $strOptions .= '&nbsp;&nbsp;&nbsp;├─ ' . $val['menu_name'] . ' </option>';
-                }
-            }
-        }
+        $strOptions = (new Tree(['array' => $parents, 'parentIdName' => 'pid']))
+            ->getTree(0, '<option value="{id}" data-pid="{pid}"> {extend_space}{menu_name} </option>');
 
         return $this->render('index', [
             'options' => $strOptions,
