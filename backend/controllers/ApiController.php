@@ -1,9 +1,11 @@
 <?php
 
 namespace backend\controllers;
+
 use Yii;
 use common\helpers\Helper;
 use backend\models\AdminLog;
+
 /**
  * Class ApiController api 执行操作控制器
  * @package backend\controllers
@@ -15,7 +17,7 @@ class ApiController extends Controller
      * @var string 定义使用的model
      */
     public $modelClass = 'backend\models\Api';
-    
+
     /**
      * 首页显示
      * @return string
@@ -50,7 +52,7 @@ class ApiController extends Controller
     public function where($params)
     {
         return [
-            
+
         ];
     }
 
@@ -70,7 +72,7 @@ class ApiController extends Controller
      * @return mixed|string
      */
     public function actionSwagger()
-    {   
+    {
         $data =  $this->getQuery(['version'=>'v1'])->all();
         $json = '';
         foreach ($data as $key => $value) {
@@ -96,5 +98,14 @@ class ApiController extends Controller
                 $json
             .'}
         }';
+    }
+
+    /**
+     * Api Form
+     */
+    public function actionForm()
+    {
+        $this->layout = false;
+        return $this->render('form');
     }
 }

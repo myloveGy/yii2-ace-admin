@@ -3,8 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>森域咨询-API</title>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+  <title>API</title>
   <link rel="stylesheet" type="text/css" href="/public/swg/swagger-ui.css" >
   <link rel="icon" type="image/png" href="/public/swg/favicon-32x32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="/public/swg/favicon-16x16.png" sizes="16x16" />
