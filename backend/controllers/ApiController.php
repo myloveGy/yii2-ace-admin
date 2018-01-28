@@ -16,7 +16,7 @@ class ApiController extends Controller
     /**
      * @var string 定义使用的model
      */
-    public $modelClass = 'backend\models\Api';
+    public $modelClass = 'common\models\Api';
 
     /**
      * 首页显示
@@ -68,44 +68,34 @@ class ApiController extends Controller
     }
 
     /**
-     * 查看接口文档
-     * @return mixed|string
-     */
-    public function actionSwagger()
-    {
-        $data =  $this->getQuery(['version'=>'v1'])->all();
-        $json = '';
-        foreach ($data as $key => $value) {
-            $json .= '"'.$value['url'].'":{';
-            $json .= '"'.$value['method'].'":{';
-            $json .= '"tags":["'.$value['tags'].'"]';
-            $json .= ',"summary":"'.$value['summary'].'"';
-            $json .= ',"description":"'.$value['description'].'"';
-            $json .= ',"produces":'.$value['produces'];
-            $json .= ',"parameters":'.$value['parameters'];
-            $json .= ',"responses":'.$value['responses'];
-            $json .= '}';
-            $json .= '},';
-        }
-        $json = rtrim($json,',');
-        return '{
-            "swagger": "2.0",
-            "info": {
-                "title": "ApiDoc",
-                "version": "v1"
-            },
-            "paths": {'.
-                $json
-            .'}
-        }';
-    }
-
-    /**
      * Api Form
      */
     public function actionForm()
     {
-        $this->layout = false;
-        return $this->render('form');
+//        $this->layout = false;
+        return $this->render('form',[
+            'methods' => [
+            'get'=>'get',
+            'post'=>'post',
+            'put'=>'put',
+            'delete'=>'delete',
+            'options'=>'options'
+            ],
+            'schemelist' => [
+            'http'=>'http',
+            'https'=>'https',
+            'ws'=>'ws',
+            'wss'=>'wss'
+            ],
+        ]);
+    }
+
+    /**
+     * Api Store
+     *
+     */
+    public  function actionCreate1()
+    {
+
     }
 }
