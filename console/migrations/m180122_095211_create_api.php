@@ -4,9 +4,9 @@ use yii\db\Migration;
 use yii\db\Schema;
 
 /**
- * Class m180122_095211_create_yii2_api_talbe
+ * Class m180122_095211_create_api
  */
-class m180122_095211_create_yii2_api_talbe extends Migration
+class m180122_095211_create_api extends Migration
 {
     /**
      * @var string 定义表名
@@ -21,7 +21,7 @@ class m180122_095211_create_yii2_api_talbe extends Migration
         $this->createTable($this->table, [
             'id' => Schema::TYPE_PK,
             'url' => Schema::TYPE_STRING . ' NOT NULL',
-            'schemes' => Schema::TYPE_STRING . ' NOT NULL',
+            'schemes' => $this->string(50)->notNull()->defaultValue('http')->comment('传输协议'),
             'method' => Schema::TYPE_STRING . ' NOT NULL',
             'tags' => Schema::TYPE_STRING . ' NOT NULL',
             'summary' => Schema::TYPE_STRING . ' NOT NULL',
@@ -47,7 +47,7 @@ class m180122_095211_create_yii2_api_talbe extends Migration
      */
     public function safeDown()
     {
-        echo "m180122_095211_create_yii2_api_talbe cannot be reverted.\n";
+        echo "m180122_095211_create_api cannot be reverted.\n";
         $this->dropTable($this->table);
         return false;
     }
