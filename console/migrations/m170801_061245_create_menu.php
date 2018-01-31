@@ -37,8 +37,7 @@ class m170801_061245_create_menu extends Migration
 
         $time = time();
 
-        // 写入数据
-        $this->batchInsert($this->table, [
+        $insertKey = [
             'pid',
             'menu_name',
             'icons',
@@ -48,20 +47,60 @@ class m170801_061245_create_menu extends Migration
             'created_id',
             'updated_at',
             'updated_id',
-        ], [
-            [0, '后台管理', 'menu-icon fa fa-cog', '', 2, $time, 1, $time, 1],
-            [1, '管理员信息', '', 'admin/index', 1, $time, 1, $time, 1],
-            [1, '角色管理', '', 'role/index', 2, $time, 1, $time, 1],
-            [1, '角色分配', 'icon-cog', 'auth-assignment/index', 3, $time, 1, $time, 1],
-            [1, '权限管理', '', 'authority/index', 4, $time, 1, $time, 1],
-            [1, '规则管理', 'menu-icon fa fa-shield', 'auth-rule/index', 5, $time, 1, $time, 1],
-            [1, '导航栏目', '', 'menu/index', 6, $time, 1, $time, 1],
-            [1, '模块生成', '', 'module/index', 7, $time, 1, $time, 1],
-            [1, '操作日志', '', 'admin-log/index', 8, $time, 1, $time, 1],
-            [0, '地址信息', 'menu-icon fa fa-bank', 'china/index', 4, $time, 1, $time, 1],
+        ];
+
+        // 写入后台导航栏目
+        $this->insert($this->table, [
+            'pid' => 0,
+            'menu_name' => '后台管理',
+            'icons' => 'menu-icon fa fa-cog',
+            'url' => '',
+            'sort' => 1,
+            'created_at' => $time,
+            'created_id' => 1,
+            'updated_at' => $time,
+            'updated_id' => 1,
+        ]);
+
+        $intPid = $this->db->getLastInsertID();
+
+        // 写入后台管理下的导航栏目
+        $this->batchInsert($this->table, $insertKey, [
+            [$intPid, '管理员信息', '', 'admin/index', 1, $time, 1, $time, 1],
+            [$intPid, '导航栏目', '', 'menu/index', 2, $time, 1, $time, 1],
+            [$intPid, '模块生成', '', 'module/index', 3, $time, 1, $time, 1],
+            [$intPid, '操作日志', '', 'admin-log/index', 4, $time, 1, $time, 1]
+        ]);
+
+        $this->insert($this->table, [
+            'pid' => $intPid,
+            'menu_name' => '后台权限',
+            'icons' => '',
+            'url' => '',
+            'sort' => 5,
+            'created_at' => $time,
+            'created_id' => 1,
+            'updated_at' => $time,
+            'updated_id' => 1,
+        ]);
+
+        // 写入权限管理
+        $intParentId = $this->db->getLastInsertID();
+
+        // 写入后台管理下的导航栏目
+        $this->batchInsert($this->table, $insertKey, [
+            [$intParentId, '角色管理', 'menu-icon fa fa-graduation-cap', 'role/index', 1, $time, 1, $time, 1],
+            [$intParentId, '角色分配', 'menu-icon fa fa-paper-plane', 'auth-assignment/index', 2, $time, 1, $time, 1],
+            [$intParentId, '权限管理', 'menu-icon fa fa-fire', 'authority/index', 3, $time, 1, $time, 1],
+            [$intParentId, '规则管理', 'menu-icon fa fa-shield', 'auth-rule/index', 4, $time, 1, $time, 1],
+        ]);
+
+        $this->batchInsert($this->table, $insertKey, [
+            [0, '地址信息', 'menu-icon fa fa-bank', 'china/index', 2, $time, 1, $time, 1],
             [0, '用户信息', 'menu-icon fa fa-user', 'user/index', 3, $time, 1, $time, 1],
-            [0, '日程管理', 'menu-icon fa fa-calendar', 'arrange/index', 1, $time, 1, $time, 1],
-            [0, '上传文件', 'menu-icon fa fa-upload', 'uploads/index', 9, $time, 1, $time, 1],
+            [0, '日程管理', 'menu-icon fa fa-calendar', 'arrange/index', 4, $time, 1, $time, 1],
+            [0, '上传文件', 'menu-icon fa fa-upload', 'uploads/index', 5, $time, 1, $time, 1],
+            [0, 'API管理', 'menu-icon fa fa-external-link', 'api/index', 6, $time, 1, $time, 1],
         ]);
     }
 

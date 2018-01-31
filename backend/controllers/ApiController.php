@@ -15,6 +15,19 @@ class ApiController extends Controller
     public $modelClass = 'common\models\Api';
 
     /**
+     * 搜索配置
+     * @param  array $params 查询参数
+     * @return array
+     */
+    public function where($params)
+    {
+        return [
+            'id' => '=',
+            'summary' => 'like',
+        ];
+    }
+
+    /**
      * 首页显示
      * @return string
      */
@@ -37,20 +50,7 @@ class ApiController extends Controller
         ]);
     }
 
-    /**
-     * 查看接口文档
-     * @return string
-     */
-    public function actionDoc()
-    {
-        $this->layout = false;
-        return $this->render('doc');
-    }
-
-    /**
-     * Api Form
-     */
-    public function actionForm()
+    public function actionCreate()
     {
         return $this->render('form', [
             'methods' => [
@@ -67,5 +67,6 @@ class ApiController extends Controller
                 'wss' => 'wss'
             ],
         ]);
+
     }
 }
