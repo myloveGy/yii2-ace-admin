@@ -32,7 +32,7 @@ class m180122_095211_create_api extends Migration
             'operationId' => Schema::TYPE_STRING,
             'consumes' => Schema::TYPE_STRING . ' NOT NULL',
             'produces' => Schema::TYPE_STRING . ' NOT NULL',
-            'parameters' => Schema::TYPE_TEXT ,
+            'parameters' => Schema::TYPE_TEXT,
             'responses' => Schema::TYPE_STRING . ' NOT NULL',
             'version' => Schema::TYPE_STRING . ' NOT NULL',
             'created_at' => $this->integer(11)->notNull()->defaultValue(0)->comment('创建时间'),

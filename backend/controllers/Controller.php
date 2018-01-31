@@ -67,19 +67,18 @@ class Controller extends \common\controllers\UserController
         // 主控制器验证
         if (parent::beforeAction($action)) {
             // 验证权限
-//            if (Yii::$app->user->id!=1){
-                if (!Yii::$app->user->can($action->controller->id . '/' . $action->id)
-                    && Yii::$app->getErrorHandler()->exception === null
-                ) {
-                    // 没有权限AJAX返回
-                    if (Yii::$app->request->isAjax) {
-                        Yii::$app->response->content = Json::encode($this->error(216));
-                        return false;
-                    }
-
-                    throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
+            if (!Yii::$app->user->can($action->controller->id . '/' . $action->id)
+                && Yii::$app->getErrorHandler()->exception === null
+            ) {
+                // 没有权限AJAX返回
+                if (Yii::$app->request->isAjax) {
+                    Yii::$app->response->content = Json::encode($this->error(216));
+                    return false;
                 }
-//            }
+
+                throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
+            }
+
             // 处理获取数据(默认不提前注入)
             if (!in_array($action->id, ['create', 'update', 'delete', 'delete-all', 'editable', 'upload', 'export'])) {
                 $this->admins = ArrayHelper::map(Admin::findAll(['status' => Admin::STATUS_ACTIVE]), 'id', 'username');
