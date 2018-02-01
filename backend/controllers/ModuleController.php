@@ -131,7 +131,7 @@ class ModuleController extends Controller
 
         // 拼接字符串
         $dirName = Yii::$app->basePath . '/';
-        $strCName = $dirName . 'Controllers/' . (stripos(Helper::strToUpperWords($php), '.php') ? $php : $php . '.php');
+        $strCName = $dirName . 'controllers/' . (stripos(Helper::strToUpperWords($php), '.php') ? $php : $php . '.php');
         $strVName = $dirName . 'views/' . $strName . '/' . (stripos($html, '.php') ? $html : $html . '.php');
 
         // 验证文件不存在
