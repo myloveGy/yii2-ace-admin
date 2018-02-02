@@ -15,6 +15,11 @@ Yii2 ace Admin 后台模板
 * 账号： admin
 * 密码： admin888
 ### 安装
+* 提示：请先确定安装了[Composer Asset插件:](https://github.com/fxpio/composer-asset-plugin)
+```
+php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
+```
+
 1. 执行 composer 安装项目
         
     ```

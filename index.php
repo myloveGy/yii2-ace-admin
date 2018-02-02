@@ -201,6 +201,7 @@ if (!empty($_POST) && isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
         $('#close-modal').click(function () {
             $('#myModal').modal('hide')
         });
+
         $('form').submit(function () {
             if ($(this).validate({
                     errorPlacement: function (error, errorPlacement) {
@@ -217,11 +218,11 @@ if (!empty($_POST) && isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
                     url: './index.php',
                     type: 'POST',
                     data: $('form').serialize(),
-                    dataType: 'json',
+                    dataType: 'json'
                 }).done(function (json) {
                     layer.msg(json.msg, {
-                        icon: json.status == 1 ? 6 : 5, end: function () {
-                            if (json.status == 1) $('#myModal').modal('show');
+                        icon: json.status === 1 ? 6 : 5, end: function () {
+                            if (json.status === 1) $('#myModal').modal('show');
                         }
                     })
                 }).fail(function () {
