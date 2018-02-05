@@ -1,23 +1,30 @@
 <?php
-// 定义标题和面包屑信息
-$this->title = 'Api信息';
 
-$url = '@web/public/assets';
+use yii\helpers\Json;
+use backend\widgets\MeTable;
+
+/* @var $methods array */
+/* @var $schemelist array */
+
+// 定义标题和面包屑信息
+$this->title = 'API信息';
+
+$url     = '@web/public/assets';
 $depends = ['depends' => 'backend\assets\AdminAsset'];
-$this->registerCssFile($url.'/css/chosen.css', $depends);
-$this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
+$this->registerCssFile($url . '/css/chosen.css', $depends);
+$this->registerJsFile($url . '/js/chosen.jquery.min.js', $depends);
 ?>
-<?=\backend\widgets\MeTable::widget()?>
+<?= MeTable::widget() ?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var methods  = <?=\yii\helpers\Json::encode($methods)?>,
-        schemelist  = <?=\yii\helpers\Json::encode($schemelist)?>,
-        aAdmins = <?=\yii\helpers\Json::encode($this->params['admins'])?>,
+    var methods = <?=Json::encode($methods)?>,
+        schemelist = <?=Json::encode($schemelist)?>,
+        aAdmins = <?=Json::encode($this->params['admins'])?>,
         m = meTables({
-            title: "Api信息",
+            title: "APi信息",
             fileSelector: ["#file"],
             table: {
-                "aoColumns":[
+                "aoColumns": [
                     {
                         "title": "ID",
                         "data": "id",
@@ -41,7 +48,7 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
                         "value": schemelist,
                         "edit": {"type": "select", "required": true},
                         "bSortable": false,
-                        "createdCell": function(td, data) {
+                        "createdCell": function (td, data) {
                             $(td).html(schemelist[data] ? schemelist[data] : data);
                         }
                     },
@@ -52,7 +59,7 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
                         "value": methods,
                         "edit": {"type": "select", "required": true},
                         "bSortable": false,
-                        "createdCell": function(td, data) {
+                        "createdCell": function (td, data) {
                             $(td).html(methods[data] ? methods[data] : data);
                         }
                     },
@@ -75,7 +82,7 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
                         "bSortable": false,
                         "defaultContent": "",
                         "bViews": false
-                    },             
+                    },
                     {
                         "title": "tags",
                         "data": "tags",
@@ -85,7 +92,7 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
                         "bSortable": false,
                         "defaultContent": "",
                         "bViews": false
-                    },                        
+                    },
                     {
                         "title": "description",
                         "data": "description",
@@ -97,57 +104,10 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
                         "bViews": false
                     },
                     {
-                        "title": "MIME类型使用",
-                        "data": "consumes",
-                        "sName": "consumes",
-                        "isHide": true,
-                        "edit": {"type": "text", "rangelength": "[2, 255]"},
-                        "bSortable": false,
-                        "defaultContent": "",
-                        "bViews": false
-                    },
-                    {
-                        "title": "MIME类型产生",
-                        "data": "produces",
-                        "sName": "produces",
-                        "isHide": true,
-                        "edit": {"type": "text", "rangelength": "[2, 255]"},
-                        "bSortable": false,
-                        "defaultContent": "",
-                        "bViews": false
-                    },
-                    {
-                        "title": "配置参数",
-                        "data": "parameters",
-                        "sName": "parameters",
-                        "isHide": true,
-                        "edit": {"type": "textarea"},
-                        "bSortable": false,
-                        "defaultContent": "",
-                        "bViews": false
-                    },
-                    {
-                        "title": "响应参数",
-                        "data": "responses",
-                        "sName": "responses",
-                        "isHide": true,
-                        "edit": {"type": "text", "rangelength": "[2, 255]"},
-                        "bSortable": false,
-                        "defaultContent": "",
-                        "bViews": false
-                    },
-                    {
                         "title": "创建时间",
                         "data": "created_at",
                         "sName": "created_at",
                         "createdCell": meTables.dateTimeString
-                    },
-                    {
-                        "title": "创建用户",
-                        "data": "created_id",
-                        "sName": "created_id",
-                        "bSortable": false,
-                        "createdCell": mt.adminString
                     },
                     {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell": mt.dateTimeString},
                     {
@@ -162,11 +122,11 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
         });
     var $file = null;
     mt.fn.extend({
-        beforeShow: function(data) {
+        beforeShow: function (data) {
             $file.ace_file_input("reset_input");
 
             // 修改复值
-            if (this.action == "update" && ! empty(data.face)) {
+            if (this.action == "update" && !empty(data.face)) {
                 $file.ace_file_input("show_file_list", [data.face]);
             }
 
@@ -174,7 +134,7 @@ $this->registerJsFile($url.'/js/chosen.jquery.min.js', $depends);
         }
     });
 
-    $(function(){
+    $(function () {
         m.init();
         $file = $("#file");
     });
