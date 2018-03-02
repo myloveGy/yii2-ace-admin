@@ -11,7 +11,7 @@ Yii2 ace Admin 后台模板
 * PHP >= 5.4
 * MySQL
 ### 项目demo
-* 地址： [http://yii2.sh-jinger.com](http://yii2.sh-jinger.com)
+* 地址： [https://yii2.sh-jinger.com](https://yii2.sh-jinger.com)
 * 账号： admin
 * 密码： admin888
 ### 安装
