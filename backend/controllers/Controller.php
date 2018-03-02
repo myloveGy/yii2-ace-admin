@@ -134,6 +134,7 @@ class Controller extends \common\controllers\UserController
      * @see where()
      * @see getQuery()
      * @see afterSearch()
+     * @throws \Exception
      */
     public function actionSearch()
     {
@@ -249,6 +250,9 @@ class Controller extends \common\controllers\UserController
     /**
      * 处理删除数据
      * @return mixed|string
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete()
     {
@@ -381,7 +385,9 @@ class Controller extends \common\controllers\UserController
 
         // 判断删除之前的文件
         $strFile = (string)$request->post($strField);   // 旧的地址
-        if (!empty($strFile) && file_exists('.' . $strFile)) unlink('.' . $strFile);
+        if (!empty($strFile) && file_exists('.' . $strFile)) {
+            unlink('.' . $strFile);
+        }
 
         // 初始化上次表单model对象，并定义好验证场景
         $model = new UploadForm(['scenario' => $strField]);
@@ -414,14 +420,11 @@ class Controller extends \common\controllers\UserController
                     'sFileName' => $objFile->baseName . '.' . $objFile->extension,
                 ];
 
-                $this->handleJson($mixReturn);
-
                 AdminLog::create(AdminLog::TYPE_UPLOAD, $mixReturn, $strField);
+                return $this->success($mixReturn);
             } else {
-                $this->setCode(204);
+                return $this->error(204);
             }
-
-            return $this->returnJson();
         } catch (\Exception $e) {
             return $this->error(203, $e->getMessage());
         }
