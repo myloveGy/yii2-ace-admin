@@ -111,13 +111,6 @@ class m170801_081237_insert_rabc extends Migration
             ['uploads/delete', 2, '上传文件-删除数据', $time, $time],
             ['uploads/delete-all', 2, '上传文件-批量删除', $time, $time],
             ['uploads/export', 2, '上传文件-导出数据', $time, $time],
-            ['api/index', 2, 'API管理-显示页面', $time, $time],
-            ['api/search', 2, 'API管理-搜索数据', $time, $time],
-            ['api/create', 2, 'API管理-添加数据', $time, $time],
-            ['api/update', 2, 'API管理-修改数据', $time, $time],
-            ['api/delete', 2, 'API管理-删除数据', $time, $time],
-            ['api/delete-all', 2, 'API管理-批量删除', $time, $time],
-            ['api/export', 2, 'API管理-导出数据', $time, $time]
         ]);
 
         // 管理员信息
