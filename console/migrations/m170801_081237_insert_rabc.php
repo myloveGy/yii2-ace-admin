@@ -111,6 +111,7 @@ class m170801_081237_insert_rabc extends Migration
             ['uploads/delete', 2, '上传文件-删除数据', $time, $time],
             ['uploads/delete-all', 2, '上传文件-批量删除', $time, $time],
             ['uploads/export', 2, '上传文件-导出数据', $time, $time],
+            ['uploads/upload', 2, '上传文件-文件上传', $time, $time],
         ]);
 
         // 管理员信息

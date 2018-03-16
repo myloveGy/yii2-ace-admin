@@ -58,7 +58,7 @@ $this->registerJsFile($url . '/js/dropzone.min.js', $depends);
                                 try {
                                     data = JSON.parse(data);
                                     for (var i in data) {
-                                        html += "<img src='" + data[i] + "' width='40px' height='40px'> ";
+                                        html += "<img class='layer-image' src='" + data[i] + "' width='40px' height='40px'> ";
                                     }
                                 } catch (e) {
                                 }
@@ -156,6 +156,17 @@ $this->registerJsFile($url . '/js/dropzone.min.js', $depends);
                 console.error(e);
             }
 
+            // 图片显示
+            $(document).on("click", ".layer-image", function () {
+                var url = $(this).prop('src');
+                layer.open({
+                    type: 1,
+                    title: false,
+                    skin: 'layui-layer-nobg', //没有背景色
+                    shadeClose: true,
+                    content: '<img class="center-block" src="' + url + '" style="max-height:90%;max-width:90%">'
+                });
+            });
         });
     </script>
 <?php $this->endBlock(); ?>
