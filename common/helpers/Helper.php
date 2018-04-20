@@ -3,6 +3,7 @@
 namespace common\helpers;
 
 use yii\helpers\ArrayHelper;
+use Closure;
 
 /**
  * Class Helper
@@ -67,61 +68,46 @@ class Helper
      */
     public static function handleWhere($params, $where, $join = 'and')
     {
-        $arrReturn = [];
-        if ($where) {
-            // 处理默认查询条件
-            if (isset($where['where']) && !empty($where['where'])) {
-                $arrReturn = $where['where'];
-                unset($where['where']);
-            }
-
-            // 处理其他查询
-            if ($where && $params) {
-                /**
-                 * 循环使用$params,前端处理了空值的情况(提交查询时候，空值不提交进查询参数中)
-                 * $params 的个数小于等于$where 个数
-                 */
-                foreach ($params as $key => $value) {
-                    // 判断不能查询请求的数据不能为空，且定义了查询参数对应查询处理方式
-                    if ($value !== '' && isset($where[$key])) {
-                        // 根据定义查询处理方式，拼接查询数组
-                        switch (gettype($where[$key])) {
-                            // 字符串
-                            case 'string':
-                                $arrReturn[] = [$where[$key], $key, $value];
-                                break;
-
-                            // 数组
-                            case 'array':
-                                // 处理函数
-                                if (isset($where[$key]['func']) && function_exists($where[$key]['func'])) {
-                                    $value = $where[$key]['func']($value);
-                                }
-
-                                // 对应字段
-                                if (empty($where[$key]['field'])) $where[$key]['field'] = $key;
-
-                                // 查询连接类型
-                                if (empty($where[$key]['and'])) $where[$key]['and'] = '=';
-
-                                $arrReturn[] = [$where[$key]['and'], $where[$key]['field'], $value];
-                                break;
-
-                            // 对象(匿名函数)
-                            case 'object':
-                                $arrReturn[] = $where[$key]($value);
-                                break;
-
-                            // 其他类型
-                            default:
-                                $arrReturn[] = ['=', $key, $value];
-                        }
-                    }
+        // 处理默认查询条件
+        if ($arrReturn = ArrayHelper::getValue($where, 'where', [])) {
+            unset($where['where']);
+        }
+        
+        // 请求参数和查询参数必须存在
+        if ($where && $params) {
+            foreach ($params as $key => $value) {
+                // 判断不能查询请求的数据不能为空，且定义了查询参数对应查询处理方式
+                if ($value === '' || !isset($where[$key])) {
+                    continue;
                 }
-            }
 
-            // 存在查询条件，数组前面添加 连接类型
-            if ($arrReturn) array_unshift($arrReturn, $join);
+                // 匿名函数处理
+                $handle = $where[$key];
+                if ($handle instanceof Closure) {
+                    $arrReturn[] = $handle($value);
+                    continue;
+                }
+
+                // 数组
+                if (is_array($handle)) {
+                    // 处理函数
+                    if (isset($handle['func']) && function_exists($handle['func'])) {
+                        $value = $handle['func']($value);
+                    }
+
+                    $handle['field'] = empty($handle['field']) ? $key : $handle['field'];   // 对应字段
+                    $handle['and']   = empty($handle['and']) ? '=' : $handle['and'];        // 查询连接类型
+                    $arrReturn[] = [$where[$key]['and'], $where[$key]['field'], $value];
+                    continue;
+                }
+
+                $arrReturn[] = [(string)$handle, $key, $value];
+            }
+        }
+
+        // 存在查询条件，数组前面添加 连接类型
+        if ($arrReturn) {
+            array_unshift($arrReturn, $join);
         }
 
         return $arrReturn;
@@ -197,7 +183,7 @@ class Helper
         ob_start();
         $objPHPExcel = new \PHPExcel();
         if ($intCount > 3000) {
-            $cacheMethod = \PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
+            $cacheMethod = \PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
             $cacheSettings = array('memoryCacheSize' => '8MB');
             \PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
         }
