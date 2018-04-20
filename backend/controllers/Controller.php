@@ -277,7 +277,7 @@ class Controller extends \common\controllers\UserController
      *
      * @return boolean|\yii\db\ActiveRecord
      */
-    private function findOne()
+    protected function findOne()
     {
         // 接收参数判断
         $data = Yii::$app->request->post();
