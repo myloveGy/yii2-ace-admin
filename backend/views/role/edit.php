@@ -141,11 +141,10 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
                 var tmp_data = parent_object.instance.get_node(data.children[i]);
                 array_attributes.push.apply(array_attributes, getChildrenAttributes(tmp_data, parent_object));
             }
-        } else {
-            if (data.data != null) {
-                array_attributes.push(data.data.split("/")[0]);
-            }
+        } else if (data.data != null) {
+            array_attributes.push(data.data.split("/")[0]);
         }
+
         return array_attributes;
     }
 
