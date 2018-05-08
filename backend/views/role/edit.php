@@ -12,8 +12,8 @@ $this->registerJsFile('@web/public/assets/js/jstree/jstree.min.js', $depends);
 $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depends);
 
 ?>
-<?=Alert::widget()?>
-<?php $form = ActiveForm::begin(['enableClientValidation' => true]);?>
+<?= Alert::widget() ?>
+<?php $form = ActiveForm::begin(['enableClientValidation' => true]); ?>
 <div class="col-xs-12 col-sm-3">
     <div class="col-xs-12 col-sm-12 widget-container-col  ui-sortable">
         <!-- #section:custom/widget-box -->
@@ -38,7 +38,7 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
 
             <div class="widget-body">
                 <div class="widget-main">
-                    <input type="hidden" name="Auth[type]" value="<?=$model->type?>" />
+                    <input type="hidden" name="Auth[type]" value="<?= $model->type ?>"/>
                     <?php
                     echo $form->field($model, 'name')->textInput($model->isNewRecord ? [] : ['disabled' => 'disabled']) .
                         $form->field($model, 'description')->textarea(['style' => 'height: 100px']) .
@@ -79,7 +79,7 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
             </div>
         </div>
     </div>
- </div>
+</div>
 
 <div class="col-xs-12 col-sm-9 widget-container-col  ui-sortable">
     <!-- #section:custom/widget-box -->
@@ -105,25 +105,25 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
             <div class="widget-main">
                 <div class="row">
                     <div class="col-xs-12 col-sm-12">
-                    <div class="checkbox col-sm-10" style="padding:5px;">
-                        <label>
-                            <input class="ace ace-checkbox-2 allChecked" type="checkbox"/>
-                            <span class="lbl">  全部选择 </span>
-                        </label>
-                    </div>
-                    <?php foreach ($permissions as $key => $value) : ?>
-                        <div class="checkbox col-sm-4" style="padding:5px;">
+                        <div class="checkbox col-sm-10" style="padding:5px;">
                             <label>
-                                <input class="ace ace-checkbox-2"
-                                       type="checkbox"
-                                       name="Auth[_permissions][]"
-                                       value="<?= $key ?>"
-                                    <?=in_array($key, $model->_permissions) ? 'checked="checked"' : ''?>
-                                />
-                                <span class="lbl"> <?= $value ?></span>
+                                <input class="ace ace-checkbox-2 allChecked" type="checkbox"/>
+                                <span class="lbl">  全部选择 </span>
                             </label>
                         </div>
-                    <?php endforeach; ?>
+                        <?php foreach ($permissions as $key => $value) : ?>
+                            <div class="checkbox col-sm-4" style="padding:5px;">
+                                <label>
+                                    <input class="ace ace-checkbox-2"
+                                           type="checkbox"
+                                           name="Auth[_permissions][]"
+                                           value="<?= $key ?>"
+                                        <?= in_array($key, $model->_permissions) ? 'checked="checked"' : '' ?>
+                                    />
+                                    <span class="lbl"> <?= $value ?></span>
+                                </label>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -133,37 +133,43 @@ $this->registerCssFile('@web/public/assets/js/jstree/default/style.css', $depend
 <?php ActiveForm::end(); ?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    $(function(){
-        $("#tree-one").jstree({
-            "plugins" : ["checkbox" ],
-            core: {
-                "animation" : 0,
-                "check_callback" : true,
-                 data: <?=Json::encode($trees)?>
+
+    function getChildrenAttributes(data, parent_object) {
+        var array_attributes = [], length = data.children.length;
+        if (length > 0) {
+            for (var i = 0; i < length; i++) {
+                var tmp_data = parent_object.instance.get_node(data.children[i]);
+                array_attributes.push.apply(array_attributes, getChildrenAttributes(tmp_data, parent_object));
             }
-        }).on('changed.jstree', function(e, data){
+        } else {
+            if (data.data != null) {
+                array_attributes.push(data.data.split("/")[0]);
+            }
+        }
+        return array_attributes;
+    }
+
+    $(function () {
+        $("#tree-one").jstree({
+            "plugins": ["checkbox"],
+            core: {
+                "animation": 0,
+                "check_callback": true,
+                data: <?=Json::encode($trees)?>
+            }
+        }).on("changed.jstree", function (e, data) {
             if (data.action === "select_node" || data.action === "deselect_node") {
                 var isChecked = data.action === "select_node",
-                    // 选中的是目录
-                    length = data.node.children.length,
-                    attributes = [];
-                if (length > 0) {
-                    for (var i = 0; i < length; i ++) {
-                        attributes.push(data.instance.get_node(data.node.children[i]).data.split("/")[0]);
-                    }
-                } else {
-                    attributes.push(data.node.data.split("/")[0]);
-                }
-
-                attributes.forEach(function(attribute) {
-                    $("input[value^='" + attribute + "/']").prop('checked', isChecked);
+                    attributes = getChildrenAttributes(data.node, data);
+                attributes.forEach(function (attribute) {
+                    $("input[value^='" + attribute + "/']").prop("checked", isChecked);
                 });
             }
         });
 
         // 全部选择
-        $('.allChecked').click(function(){
-            $('input[type=checkbox]').prop('checked', this.checked);
+        $(".allChecked").click(function () {
+            $("input[type=checkbox]").prop("checked", this.checked);
         });
     });
 </script>
