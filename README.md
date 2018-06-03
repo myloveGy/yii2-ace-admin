@@ -1,5 +1,13 @@
 Yii2 ace Admin 后台模板
 =======================
+[![Latest Stable Version](https://poser.pugx.org/liujx/yii2-app-advanced/version)](https://packagist.org/packages/liujx/yii2-app-advanced)
+[![Total Downloads](https://poser.pugx.org/liujx/yii2-app-advanced/downloads)](https://packagist.org/packages/liujx/yii2-app-advanced)
+[![Latest Unstable Version](https://poser.pugx.org/liujx/yii2-app-advanced/v/unstable)](https://packagist.org/packages/liujx/yii2-app-advanced)
+[![License](https://poser.pugx.org/liujx/yii2-app-advanced/license)](https://packagist.org/packages/liujx/yii2-app-advanced)
+[![composer.lock available](https://poser.pugx.org/liujx/yii2-app-advanced/composerlock)](https://packagist.org/packages/liujx/yii2-app-advanced)
+[![GitHub forks](https://img.shields.io/github/forks/myloveGy/yii2-ace-admin.svg)](https://github.com/myloveGy/yii2-ace-admin/network)
+[![GitHub stars](https://img.shields.io/github/stars/myloveGy/yii2-ace-admin.svg)](https://github.com/myloveGy/yii2-ace-admin/stargazers)
+[![GitHub license](https://img.shields.io/github/license/myloveGy/yii2-ace-admin.svg)](https://github.com/myloveGy/yii2-ace-admin)
 
 ### 简介
 系统基于yii2高级版本开发，后台模板使用的ace admin。对于一般的后台开发，比较方便; 对于数据表的CURL操作都有封装，且所有操作都有权限控制。
