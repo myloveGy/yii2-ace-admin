@@ -5,16 +5,21 @@ $params = array_merge(
 );
 
 return [
-    'id'         => 'app-backend',
-    'name'       => 'Yii2 Admin',
-    'basePath'   => dirname(__DIR__),
+    'id'                  => 'app-backend',
+    'name'                => 'Yii2 Admin',
+    'basePath'            => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
-    'bootstrap'  => ['log'],
-    'modules'    => [],
-    'language'   => 'zh-CN',
-    'components' => [
+    'bootstrap'           => ['log'],
+    'modules'             => [
+        'admin' => [
+            'class' => 'jinxing\admin\Module',
+            'user'  => 'user'
+        ],
+    ],
+    'language'            => 'zh-CN',
+    'components'          => [
         // 权限管理
-        'authManager' => [
+        'authManager'  => [
             'class' => 'yii\rbac\DbManager',
         ],
 
@@ -26,28 +31,23 @@ return [
                     'css' => []
                 ],
                 // 去掉自己加载的Jquery
-                'yii\web\JqueryAsset' => [
+                'yii\web\JqueryAsset'          => [
                     'sourcePath' => null,
-                    'js' => [],
+                    'js'         => [],
                 ],
             ],
         ],
 
-        // 图片处理
-        'image' => [
-            'class'  => 'yii\image\ImageDriver',
-            'driver' => 'GD'
-        ],
-
         // 用户信息
-        'user' => [
-            'identityClass'   => 'common\models\Admin',
+        'user'         => [
+            'identityClass'   => 'jinxing\admin\models\Admin',
+            'loginUrl'        => '/admin/default/login',
             'enableAutoLogin' => true,
         ],
 
         // 错误页面
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'admin/default/error',
         ],
     ],
 
