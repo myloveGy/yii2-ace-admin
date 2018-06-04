@@ -8,18 +8,18 @@ use Yii;
  * User model
  *
  * @property integer $id
- * @property string $username
- * @property string $password_hash
- * @property string $password_reset_token
- * @property string $email
- * @property string $auth_key
+ * @property string  $username
+ * @property string  $password_hash
+ * @property string  $password_reset_token
+ * @property string  $email
+ * @property string  $auth_key
  * @property integer $role
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $updated_id
  * @property integer $created_id
- * @property string $password write-only password
+ * @property string  $password write-only password
  */
 class User extends \common\models\User
 {
@@ -35,14 +35,16 @@ class User extends \common\models\User
 
     /**
      * 获取状态说明信息
+     *
      * @param  int $intStatus 状态
+     *
      * @return array|string
      */
     public static function getArrayStatus($intStatus = null)
     {
         $array = [
-            self::STATUS_ACTIVE => Yii::t('app', 'STATUS_ACTIVE'),
-            self::STATUS_DELETED => Yii::t('app', 'STATUS_DELETED'),
+            self::STATUS_ACTIVE  => Yii::t('admin', 'STATUS_ACTIVE'),
+            self::STATUS_DELETED => Yii::t('admin', 'STATUS_DELETED'),
         ];
 
         if ($intStatus !== null && isset($array[$intStatus])) {
@@ -54,13 +56,15 @@ class User extends \common\models\User
 
     /**
      * 获取状态值对应的颜色信息
+     *
      * @param  int $intStatus 状态值
+     *
      * @return array|string
      */
     public static function getStatusColor($intStatus = null)
     {
         $array = [
-            self::STATUS_ACTIVE => 'label-success',
+            self::STATUS_ACTIVE  => 'label-success',
             self::STATUS_DELETED => 'label-danger',
         ];
 
@@ -105,8 +109,8 @@ class User extends \common\models\User
     {
         return [
             'default' => ['username', 'email', 'password', 'repassword', 'status'],
-            'create' => ['username', 'email', 'password', 'repassword', 'status'],
-            'update' => ['username', 'email', 'password', 'repassword', 'status']
+            'create'  => ['username', 'email', 'password', 'repassword', 'status'],
+            'update'  => ['username', 'email', 'password', 'repassword', 'status']
         ];
     }
 
@@ -121,7 +125,7 @@ class User extends \common\models\User
         return array_merge(
             $labels,
             [
-                'password' => '密码',
+                'password'   => '密码',
                 'repassword' => '确认密码',
             ]
         );
@@ -129,7 +133,9 @@ class User extends \common\models\User
 
     /**
      * beforeSave() 新增之前的处理
+     *
      * @param  bool $insert 是否是新增数据
+     *
      * @return bool 处理是否成功
      */
     public function beforeSave($insert)
