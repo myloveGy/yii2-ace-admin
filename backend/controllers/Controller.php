@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use jinxing\admin\behaviors\AccessControl;
+use jinxing\admin\behaviors\Logging;
 use jinxing\admin\controllers\Controller as BaseController;
 
 /**
@@ -25,9 +26,13 @@ class Controller extends BaseController
     public function behaviors()
     {
         return [
-            'access' => [
+            'access'  => [
                 'class' => AccessControl::className(),
-            ]
+            ],
+
+            'logging' => [
+                'class' => Logging::className(),
+            ],
         ];
     }
 }
