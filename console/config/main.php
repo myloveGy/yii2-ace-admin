@@ -22,6 +22,10 @@ return [
           ],
     ],
     'components' => [
+        // authority management
+        'authManager'  => [
+            'class' => 'yii\rbac\DbManager',
+        ],
         'log' => [
             'targets' => [
                 [
