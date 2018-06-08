@@ -38,7 +38,7 @@ class ResetPasswordForm extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -51,7 +51,7 @@ class ResetPasswordForm extends Model
     /**
      * Resets password.
      *
-     * @return boolean if password was reset.
+     * @return bool if password was reset.
      */
     public function resetPassword()
     {

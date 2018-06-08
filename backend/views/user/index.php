@@ -1,41 +1,53 @@
 <?php
 
 use jinxing\admin\widgets\MeTable;
-use yii\helpers\Json;
-
 // 定义标题和面包屑信息
 $this->title = '用户信息';
 ?>
 <?=MeTable::widget()?>
 <?php $this->beginBlock('javascript') ?>
 <script type="text/javascript">
-    var aStatus = <?=Json::encode($status)?>,
-        aStatusColor = <?=Json::encode($statusColor)?>,
-        m = meTables({
-            title: "<?=$this->title?>",
-            table: {
-                "aoColumns":[
-                    {"title": "用户ID", "data": "id", "sName": "id", "edit": {"type": "hidden"}, "search": {"type": "text"}, "defaultOrder": "desc"},
-                    {"title": "用户账号", "data": "username", "sName": "username", "edit": {"type": "text", "required":true,"rangelength":"[2, 255]"}, "search": {"type": "text"}, "bSortable": false},
-                    {"title": "密码", "data": "password", "sName": "password", "isHide": true, "edit": {"type": "password", "rangelength":"[2, 20]"}, "bSortable": false, "defaultContent":"", "bViews":false},
-                    {"title": "确认密码", "data": "repassword", "sName": "repassword", "isHide": true, "edit": {"type": "password", "rangelength":"[2, 20]", "equalTo":"input[name=password]:first"}, "bSortable": false, "defaultContent":"", "bViews":false},
-                    {"title": "邮箱", "data": "email", "sName": "email", "edit": {"type": "text", "required":true,"rangelength":"[2, 255]", "email": true}, "search": {"type": "text"}, "bSortable": false},
-                    {"title": "状态", "data": "status", "sName": "status", "value": aStatus,
-                        "edit": {"type": "radio", "default": 10, "required":true,"number":true},
-                        "bSortable": false,
-                        "search": {"type": "select"},
-                        "createdCell":function(td, data) {
-                            $(td).html(mt.valuesString(aStatus, aStatusColor, data));
-                        }
-                    },
-                    {"title": "创建时间", "data": "created_at", "sName": "created_at", "createdCell" : meTables.dateTimeString},
-                    {"title": "修改时间", "data": "updated_at", "sName": "updated_at", "createdCell" : mt.dateTimeString},
-                ]
-            }
-        });
+    var m = meTables({
+        title: "用户信息",
+        
+        table: {
+            "aoColumns": [
+                			{"title": "id", "data": "id", "sName": "id", "edit": {"type": "hidden", }, "bSortable": false}, 
+			{"title": "username", "data": "username", "sName": "username", "edit": {"type": "text", "required": true,"rangelength": "[2, 255]"}, "bSortable": false}, 
+			{"title": "auth_key", "data": "auth_key", "sName": "auth_key", "edit": {"type": "text", "required": true,"rangelength": "[2, 32]"}, "bSortable": false}, 
+			{"title": "password_hash", "data": "password_hash", "sName": "password_hash", "edit": {"type": "text", "required": true,"rangelength": "[2, 255]"}, "bSortable": false}, 
+			{"title": "password_reset_token", "data": "password_reset_token", "sName": "password_reset_token", "edit": {"type": "text", "rangelength": "[2, 255]"}, "bSortable": false}, 
+			{"title": "email", "data": "email", "sName": "email", "edit": {"type": "text", "required": true,"rangelength": "[2, 255]"}, "bSortable": false}, 
+			{"title": "status", "data": "status", "sName": "status", "edit": {"type": "text", "required": true,"number": true}, "bSortable": false}, 
+			{"title": "created_at", "data": "created_at", "sName": "created_at", "edit": {"type": "text", "required": true,"number": true}, "bSortable": false, "createdCell" : meTables.dateTimeString}, 
+			{"title": "updated_at", "data": "updated_at", "sName": "updated_at", "edit": {"type": "text", "required": true,"number": true}, "bSortable": false, "createdCell" : meTables.dateTimeString}, 
 
-    $(function(){
-        m.init();
+            ]       
+        }
     });
+    
+    /**
+    meTables.fn.extend({
+        // 显示的前置和后置操作
+        beforeShow: function(data, child) {
+            return true;
+        },
+        afterShow: function(data, child) {
+            return true;
+        },
+        
+        // 编辑的前置和后置操作
+        beforeSave: function(data, child) {
+            return true;
+        },
+        afterSave: function(data, child) {
+            return true;
+        }
+    });
+    */
+
+     $(function(){
+         m.init();
+     });
 </script>
 <?php $this->endBlock(); ?>

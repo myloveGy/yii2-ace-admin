@@ -2,15 +2,16 @@
 
 namespace backend\controllers;
 
+use yii\web\Controller;
+
 /**
- * Class SiteController 后台首页处理
- *
- * @package backend\controllers
+ * Site controller
  */
-class SiteController extends \yii\web\Controller
+class SiteController extends Controller
 {
     public function actionIndex()
     {
-        $this->redirect('/admin');
+        return $this->render('index');
+        // return $this->redirect('/admin');
     }
 }
