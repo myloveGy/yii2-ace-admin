@@ -56,6 +56,16 @@ return [
 
             ],
         ],
+
+        'i18n' => [
+            'translations' => [
+                'admin' => [
+                    'class'          => 'yii\i18n\PhpMessageSource',
+                    'sourceLanguage' => 'en',
+                    'basePath'       => '@jinxing/admin/messages'
+                ],
+            ],
+        ],
     ],
     'params'              => $params,
 ];
