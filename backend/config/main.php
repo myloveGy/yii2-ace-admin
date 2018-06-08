@@ -41,7 +41,7 @@ return [
             ],
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'admin/default/error',
         ],
 
         // authority management
