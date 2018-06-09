@@ -58,7 +58,7 @@ $this->title = '用户信息';
                             "title": "状态",
                             "data": "status",
                             value: arrStatus,
-                            "edit": {"type": "radio", "required": true, "number": true},
+                            "edit": {"type": "radio", "required": true, "number": true, "default": 10},
                             createdCell: function (td, data) {
                                 $(td).html(mt.valuesString(arrStatus, arrColors, data));
                             },
