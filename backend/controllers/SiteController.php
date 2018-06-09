@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use yii\helpers\Url;
 use yii\web\Controller;
 
 /**
@@ -11,7 +12,6 @@ class SiteController extends Controller
 {
     public function actionIndex()
     {
-        return $this->render('index');
-        // return $this->redirect('/admin');
+        return $this->redirect(Url::toRoute('admin/default'));
     }
 }

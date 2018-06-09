@@ -53,8 +53,8 @@
             "url": "https://asset-packagist.org"
         },
         {
-            "type": "path",
-            "url": "/www/admin"
+            "type": "git",
+            "url": "git@github.com:myloveGy/yii2-admin.git"
         }
     ]
 }
