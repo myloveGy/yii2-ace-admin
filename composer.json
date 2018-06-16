@@ -1,60 +1,60 @@
 {
-    "name": "liujx/yii2-app-advanced",
-    "description": "Yii2 ace-admin RBAC management background",
-    "keywords": ["yii2", "framework", "advanced", "project template", "admin", "auth", "rbac", "yii2-admin", "liujx"],
-    "homepage": "http://www.yiiframework.com/",
-    "type": "project",
-    "license": "BSD-3-Clause",
-    "authors": [
-        {
-            "name": "liujinxing",
-            "email": "jinxing.liu@qq.com"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/yiisoft/yii2/issues?state=open",
-        "forum": "http://www.yiiframework.com/forum/",
-        "wiki": "http://www.yiiframework.com/wiki/",
-        "irc": "irc://irc.freenode.net/yii",
-        "source": "https://github.com/yiisoft/yii2"
-    },
-    "minimum-stability": "stable",
-    "require": {
-        "php": ">=5.4.0",
-        "yiisoft/yii2": ">=2.0.13",
-        "yiisoft/yii2-bootstrap": "*",
-        "yiisoft/yii2-swiftmailer": "*",
-        "yurkinx/yii2-image": "^1.1",
-        "phpoffice/phpexcel": "*",
-        "jinxing/yii2-admin": "dev-master"
-    },
-    "require-dev": {
-        "yiisoft/yii2-debug": "~2.0.0",
-        "yiisoft/yii2-gii": "~2.0.0",
-        "yiisoft/yii2-faker": "~2.0.0",
-        "codeception/base": "^2.2.3",
-        "codeception/verify": "~0.3.1"
-    },
-    "config": {
-        "process-timeout": 1800
-    },
-    "extra": {
-        "asset-installer-paths": {
-            "npm-asset-library": "vendor/npm",
-            "bower-asset-library": "vendor/bower"
-        }
-    },
-    "scripts": {
-        "post-install-cmd": "php init --env=Development --overwrite=n"
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:myloveGy/yii2-admin.git"
-        }
-    ]
+  "name": "liujx/yii2-app-advanced",
+  "description": "Yii2 ace-admin RBAC management background",
+  "keywords": [
+    "yii2",
+    "framework",
+    "advanced",
+    "project template",
+    "admin",
+    "auth",
+    "rbac",
+    "yii2-admin",
+    "liujx"
+  ],
+  "homepage": "http://www.yiiframework.com/",
+  "type": "project",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "liujinxing",
+      "email": "jinxing.liu@qq.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/yiisoft/yii2/issues?state=open",
+    "forum": "http://www.yiiframework.com/forum/",
+    "wiki": "http://www.yiiframework.com/wiki/",
+    "irc": "irc://irc.freenode.net/yii",
+    "source": "https://github.com/yiisoft/yii2"
+  },
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=5.4.0",
+    "yiisoft/yii2": ">=2.0.13",
+    "yiisoft/yii2-bootstrap": "*",
+    "yiisoft/yii2-swiftmailer": "*",
+    "yurkinx/yii2-image": "^1.1",
+    "phpoffice/phpexcel": "*",
+    "jinxing/yii2-admin": "dev-master"
+  },
+  "require-dev": {
+    "yiisoft/yii2-debug": "~2.0.0",
+    "yiisoft/yii2-gii": "~2.0.0",
+    "yiisoft/yii2-faker": "~2.0.0",
+    "codeception/base": "^2.2.3",
+    "codeception/verify": "~0.3.1"
+  },
+  "config": {
+    "process-timeout": 1800,
+    "fxp-asset": {
+      "installer-paths": {
+        "npm-asset-library": "vendor/npm",
+        "bower-asset-library": "vendor/bower"
+      }
+    }
+  },
+  "scripts": {
+    "post-install-cmd": "php init --env=Development --overwrite=n"
+  }
 }

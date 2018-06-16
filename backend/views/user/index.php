@@ -29,7 +29,7 @@ $this->title = '用户信息';
                         {
                             "title": "密码",
                             "data": "password",
-                            "isHide": true,
+                            "bHide": true,
                             "edit": {"type": "password", "rangelength": "[2, 20]"},
                             "bSortable": false,
                             "defaultContent": "",
@@ -38,7 +38,7 @@ $this->title = '用户信息';
                         {
                             "title": "确认密码",
                             "data": "repassword",
-                            "isHide": true,
+                            "bHide": true,
                             "edit": {
                                 "type": "password",
                                 "rangelength": "[2, 20]",
