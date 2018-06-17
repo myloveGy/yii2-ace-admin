@@ -34,9 +34,7 @@
     "yiisoft/yii2": ">=2.0.13",
     "yiisoft/yii2-bootstrap": "*",
     "yiisoft/yii2-swiftmailer": "*",
-    "yurkinx/yii2-image": "^1.1",
-    "phpoffice/phpexcel": "*",
-    "jinxing/yii2-admin": "dev-master"
+    "jinxing/yii2-admin": "~1.0.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
