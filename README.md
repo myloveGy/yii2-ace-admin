@@ -31,7 +31,11 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
 1. 执行 composer 安装项目
         
     ```
-    php composer create-project liujx/yii2-app-advanced
+    php composer create-project liujx/yii2-app-advanced "~1.0.0"
+    
+    or 
+    
+    php composer create-project liujx/yii2-app-advanced "~2.0.0"
     ```
 
 2. 执行该目录下的 init 初始化配置（生成本地配置文件）
@@ -46,6 +50,10 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
 * 导入admin migration 后台基础数据
     ```
     php yii migrate 
+    ```
+    **如果是2.0.0 版本的话，还要执行**
+    ```php
+    php yii migrate --migrationPath=@jinxing/admin/migrations
     ```
 
 或者执行安装文件

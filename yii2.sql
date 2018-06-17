@@ -1,18 +1,3 @@
-/*
-Navicat MySQL Data Transfer
-
-Source Server         : 我的数据库
-Source Server Version : 50636
-Source Host           : localhost:3306
-Source Database       : yii2
-
-Target Server Type    : MYSQL
-Target Server Version : 50636
-File Encoding         : 65001
-
-Date: 2017-08-06 13:15:51
-*/
-
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -25,7 +10,7 @@ CREATE TABLE `yii2_admin` (
   `email` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT '管理员邮箱',
   `face` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '管理员头像',
   `role` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '管理员角色',
-  `status` smallint(2) NOT NULL DEFAULT '10' COMMENT '状态',
+  `status` tinyint(1) NOT NULL DEFAULT '10' COMMENT '状态',
   `auth_key` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `password_hash` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `password_reset_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -45,30 +30,33 @@ CREATE TABLE `yii2_admin` (
 -- ----------------------------
 -- Records of yii2_admin
 -- ----------------------------
-INSERT INTO `yii2_admin` VALUES ('1', 'super', 'super@admin.com', '', 'administrator', '10', 'gKkLFMdB2pvIXOFNpF_Aeemvdf1j0YUM', '$2y$13$Nuf1mzDRoCMxrWI.rIjENu20QshJG41smdEeHFHxq0qdmS99YytHy', '5vLaPpUS-I-XxJaoGP-GZDk474WdnaK3_1469073015', '1501996501', '127.0.0.1', '湖南省,岳阳市,岳阳县', '1501996501', '1', '1501996501', '1');
-INSERT INTO `yii2_admin` VALUES ('2', 'admin', 'admin@admin.com', '', 'admin', '10', 'tArp_Kv4z1JlzBUZYCL33N24AZL-_77p', '$2y$13$RNrJ7GK1A5iZRxBpho6sbeCJKfNRxzy5axCeRjZLqvA5W6RuVYBRW', 'CgScbf1E96N3pqH01b0mVi_Z58j8QsRV_1501916190', '1501996501', '127.0.0.1', '湖南省,岳阳市,岳阳县', '1501996501', '1', '1501996501', '1');
+INSERT INTO `yii2_admin` VALUES ('1', 'super', 'super@admin.com', '', 'admin', '10', 'a91csRbVRF4Djb7fcC8pprg9fBHUCQUm', '$2y$13$7fhBfCA7ZaQyn5RnXW.IdeWrMSLfAjqbnaxObOHUPikiVoqcq505y', 'hYE7GGXF4NBRstGwau4oH3tM7hsygA20_1529222657', '1528516726', '127.0.0.1', '湖南省,岳阳市,岳阳县', '1528516726', '1', '1529222657', '1');
+INSERT INTO `yii2_admin` VALUES ('2', 'admin', 'admin@admin.com', '', 'admin', '10', 'LudXdQd4SSsMNu0fuDsL_3BftPmcqM1C', '$2y$13$PBOWkl0OXng1fd.f1B3JcuPNGYWCOaITMt5FN6byBNAKranWRSpsK', 'cVb_E2McANCTETVRrns1iBjWu3gMcY79_1529222673', '1528516726', '127.0.0.1', '湖南省,岳阳市,岳阳县', '1528516726', '1', '1529222673', '1');
 
 -- ----------------------------
--- Table structure for yii2_admin_log
+-- Table structure for yii2_admin_operate_logs
 -- ----------------------------
-DROP TABLE IF EXISTS `yii2_admin_log`;
-CREATE TABLE `yii2_admin_log` (
+DROP TABLE IF EXISTS `yii2_admin_operate_logs`;
+CREATE TABLE `yii2_admin_operate_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志ID',
-  `type` smallint(2) NOT NULL DEFAULT '1' COMMENT '日志类型',
-  `controller` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '控制器',
-  `action` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '方法',
-  `url` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '请求地址',
-  `index` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '数据标识',
-  `params` text COLLATE utf8_unicode_ci NOT NULL COMMENT '请求参数',
+  `admin_id` int(11) NOT NULL DEFAULT '0' COMMENT '操作管理员ID',
+  `admin_name` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '操作管理员名称',
+  `action` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '方法',
+  `index` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '数据标识',
+  `request` text COLLATE utf8_unicode_ci NOT NULL COMMENT '请求参数',
+  `response` text COLLATE utf8_unicode_ci NOT NULL COMMENT '响应数据',
+  `ip` char(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '请求IP',
   `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `created_id` int(11) NOT NULL DEFAULT '0' COMMENT '创建用户',
   PRIMARY KEY (`id`),
-  KEY `admin_id` (`created_id`) USING BTREE COMMENT '管理员'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='管理员信息表';
+  KEY `admin_name` (`admin_name`) USING BTREE COMMENT '管理员'
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='管理员操作日志记录信息表';
 
 -- ----------------------------
--- Records of yii2_admin_log
+-- Records of yii2_admin_operate_logs
 -- ----------------------------
+INSERT INTO `yii2_admin_operate_logs` VALUES ('1', '1', 'super', 'admin/menu/create', '', '{\"id\":\"\",\"pid\":\"0\",\"menu_name\":\"用户信息\",\"icons\":\"menu-icon fa fa-user\",\"url\":\"user/index\",\"status\":\"1\",\"sort\":\"100\",\"auth\":[\"index\",\"search\",\"create\",\"update\",\"delete\",\"delete-all\",\"export\"]}', '{\"errCode\":0,\"errMsg\":\"操作成功\",\"data\":{\"pid\":\"0\",\"menu_name\":\"用户信息\",\"icons\":\"menu-icon fa fa-user\",\"url\":\"user/index\",\"status\":\"1\",\"sort\":\"100\",\"created_at\":{\"expression\":\"UNIX_TIMESTAMP()\",\"params\":[]},\"updated_at\":{\"expression\":\"UNIX_TIMESTAMP()\",\"params\":[]},\"created_id\":1,\"updated_id\":1,\"id\":14}}', '127.0.0.1', '1528516796');
+INSERT INTO `yii2_admin_operate_logs` VALUES ('2', '1', 'super', 'admin/admin/update', '1', '{\"id\":\"1\",\"username\":\"super\",\"password\":\"admin123\",\"repassword\":\"admin123\",\"face\":\"\",\"email\":\"super@admin.com\",\"role\":\"admin\",\"status\":\"10\"}', '{\"errCode\":0,\"errMsg\":\"操作成功\",\"data\":{\"id\":1,\"username\":\"super\",\"email\":\"super@admin.com\",\"face\":\"\",\"role\":\"admin\",\"status\":\"10\",\"auth_key\":\"a91csRbVRF4Djb7fcC8pprg9fBHUCQUm\",\"password_hash\":\"$2y$13$7fhBfCA7ZaQyn5RnXW.IdeWrMSLfAjqbnaxObOHUPikiVoqcq505y\",\"password_reset_token\":\"hYE7GGXF4NBRstGwau4oH3tM7hsygA20_1529222657\",\"last_time\":1528516726,\"last_ip\":\"127.0.0.1\",\"address\":\"湖南省,岳阳市,岳阳县\",\"created_at\":1528516726,\"created_id\":1,\"updated_at\":{\"expression\":\"UNIX_TIMESTAMP()\",\"params\":[]},\"updated_id\":1}}', '127.0.0.1', '1529222658');
+INSERT INTO `yii2_admin_operate_logs` VALUES ('3', '1', 'super', 'admin/admin/update', '2', '{\"id\":\"2\",\"username\":\"admin\",\"password\":\"admin888\",\"repassword\":\"admin888\",\"face\":\"\",\"email\":\"admin@admin.com\",\"role\":\"admin\",\"status\":\"10\"}', '{\"errCode\":0,\"errMsg\":\"操作成功\",\"data\":{\"id\":2,\"username\":\"admin\",\"email\":\"admin@admin.com\",\"face\":\"\",\"role\":\"admin\",\"status\":\"10\",\"auth_key\":\"LudXdQd4SSsMNu0fuDsL_3BftPmcqM1C\",\"password_hash\":\"$2y$13$PBOWkl0OXng1fd.f1B3JcuPNGYWCOaITMt5FN6byBNAKranWRSpsK\",\"password_reset_token\":\"cVb_E2McANCTETVRrns1iBjWu3gMcY79_1529222673\",\"last_time\":1528516726,\"last_ip\":\"127.0.0.1\",\"address\":\"湖南省,岳阳市,岳阳县\",\"created_at\":1528516726,\"created_id\":1,\"updated_at\":{\"expression\":\"UNIX_TIMESTAMP()\",\"params\":[]},\"updated_id\":1}}', '127.0.0.1', '1529222673');
 
 -- ----------------------------
 -- Table structure for yii2_arrange
@@ -78,8 +66,8 @@ CREATE TABLE `yii2_arrange` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '记录ID',
   `title` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '事件标题',
   `desc` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT '事件描述',
-  `status` smallint(2) NOT NULL DEFAULT '0' COMMENT '状态[0 - 待处理 1 - 已委派 2 - 完成 3 延期]',
-  `time_status` smallint(2) NOT NULL DEFAULT '0' COMMENT '事件状态[0 - 延缓 1 - 正常 2 - 紧急]',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态[0 - 待处理 1 - 已委派 2 - 完成 3 延期]',
+  `time_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '事件状态[0 - 延缓 1 - 正常 2 - 紧急]',
   `admin_id` int(11) NOT NULL DEFAULT '0' COMMENT '委派管理员',
   `start_at` int(11) NOT NULL DEFAULT '0' COMMENT '开始时间',
   `end_at` int(11) NOT NULL DEFAULT '0' COMMENT '结束时间',
@@ -103,14 +91,16 @@ CREATE TABLE `yii2_auth_assignment` (
   `user_id` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`item_name`,`user_id`),
+  KEY `auth_assignment_user_id_idx` (`user_id`),
   CONSTRAINT `yii2_auth_assignment_ibfk_1` FOREIGN KEY (`item_name`) REFERENCES `yii2_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of yii2_auth_assignment
 -- ----------------------------
-INSERT INTO `yii2_auth_assignment` VALUES ('admin', '2', '1501996503');
-INSERT INTO `yii2_auth_assignment` VALUES ('administrator', '1', '1501996503');
+INSERT INTO `yii2_auth_assignment` VALUES ('admin', '1', '1529222658');
+INSERT INTO `yii2_auth_assignment` VALUES ('admin', '2', '1528516729');
+INSERT INTO `yii2_auth_assignment` VALUES ('administrator', '1', '1528516729');
 
 -- ----------------------------
 -- Table structure for yii2_auth_item
@@ -133,86 +123,94 @@ CREATE TABLE `yii2_auth_item` (
 -- ----------------------------
 -- Records of yii2_auth_item
 -- ----------------------------
-INSERT INTO `yii2_auth_item` VALUES ('admin', '1', '管理员', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin-log/delete', '2', '操作日志-删除', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin-log/delete-all', '2', '操作日志-批量删除', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin-log/export', '2', '操作日志-导出', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin-log/index', '2', '操作日志-显示', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin-log/search', '2', '操作日志-搜索', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/address', '2', '管理员地址信息查询', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/create', '2', '创建管理员信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/delete', '2', '删除管理员信息', 'admin-delete', null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/delete-all', '2', '批量删除管理员信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/editable', '2', '管理员信息行内编辑', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/export', '2', '管理员西信息导出', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/index', '2', '显示管理员信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/search', '2', '搜索管理员信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/update', '2', '修改管理员信息', 'admin', null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/upload', '2', '上传管理员头像信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('admin/view', '2', '查看管理员详情信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('administrator', '1', '超级管理员', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/arrange', '2', '我的日程查询', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/calendar', '2', '我的日程信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/create', '2', '创建日程管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/delete', '2', '删除日程管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/delete-all', '2', '批量删除日程信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/editable', '2', '日程管理行内编辑', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/export', '2', '日程信息导出', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/index', '2', '显示日程管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/search', '2', '搜索日程管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('arrange/update', '2', '修改日程管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-assignment/create', '2', '创建角色分配', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-assignment/delete', '2', '删除角色分配', 'auth-assignment', null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-assignment/export', '2', '导出角色分配', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-assignment/index', '2', '显示角色分配', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-assignment/search', '2', '搜索角色分配', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-rule/create', '2', '创建规则管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-rule/delete', '2', '删除规则管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-rule/delete-all', '2', '规则管理-多删除', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-rule/export', '2', '导出规则管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-rule/index', '2', '显示规则管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-rule/search', '2', '搜索规则管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('auth-rule/update', '2', '修改规则管理', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('authority/create', '2', '创建权限信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('authority/delete', '2', '删除权限信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('authority/delete-all', '2', '权限信息多删除操作', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('authority/export', '2', '权限信息导出', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('authority/index', '2', '显示权限信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('authority/search', '2', '搜索权限信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('authority/update', '2', '修改权限信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('china/create', '2', '创建地址信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('china/delete', '2', '删除地址信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('china/delete-all', '2', '地址信息-批量删除', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('china/export', '2', '地址信息导出', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('china/index', '2', '显示地址信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('china/search', '2', '搜索地址信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('china/update', '2', '修改地址信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('menu/create', '2', '创建导航栏目', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('menu/delete', '2', '删除导航栏目', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('menu/delete-all', '2', '批量删除导航栏目信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('menu/export', '2', '导航栏目信息导出', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('menu/index', '2', '显示导航栏目', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('menu/search', '2', '搜索导航栏目', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('menu/update', '2', '修改导航栏目', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('module/create', '2', '创建模块生成', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('module/index', '2', '显示模块生成', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('module/produce', '2', '模块生成配置文件', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('module/update', '2', '修改模块生成', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('role/create', '2', '创建角色信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('role/delete', '2', '删除角色信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('role/edit', '2', '角色分配权限', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('role/export', '2', '角色信息导出', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('role/index', '2', '显示角色信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('role/search', '2', '搜索角色信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('role/update', '2', '修改角色信息', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('role/view', '2', '角色权限查看', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('user/create', '2', '用户信息-创建', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('user/delete', '2', '用户信息-删除', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('user/delete-all', '2', '用户信息-批量删除', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('user/export', '2', '用户信息-导出', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('user/index', '2', '用户信息-显示', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('user/search', '2', '用户信息-搜索', null, null, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_item` VALUES ('user/update', '2', '用户信息-修改', null, null, '1501996503', '1501996503');
+INSERT INTO `yii2_auth_item` VALUES ('admin', '1', '管理员', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin-log/delete', '2', '操作日志-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin-log/delete-all', '2', '操作日志-批量删除', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin-log/export', '2', '操作日志-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin-log/index', '2', '操作日志-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin-log/search', '2', '操作日志-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/address', '2', '管理员信息信息-查询地址', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/create', '2', '管理员信息-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/delete', '2', '管理员信息-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/delete-all', '2', '管理员信息-批量删除', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/editable', '2', '管理员信息-行内编辑', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/export', '2', '管理员信息-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/index', '2', '管理员信息-显示数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/search', '2', '管理员信息-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/update', '2', '管理员信息-修改数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/upload', '2', '管理员信息-上传头像', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/admin/view', '2', '管理员信息-显示详情', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/arrange', '2', '我的日程-查询数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/calendar', '2', '我的日程-查看详情', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/create', '2', '日程管理-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/delete', '2', '日程管理-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/delete-all', '2', '日程信息-批量删除', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/editable', '2', '日程管理-行内编辑', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/export', '2', '日程信息-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/index', '2', '日程管理-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/search', '2', '日程管理-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/arrange/update', '2', '日程管理-修改数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-assignment/create', '2', '角色分配-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-assignment/delete', '2', '角色分配-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-assignment/export', '2', '角色分配-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-assignment/index', '2', '角色分配-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-assignment/search', '2', '角色分配-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-rule/create', '2', '规则管理-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-rule/delete', '2', '规则管理-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-rule/delete-all', '2', '规则管理-批量删除', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-rule/export', '2', '规则管理-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-rule/index', '2', '规则管理-显示数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-rule/search', '2', '规则管理-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/auth-rule/update', '2', '规则管理-修改数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/authority/create', '2', '权限信息-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/authority/delete', '2', '权限信息-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/authority/delete-all', '2', '权限信息-批量删除', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/authority/export', '2', '权限信息-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/authority/index', '2', '权限信息-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/authority/search', '2', '权限信息-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/authority/update', '2', '权限信息-修改数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/china/create', '2', '地址信息-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/china/delete', '2', '地址信息-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/china/delete-all', '2', '地址信息-批量删除', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/china/export', '2', '地址信息-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/china/index', '2', '地址信息-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/china/search', '2', '地址信息-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/china/update', '2', '地址信息-修改数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/menu/create', '2', '导航栏目-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/menu/delete', '2', '导航栏目-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/menu/delete-all', '2', '导航栏目-批量删除', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/menu/export', '2', '导航栏目-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/menu/index', '2', '导航栏目-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/menu/search', '2', '导航栏目-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/menu/update', '2', '导航栏目-修改数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/module/create', '2', '模块生成-生成预览表单', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/module/index', '2', '模块生成-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/module/produce', '2', '模块生成-生成文件', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/module/update', '2', '模块生成-生成预览文件', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/role/create', '2', '角色信息-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/role/delete', '2', '角色信息-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/role/edit', '2', '角色信息-分配权限', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/role/export', '2', '角色信息-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/role/index', '2', '角色信息-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/role/search', '2', '角色信息-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/role/update', '2', '角色信息-修改数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/role/view', '2', '角色权限-查看详情', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/uploads/create', '2', '上传文件-添加数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/uploads/delete', '2', '上传文件-删除数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/uploads/delete-all', '2', '上传文件-批量删除', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/uploads/export', '2', '上传文件-导出数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/uploads/index', '2', '上传文件-显示页面', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/uploads/search', '2', '上传文件-搜索数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/uploads/update', '2', '上传文件-修改数据', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('admin/uploads/upload', '2', '上传文件-文件上传', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('administrator', '1', '超级管理员', null, null, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_item` VALUES ('user/create', '2', '用户信息-添加数据', null, null, '1528516795', '1528516795');
+INSERT INTO `yii2_auth_item` VALUES ('user/delete', '2', '用户信息-删除数据', null, null, '1528516796', '1528516796');
+INSERT INTO `yii2_auth_item` VALUES ('user/delete-all', '2', '用户信息-批量删除', null, null, '1528516796', '1528516796');
+INSERT INTO `yii2_auth_item` VALUES ('user/export', '2', '用户信息-导出数据', null, null, '1528516796', '1528516796');
+INSERT INTO `yii2_auth_item` VALUES ('user/index', '2', '用户信息-显示数据', null, null, '1528516795', '1528516795');
+INSERT INTO `yii2_auth_item` VALUES ('user/search', '2', '用户信息-搜索数据', null, null, '1528516795', '1528516795');
+INSERT INTO `yii2_auth_item` VALUES ('user/update', '2', '用户信息-修改数据', null, null, '1528516795', '1528516795');
 
 -- ----------------------------
 -- Table structure for yii2_auth_item_child
@@ -230,134 +228,170 @@ CREATE TABLE `yii2_auth_item_child` (
 -- ----------------------------
 -- Records of yii2_auth_item_child
 -- ----------------------------
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin-log/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin-log/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin-log/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin-log/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin-log/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin-log/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin-log/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin-log/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/address');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/address');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/editable');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/editable');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/upload');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/upload');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/view');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/view');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/arrange');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/arrange');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/calendar');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/calendar');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/editable');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/editable');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'arrange/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'arrange/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-assignment/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-assignment/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-assignment/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-assignment/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-assignment/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-rule/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-rule/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-rule/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-rule/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-rule/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-rule/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'auth-rule/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'authority/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'authority/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'authority/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'authority/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'authority/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'authority/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'authority/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'china/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'china/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'menu/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'menu/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'menu/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'menu/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'menu/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'menu/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'menu/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'menu/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'module/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'module/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'module/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'module/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'module/produce');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'module/produce');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'module/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'module/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'role/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'role/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'role/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'role/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'role/edit');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'role/edit');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'role/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'role/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'role/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'role/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'role/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'role/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'role/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'role/update');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'role/view');
-INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'role/view');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'user/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin-log/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin-log/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin-log/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin-log/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin-log/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin-log/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin-log/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin-log/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin-log/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin-log/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/address');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/address');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/editable');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/editable');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/upload');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/upload');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/admin/view');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/admin/view');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/arrange');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/arrange');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/calendar');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/calendar');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/editable');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/editable');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/arrange/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/arrange/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-assignment/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-assignment/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-assignment/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-assignment/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-assignment/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-assignment/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-assignment/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-assignment/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-assignment/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-assignment/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-rule/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-rule/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-rule/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-rule/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-rule/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-rule/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-rule/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-rule/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-rule/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-rule/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-rule/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-rule/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/auth-rule/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/auth-rule/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/authority/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/authority/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/authority/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/authority/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/authority/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/authority/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/authority/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/authority/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/authority/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/authority/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/authority/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/authority/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/authority/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/authority/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/china/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/china/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/china/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/china/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/china/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/china/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/china/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/china/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/china/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/china/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/china/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/china/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/china/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/china/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/menu/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/menu/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/menu/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/menu/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/menu/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/menu/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/menu/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/menu/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/menu/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/menu/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/menu/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/menu/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/menu/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/menu/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/module/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/module/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/module/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/module/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/module/produce');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/module/produce');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/module/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/module/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/role/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/role/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/role/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/role/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/role/edit');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/role/edit');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/role/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/role/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/role/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/role/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/role/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/role/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/role/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/role/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/role/view');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/role/view');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/uploads/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/uploads/create');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/uploads/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/uploads/delete');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/uploads/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/uploads/delete-all');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/uploads/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/uploads/export');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/uploads/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/uploads/index');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/uploads/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/uploads/search');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/uploads/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/uploads/update');
+INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'admin/uploads/upload');
+INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'admin/uploads/upload');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'user/create');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'user/delete');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'user/delete');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'user/delete-all');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'user/delete-all');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'user/export');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'user/export');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'user/index');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'user/index');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'user/search');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'user/search');
-INSERT INTO `yii2_auth_item_child` VALUES ('admin', 'user/update');
 INSERT INTO `yii2_auth_item_child` VALUES ('administrator', 'user/update');
 
 -- ----------------------------
@@ -375,9 +409,9 @@ CREATE TABLE `yii2_auth_rule` (
 -- ----------------------------
 -- Records of yii2_auth_rule
 -- ----------------------------
-INSERT INTO `yii2_auth_rule` VALUES ('admin', 0x4F3A32333A226261636B656E645C72756C65735C41646D696E52756C65223A333A7B733A343A226E616D65223B733A353A2261646D696E223B733A393A22637265617465644174223B693A313439393030363036393B733A393A22757064617465644174223B693A313439393030363036393B7D, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_rule` VALUES ('admin-delete', 0x4F3A32393A226261636B656E645C72756C65735C41646D696E44656C65746552756C65223A333A7B733A343A226E616D65223B733A31323A2261646D696E2D64656C657465223B733A393A22637265617465644174223B693A313530313931393036363B733A393A22757064617465644174223B693A313530313931393036363B7D, '1501996503', '1501996503');
-INSERT INTO `yii2_auth_rule` VALUES ('auth-assignment', 0x4F3A33323A226261636B656E645C72756C65735C4175746841737369676E6D656E7452756C65223A353A7B733A343A226E616D65223B733A31353A22617574682D61737369676E6D656E74223B733A393A22637265617465644174223B693A313530303130353233383B733A393A22757064617465644174223B693A313530303130353233383B733A34373A22206261636B656E645C72756C65735C4175746841737369676E6D656E7452756C652061646D696E526F6C654E616D65223B733A31333A2261646D696E6973747261746F72223B733A34333A22206261636B656E645C72756C65735C4175746841737369676E6D656E7452756C6520696E74557365724964223B693A313B7D, '1501996503', '1501996503');
+INSERT INTO `yii2_auth_rule` VALUES ('admin', 0x4F3A32393A226A696E78696E675C61646D696E5C72756C65735C41646D696E52756C65223A333A7B733A343A226E616D65223B733A353A2261646D696E223B733A393A22637265617465644174223B693A313532363732333535343B733A393A22757064617465644174223B693A313532363732333535343B7D, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_rule` VALUES ('admin-delete', 0x4F3A33353A226A696E78696E675C61646D696E5C72756C65735C41646D696E44656C65746552756C65223A333A7B733A343A226E616D65223B733A31323A2261646D696E2D64656C657465223B733A393A22637265617465644174223B693A313532363732333537333B733A393A22757064617465644174223B693A313532363732333537333B7D, '1528516729', '1528516729');
+INSERT INTO `yii2_auth_rule` VALUES ('auth-assignment', 0x4F3A33383A226A696E78696E675C61646D696E5C72756C65735C4175746841737369676E6D656E7452756C65223A333A7B733A343A226E616D65223B733A31353A22617574682D61737369676E6D656E74223B733A393A22637265617465644174223B693A313532363732333630363B733A393A22757064617465644174223B693A313532363732333630363B7D, '1528516729', '1528516729');
 
 -- ----------------------------
 -- Table structure for yii2_china
@@ -3960,53 +3994,75 @@ CREATE TABLE `yii2_menu` (
   `menu_name` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT '导航栏目',
   `icons` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'icon-desktop' COMMENT '使用的小图标',
   `url` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'site/index' COMMENT '访问地址',
-  `status` smallint(2) NOT NULL DEFAULT '1' COMMENT '状态',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
   `sort` smallint(6) NOT NULL DEFAULT '100' COMMENT '排序',
   `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `created_id` int(11) NOT NULL DEFAULT '0' COMMENT '创建用户',
   `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
   `updated_id` int(11) NOT NULL DEFAULT '0' COMMENT '修改用户',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='后台导航栏目信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='后台导航栏目信息表';
 
 -- ----------------------------
 -- Records of yii2_menu
 -- ----------------------------
-INSERT INTO `yii2_menu` VALUES ('1', '0', '后台管理', 'menu-icon fa fa-cog', '', '1', '2', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('2', '1', '管理员信息', '', 'admin/index', '1', '1', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('3', '1', '角色管理', '', 'role/index', '1', '2', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('4', '1', '角色分配', 'icon-cog', 'auth-assignment/index', '1', '3', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('5', '1', '权限管理', '', 'authority/index', '1', '4', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('6', '1', '规则管理', 'menu-icon fa fa-shield', 'auth-rule/index', '1', '5', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('7', '1', '导航栏目', '', 'menu/index', '1', '6', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('8', '1', '模块生成', '', 'module/index', '1', '7', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('9', '1', '操作日志', '', 'admin-log/index', '1', '8', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('10', '0', '地址信息', 'menu-icon fa fa-bank', 'china/index', '1', '4', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('11', '0', '用户信息', 'menu-icon fa fa-user', 'user/index', '1', '3', '1501996500', '1', '1501996500', '1');
-INSERT INTO `yii2_menu` VALUES ('12', '0', '日程管理', 'menu-icon fa fa-calendar', 'arrange/index', '1', '1', '1501996500', '1', '1501996500', '1');
+INSERT INTO `yii2_menu` VALUES ('1', '0', '后台管理', 'menu-icon fa fa-cog', '', '1', '1', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('2', '1', '管理员信息', '', 'admin/admin/index', '1', '1', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('3', '1', '导航栏目', '', 'admin/menu/index', '1', '2', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('4', '1', '模块生成', '', 'admin/module/index', '1', '3', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('5', '1', '操作日志', '', 'admin/admin-log/index', '1', '4', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('6', '1', '后台权限', '', '', '1', '5', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('7', '6', '角色管理', 'menu-icon fa fa-graduation-cap', 'admin/role/index', '1', '1', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('8', '6', '角色分配', 'menu-icon fa fa-paper-plane', 'admin/auth-assignment/index', '1', '2', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('9', '6', '权限管理', 'menu-icon fa fa-fire', 'admin/authority/index', '1', '3', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('10', '6', '规则管理', 'menu-icon fa fa-shield', 'admin/auth-rule/index', '1', '4', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('11', '0', '地址信息', 'menu-icon fa fa-bank', 'admin/china/index', '1', '2', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('12', '0', '日程管理', 'menu-icon fa fa-calendar', 'admin/arrange/index', '1', '4', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('13', '0', '上传文件', 'menu-icon fa fa-upload', 'admin/uploads/index', '1', '5', '1528516724', '1', '1528516724', '1');
+INSERT INTO `yii2_menu` VALUES ('14', '0', '用户信息', 'menu-icon fa fa-user', 'user/index', '1', '100', '1528516795', '1', '1528516795', '1');
 
 -- ----------------------------
 -- Table structure for yii2_migration
 -- ----------------------------
 DROP TABLE IF EXISTS `yii2_migration`;
 CREATE TABLE `yii2_migration` (
-  `version` varchar(180) NOT NULL,
+  `version` varchar(180) COLLATE utf8_unicode_ci NOT NULL,
   `apply_time` int(11) DEFAULT NULL,
   PRIMARY KEY (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of yii2_migration
 -- ----------------------------
-INSERT INTO `yii2_migration` VALUES ('m000000_000000_base', '1501996476');
-INSERT INTO `yii2_migration` VALUES ('m130524_201442_init', '1501996498');
-INSERT INTO `yii2_migration` VALUES ('m140506_102106_rbac_init', '1501996480');
-INSERT INTO `yii2_migration` VALUES ('m170801_061245_create_menu', '1501996500');
-INSERT INTO `yii2_migration` VALUES ('m170801_072726_create_admin', '1501996502');
-INSERT INTO `yii2_migration` VALUES ('m170801_074527_create_arrange', '1501996503');
-INSERT INTO `yii2_migration` VALUES ('m170801_081237_insert_rabc', '1501996503');
-INSERT INTO `yii2_migration` VALUES ('m170804_163745_create_china', '1501996506');
-INSERT INTO `yii2_migration` VALUES ('m170805_100055_create_admin_log', '1501996507');
+INSERT INTO `yii2_migration` VALUES ('m000000_000000_base', '1528516700');
+INSERT INTO `yii2_migration` VALUES ('m140506_102106_rbac_init', '1528516703');
+INSERT INTO `yii2_migration` VALUES ('m170907_052038_rbac_add_index_on_auth_assignment_user_id', '1528516703');
+INSERT INTO `yii2_migration` VALUES ('m170801_061245_create_menu', '1528516724');
+INSERT INTO `yii2_migration` VALUES ('m170801_072726_create_admin', '1528516727');
+INSERT INTO `yii2_migration` VALUES ('m170801_074527_create_arrange', '1528516729');
+INSERT INTO `yii2_migration` VALUES ('m170801_081237_insert_rabc', '1528516730');
+INSERT INTO `yii2_migration` VALUES ('m170804_163745_create_china', '1528516731');
+INSERT INTO `yii2_migration` VALUES ('m170805_100055_create_admin_operate_logs', '1528516734');
+INSERT INTO `yii2_migration` VALUES ('m171118_082050_create_uploads', '1528516735');
+INSERT INTO `yii2_migration` VALUES ('m130524_201442_init', '1528516756');
+
+-- ----------------------------
+-- Table structure for yii2_uploads
+-- ----------------------------
+DROP TABLE IF EXISTS `yii2_uploads`;
+CREATE TABLE `yii2_uploads` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `title` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT '文件名称',
+  `url` text COLLATE utf8_unicode_ci NOT NULL COMMENT '访问地址[可以是json字符串]',
+  `multiple` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否为多图片上传',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='上传文件信息表';
+
+-- ----------------------------
+-- Records of yii2_uploads
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yii2_user
