@@ -11,6 +11,7 @@ Yii2 ace Admin 后台模板
 
 ### 简介
 系统基于yii2高级版本开发，后台模板使用的ace admin。对于一般的后台开发，比较方便; 对于数据表的CURL操作都有封装，且所有操作都有权限控制。
+现在这个项目只是一个示例项目，主要功能被我移到: <strong>[jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)</strong>,这样引入自己项目更方便一些
 #### 特点
 * 使用RBAC权限管理，所有操作基于权限控制
 * 视图使用JS控制，数据显示使用的jquery.DataTables
@@ -31,11 +32,11 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
 1. 执行 composer 安装项目
         
     ```
-    php composer create-project liujx/yii2-app-advanced "~1.0.0"
+    php composer create-project liujx/yii2-app-advanced
     
     or 
     
-    php composer create-project liujx/yii2-app-advanced "~2.0.0"
+    php composer create-project liujx/yii2-app-advanced="1.2.3"
     ```
 
 2. 执行该目录下的 init 初始化配置（生成本地配置文件）
@@ -47,15 +48,14 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
     ```
     php yii migrate --migrationPath=@yii/rbac/migrations
     ``` 
-* 导入admin migration 后台基础数据
+* 导入admin migration 后台基础数据(1.2.3版本，只需要执行 php yii migrate )
     ```
-    php yii migrate 
-    ```
-    **如果是2.0.0 版本的话，还要执行**
-    ```php
     php yii migrate --migrationPath=@jinxing/admin/migrations
     ```
-
+    > 导入用户表数据
+    ```
+     php yii migrate 
+    ```
 或者执行安装文件
 
 1. 浏览器进入该目录的下执行index.php （项目根目录下的index.php）进行数据库数据的导入
@@ -65,6 +65,8 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
 * 后台默认超级管理员账号：super 密码：admin123
 * 管理员账号：admin 密码：admin888
 ### 使用说明
+
+#### 2.0.0 的配置说明可以查看[jinxing/yii2-admin](https://github.com/myloveGy/yii2-admin/wiki)
 
 基本操作的权限(以管理员操作为例)：
 
