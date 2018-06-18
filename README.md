@@ -207,13 +207,14 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
 
 ### 预览
 1. 登录页
-![登录页](./backend/web/public/assets/images/desc1.png)
+![登录页](./docs/images/docs-1.png)
 2. 数据显示
-![数据显示](./backend/web/public/assets/images/desc2.png)
+![数据显示](./docs/images/docs-2-1.png)
+![数据显示](./docs/images/docs-2-2.png)
 3. 权限分配
-![权限分配](./backend/web/public/assets/images/desc3.png)
+![权限分配](./docs/images/docs-3.png)
 4. 模块生成
-![模块生成](./backend/web/public/assets/images/desc4.png)
+![模块生成](./docs/images/docs-4.png)
 
 目录结构
 -------------------
