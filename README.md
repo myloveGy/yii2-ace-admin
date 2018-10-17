@@ -56,12 +56,7 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
     ```
      php yii migrate 
     ```
-或者执行安装文件
-
-1. 浏览器进入该目录的下执行index.php （项目根目录下的index.php）进行数据库数据的导入
-
-2. 配置虚拟机,设置路径为 bacekend/web/ 下，配置好路由重写 
-
+    
 * 后台默认超级管理员账号：super 密码：admin123
 * 管理员账号：admin 密码：admin888
 ### 使用说明
@@ -149,7 +144,7 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
          * ------ search 搜索表单配置(不配置不会生成查询表单), type 类型支持 text, select 其他可以自行扩展
          * ------ edit 编辑表单配置（不配置不会生成编辑表单）, 
          * --------- type 类型支持hidden, text, password, file, radio, select, checkbox, textarea 等等 
-         * --------- meTable.inputCreate 等后缀函数为其生成表单元素，可以自行扩展
+         * --------- meTables.inputCreate 等后缀函数为其生成表单元素，可以自行扩展
          * --------- 除了表单元素自带属性，比如 required: true, number: true 等为 jquery.validate.js 的验证配置
          * --------- 最终生成表单元素 <input name="name" required="true" number="true" />
          * ------ defaultOrder 设置默认排序的方式(有"ace", "desc")
