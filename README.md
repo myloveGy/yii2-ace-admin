@@ -129,6 +129,7 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
         }
     }
     ```
+### [控制器详细使用说明](./docs/controller.md)
 2. 后台model
     使用gii生成model，命名空间 backend\models
 
@@ -139,7 +140,7 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
          * 简单配置说明
          * title 配置表格名称
          * table DataTables 的配置 
-         * --- aoColumns 中的 value, search, edit, defaultOrder, isHide 是 meTables 的配置
+         * --- aoColumns 中的 value, search, edit, defaultOrder, isHide, bViews 是 meTables 的配置
          * ------ value 为编辑表单radio、select, checkbox， 搜索的表单的select 提供数据源,格式为一个对象 {"值": "显示信息"}
          * ------ search 搜索表单配置(不配置不会生成查询表单), type 类型支持 text, select 其他可以自行扩展
          * ------ edit 编辑表单配置（不配置不会生成编辑表单）, 
@@ -149,6 +150,8 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
          * --------- 最终生成表单元素 <input name="name" required="true" number="true" />
          * ------ defaultOrder 设置默认排序的方式(有"ace", "desc")
          * ------ isHide 该列是否需要隐藏 true 隐藏
+         * ------ bViews 该列是否在详情里面显示 false 不显示
+         * ------ bExport or isExport 是否导出这一列的数据 
          * 其他配置查看 meTables 配置
          */
         
@@ -176,18 +179,38 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
         var m = meTables({
             title: "地址信息",
             table: {
-                "aoColumns":[
-                    {"title": "id", "data": "id", "sName": "id",  "defaultOrder": "desc",
-                        "edit": {"type": "text", "required":true,"number":true}
+                aoColumns:[
+                    {
+                       title: "id", 
+                       data: "id", 
+                       defaultOrder: "desc",
+                       edit: {
+                           type: "text", // 这一列可以不用写，默认type 为 text 
+                           required: true,
+                           number: true,
+                           name: "id",   // 这一列可以不用写，默认为外层的 data 属性
+                       }
                     },
-                    {"title": "地址名称", "data": "name", "sName": "name",
-                        "edit": {"type": "text", "required": true, "rangelength":"[2, 40]"},
-                        "search": {"type": "text"},
-                        "bSortable": false
+                    {
+                        title: "地址名称",
+                        data: "name", 
+                        edit: {
+                           required: true, 
+                           rangelength: "[2, 40]"
+                        },
+                        search: {"type": "text"},
+                        bSortable: false
                     },
-                    {"title": "父类ID", "data": "pid", "sName": "pid", "value": arrParent,
-                        "edit": {"type": "text", "required": true, "number": true},
-                        "search": {"type":"select"}
+                    {
+                        title: "父类ID", 
+                        data: "pid", 
+                        value: arrParent,
+                        edit: {
+                           required: true, 
+                           number: true
+                        },
+                        // 不管是search 或者 edit 定义了type 为 select、radio、checkbox 需要通过 value 来提供表单生成下拉的、选择的数据
+                        search: {type: "select"}
                     }
                 ]
             }
@@ -198,7 +221,7 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
             m.init();
         })
     ```
-[meTables配置说明](./backend/web/public/assets/js/common/README.md)
+### [meTables详细配置说明](./docs/metables.md)    
 
 ### 预览
 1. 登录页
