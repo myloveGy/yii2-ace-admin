@@ -167,4 +167,4 @@ E.g:
 
 
 
-[←  关于 module 配置数据](./2.Module-configuration) | [ 关于 meTables 配置数据 →](./4.MeTable-configuration)
+[←  关于 module 配置数据](./module.md) | [ 关于 meTables 配置数据 →](./metables.md)
