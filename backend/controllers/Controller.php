@@ -2,9 +2,9 @@
 
 namespace backend\controllers;
 
-use jinxing\admin\behaviors\AccessControl;
 use jinxing\admin\behaviors\Logging;
 use jinxing\admin\controllers\Controller as BaseController;
+use yii\filters\AccessControl;
 
 /**
  * Class Controller 后台的基础控制器
@@ -26,8 +26,14 @@ class Controller extends BaseController
     public function behaviors()
     {
         return [
-            'access'  => [
+            'access' => [
                 'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow'       => true,
+                        'permissions' => [$this->action->getUniqueId()],
+                    ]
+                ],
             ],
 
             'logging' => [
