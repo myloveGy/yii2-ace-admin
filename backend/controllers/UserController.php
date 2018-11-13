@@ -16,19 +16,6 @@ class UserController extends Controller
     public $modelClass = 'backend\models\User';
 
     /**
-     * 查询处理
-     *
-     * @return array 返回数组
-     */
-    public function where()
-    {
-        return [
-            'username' => 'like',
-            'email'    => 'like',
-        ];
-    }
-
-    /**
      * 首页显示
      *
      * @return string
