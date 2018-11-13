@@ -30,11 +30,12 @@
   },
   "minimum-stability": "stable",
   "require": {
+    "ext-json": "*",
     "php": ">=5.4.0",
     "yiisoft/yii2": ">=2.0.13",
     "yiisoft/yii2-bootstrap": "*",
     "yiisoft/yii2-swiftmailer": "*",
-    "jinxing/yii2-admin": "~1.0.0"
+    "jinxing/yii2-admin": "dev-master"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
