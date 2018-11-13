@@ -23,6 +23,7 @@ $this->title = '用户信息';
                         {
                             title: "用户名",
                             data: "username",
+                            search: {name: "username:like"},
                             edit: {type: "text", required: true, rangeLength: "[2, 255]"},
                             sortable: false
                         },
@@ -51,6 +52,7 @@ $this->title = '用户信息';
                         {
                             title: "Email",
                             data: "email",
+                            search: {name: "email:like"},
                             edit: {type: "text", required: true, email: true, rangeLength: "[2, 255]"},
                             sortable: false
                         },
