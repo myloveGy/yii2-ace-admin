@@ -13,6 +13,7 @@ $this->title = '用户信息';
             arrColors = <?=Json::encode($statusColor)?>,
             m = meTables({
                 title: "用户信息",
+                number: false,
                 table: {
                     aoColumns: [
                         {
