@@ -106,7 +106,4 @@ getPk() | 获取主键名称
     }
 ```
 
-
-
-
 [←  关于 module 配置数据](./module.md) | [ 关于 meTables 配置数据 →](./metables.md)
