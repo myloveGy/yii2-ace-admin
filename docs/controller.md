@@ -31,64 +31,6 @@ actionExport()   | 导出数据             | [where() Provide query conditions]
 方法名称  | 说明
 getPk() | 获取主键名称
 
-### where() public method 
-return an array
-为查询提供查询条件和处理方式
-
-<table>
-    <tr>
-        <td colspan="3">public function where() </td>
-    </tr>
-    <tr>
-        <td> $params </td>
-        <td> array </td>
-        <td> 前端查询请求参数，不需要使用可以不定义这个参数 </td>
-    </tr>
-</table>
-
-需要返回一个数组，确定前端是否有查询参数，最后拼接到db查询数组
-E.g:
-```
-    public function where()
-    {
-        return [
-            // 简单的表达式查询
-            'id'   => '=',
-            'name' => 'like',
-            
-            /**
-             * 配置数据字段查询
-             * field string  查询的字段,不写默认使用数组 key 这里的就是 username
-             * and   string  查询的表达式，不写默认就是 =
-             * func  function|string  可以是一个函数，也可以是函数名称字符串
-             */
-            'username' => [
-                'field' => 'name', 
-                'and'   => 'like',
-                'func'  => function ($value) {
-                    return $value.'123';
-                }
-            ],
-            
-            // 使用匿名函数处理，$value 就是前端请求过来的查询值，需要返回一个数组
-            'email' => function ($value) {
-                return ['like', 'email', $value];
-            }
-           
-        ];
-    }
-```
-使用所有查询时，上述配置最终将生成以下查询条件:
-```php
-    $params = Yii::$app->request->post('params');
-    $db->where([
-        'and',
-        ['=', 'id',  $params['id']],
-        ['like', 'name', $params['name']],
-        ['like', 'name', $params['username'].'123'],
-        ['like', 'email', $params['email']]
-    ]);
-```
 
 如果是更复杂的查询，例如链接表查询，则需要覆盖 [getQuery()](#getquerywhere-protected-method) 方法.
 
