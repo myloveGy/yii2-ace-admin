@@ -56,9 +56,11 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
     
 * 后台默认超级管理员账号：super 密码：admin123
 * 管理员账号：admin 密码：admin888
+
 ### 使用说明
 
 #### 2.0.0 的配置说明可以查看[jinxing/yii2-admin](https://github.com/myloveGy/yii2-admin/wiki)
+#### [jinxing/yii2-admin v1.1.0 更新说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/v1.1.1.md)
 
 基本操作的权限(以管理员操作为例)：
 
