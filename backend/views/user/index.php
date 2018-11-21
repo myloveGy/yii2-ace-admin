@@ -14,6 +14,11 @@ $this->title = '用户信息';
             m = meTables({
                 title: "用户信息",
                 number: false,
+                operations: {
+                    buttons: {
+                        update: {icon: "", "button-title": "编辑"}
+                    }
+                },
                 table: {
                     aoColumns: [
                         {
