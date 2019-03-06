@@ -129,11 +129,11 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
             },
             
             /**
-             * 定义搜索表达(函数后缀名SearchCreate)
+             * 定义搜索表达(函数后缀名SearchMiddleCreate 和 SearchCreate 函数 负责渲染搜索 html )
              * 使用配置 search: {"type": "email", "id": "search-email"}
              * search 里面配置的信息都通过 params 传递给函数
              */
-            "emailSearchCreate": function(params) {
+            "emailSearchMiddleCreate": function(params) {
                 return '<input type="text" name="' + params.name +'">';
             }
         });
