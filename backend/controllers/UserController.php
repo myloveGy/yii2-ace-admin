@@ -15,6 +15,13 @@ class UserController extends Controller
      */
     public $modelClass = 'backend\models\User';
 
+    public function where()
+    {
+        return [
+            [['email', 'username'], 'like']
+        ];
+    }
+
     /**
      * 首页显示
      *
