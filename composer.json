@@ -35,7 +35,7 @@
     "yiisoft/yii2": ">=2.0.13",
     "yiisoft/yii2-bootstrap": "*",
     "yiisoft/yii2-swiftmailer": "*",
-    "jinxing/yii2-admin": "dev-master"
+    "jinxing/yii2-admin": "~1.2.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
