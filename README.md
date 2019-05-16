@@ -1,4 +1,4 @@
-Yii2 ace Admin 后台模板
+Yii2 Ace Admin 后台模板
 =======================
 [![Latest Stable Version](https://poser.pugx.org/liujx/yii2-app-advanced/version)](https://packagist.org/packages/liujx/yii2-app-advanced)
 [![Total Downloads](https://poser.pugx.org/liujx/yii2-app-advanced/downloads)](https://packagist.org/packages/liujx/yii2-app-advanced)
