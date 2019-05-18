@@ -26,10 +26,10 @@ class AuthRuleController extends Controller
 
     /**
      * 查询处理
-     * @param  array $params
+     *
      * @return array 返回数组
      */
-    public function where($params)
+    public function where()
     {
         return [
             'name' => 'like'
@@ -38,6 +38,7 @@ class AuthRuleController extends Controller
 
     /**
      * 搜索之后的数据处理
+     *
      * @param mixed $array
      */
     public function afterSearch(&$array)

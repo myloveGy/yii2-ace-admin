@@ -27,24 +27,22 @@ class AdminController extends Controller
 
     /**
      * 搜索配置
-     * @param  array $params 查询参数
+     *
      * @return array
      */
-    public function where($params)
+    public function where()
     {
-        $where = [];
+        $where = [
+            [['id', 'status'], '='],
+            [['username', 'email'], 'like'],
+        ];
+
         $intUid = (int)Yii::$app->user->id;
         if ($intUid !== Admin::SUPER_ADMIN_ID) {
-            $where = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
+            $where['where'] = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
         }
 
-        return [
-            'id' => '=',
-            'username' => 'like',
-            'email' => 'like',
-            'where' => $where,
-            'status' => '='
-        ];
+        return $where;
     }
 
     /**
@@ -55,8 +53,8 @@ class AdminController extends Controller
     {
         // 查询用户数据
         return $this->render('index', [
-            'roles' => Admin::getArrayRole(),      // 用户角色
-            'status' => Admin::getArrayStatus(),    // 状态
+            'roles'       => Admin::getArrayRole(),      // 用户角色
+            'status'      => Admin::getArrayStatus(),    // 状态
             'statusColor' => Admin::getStatusColor(), // 状态对应颜色
         ]);
     }
@@ -67,8 +65,8 @@ class AdminController extends Controller
      */
     public function actionView()
     {
-        $address = '选择县';
-        $user = Yii::$app->view->params['user'];
+        $address  = '选择县';
+        $user     = Yii::$app->view->params['user'];
         $arrChina = [];
         if ($user->address) {
             $arrAddress = explode(',', $user->address);
@@ -94,57 +92,67 @@ class AdminController extends Controller
         // 载入视图文件
         return $this->render('view', [
             'address' => $address,  // 县
-            'china' => $arrChina, // 省市信息
-            'logs' => $logs,  // 日志信息
+            'china'   => $arrChina, // 省市信息
+            'logs'    => $logs,  // 日志信息
         ]);
     }
 
     /**
      * 上传文件之后的处理
-     * @param object $objFile
+     *
      * @param string $strFilePath
      * @param string $strField
+     *
      * @return bool
+     * @throws \yii\base\ErrorException
+     * @throws \yii\base\InvalidConfigException
      */
-    public function afterUpload($objFile, &$strFilePath, $strField)
+    public function afterUpload($strFilePath, $strField)
     {
         // 上传头像信息
-        if ($strField === 'avatar' || $strField === 'face') {
-            // 删除之前的缩略图
-            $strFace = Yii::$app->request->post('face');
-            if ($strFace) {
-                $strFace = dirname($strFace) . '/thumb_' . basename($strFace);
-                if (file_exists('.' . $strFace)) @unlink('.' . $strFace);
-            }
-
-            // 处理图片
-            $strTmpPath = dirname($strFilePath) . '/thumb_' . basename($strFilePath);
-
-            /* @var $image yii\image\ImageDriver */
-            $imageComponent = Yii::$app->get('image');
-            if ($imageComponent) {
-                /* @var $image yii\image\drivers\Kohana_Image_GD */
-                $image = $imageComponent->load($strFilePath);
-                $image->resize(180, 180, Image::CROP)->save($strTmpPath);
-                $image->resize(48, 48, Image::CROP)->save();
-
-                // 管理员页面修改头像
-                $admin = Admin::findOne(Yii::$app->user->id);
-                if ($admin && $strField === 'avatar') {
-                    // 删除之前的图像信息
-                    if ($admin->face && file_exists('.' . $admin->face)) {
-                        @unlink('.' . $admin->face);
-                        @unlink('.' . dirname($admin->face) . '/thumb_' . basename($admin->face));
-                    }
-
-                    $admin->face = ltrim($strFilePath, '.');
-                    $admin->save();
-                    $strFilePath = $strTmpPath;
-                }
-            }
+        if (!in_array($strField, ['avatar', 'face'])) {
+            return $strFilePath;
         }
 
-        return true;
+        // 删除之前的缩略图
+        $strFace = Yii::$app->request->post('face');
+        if ($strFace) {
+            $strFace = dirname($strFace) . '/thumb_' . basename($strFace);
+            if (file_exists('.' . $strFace)) @unlink('.' . $strFace);
+        }
+
+        /* @var $image yii\image\ImageDriver */
+        $imageComponent = Yii::$app->get('image');
+        if (!$imageComponent) {
+            return $strFilePath;
+        }
+
+        // 处理图片
+        $strTmpPath = dirname($strFilePath) . '/thumb_' . basename($strFilePath);
+        /* @var $image yii\image\drivers\Kohana_Image_GD */
+        $image = $imageComponent->load($strFilePath);
+        $image->resize(180, 180, Image::CROP)->save($strTmpPath);
+        $image->resize(48, 48, Image::CROP)->save();
+
+        if ($strField !== 'avatar') {
+            return $strFilePath;
+        }
+
+        // 管理员页面修改头像
+        $admin = Admin::findOne(Yii::$app->user->id);
+        if (!$admin) {
+            return $strFilePath;
+        }
+
+        // 删除之前的图像信息
+        if ($admin->face && file_exists('.' . $admin->face)) {
+            @unlink('.' . $admin->face);
+            @unlink('.' . dirname($admin->face) . '/thumb_' . basename($admin->face));
+        }
+
+        $admin->face = ltrim($strFilePath, '.');
+        $admin->save();
+        return $strTmpPath;
     }
 
     /**
@@ -154,9 +162,9 @@ class AdminController extends Controller
      */
     public function actionAddress()
     {
-        $request = Yii::$app->request;
-        $strName = $request->get('query');                     // 查询参数
-        $intPid = (int)$request->get('iPid', 0);   // 父类ID
+        $request    = Yii::$app->request;
+        $strName    = $request->get('query');                     // 查询参数
+        $intPid     = (int)$request->get('iPid', 0);   // 父类ID
         $arrCountry = China::find()->select(['id', 'name as text'])
             ->where([
                 'and',
@@ -194,9 +202,9 @@ class AdminController extends Controller
         }
 
         /* @var $model \backend\models\Admin */
-        $model = $this->modelClass;
+        $model                    = $this->modelClass;
         $this->arrJson['errCode'] = 220;
-        $admins = $model::findAll([$this->pk => $arrIds]);
+        $admins                   = $model::findAll([$this->pk => $arrIds]);
         if (empty($admins)) {
             return $this->error(220);
         }

@@ -51,13 +51,10 @@ class Controller extends \common\controllers\UserController
     protected $strategy = 'DataTables';
 
     /**
-     * @var null admins 定义管理员信息
-     */
-    protected $admins = null;
-
-    /**
      * 请求之前的数据验证
+     *
      * @param \yii\base\Action $action
+     *
      * @return bool
      * @throws UnauthorizedHttpException
      * @throws \yii\web\BadRequestHttpException
@@ -65,32 +62,32 @@ class Controller extends \common\controllers\UserController
     public function beforeAction($action)
     {
         // 主控制器验证
-        if (parent::beforeAction($action)) {
-            // 验证权限
-            if (!Yii::$app->user->can($action->controller->id . '/' . $action->id)
-                && Yii::$app->getErrorHandler()->exception === null
-            ) {
-                // 没有权限AJAX返回
-                if (Yii::$app->request->isAjax) {
-                    Yii::$app->response->content = Json::encode($this->error(216));
-                    return false;
-                }
-
-                throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
-            }
-
-            // 处理获取数据(默认不提前注入)
-            if (!in_array($action->id, ['create', 'update', 'delete', 'delete-all', 'editable', 'upload', 'export'])) {
-                $this->admins = ArrayHelper::map(Admin::findAll(['status' => Admin::STATUS_ACTIVE]), 'id', 'username');
-                // 注入变量信息
-                Yii::$app->view->params['admins'] = $this->admins;
-                Yii::$app->view->params['user'] = Yii::$app->getUser()->identity;
-            }
-
-            return true;
+        if (!parent::beforeAction($action)) {
+            return false;
         }
 
-        return false;
+        // 验证权限
+        if (!Yii::$app->user->can($action->controller->id . '/' . $action->id)
+            && Yii::$app->getErrorHandler()->exception === null
+        ) {
+            // 没有权限AJAX返回
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->content = Json::encode($this->error(216));
+                return false;
+            }
+
+            throw new UnauthorizedHttpException('对不起，您现在还没获得该操作的权限!');
+        }
+
+        // 处理获取数据(默认不提前注入)
+        if (!in_array($action->id, ['create', 'update', 'delete', 'delete-all', 'editable', 'upload', 'export'])) {
+            // 注入变量信息
+            $admins                           = Admin::findAll(['status' => Admin::STATUS_ACTIVE]);
+            Yii::$app->view->params['admins'] = ArrayHelper::map($admins, 'id', 'username');
+            Yii::$app->view->params['user']   = Yii::$app->getUser()->identity;
+        }
+
+        return true;
     }
 
     /**
@@ -103,20 +100,10 @@ class Controller extends \common\controllers\UserController
     }
 
     /**
-     * 获取查询的配置信息(查询参数)
-     * @access protected
-     * @param  array $params 查询的请求参数
-     * @return array 返回一个数组用来查询
-     */
-    protected function where($params)
-    {
-        return [];
-    }
-
-    /**
      * 获取查询对象(查询结果一定要为数组)
      *
      * @param mixed|array $where 查询条件
+     *
      * @return \yii\db\Query 返回查询对象
      * @see actionSearch()
      * @see actionExport()
@@ -131,10 +118,10 @@ class Controller extends \common\controllers\UserController
     /**
      * 处理查询数据
      * @return mixed|string
-     * @see where()
+     * @throws \Exception
      * @see getQuery()
      * @see afterSearch()
-     * @throws \Exception
+     * @see where()
      */
     public function actionSearch()
     {
@@ -144,18 +131,22 @@ class Controller extends \common\controllers\UserController
 
         // 获取查询参数
         $search = $strategy->getRequest(); // 处理查询参数
-        $search['field'] = $search['field'] ? $search['field'] : $this->sort;
-        $search['orderBy'] = [$search['field'] => $search['sort'] == 'asc' ? SORT_ASC : SORT_DESC];
-        $search['where'] = Helper::handleWhere($search['params'], $this->where($search['params']));
+
+        // 定义了where方法
+        if (method_exists($this, 'where')) {
+            $search['where'] = Helper::handleWhere($search['params'], $this->where($search['params']));
+        }
 
         // 查询数据
-        $query = $this->getQuery($search['where']);
+        $query = $this->getQuery(ArrayHelper::getValue($search, 'where', []));
         if (YII_DEBUG) $this->arrJson['other'] = $query->createCommand()->getRawSql();
 
         // 查询数据条数
         $total = $query->count();
         if ($total) {
-            $array = $query->offset($search['offset'])->limit($search['limit'])->orderBy($search['orderBy'])->all();
+            $field   = ArrayHelper::getValue($search, 'field', $this->sort);
+            $orderBy = [$field => $search['sort'] == 'asc' ? SORT_ASC : SORT_DESC];
+            $array   = $query->offset($search['offset'])->limit($search['limit'])->orderBy($orderBy)->all();
             if ($array) $this->afterSearch($array);
         } else {
             $array = [];
@@ -167,9 +158,11 @@ class Controller extends \common\controllers\UserController
     /**
      * 查询之后的数据处理函数
      * @access protected
-     * @param  mixed $array 查询出来的数组对象
+     *
+     * @param mixed $array 查询出来的数组对象
+     *
      * @return void  对数据进行处理
-     * @see actionSearch()
+     * @see    actionSearch()
      */
     protected function afterSearch(&$array)
     {
@@ -221,7 +214,7 @@ class Controller extends \common\controllers\UserController
     public function actionUpdate()
     {
         // 接收参数判断
-        $data = Yii::$app->request->post();
+        $data  = Yii::$app->request->post();
         $model = $this->findOne();
         if (!$model) {
             return $this->returnJson();
@@ -257,7 +250,7 @@ class Controller extends \common\controllers\UserController
     public function actionDelete()
     {
         // 接收参数判断
-        $data = Yii::$app->request->post();
+        $data  = Yii::$app->request->post();
         $model = $this->findOne();
         if (!$model) {
             return $this->returnJson();
@@ -267,9 +260,9 @@ class Controller extends \common\controllers\UserController
         if ($model->delete()) {
             AdminLog::create(AdminLog::TYPE_DELETE, $data, $this->pk . '=' . $data[$this->pk]);
             return $this->success($model);
-        } else {
-            return $this->error(1004, Helper::arrayToString($model->getErrors()));
         }
+
+        return $this->error(1004, Helper::arrayToString($model->getErrors()));
     }
 
     /**
@@ -315,9 +308,9 @@ class Controller extends \common\controllers\UserController
         if ($model::deleteAll($where)) {
             AdminLog::create(AdminLog::TYPE_DELETE, $where, $this->pk . '=all');
             return $this->success($ids);
-        } else {
-            return $this->error(1004);
         }
+
+        return $this->error(1004);
     }
 
     /**
@@ -328,9 +321,9 @@ class Controller extends \common\controllers\UserController
     public function actionEditable()
     {
         // 接收参数
-        $request = Yii::$app->request;
-        $mixPk = $request->post('pk');    // 主键值
-        $strAttr = $request->post('name');  // 字段名
+        $request  = Yii::$app->request;
+        $mixPk    = $request->post('pk');    // 主键值
+        $strAttr  = $request->post('name');  // 字段名
         $mixValue = $request->post('value'); // 字段值
 
         // 第一步验证： 主键值、修改字段、修改的值不能为空字符串
@@ -351,22 +344,9 @@ class Controller extends \common\controllers\UserController
         if ($model->save()) {
             AdminLog::create(AdminLog::TYPE_UPDATE, $request->post(), $this->pk . '=' . $mixPk);
             return $this->success($model);
-        } else {
-            return $this->error(206, Helper::arrayToString($model->getErrors()));
         }
-    }
 
-    /**
-     * 文件上传成功的处理信息
-     * @access protected
-     * @param  object $object 文件上传类
-     * @param  string $strFilePath 文件保存路径
-     * @param  string $strField 上传文件表单名
-     * @return bool 上传成功返回true
-     */
-    protected function afterUpload($object, &$strFilePath, $strField)
-    {
-        return true;
+        return $this->error(206, Helper::arrayToString($model->getErrors()));
     }
 
     /**
@@ -377,7 +357,7 @@ class Controller extends \common\controllers\UserController
     public function actionUpload()
     {
         // 接收参数
-        $request = Yii::$app->request;
+        $request  = Yii::$app->request;
         $strField = $request->get('sField');    // 上传文件表单名称
         if (empty($strField)) {
             return $this->error(201);
@@ -413,18 +393,28 @@ class Controller extends \common\controllers\UserController
 
             // 生成文件随机名
             $strFilePath = $dirName . uniqid() . '.' . $objFile->extension;
-            // 执行文件上传保存，并且处理自己定义上传之后的处理
-            if ($objFile->saveAs($strFilePath) && $this->afterUpload($objFile, $strFilePath, $strField)) {
-                $mixReturn = [
-                    'sFilePath' => trim($strFilePath, '.'),
-                    'sFileName' => $objFile->baseName . '.' . $objFile->extension,
-                ];
 
-                AdminLog::create(AdminLog::TYPE_UPLOAD, $mixReturn, $strField);
-                return $this->success($mixReturn);
-            } else {
+            // 执行文件上传保存
+            if (!$objFile->saveAs($strFilePath)) {
                 return $this->error(204);
             }
+
+            // 并且处理自己定义上传之后的处理
+            if (method_exists($this, 'afterUpload')) {
+                $strFilePath = $this->afterUpload($strFilePath, $strField, $objFile);
+                if (!$strFilePath) {
+                    return $this->error(204);
+                }
+            }
+
+            $mixReturn = [
+                'sFilePath' => trim($strFilePath, '.'),
+                'sFileName' => $objFile->baseName . '.' . $objFile->extension,
+            ];
+
+            AdminLog::create(AdminLog::TYPE_UPLOAD, $mixReturn, $strField);
+            return $this->success($mixReturn);
+
         } catch (\Exception $e) {
             return $this->error(203, $e->getMessage());
         }
@@ -444,6 +434,10 @@ class Controller extends \common\controllers\UserController
      * 文件导出处理
      *
      * @return mixed|string
+     * @throws \PHPExcel_Exception
+     * @throws \PHPExcel_Reader_Exception
+     * @throws \PHPExcel_Writer_Exception
+     * @throws \yii\base\ExitException
      * @see where()
      * @see getQuery()
      * @see getExportHandleParams()
@@ -451,18 +445,23 @@ class Controller extends \common\controllers\UserController
     public function actionExport()
     {
         // 接收参数
-        $request = Yii::$app->request;
+        $request   = Yii::$app->request;
         $arrFields = $request->post('fields');    // 字段信息
-        $strTitle = $request->post('title');     // 标题信息
-        $params = $request->post('params');       // 查询条件信息
+        $strTitle  = $request->post('title');     // 标题信息
+        $params    = $request->post('params');       // 查询条件信息
 
         // 判断数据的有效性
         if (empty($arrFields) || empty($strTitle)) {
             return $this->error(201);
         }
 
-        $query = $this->getQuery(Helper::handleWhere($params, $this->where($params)));
-        $query->orderBy([$this->sort => SORT_DESC]);
+        if (method_exists($this, 'where')) {
+            $where = Helper::handleWhere($params, $this->where($params));
+        } else {
+            $where = [];
+        }
+
+        $query = $this->getQuery($where)->orderBy([$this->sort => SORT_DESC]);
 
         // 数据导出
         return Helper::excel($strTitle, $arrFields, $query, $this->getExportHandleParams());

@@ -18,18 +18,14 @@ class AdminLogController extends Controller
 
     /**
      * 查询处理
-     * @param  array $params
+     *
      * @return array 返回数组
      */
-    public function where($params)
+    public function where()
     {
         $where = [
-            'type' => '=',
-            'controller' => 'like',
-            'action' => 'like',
-            'url' => 'like',
-            'created_id' => '=',
-            'where' => [],
+            [['type', 'created_id'], '='],
+            [['controller', 'action', 'url'], 'like'],
         ];
 
         if (Yii::$app->user->id != Admin::SUPER_ADMIN_ID) {

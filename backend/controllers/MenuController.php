@@ -20,18 +20,14 @@ class MenuController extends Controller
 
     /**
      * 查询参数配置
-     * @param array $params
+     *
      * @return array
      */
-    public function where($params)
+    public function where()
     {
         return [
-            'id' => '=',
-            'menu_name' => 'like',
-            'url' => '=',
-            'action_name' => 'like',
-            'status' => '=',
-            'pid' => '='
+            [['id', 'status', 'pid'], '='],
+            [['menu_name', 'url', 'action_name'], 'like'],
         ];
     }
 

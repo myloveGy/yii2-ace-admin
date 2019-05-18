@@ -34,26 +34,23 @@ class RoleController extends Controller
 
     /**
      * 设置查询参数
-     * @param array $params
      * @return array
      */
-    public function where($params)
+    public function where()
     {
-        $uid = Yii::$app->user->id;
+        $uid   = Yii::$app->user->id;
         $where = [['=', 'type', Auth::TYPE_ROLE]]; // 查询角色信息
 
         // 不是管理员
         if ($uid != Admin::SUPER_ADMIN_ID) {
             // 获取用户的所有角色
-            $roles = Yii::$app->authManager->getRolesByUser($uid);
-            if ($roles) {
+            if ($roles = Yii::$app->authManager->getRolesByUser($uid)) {
                 $where[] = ['in', 'name', array_keys($roles)];
             }
         }
 
         return [
-            'name' => 'like',
-            'description' => 'like',
+            [['name', 'description'], 'like'],
             'where' => $where,    // 查询角色信息
         ];
     }
@@ -72,10 +69,12 @@ class RoleController extends Controller
     /**
      * 修改角色权限信息
      *
-     * @param  string $name 角色名
+     * @param string $name 角色名
+     *
      * @return string|\yii\web\Response
-     * @throws \yii\web\UnauthorizedHttpException
      * @throws HttpException
+     * @throws UnauthorizedHttpException
+     * @throws \yii\base\Exception
      */
     public function actionEdit($name)
     {
@@ -89,16 +88,16 @@ class RoleController extends Controller
         }
 
         // 判断自己是否有这个权限
-        $uid = Yii::$app->user->id;                             // 用户ID
-        $objAuth = Yii::$app->getAuthManager();                 // 权限对象
+        $uid      = Yii::$app->user->id;                             // 用户ID
+        $objAuth  = Yii::$app->getAuthManager();                 // 权限对象
         $mixRoles = $objAuth->getAssignment($name, $uid);       // 获取用户是否有改权限
         if (!$mixRoles && $uid != Admin::SUPER_ADMIN_ID) {
             throw new UnauthorizedHttpException('对不起，您没有修改该角色的权限!');
         }
 
         $request = Yii::$app->request;                          // 请求信息
-        $model = $this->findModel($name);                       // 查询对象
-        $array = $request->post();                              // 请求参数信息
+        $model   = $this->findModel($name);                       // 查询对象
+        $array   = $request->post();                              // 请求参数信息
         if ($array && $model->load($array, '')) {
             // 修改权限
             $permissions = $this->preparePermissions($array);
@@ -118,22 +117,24 @@ class RoleController extends Controller
         $trees = (new Tree([
             'parentIdName' => 'pid',
             'childrenName' => 'children',
-            'array' => Menu::getMenusByPermissions($permissions)
+            'array'        => Menu::getMenusByPermissions($permissions)
         ]))->getTreeArray(0);
 
         $trees = Menu::getJsMenus($trees, $model->_permissions);
 
         // 加载视图返回
         return $this->render('edit', [
-            'model' => $model,              // 模型对象
+            'model'       => $model,              // 模型对象
             'permissions' => $permissions,  // 权限信息
-            'trees' => $trees,              // 导航栏树,
+            'trees'       => $trees,              // 导航栏树,
         ]);
     }
 
     /**
      * 查看角色权限信息
-     * @param  string $name 角色名称
+     *
+     * @param string $name 角色名称
+     *
      * @return string
      * @throws HttpException
      */
@@ -150,34 +151,36 @@ class RoleController extends Controller
         $tree = new Tree([
             'parentIdName' => 'pid',
             'childrenName' => 'child',
-            'array' => Menu::getMenusByPermissions($permissions)
+            'array'        => Menu::getMenusByPermissions($permissions)
         ]);
 
         return $this->render('view', [
-            'menus' => $tree->getTreeArray(0),
-            'model' => $model,
+            'menus'       => $tree->getTreeArray(0),
+            'model'       => $model,
             'permissions' => $permissions,
         ]);
     }
 
     /**
      * 查询单个model
-     * @param  string $name
+     *
+     * @param string $name
+     *
      * @return \backend\models\Auth
      * @throws \yii\web\HttpException
      */
     protected function findModel($name)
     {
         if ($name) {
-            $auth = Yii::$app->getAuthManager();
+            $auth  = Yii::$app->getAuthManager();
             $model = new Auth();
-            $role = $auth->getRole($name);
+            $role  = $auth->getRole($name);
             if ($role) {
-                $model->name = $role->name;
-                $model->type = $role->type;
+                $model->name        = $role->name;
+                $model->type        = $role->type;
                 $model->description = $role->description;
-                $model->created_at = $role->createdAt;
-                $model->updated_at = $role->updatedAt;
+                $model->created_at  = $role->createdAt;
+                $model->updated_at  = $role->updatedAt;
                 $model->setIsNewRecord(false);
                 return $model;
             }
@@ -192,8 +195,8 @@ class RoleController extends Controller
      */
     protected function getPermissions()
     {
-        $uid = Yii::$app->user->id;
-        $models = $uid == 1 ? Auth::find()->where([
+        $uid         = Yii::$app->user->id;
+        $models      = $uid == 1 ? Auth::find()->where([
             'type' => Auth::TYPE_PERMISSION
         ])->orderBy(['name' => SORT_ASC])->all() : Yii::$app->getAuthManager()->getPermissionsByUser($uid);
         $permissions = [];
@@ -206,7 +209,9 @@ class RoleController extends Controller
 
     /**
      * 加载权限信息
-     * @param  array $post 提交参数
+     *
+     * @param array $post 提交参数
+     *
      * @return array
      */
     protected function preparePermissions($post)

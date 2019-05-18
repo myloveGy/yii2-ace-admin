@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use backend\models\Admin;
-use backend\models\Auth;
 use backend\models\AuthAssignment;
 use yii\helpers\Json;
 use common\helpers\Helper;
@@ -27,19 +26,12 @@ class AuthAssignmentController extends Controller
 
     /**
      * 查询处理
-     * @param  array $params
+     *
      * @return array 返回数组
      */
-    public function where($params)
+    public function where()
     {
-        return [
-            'user_id' => function ($value) {
-                return ['in', 'user_id', $value];
-            },
-            'item_name' => function ($value) {
-                return ['in', 'item_name', $value];
-            }
-        ];
+        return [['user_id', 'item_name'], 'in'];
     }
 
     /**
@@ -54,7 +46,7 @@ class AuthAssignmentController extends Controller
         // 载入视图
         return $this->render('index', [
             'arrRoles' => $arrRoles,
-            'roles' => Json::encode($arrRoles),
+            'roles'    => Json::encode($arrRoles),
         ]);
     }
 
@@ -71,9 +63,9 @@ class AuthAssignmentController extends Controller
         }
 
         foreach ($data['item_name'] as $name) {
-            $model = new AuthAssignment();
+            $model            = new AuthAssignment();
             $model->item_name = $name;
-            $model->user_id = $data['user_id'];
+            $model->user_id   = $data['user_id'];
             if ($model->save()) {
                 $this->arrJson['errMsg'] .= $model->item_name . ': 处理成功';
             } else {
@@ -82,12 +74,15 @@ class AuthAssignmentController extends Controller
             }
         }
 
-        return $this->success($data, 0);
+        return $this->success($data);
     }
 
     /**
      * 删除分配信息
+     *
      * @return mixed|string
+     * @throws \Throwable
+     * @throws yii\db\StaleObjectException
      */
     public function actionDelete()
     {
@@ -106,8 +101,8 @@ class AuthAssignmentController extends Controller
         // 删除数据成功
         if ($model->delete()) {
             return $this->success($model);
-        } else {
-            return $this->error(1004, Helper::arrayToString($model->getErrors()));
         }
+
+        return $this->error(1004, Helper::arrayToString($model->getErrors()));
     }
 }

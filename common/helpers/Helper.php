@@ -15,10 +15,12 @@ class Helper
 {
     /**
      * map() 使用ArrayHelper 处理数组, 并添加其他信息
-     * @param  mixed $array 需要处理的数据
-     * @param  string $id 键名
-     * @param  string $name 键值
-     * @param  array $params 其他数据
+     *
+     * @param mixed  $array  需要处理的数据
+     * @param string $id     键名
+     * @param string $name   键值
+     * @param array  $params 其他数据
+     *
      * @return array
      */
     public static function map($array, $id, $name, $params = ['请选择'])
@@ -61,61 +63,70 @@ class Helper
 
     /**
      * 处理通过请求参数对应yii2 where 查询条件
-     * @param array $params 请求参数数组
-     * @param array $where 定义查询处理方式数组
-     * @param string $join 默认查询方式是and
+     *
+     * @param array  $params 请求参数数组
+     * @param array  $where  定义查询处理方式数组
+     * @param string $join   默认查询方式是and
+     *
      * @return array
      */
     public static function handleWhere($params, $where, $join = 'and')
     {
         // 处理默认查询条件
-        if ($arrReturn = ArrayHelper::getValue($where, 'where', [])) {
+        $conditions = ArrayHelper::getValue($where, 'where', []);
+        if (isset($where['where'])) {
             unset($where['where']);
         }
-        
-        // 请求参数和查询参数必须存在
-        if ($where && $params) {
-            foreach ($params as $key => $value) {
-                // 判断不能查询请求的数据不能为空，且定义了查询参数对应查询处理方式
-                if ($value === '' || !isset($where[$key])) {
-                    continue;
-                }
 
-                // 匿名函数处理
-                $handle = $where[$key];
-                if ($handle instanceof Closure) {
-                    $arrReturn[] = $handle($value);
-                    continue;
-                }
-
-                // 数组
-                if (is_array($handle)) {
-                    // 处理函数
-                    if (isset($handle['func']) && function_exists($handle['func'])) {
-                        $value = $handle['func']($value);
-                    }
-
-                    $handle['field'] = empty($handle['field']) ? $key : $handle['field'];   // 对应字段
-                    $handle['and']   = empty($handle['and']) ? '=' : $handle['and'];        // 查询连接类型
-                    $arrReturn[] = [$where[$key]['and'], $where[$key]['field'], $value];
-                    continue;
-                }
-
-                $arrReturn[] = [(string)$handle, $key, $value];
-            }
+        // 请求参数存在且必须配置查询参数
+        if (empty($where) || empty($params)) {
+            return $conditions;
         }
+
+        $where = static::arrayAssoc($where);
+        foreach ($params as $key => $value) {
+            // 判断不能查询请求的数据不能为空，且定义了查询参数对应查询处理方式
+            if (static::isEmpty($value) || !isset($where[$key])) {
+                continue;
+            }
+
+            // 匿名函数处理
+            $handle = $where[$key];
+            if ($handle instanceof Closure) {
+                $conditions[] = $handle($value, $key);
+                continue;
+            }
+
+            // 数组
+            if (is_array($handle)) {
+                // 处理函数
+                if (isset($handle['func']) && (function_exists($handle['func']) || $handle['func'] instanceof Closure)) {
+                    $value = $handle['func']($value);
+                }
+
+                $key        = ArrayHelper::getValue($handle, 'field', $key);
+                $expression = ArrayHelper::getValue($handle, 'and', '=');
+            } else {
+                $expression = (string)$handle;
+            }
+
+            $conditions[] = [$expression, $key, $value];
+        }
+
 
         // 存在查询条件，数组前面添加 连接类型
-        if ($arrReturn) {
-            array_unshift($arrReturn, $join);
+        if ($conditions) {
+            array_unshift($conditions, $join);
         }
 
-        return $arrReturn;
+        return $conditions;
     }
 
     /**
      * 将一个多维数组连接为一个字符串
-     * @param  array $array 数组
+     *
+     * @param array $array 数组
+     *
      * @return string
      */
     public static function arrayToString($array)
@@ -133,42 +144,38 @@ class Helper
     /**
      * 通过指定字符串拆分数组，然后各个元素首字母，最后拼接
      *
-     * @example $strName = 'yii_user_log',$and = '_', return YiiUserLog
-     * @param string $strName 字符串
-     * @param string $and 拆分的字符串(默认'_')
+     * @param string       $strName 字符串
+     * @param string|array $and     拆分的字符串(默认'_')
+     *
      * @return string
+     * @example $strName = 'yii_user_log',$and = '_', return YiiUserLog
      */
     public static function strToUpperWords($strName, $and = '_')
     {
-        // 通过指定字符串拆分为数组
-        $value = explode($and, $strName);
-        if ($value) {
-            // 首字母大写，然后拼接
-            $strReturn = '';
-            foreach ($value as $val) {
-                $strReturn .= ucfirst($val);
-            }
-        } else {
-            $strReturn = ucfirst($strName);
-        }
-
-        return $strReturn;
+        $strReturn = ucwords(str_replace($and, ' ', $strName));
+        return str_replace(' ', '', $strReturn);
     }
 
     /**
      * model 导出excel
-     * @param string $title excel 标题
-     * @param array $columns 列对应的字段名称 ['id' => 'ID']
-     * ['id' => 'id', 'title' => '标题', 'content' => '内容']
-     * 导出查询数据
-     * ['id' => 1, 'title' => 123, 'content' => 'test']
-     * 其中 key 对应的是查询出来数据的 key,数据导填充的值通过这个key获取
-     * 其中 value 对应的是导出第一列对应的标题内容
-     * @param $query \yii\db\Query 查询对象
-     * 注意对象查询结果一定要转数组 asArray()
-     * @param array $handleParams 处理参数
-     * @param null|object|string $function 处理函数
+     *
+     * @param string             $title        excel 标题
+     * @param array              $columns      列对应的字段名称 ['id' => 'ID']
+     *                                         ['id' => 'id', 'title' => '标题', 'content' => '内容']
+     *                                         导出查询数据
+     *                                         ['id' => 1, 'title' => 123, 'content' => 'test']
+     *                                         其中 key 对应的是查询出来数据的 key,数据导填充的值通过这个key获取
+     *                                         其中 value 对应的是导出第一列对应的标题内容
+     * @param                    $query        \yii\db\Query 查询对象
+     *                                         注意对象查询结果一定要转数组 asArray()
+     * @param array              $handleParams 处理参数
+     * @param null|object|string $function     处理函数
+     *
      * @return mixed
+     * @throws \PHPExcel_Exception
+     * @throws \PHPExcel_Reader_Exception
+     * @throws \PHPExcel_Writer_Exception
+     * @throws \yii\base\ExitException
      */
     public static function excel($title, $columns, $query, $handleParams = [], $function = null)
     {
@@ -183,7 +190,7 @@ class Helper
         ob_start();
         $objPHPExcel = new \PHPExcel();
         if ($intCount > 3000) {
-            $cacheMethod = \PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+            $cacheMethod   = \PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
             $cacheSettings = array('memoryCacheSize' => '8MB');
             \PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
         }
@@ -207,7 +214,7 @@ class Helper
 
         $arrLetter = array_slice($arrLetter, 0, $intLength);
 
-        $keys = array_keys($columns);
+        $keys   = array_keys($columns);
         $values = array_values($columns);
 
         // 确定第一行信息
@@ -226,7 +233,7 @@ class Helper
                 // 写入信息数据
                 foreach ($arrLetter as $intKey => $strValue) {
                     $tmpAttribute = $keys[$intKey];
-                    $tmpValue = isset($value[$tmpAttribute]) ? $value[$tmpAttribute] : null;
+                    $tmpValue     = isset($value[$tmpAttribute]) ? $value[$tmpAttribute] : null;
                     if (isset($handleParams[$tmpAttribute])) {
                         $tmpValue = $handleParams[$tmpAttribute]($tmpValue);
                     }
@@ -257,5 +264,42 @@ class Helper
         $objWriter->save('php://output');
         \Yii::$app->end();
         return;
+    }
+
+    /**
+     * 验证是否为空
+     *
+     * @param $value
+     *
+     * @return bool
+     */
+    public static function isEmpty($value)
+    {
+        return $value === '' || $value === [] || $value === null || is_string($value) && trim($value) === '';
+    }
+
+    /**
+     * 将数组转为 key => value 模式
+     *
+     * @param array $array
+     *
+     * @return array
+     */
+    public static function arrayAssoc(array $array)
+    {
+        $handle = [];
+        foreach ($array as $k => $value) {
+            if (is_numeric($k) && is_array($value) && count($value) == 2) {
+                list($keys, $expression) = $value;
+                $keys = (array)$keys;
+                foreach ($keys as $field) {
+                    $handle[$field] = $expression;
+                }
+            } elseif (is_string($k)) {
+                $handle[$k] = $value;
+            }
+        }
+
+        return $handle;
     }
 }

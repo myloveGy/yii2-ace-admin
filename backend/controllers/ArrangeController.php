@@ -19,25 +19,22 @@ class ArrangeController extends Controller
 
     /**
      * 查询参数配置
-     * @param array $params
+     *
      * @return array
      */
-    public function where($params)
+    public function where()
     {
+        $where  = [
+            [['id', 'status', 'admin_id'], '='],
+            ['title', 'like'],
+        ];
+
         $intUid = (int)Yii::$app->user->id;
         if ($intUid !== Admin::SUPER_ADMIN_ID) {
-            $where = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
-        } else {
-            $where = [];
+            $where['where'] = [['or', ['id' => $intUid], ['created_id' => $intUid]]];
         }
 
-        return [
-            'id' => '=',
-            'title' => 'like',
-            'status' => '=',
-            'admin_id' => '=',
-            'where' => $where
-        ];
+        return $where;
     }
 
     /**
@@ -47,10 +44,10 @@ class ArrangeController extends Controller
     public function actionIndex()
     {
         return $this->render('index', [
-            'status' => Arrange::getStatus(),         // 状态
-            'timeStatus' => Arrange::getTimeStatus(),     // 时间状态
+            'status'       => Arrange::getStatus(),         // 状态
+            'timeStatus'   => Arrange::getTimeStatus(),     // 时间状态
             'statusColors' => Arrange::getStatusColors(),   // 状态颜色
-            'timeColors' => Arrange::getTimeColors(),     // 时间状态颜色
+            'timeColors'   => Arrange::getTimeColors(),     // 时间状态颜色
         ]);
     }
 
@@ -69,11 +66,11 @@ class ArrangeController extends Controller
 
         // 载入视图
         return $this->render('calendar', [
-            'status' => Arrange::getStatus(),         // 状态
-            'timeStatus' => Arrange::getTimeStatus(),     // 时间状态
-            'arrange' => $arrArrange,                  // 没有委派的事件
+            'status'       => Arrange::getStatus(),         // 状态
+            'timeStatus'   => Arrange::getTimeStatus(),     // 时间状态
+            'arrange'      => $arrArrange,                  // 没有委派的事件
             'statusColors' => Arrange::getStatusColors(),   // 状态颜色
-            'timeColors' => Arrange::getTimeColors(),     // 时间状态颜色
+            'timeColors'   => Arrange::getTimeColors(),     // 时间状态颜色
         ]);
     }
 
@@ -85,9 +82,9 @@ class ArrangeController extends Controller
     {
         $request = Yii::$app->request;
         // 查询条件
-        $where = ['and', ['=', 'admin_id', Yii::$app->user->id]];
+        $where    = ['and', ['=', 'admin_id', Yii::$app->user->id]];
         $strStart = $request->get('start');
-        $strEnd = $request->get('end');
+        $strEnd   = $request->get('end');
 
         if ($strStart) {
             $where[] = ['>=', 'created_at', strtotime($strStart)];
@@ -103,14 +100,14 @@ class ArrangeController extends Controller
             $arrTmp = [];
             foreach ($arrUserArrange as $value) {
                 $arrTmp[] = [
-                    'id' => $value['id'],
-                    'title' => $value['title'],
-                    'start' => date('Y-m-d H:i:s', $value['start_at']),
-                    'desc' => $value['desc'],
-                    'status' => $value['status'],
-                    'end' => date('Y-m-d H:i:s', $value['end_at']),
+                    'id'          => $value['id'],
+                    'title'       => $value['title'],
+                    'start'       => date('Y-m-d H:i:s', $value['start_at']),
+                    'desc'        => $value['desc'],
+                    'status'      => $value['status'],
+                    'end'         => date('Y-m-d H:i:s', $value['end_at']),
                     'time_status' => $value['time_status'],
-                    'className' => Arrange::getStatusColors($value['status']),
+                    'className'   => Arrange::getStatusColors($value['status']),
                 ];
             }
 

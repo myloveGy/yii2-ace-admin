@@ -17,14 +17,14 @@ class UserController extends Controller
 
     /**
      * 查询处理
-     * @param  array $params
+     *
+     *
      * @return array 返回数组
      */
-    public function where($params)
+    public function where()
     {
         return [
-            'username' => 'like',
-            'email' => 'like',
+            [['username', 'email'], 'like'],
         ];
     }
 
@@ -35,7 +35,7 @@ class UserController extends Controller
     public function actionIndex()
     {
         return $this->render('index', [
-            'status' => User::getArrayStatus(),
+            'status'      => User::getArrayStatus(),
             'statusColor' => User::getStatusColor(),
         ]);
     }

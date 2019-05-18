@@ -14,14 +14,13 @@ class AuthorityController extends RoleController
 {
     /**
      * 查询参数配置
-     * @param array $params
+     *
      * @return array
      */
-    public function where($params)
+    public function where()
     {
         return [
-            'name' => 'like',
-            'description' => 'like',
+            [['name', 'description'], 'like'],
             'where' => [['=', 'type', Auth::TYPE_PERMISSION]],
         ];
     }
@@ -33,7 +32,7 @@ class AuthorityController extends RoleController
     public function actionIndex()
     {
         // 查询出全部的规则
-        $rules = AuthRule::find()->asArray()->all();
+        $rules    = AuthRule::find()->asArray()->all();
         $arrRules = ['' => '请选择'];
         if ($rules) {
             foreach ($rules as $value) {
@@ -50,7 +49,7 @@ class AuthorityController extends RoleController
 
         // 载入试图
         return $this->render('index', [
-            'type' => Auth::TYPE_PERMISSION, // 权限类型
+            'type'  => Auth::TYPE_PERMISSION, // 权限类型
             'rules' => yii\helpers\Json::encode($arrRules) // 所有规则
         ]);
     }
