@@ -93,14 +93,6 @@ class SiteController extends \yii\web\Controller
      */
     public function actionLogin()
     {
-        var_dump(Helper::handleWhere([
-            'id' => 1,
-            'username' => 2,
-        ], [
-            'where' => [['=', 'name', '56']],
-            [['id', 'username'], '=']
-        ]));
-        exit;
         $this->layout = 'login.php';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
