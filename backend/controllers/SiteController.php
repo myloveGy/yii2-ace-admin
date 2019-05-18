@@ -27,17 +27,17 @@ class SiteController extends \yii\web\Controller
                 'rules' => [
                     [
                         'actions' => ['login', 'error'],
-                        'allow' => true,
+                        'allow'   => true,
                     ],
                     [
                         'actions' => ['logout', 'index', 'system', 'grid', 'get-data', 'update', 'create', 'test'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow'   => true,
+                        'roles'   => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
+            'verbs'  => [
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -64,8 +64,8 @@ class SiteController extends \yii\web\Controller
     {
         $this->layout = false;
         // 获取用户导航栏信息
-        $menus = Menu::getUserMenus(Yii::$app->user->id);
-        Yii::$app->view->params['user'] = Yii::$app->getUser()->identity;
+        $menus                           = Menu::getUserMenus(Yii::$app->user->id);
+        Yii::$app->view->params['user']  = Yii::$app->getUser()->identity;
         Yii::$app->view->params['menus'] = $menus ? $menus : [];
         return $this->render('index');
     }
@@ -81,7 +81,7 @@ class SiteController extends \yii\web\Controller
         Yii::$app->view->params['user'] = Yii::$app->getUser()->identity;
 
         return $this->render('system', [
-            'yii' => 'Yii ' . Yii::getVersion(),                      // Yii 版本
+            'yii'    => 'Yii ' . Yii::getVersion(),                   // Yii 版本
             'upload' => ini_get('upload_max_filesize'),      // 上传文件大小
         ]);
     }
@@ -100,14 +100,10 @@ class SiteController extends \yii\web\Controller
 
         $model = new AdminForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            // 生成缓存导航栏文件
-            Menu::setNavigation(Yii::$app->user->id);
             return $this->goBack(); // 到首页去
-        } else {
-            return $this->render('login', [
-                'model' => $model,
-            ]);
         }
+
+        return $this->render('login', compact('model'));
     }
 
     /**
@@ -121,11 +117,10 @@ class SiteController extends \yii\web\Controller
         $admin = Admin::findOne(Yii::$app->user->id);
         if ($admin) {
             $admin->last_time = time();
-            $admin->last_ip = Helper::getIpAddress();
+            $admin->last_ip   = Helper::getIpAddress();
             $admin->save();
         }
 
-        Yii::$app->cache->delete(Menu::CACHE_KEY.Yii::$app->user->id);
         Yii::$app->user->logout();
         return $this->goHome();
     }
