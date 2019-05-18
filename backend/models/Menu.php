@@ -24,9 +24,6 @@ use yii\helpers\ArrayHelper;
  */
 class Menu extends AdminModel
 {
-    // 缓存key
-    const CACHE_KEY = 'navigation';
-
     /**
      * 状态
      */
