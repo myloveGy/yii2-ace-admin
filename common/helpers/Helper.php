@@ -79,40 +79,37 @@ class Helper
         }
 
         // 请求参数存在且必须配置查询参数
-        if (empty($where) || empty($params)) {
-            return $conditions;
-        }
-
-        $where = static::arrayAssoc($where);
-        foreach ($params as $key => $value) {
-            // 判断不能查询请求的数据不能为空，且定义了查询参数对应查询处理方式
-            if (static::isEmpty($value) || !isset($where[$key])) {
-                continue;
-            }
-
-            // 匿名函数处理
-            $handle = $where[$key];
-            if ($handle instanceof Closure) {
-                $conditions[] = $handle($value, $key);
-                continue;
-            }
-
-            // 数组
-            if (is_array($handle)) {
-                // 处理函数
-                if (isset($handle['func']) && (function_exists($handle['func']) || $handle['func'] instanceof Closure)) {
-                    $value = $handle['func']($value);
+        if ($where && $params) {
+            $where = static::arrayAssoc($where);
+            foreach ($params as $key => $value) {
+                // 判断不能查询请求的数据不能为空，且定义了查询参数对应查询处理方式
+                if (static::isEmpty($value) || !isset($where[$key])) {
+                    continue;
                 }
 
-                $key        = ArrayHelper::getValue($handle, 'field', $key);
-                $expression = ArrayHelper::getValue($handle, 'and', '=');
-            } else {
-                $expression = (string)$handle;
+                // 匿名函数处理
+                $handle = $where[$key];
+                if ($handle instanceof Closure) {
+                    $conditions[] = $handle($value, $key);
+                    continue;
+                }
+
+                // 数组
+                if (is_array($handle)) {
+                    // 处理函数
+                    if (isset($handle['func']) && (function_exists($handle['func']) || $handle['func'] instanceof Closure)) {
+                        $value = $handle['func']($value);
+                    }
+
+                    $key        = ArrayHelper::getValue($handle, 'field', $key);
+                    $expression = ArrayHelper::getValue($handle, 'and', '=');
+                } else {
+                    $expression = (string)$handle;
+                }
+
+                $conditions[] = [$expression, $key, $value];
             }
-
-            $conditions[] = [$expression, $key, $value];
         }
-
 
         // 存在查询条件，数组前面添加 连接类型
         if ($conditions) {

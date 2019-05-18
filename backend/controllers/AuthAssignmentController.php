@@ -31,7 +31,9 @@ class AuthAssignmentController extends Controller
      */
     public function where()
     {
-        return [['user_id', 'item_name'], 'in'];
+        return [
+            [['user_id', 'item_name'], 'in']
+        ];
     }
 
     /**
