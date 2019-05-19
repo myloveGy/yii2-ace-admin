@@ -87,6 +87,11 @@ class Helper
                     continue;
                 }
 
+                // 如果是字符串的话，去除两边空格
+                if (is_string($value)) {
+                    $value = trim($value);
+                }
+
                 // 匿名函数处理
                 $handle = $where[$key];
                 if ($handle instanceof Closure) {
