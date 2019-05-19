@@ -1,27 +1,29 @@
 <?php
+
 use backend\assets\AppAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
+
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta charset="<?= Yii::$app->charset ?>"/>
-    <title><?=Yii::$app->name.Html::encode($this->title) ?></title>
-    <meta name="description" content="3 styles with inline editable feature" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title><?= Yii::$app->name . Html::encode($this->title) ?></title>
+    <meta name="description" content="3 styles with inline editable feature"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <?= Html::csrfMetaTags() ?>
     <?php $this->head(); ?>
     <!-- ace styles -->
-    <link rel="stylesheet" href="/public/assets/css/ace.min.css" id="main-ace-style" />
+    <link rel="stylesheet" href="/public/assets/css/ace.min.css" id="main-ace-style"/>
     <!--[if lte IE 9]>
-    <link rel="stylesheet" href="/public/assets/css/ace-part2.min.css" />
+    <link rel="stylesheet" href="/public/assets/css/ace-part2.min.css"/>
     <![endif]-->
     <!--[if lte IE 9]>
-    <link rel="stylesheet" href="/public/assets/css/ace-ie.min.css" />
+    <link rel="stylesheet" href="/public/assets/css/ace-ie.min.css"/>
     <![endif]-->
     <!-- inline styles related to this page -->
     <!-- ace settings handler -->
@@ -32,20 +34,87 @@ AppAsset::register($this);
     <script src="/public/assets/js/respond.min.js"></script>
     <![endif]-->
     <style>
-        body {overflow: hidden}
-        .me-breadcrumb{display:block;max-width:100%;max-height:41px;overflow:hidden}
-        .me-breadcrumb div{color:#585858;float:left;height:100%;display:inline-block;padding-left:15px;padding-right:15px;border-right:1px solid #e2e2e2}
-        .me-breadcrumb div.me-window{padding:0;border-right:none}
-        .me-breadcrumb div.me-window div{padding-right:8px}
-        .me-breadcrumb div.me-window a{margin-left:5px}
-        .me-breadcrumb div.active,.me-breadcrumb div.options:hover{color:#428bca;font-weight:700;background-color:#fff}
-        .me-breadcrumb div a{color:red}
-        .me-breadcrumb div.options a{color:#428bca;font-size:14px}
-        .me-breadcrumb div span{cursor:pointer}
-        #nav-search span a#window-refresh{font-size:20px}
-        .iframe{-webkit-transition:all.3s ease-out 0s;transition:all.3s ease-out 0s}
-        .breadcrumbs-fixed+.page-content{padding-top:41px}
-        #page-content{overflow-y:hidden;padding-right:0;padding-bottom:0;padding-left:0}
+        body {
+            overflow: hidden
+        }
+
+        .me-breadcrumb {
+            display: block;
+            max-width: 100%;
+            max-height: 41px;
+            overflow: hidden
+        }
+
+        .me-breadcrumb #close-all-page {
+            max-height: 40px;
+        }
+
+        .me-breadcrumb #close-all-page a {
+            padding-top: 3px;
+            display: block;
+        }
+
+        .me-breadcrumb div {
+            color: #585858;
+            float: left;
+            height: 100%;
+            display: inline-block;
+            padding-left: 15px;
+            padding-right: 15px;
+            border-right: 1px solid #e2e2e2
+        }
+
+        .me-breadcrumb div.me-window {
+            padding: 0;
+            border-right: none
+        }
+
+        .me-breadcrumb div.me-window div {
+            padding-right: 8px
+        }
+
+        .me-breadcrumb div.me-window a {
+            margin-left: 5px
+        }
+
+        .me-breadcrumb div.active, .me-breadcrumb div.options:hover {
+            color: #428bca;
+            font-weight: 700;
+            background-color: #fff
+        }
+
+        .me-breadcrumb div a {
+            color: red
+        }
+
+        .me-breadcrumb div.options a {
+            color: #428bca;
+            font-size: 14px
+        }
+
+        .me-breadcrumb div span {
+            cursor: pointer
+        }
+
+        #nav-search span a#window-refresh {
+            font-size: 20px
+        }
+
+        .iframe {
+            -webkit-transition: all .3s ease-out 0s;
+            transition: all .3s ease-out 0s
+        }
+
+        .breadcrumbs-fixed + .page-content {
+            padding-top: 41px
+        }
+
+        #page-content {
+            overflow-y: hidden;
+            padding-right: 0;
+            padding-bottom: 0;
+            padding-left: 0
+        }
     </style>
 </head>
 <body class="no-skin">
@@ -53,7 +122,10 @@ AppAsset::register($this);
 <!-- #section:basics/navbar.layout -->
 <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <script type="text/javascript">
-        try { ace.settings.check('navbar' , 'fixed')}catch(e){}
+        try {
+            ace.settings.check('navbar', 'fixed')
+        } catch (e) {
+        }
     </script>
 
     <div class="navbar-container" id="navbar-container">
@@ -67,7 +139,7 @@ AppAsset::register($this);
 
         <div class="navbar-header pull-left">
             <a href="/" class="navbar-brand">
-                <small><?=Yii::$app->params['projectName']?></small>
+                <small><?= Yii::$app->params['projectName'] ?></small>
             </a>
         </div>
 
@@ -76,37 +148,45 @@ AppAsset::register($this);
                 <!-- 用户信息显示 -->
                 <li class="light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                        <img class="nav-user-photo" src="<?=$this->params['user']->face ? $this->params['user']->face : '/public/assets/avatars/avatar.jpg'?>" alt="Jason's Photo" />
+                        <img class="nav-user-photo"
+                             src="<?= $this->params['user']->face ? $this->params['user']->face : '/public/assets/avatars/avatar.jpg' ?>"
+                             alt="Jason's Photo"/>
                         <span class="user-info">
-                                <small>欢迎登录</small><?=$this->params['user']->username?>
+                                <small>欢迎登录</small><?= $this->params['user']->username ?>
                             </span>
                         <i class="ace-icon fa fa-caret-down"></i>
                     </a>
 
                     <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                         <li>
-                            <a class="window-iframe" data-id="index" title="登录信息" data-url="<?=Url::toRoute(['site/system'])?>" href="<?=Url::toRoute(['site/system'])?>">
+                            <a class="window-iframe" data-id="index" title="登录信息"
+                               data-url="<?= Url::toRoute(['site/system']) ?>"
+                               href="<?= Url::toRoute(['site/system']) ?>">
                                 <i class="ace-icon fa fa-desktop"></i>登录信息
                             </a>
                         </li>
                         <li>
-                            <a class="window-iframe" data-id="my-info" title="个人信息" data-url="<?=Url::toRoute(['admin/view'])?>" href="<?=Url::toRoute(['admin/view'])?>">
+                            <a class="window-iframe" data-id="my-info" title="个人信息"
+                               data-url="<?= Url::toRoute(['admin/view']) ?>"
+                               href="<?= Url::toRoute(['admin/view']) ?>">
                                 <i class="ace-icon fa fa-user"></i>个人信息
                             </a>
                         </li>
                         <li>
-                            <a class="window-iframe" data-id="my-arrange" title="我的日程" data-url="<?=Url::toRoute(['arrange/calendar'])?>" href="<?=Url::toRoute(['arrange/calendar'])?>">
+                            <a class="window-iframe" data-id="my-arrange" title="我的日程"
+                               data-url="<?= Url::toRoute(['arrange/calendar']) ?>"
+                               href="<?= Url::toRoute(['arrange/calendar']) ?>">
                                 <i class="ace-icon fa fa-calendar"></i>我的日程
                             </a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <?=Html::beginForm(['/site/logout'], 'post'); ?>
-                            <?=Html::submitButton(
+                            <?= Html::beginForm(['/site/logout'], 'post'); ?>
+                            <?= Html::submitButton(
                                 '<i class="ace-icon fa fa-power-off"></i> 退出登录 ',
                                 ['class' => 'btn btn-link logout']
-                            )?>
-                            <?=Html::endForm(); ?>
+                            ) ?>
+                            <?= Html::endForm(); ?>
                         </li>
                     </ul>
                 </li>
@@ -119,27 +199,36 @@ AppAsset::register($this);
 <!-- /section:basics/navbar.layout -->
 <div class="main-container main-container-fixed" id="main-container">
     <script type="text/javascript">
-        try{ace.settings.check('main-container' , 'fixed')}catch(e){}
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
     </script>
 
     <!-- #section:basics/sidebar -->
     <div id="sidebar" class="sidebar responsive sidebar-fixed">
         <script type="text/javascript">
-            try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
+            try {
+                ace.settings.check('sidebar', 'fixed')
+            } catch (e) {
+            }
         </script>
 
         <div class="sidebar-shortcuts" id="sidebar-shortcuts">
             <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-                <button class="btn btn-success window-iframe"  title="我的日程信息" data-id="my-arrange" data-url="<?=Url::toRoute(['arrange/calendar'])?>">
+                <button class="btn btn-success window-iframe" title="我的日程信息" data-id="my-arrange"
+                        data-url="<?= Url::toRoute(['arrange/calendar']) ?>">
                     <i class="ace-icon fa fa-calendar"></i>
                 </button>
                 <button class="btn btn-info">
                     <i class="ace-icon fa fa-pencil"></i>
                 </button>
-                <button class="btn btn-warning window-iframe" title="个人信息" data-id="my-info" data-url="<?=Url::toRoute(['admin/view'])?>">
+                <button class="btn btn-warning window-iframe" title="个人信息" data-id="my-info"
+                        data-url="<?= Url::toRoute(['admin/view']) ?>">
                     <i class="ace-icon glyphicon glyphicon-user"></i>
                 </button>
-                <button class="btn btn-danger window-iframe" title="登录信息" data-id="index" data-url="<?=Url::toRoute(['site/system'])?>">
+                <button class="btn btn-danger window-iframe" title="登录信息" data-id="index"
+                        data-url="<?= Url::toRoute(['site/system']) ?>">
                     <i class="ace-icon fa fa-cogs"></i>
                 </button>
             </div>
@@ -152,26 +241,30 @@ AppAsset::register($this);
         </div>
         <!--左侧导航栏信息-->
         <?php
-            try {
-                echo \backend\widgets\Nav::widget([
-                    'options' => [
-                        'id' => 'nav-list-main',
-                        'class' => 'nav nav-list',
-                    ],
-                    'labelName' => 'menu_name',
-                    'items' =>  $this->params['menus'],
-                    'itemsName' => 'child'
-                ]);
-            } catch (\Exception $e) {
+        try {
+            echo \backend\widgets\Nav::widget([
+                'options'   => [
+                    'id'    => 'nav-list-main',
+                    'class' => 'nav nav-list',
+                ],
+                'labelName' => 'menu_name',
+                'items'     => $this->params['menus'],
+                'itemsName' => 'child'
+            ]);
+        } catch (\Exception $e) {
 
-            }
+        }
         ?>
         <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
-            <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left"
+               data-icon2="ace-icon fa fa-angle-double-right"></i>
         </div>
 
         <script type="text/javascript">
-            try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
+            try {
+                ace.settings.check('sidebar', 'collapsed')
+            } catch (e) {
+            }
         </script>
     </div>
 
@@ -181,7 +274,10 @@ AppAsset::register($this);
         <!--头部可固定导航信息-->
         <div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
             <script type="text/javascript">
-                try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+                try {
+                    ace.settings.check('breadcrumbs', 'fixed')
+                } catch (e) {
+                }
             </script>
             <div class="me-breadcrumb pull-left">
                 <div class="prev options hide" id="window-prev">
@@ -199,6 +295,11 @@ AppAsset::register($this);
                 <div class="next options hide" id="window-next">
                     <a href="#"><i class="ace-icon fa fa-forward"></i></a>
                 </div>
+                <div class="options hide" id="close-all-page">
+                    <a href="#" title="<?= Yii::t('admin', 'close all') ?>">
+                        <i class="ace-icon fa fa-times-circle bigger-150 red icon-only"></i>
+                    </a>
+                </div>
             </div>
 
             <!--搜索-->
@@ -212,7 +313,8 @@ AppAsset::register($this);
         </div>
 
         <div class="page-content" id="page-content">
-            <iframe class="active iframe" name="iframe-index" id="iframe-index" width="100%" height="100%" src="<?=Url::toRoute(['site/system'])?>" frameborder="0"></iframe>
+            <iframe class="active iframe" name="iframe-index" id="iframe-index" width="100%" height="100%"
+                    src="<?= Url::toRoute(['site/system']) ?>" frameborder="0"></iframe>
         </div>
     </div>
 </div>
@@ -220,16 +322,16 @@ AppAsset::register($this);
 <!-- basic scripts -->
 <!--[if !IE]> -->
 <script type="text/javascript">
-    window.jQuery || document.write("<script src='/public/assets/js/jquery.min.js'>"+"<"+"/script>");
+    window.jQuery || document.write("<script src='/public/assets/js/jquery.min.js'>" + "<" + "/script>");
 </script>
 <!-- <![endif]-->
 <!--[if IE]>
 <script type="text/javascript">
-    window.jQuery || document.write("<script src='/public/assets/js/jquery1x.min.js'>" + "<"+"/script>");
+    window.jQuery || document.write("<script src='/public/assets/js/jquery1x.min.js'>" + "<" + "/script>");
 </script>
 <![endif]-->
 <script type="text/javascript">
-    if('ontouchstart' in document.documentElement) document.write("<script src='/public/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+    if ('ontouchstart' in document.documentElement) document.write("<script src='/public/assets/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
 </script>
 <script src="/public/assets/js/bootstrap.min.js"></script>
 <!--[if lte IE 8]>
@@ -248,7 +350,12 @@ AppAsset::register($this);
 
     function addDiv(strId, strTitle) {
         $windowDiv.find("div.active").removeClass("active");
-        if ($windowDiv.find("div:not(div.hide)").size() >= intSize) {
+        var size = $windowDiv.find("div:not(div.hide)").size();
+        if (size >= 3) {
+            $("#close-all-page").removeClass("hide");
+        }
+
+        if (size >= intSize) {
             $windowDiv.find("div:not(div.hide):first").addClass("hide");
             $("#window-prev").removeClass("hide");
         }
@@ -274,6 +381,21 @@ AppAsset::register($this);
         $(window).resize(function () {
             authHeight()
         });
+
+        // 关闭全部
+        $("#close-all-page a").click(function () {
+            $windowDiv.find("div.me-div").each(function () {
+                if ($(this).hasClass("active")) {
+                    $(this).removeClass("hide");
+                } else {
+                    $("#" + $(this).data("id")).remove();
+                    $(this).remove();
+                }
+            });
+
+            $(this).parent().add("#window-next").add("#window-prev").addClass("hide");
+        });
+
         $("#window-refresh").click(function (evt) {
             evt.preventDefault();
             var objActive = $("#page-content iframe.active").get(0);
