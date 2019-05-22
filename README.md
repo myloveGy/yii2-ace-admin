@@ -15,6 +15,7 @@ Yii2 ace Admin 后台模板
 * 使用RBAC权限管理，所有操作基于权限控制
 * 视图使用JS控制，数据显示使用的jquery.DataTables
 * 基于数据表的增、删、改、查都有封装，添加新的数据表操作方便
+
 ### 安装要求
 * PHP >= 5.4
 * MySQL
@@ -23,7 +24,9 @@ Yii2 ace Admin 后台模板
 * 账号： admin
 * 密码： admin888
 ### 安装
+
 * 提示：请先确定安装了[Composer Asset插件:](https://github.com/fxpio/composer-asset-plugin)
+
 ```
 php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
 ```
