@@ -11,8 +11,10 @@ Yii2 Ace Admin 后台模板
 [![GitHub license](https://img.shields.io/github/license/myloveGy/yii2-ace-admin.svg)](https://github.com/myloveGy/yii2-ace-admin)
 
 ### 简介
-系统基于yii2高级版本开发，后台模板使用的ace admin。对于一般的后台开发，比较方便; 对于数据表的CURL操作都有封装，且所有操作都有权限控制。
-现在这个项目只是一个示例项目，主要功能被我移到: <strong>[jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)</strong>,这样引入自己项目更方便一些
+系统基于yii2高级版本开发，后台模板使用的 Ace Admin。对于一般的后台开发，比较方便; 
+对于数据表的CURL操作都有封装，且所有操作都有权限控制。现在这个项目只是一个示例项目，
+主要功能被我移到: <strong>[jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)</strong>,
+这样引入自己项目更方便一些
 
 #### 特点
 * 使用RBAC权限管理，所有操作基于权限控制
@@ -33,7 +35,8 @@ Yii2 Ace Admin 后台模板
 * 不使用 composer 安装可以从下面地址下载打包文件，并从第3步开始安装
 
    * [百度网盘](https://pan.baidu.com/s/1frc7FxxL1Pkf2dd06m0tlA)
-   * [有道云笔记](http://note.youdao.com/noteshare?id=79babb1e1f7fbc99c79be2d10acff2c0)
+   * [有道云笔记](https://note.youdao.com/ynoteshare1/index.html?id=4e1e59dd2ec2541796105d4d7afdb3c9)
+   * [CSDN](https://download.csdn.net/download/myliujx/11193963)
     
 * 提示：请先确定安装了[Composer Asset插件:](https://github.com/fxpio/composer-asset-plugin)
     ```
