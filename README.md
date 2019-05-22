@@ -13,22 +13,32 @@ Yii2 Ace Admin 后台模板
 ### 简介
 系统基于yii2高级版本开发，后台模板使用的ace admin。对于一般的后台开发，比较方便; 对于数据表的CURL操作都有封装，且所有操作都有权限控制。
 现在这个项目只是一个示例项目，主要功能被我移到: <strong>[jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)</strong>,这样引入自己项目更方便一些
+
 #### 特点
 * 使用RBAC权限管理，所有操作基于权限控制
 * 视图使用JS控制，数据显示使用的jquery.DataTables
 * 基于数据表的增、删、改、查都有封装，添加新的数据表操作方便
+
 ### 安装要求
 * PHP >= 5.4
 * MySQL
+
 ### 项目demo
 * 地址： [https://yii2.sh-jinger.com](https://yii2.sh-jinger.com)
 * 账号： admin
 * 密码： admin888
+
 ### 安装
+
+* 不使用 composer 安装可以从下面地址下载打包文件，并从第3步开始安装
+
+   * [百度网盘](https://pan.baidu.com/s/1frc7FxxL1Pkf2dd06m0tlA)
+   * [有道云笔记](http://note.youdao.com/noteshare?id=79babb1e1f7fbc99c79be2d10acff2c0)
+    
 * 提示：请先确定安装了[Composer Asset插件:](https://github.com/fxpio/composer-asset-plugin)
-```
-php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
-```
+    ```
+    php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
+    ```
 
 1. 执行 composer 安装项目
         
@@ -40,20 +50,21 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
 
 3. 配置好数据库配置后,导入数据表结构
 
-需要顺序执行
-* 导入rbac migration 权限控制数据表
-    ```
-    php yii migrate --migrationPath=@yii/rbac/migrations
-    ```
-* 导入后台默认数据(菜单、默认权限)
-    ```
-    php yii migrate --migrationPath=@jinxing/admin/migrations
-    ```
+    需要顺序执行
     
-*  导入用户表数据
-    ```
-     php yii migrate 
-    ```
+    * 导入rbac migration 权限控制数据表
+        ```
+        php yii migrate --migrationPath=@yii/rbac/migrations
+        ```
+    * 导入后台默认数据(菜单、默认权限)
+        ```
+        php yii migrate --migrationPath=@jinxing/admin/migrations
+        ```
+        
+    *  导入用户表数据
+        ```
+         php yii migrate 
+        ```
     
 * 后台默认超级管理员账号：super 密码：admin123
 * 管理员账号：admin 密码：admin888
@@ -61,6 +72,8 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
 ### 使用说明
 
 #### 2.0.0 的配置说明可以查看[jinxing/yii2-admin](https://github.com/myloveGy/yii2-admin/wiki)
+
+#### [jinxing/yii2-admin v1.2.0 更新说明](https://github.com/myloveGy/yii2-admin/blob/master/CHANGELOG.md)
 #### [jinxing/yii2-admin v1.1.0 更新说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/v1.1.1.md)
 
 基本操作的权限(以管理员操作为例)：
@@ -92,8 +105,10 @@ php composer.phar global require "fxp/composer-asset-plugin:^1.2.0"
         protected $modelClass = '\common\models\China';
     }
     ```
-### [控制器详细使用说明](./docs/controller.md)
+    ### [控制器详细使用说明](./docs/controller.md)
+    
 2. 后台model
+
     使用gii生成model，命名空间 backend\models
 
 3. 视图文件JS配置
