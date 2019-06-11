@@ -10,21 +10,25 @@ Yii2 Ace Admin 后台模板
 [![GitHub license](https://img.shields.io/github/license/myloveGy/yii2-ace-admin.svg)](https://github.com/myloveGy/yii2-ace-admin)
 
 ## 一 简介
+
 系统基于yii2高级版本开发，后台模板使用的 Ace Admin。对于一般的后台开发，比较方便; 
-对于数据表的CURL操作都有封装，且所有操作都有权限控制。现在这个项目只是一个示例项目，
+对于数据表的CURD操作都有封装，且所有操作都有权限控制。现在这个项目只是一个示例项目，
 主要功能被我移到: <strong>[jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)</strong>,
 这样引入自己项目更方便一些
 
 ## 二 特点
+
 * 使用RBAC权限管理，所有操作基于权限控制
 * 视图使用JS控制，数据显示使用的jquery.DataTables
-* 基于数据表的增、删、改、查都有封装，添加新的数据表操作方便
+* 基于数据表的CURD都有封装，添加新的数据表操作方便
 
 ## 三 安装要求
+
 * PHP >= 5.4
 * MySQL
 
 ## 四 项目demo
+
 * 地址： [https://yii2.sh-jinger.com](https://yii2.sh-jinger.com)
 * 账号： admin
 * 密码： admin888
@@ -131,7 +135,7 @@ class ChinaController extends Controller
 }
 ```
   
-###### [控制器详细使用说明>>](./docs/controller.md)
+##### [控制器详细使用说明>>](./docs/controller.md)
     
 ##### 6.2.2.2 视图文件JS配置
     ```js
@@ -221,9 +225,10 @@ class ChinaController extends Controller
             m.init();
         })
     ```
-### [meTables详细配置说明](./docs/metables.md)    
+##### [meTables详细配置说明](./docs/metables.md)    
 
 ## 七 预览
+
 1. 登录页
 ![登录页](./docs/images/docs-1.png)
 2. 数据显示
