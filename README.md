@@ -237,3 +237,8 @@ class ChinaController extends Controller
 ![权限分配](./docs/images/docs-3.png)
 4. 模块生成
 ![模块生成](./docs/images/docs-4.png)
+
+## 八 其他说明
+
+### 8.1. 使用的扩展包 [jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)
+### 8.2. [常见问题解答](./docs/faq.md)
