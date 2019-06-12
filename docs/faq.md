@@ -138,3 +138,54 @@ m = meTables({
 ```
 
 [更多`meTabls`说明>>](./metables.md)
+
+## 五 控制器相关问题
+
+### 5.1 查询数据问题
+
+前端需要配置搜索`input`, 就是每一列的 `search` 配置项
+
+控制器需要定义`where`方法处理查询
+
+```php
+public function where()
+{
+    
+    return [
+        // 第一个元素定义查询字段，第二个元素定义查询方式
+        ['status', '='],
+    ];
+}
+```
+>为什么需要`where`来处理查询方式，主要为了简化前端工作，让后端来处理复杂查询
+
+1. 比如前端一个搜索框，`name` 为 `username`, 需要后端同时搜索用户名、用户昵称、邮箱
+```php
+public function where()
+{
+    return [
+        ['username', function ($value) {
+            return [
+                'or', 
+                ['like', 'username', $value], 
+                ['like', 'nickname', $value],
+                ['like', 'email', $value],
+            ];
+        }]
+    ];
+}
+```
+
+2. `where`可以定义默认的查询条件
+```php
+public function where()
+{
+    return [
+        // 注意 where 为一个二维数组
+        'where' => [['=', 'status', 1]],
+        
+        // 其他请求查询条件 
+        [['username', 'email'], 'like'], // username、email 都使用 like 查询
+    ];
+}
+```
