@@ -20,7 +20,7 @@ $this->title = '用户信息';
                     }
                 },
                 table: {
-                    aoColumns: [
+                    columns: [
                         {
                             title: "id",
                             data: "id", "edit": {"type": "hidden"},
