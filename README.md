@@ -83,7 +83,6 @@ php init
 
 #### 2.0.0 的配置说明可以查看[jinxing/yii2-admin](https://github.com/myloveGy/yii2-admin/wiki)
 #### [jinxing/yii2-admin v1.2.0 更新说明](https://github.com/myloveGy/yii2-admin/blob/master/CHANGELOG.md)
-#### [jinxing/yii2-admin v1.1.0 更新说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/v1.1.1.md)
 
 ### 6.1 基本操作的权限(以管理员操作为例)：
 
