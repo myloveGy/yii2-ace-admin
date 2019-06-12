@@ -111,4 +111,30 @@ var m = meTables({
 })
 ```
 
+### 4.3 怎么为搜索`select`,编辑`select`,`radio`提供数据
+
+配置那一列的`value`，数据格式为 `object` `{value1:label1, value2: label2}`
+
+```js
+m = meTables({
+    title: "用户信息",
+    table: {
+        columns: [
+            {
+                title: "状态",
+                data: "status", 
+                edit: {type: "select"},
+                search: {type: "select"},
+                value: {
+                  1: "启用",
+                  2: "停用"  
+                },
+                sortable: false
+            }
+         ]
+    }
+})
+
+```
+
 [更多`meTabls`说明>>](./metables.md)
