@@ -143,7 +143,7 @@ class ChinaController extends Controller
          * 简单配置说明
          * title 配置表格名称
          * table DataTables 的配置 
-         * --- aoColumns 中的 value, search, edit, defaultOrder, hide, view 是 meTables 的配置
+         * --- columns 中的 value, search, edit, defaultOrder, hide, view 是 meTables 的配置
          * ------ value 为编辑表单radio、select, checkbox， 搜索的表单的select 提供数据源,格式为一个对象 {"值": "显示信息"}
          * ------ search 搜索表单配置(不配置不会生成查询表单), type 类型支持 text, select 其他可以自行扩展
          * ------ edit 编辑表单配置（不配置不会生成编辑表单）, 
