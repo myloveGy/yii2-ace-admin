@@ -35,8 +35,7 @@ var m = meTables({
     urlSuffix: ".html",
     url: {
         search: "me-search"  
-    },
-    ...
+    }
 }); 
 ```
 
@@ -67,13 +66,13 @@ buttons.create.className| string     | btn btn-white btn-primary btn-bold| 创�
 > 每个按钮都有如下按钮配置项: **bShow, icon, className** 
 
 如果想要不显示那个按钮，只需要那个按钮的配置设置为 `false` 或者 `null`,就好：
+
 ```js
 var m = meTables({
     buttons: {
         create: false,
-        updateAll: false,
-    },
-    ...
+        updateAll: false
+    }
 });
 ```
 
@@ -87,10 +86,9 @@ var m = meTables({
             icon: "ace-icon fa fa-plus-circle yellow",
             className: "btn btn-white btn-primary btn-bold",
             text: "自定义按钮",          // 按钮文字
-            "data-func": "customize",  // 指定调用自己的那个函数
+            "data-func": "customize"  // 指定调用自己的那个函数
         }
-    },
-    ...
+    }
 });
 
 // 不过自定义按钮，需要给 m 添加函数 函数名称就是配置按钮中 data-func 指定的函数名称
@@ -128,7 +126,7 @@ var m = meTables({
         buttons: {
             // 不显示这个按钮
             see: null,
-            update: null,
+            update: null
         }
     }
 })
@@ -404,30 +402,29 @@ $.extend(table, {
 
 ```js
 var m = meTables({
-    ...,
     table: {
         columns: [
             {
                 title: "用户名称",
                 data: "username",
                 edit: {
-                    id: "username",
+                    id: "username"
                 }
             }
             
-        ],
+        ]
     }
 });
 
 // 用户名字段在创建的时候显示出来，修改的时候隐藏起来
 $.extend(m, {
-    beforeShow: function(data, child) {
+    beforeShow: function() {
         if (this.action === "update") {
             $("#username").hide();
         } else  {
             $("#username").show();
         }
-    },
+    }
 });
 ```
 
@@ -457,7 +454,7 @@ var m = meTables({
                 }
             }
             
-        ],
+        ]
     }
 });
 
