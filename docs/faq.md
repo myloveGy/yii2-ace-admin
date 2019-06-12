@@ -35,3 +35,24 @@ public function getQuery($where)
 }
 ```
 
+### 三 怎么将请求参数传递到`search`方法的查询条件
+
+1. 控制器`actionIndex`方法接收请求参数,传递到视图(或者直接在视图里面接收)
+
+    ```php
+    public function actionIndex()
+    {
+        $id = Yii::$app->request->get('id');
+        return $this->render('index', compact('id'))
+    }
+    ```
+
+2. 视图文件中，配置`meTables`的附加参数
+
+    ```php
+    var m = meTables({
+        params: {
+            id: <?php echo isset($id) ? $id : 'null' ?>,
+        }
+    })
+    ```
