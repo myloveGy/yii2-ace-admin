@@ -47,13 +47,7 @@
   "config": {
     "process-timeout": 1800,
     "fxp-asset": {
-      "installer-paths": {
-        "npm-asset-library": "vendor/npm",
-        "bower-asset-library": "vendor/bower"
-      }
+      "enabled": false
     }
-  },
-  "scripts": {
-    "post-install-cmd": "php init --env=Development --overwrite=n"
   }
 }
