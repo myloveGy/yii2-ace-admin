@@ -3,14 +3,11 @@
   "description": "Yii2 ace-admin RBAC management background",
   "keywords": [
     "yii2",
-    "framework",
-    "advanced",
+    "yii2-admin",
     "project template",
     "admin",
     "auth",
-    "rbac",
-    "yii2-admin",
-    "liujx"
+    "rbac"
   ],
   "homepage": "http://www.yiiframework.com/",
   "type": "project",
