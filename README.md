@@ -99,12 +99,6 @@ php init
 
 ### 6.2 使用后台模块生成功能
 
->该功能仅能生成控制器、视图等文件，`model`需要使用`gii`生成
-
-#### 6.2.1 先使用`gii`生成`model`文件
-
-#### 6.2.2 使用后台模块生成功能，生成`controller`和`view`文件
-
 ![使用后台模块生成功能](./docs/images/module.png '使用后台模块生成功能')
 
 点击下一步下一步就好了
@@ -112,11 +106,12 @@ php init
 该功能所做事情：
 
 1. 生成`controller`文件
-2. 生成`view`文件
-3. 添加权限信息(并将权限分配给超级管理员)
-4. 添加菜单信息
+2. 生成`model`文件
+3. 生成`view`文件
+4. 添加权限信息(并将权限分配给超级管理员)
+5. 添加菜单信息
 
-##### 6.2.2.1 生成控制器说明
+#### 6.2.1 生成控制器说明
 
 ```php
 namespace backend\controllers;
@@ -134,9 +129,9 @@ class ChinaController extends Controller
 }
 ```
   
-##### [控制器详细使用说明>>](./docs/controller.md)
+#### [控制器详细使用说明>>](./docs/controller.md)
     
-##### 6.2.2.2 视图文件JS配置
+#### 6.2.2 视图文件JS配置
     ```js
         var arrParent = {"0": "中国", "1": "湖南"};
         /**
