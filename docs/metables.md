@@ -296,7 +296,7 @@ var m = meTables({
 
 **可以自定义搜索表单类型:**
 ```js
-meTables.extend({
+$.extend(MeTables, {
     /**
      * 定义搜索表达(函数后缀名SearchCreate)
      * 使用配置 search: {"type": "email", "id": "search-email"}
@@ -321,7 +321,7 @@ meTables.extend({
 
 **可以自定义类型:**
 ```js
-meTables.extend({
+$.extend(MeTables, {
     /**
      * 定义编辑表单(函数后缀名Create)
      * 使用配置 edit: {"type": "email", "id": "user-email"}
