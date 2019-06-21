@@ -15,10 +15,15 @@ class UserController extends Controller
      */
     public $modelClass = 'backend\models\User';
 
+    /**
+     * 定义查询字段对应处理表达式
+     *
+     * @return array
+     */
     public function where()
     {
         return [
-            [['email', 'username'], 'like']
+            [['email', 'username'], 'like'],
         ];
     }
 
@@ -33,20 +38,6 @@ class UserController extends Controller
             'status'      => User::getArrayStatus(),
             'statusColor' => User::getStatusColor(),
         ]);
-    }
-
-    /**
-     * 处理导出数据显示的问题
-     *
-     * @return array
-     */
-    public function getExportHandleParams()
-    {
-        $array['created_at'] = $array['updated_at'] = function ($value) {
-            return date('Y-m-d H:i:s', $value);
-        };
-
-        return $array;
     }
 }
 

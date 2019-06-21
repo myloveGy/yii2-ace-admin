@@ -14,9 +14,14 @@ use yii\filters\AccessControl;
 class Controller extends BaseController
 {
     /**
-     * @var string 使用yii2-admin 的布局
+     * @var string 使用 yii2-admin 的布局
      */
     public $layout = '@jinxing/admin/views/layouts/main';
+
+    /**
+     * @var string 使用自己定义的上传文件处理表单
+     */
+    public $uploadFromClass = 'backend\models\forms\UploadForm';
 
     /**
      * 定义使用的行为
@@ -32,7 +37,7 @@ class Controller extends BaseController
                     [
                         'allow'       => true,
                         'permissions' => [$this->action->getUniqueId()],
-                    ]
+                    ],
                 ],
             ],
 
