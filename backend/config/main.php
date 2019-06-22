@@ -8,6 +8,7 @@ $params = array_merge(
 
 return [
     'id'                  => 'app-backend',
+    'name'                => 'Yii Ace Admin',
     'basePath'            => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap'           => ['log'],
@@ -15,7 +16,7 @@ return [
     'modules'             => [
         'admin' => [
             'class' => 'jinxing\admin\Module',
-            'user'  => 'user'
+            'user'  => 'user',
         ],
     ],
     'components'          => [
@@ -49,14 +50,14 @@ return [
             'bundles' => [
                 // 去掉自己的bootstrap 资源
                 'yii\bootstrap\BootstrapAsset' => [
-                    'css' => []
+                    'css' => [],
                 ],
                 // 去掉自己加载的Jquery
                 'yii\web\JqueryAsset'          => [
                     'sourcePath' => null,
                     'js'         => [],
                 ],
-            ]
+            ],
         ],
 
         // authority management
@@ -77,7 +78,7 @@ return [
                 'admin' => [
                     'class'          => 'yii\i18n\PhpMessageSource',
                     'sourceLanguage' => 'en',
-                    'basePath'       => '@jinxing/admin/messages'
+                    'basePath'       => '@jinxing/admin/messages',
                 ],
             ],
         ],
