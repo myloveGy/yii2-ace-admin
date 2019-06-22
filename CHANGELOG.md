@@ -4,14 +4,14 @@ Yii2 Ace Admin 后台模板版本更新记录
 2.0.4 2019-06-22
 ----------------
 
-- Refactor: 代码优化
+- refactor: 代码优化
 
 2.0.3 2019-05-16
 ----------------
 
-- Change: 使用最新版本的 jinxing/yii2-admin 包 ~1.2.0
+- change: 使用最新版本的 jinxing/yii2-admin 包 ~1.2.0
 
 2.0.2 2018-11-13
 ----------------
 
-- Change: 使用最新版本的 jinxing/yii2-admin 包 ~1.1.0
+- change: 使用最新版本的 jinxing/yii2-admin 包 ~1.1.0
