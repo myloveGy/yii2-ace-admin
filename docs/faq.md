@@ -29,7 +29,7 @@ public function getQuery($where)
     return Admin::find()->select(['*'])
                 ->innerJoin('admin_operate_logs', 'admin.id = admin_operate_logs.admin_id')
                 ->where($where)
-                ->asArray()
+                ->asArray();
 }
 ```
 
@@ -38,7 +38,7 @@ public function getQuery($where)
 ```php
 public function getQuery($where)
 {
-    return Customer::find()->with('orders', 'country')->where($where)->asArray()
+    return Customer::find()->with('orders', 'country')->where($where)->asArray();
 }
 ```
 
@@ -50,7 +50,7 @@ public function getQuery($where)
     public function actionIndex()
     {
         $id = Yii::$app->request->get('id');
-        return $this->render('index', compact('id'))
+        return $this->render('index', compact('id'));
     }
     ```
 
