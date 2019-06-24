@@ -11,6 +11,13 @@ FAQ
    * [百度网盘](https://pan.baidu.com/s/1frc7FxxL1Pkf2dd06m0tlA)
    * [有道云笔记](https://note.youdao.com/ynoteshare1/index.html?id=4e1e59dd2ec2541796105d4d7afdb3c9)
    * [CSDN](https://download.csdn.net/download/myliujx/11193963)
+   
+### 安装完成，报目录不存在错误
+
+![登录页](./images/asset-error.png)
+
+直接`cp` `vendor`目录下 `bower` 目录更名为 `bower-asset`
+
 
 ## 二 连表操作怎么办？
 
