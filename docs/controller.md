@@ -27,7 +27,7 @@
 |`actionDelete()`   | 删除数据         |
 |`actionDeleteAll()`| 删除多条数据      |
 |`actionEditable()` | 行内编辑         |
-|`actionUpload()`   | 上传文件         | [ afterUpload() File upload processing](#afterupdate-filepath-field-object-protected-method)
+|`actionUpload()`   | 上传文件         | [ afterUpload() File upload processing](#afterupload-filepath-field-object-protected-method)
 |`actionExport()`   | 导出数据         | [where() Provide query conditions](#where-public-method)、[getQuery() Provide query object](#getquerywhere-protected-method)、[getExportHandleParams() Provide data export processing parameters ](#getexporthandleparams-protected-method)
 
 ## 其他方法
