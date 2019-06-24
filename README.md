@@ -239,3 +239,6 @@ class ChinaController extends Controller
 
 ### 8.1. 使用的扩展包 [jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)
 ### 8.2. [常见问题解答](./docs/faq.md)
+### 8.3. [控制器使用说明](./docs/controller.md)
+### 8.4. [meTables使用说明](./docs/metables.md)
+### 8.5. [模块配置说明](./docs/module.md)
