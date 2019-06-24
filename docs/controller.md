@@ -27,33 +27,111 @@
 |`actionDelete()`   | 删除数据         |
 |`actionDeleteAll()`| 删除多条数据      |
 |`actionEditable()` | 行内编辑         |
-|`actionUpload()`   | 上传文件         | [ afterUpload() File upload processing](#afteruploadobject-strfilepath-strfield-protected-method)
+|`actionUpload()`   | 上传文件         | [ afterUpload() File upload processing](#afterupdate-filepath-field-object-protected-method)
 |`actionExport()`   | 导出数据         | [where() Provide query conditions](#where-public-method)、[getQuery() Provide query object](#getquerywhere-protected-method)、[getExportHandleParams() Provide data export processing parameters ](#getexporthandleparams-protected-method)
 
-## 公共方法
+## 其他方法
 
-|方法名称   | 说明        |
-|:---------|:-----------|
-|`getPk()` | 获取主键名称|
+### `getPk()` public method
+> return `string`
 
+获取主键名称
 
-如果是更复杂的查询，例如链接表查询，则需要覆盖 [getQuery()](#getquerywhere-protected-method) 方法.
+### `where()` public method
 
-## getQuery($where) protected method
+> return `array`
+
+用来处理查询请求字段对应后端SQL查询表达式
+
+```php
+protected function where()
+{
+    return [
+        // 表示前端请求查询字段 id、status、type 都使用 = 查询
+        [['id', 'status', 'type'], '='],
+        
+        // 表示前端请求查询字段 username、email 都使用 like 查询
+        [['username', 'email'], 'like'],
+    ];
+}
+```
+
+#### 支持配置方式
+1. `key` => `value` 方式
+
+    ```php
+    protected function where()
+    {
+        return [
+            // 简单处理
+            'id' => '=',
+            'username' => 'like',
+         
+            // 复杂处理, 使用数组
+            'email' => [
+               'field' => 'user.email', // 修改字段
+               'func'  => 'trim',       // 使用函数处理值
+               'and'   => 'like',       // 使用的连接表达式   
+            ],
+         
+            /**
+             * 复杂处理，使用匿名函数
+             * 
+             * @param mixed  $value  前端请求过来的值
+             * @param string $column 前端对应的字段名称, 不使用的话，可以不用接收
+             * @return array 需要返回一个数组
+             */
+            'nickname' => function ($value, $key) {
+                return ['like', $key, $value];
+                
+                // (`nickname` like '%{$value}%' or `username` like '%{$value}%')
+                // return ['or', ['like', 'nickname', $value], ['like', 'username', $value]];
+            },
+        ];
+    }
+    ```
+    
+2. 数组方式, 和 `key` => `value` 支持配置方式一致，只是改为数组方式，可以一个表达式对应多个字段 
+
+`[字段, 表达式]`
+
+    ```php
+        protected function where()
+        {
+            return [
+                // 简单处理
+                [['id', 'type'], '=']
+    
+                // 复杂处理, 使用数组
+                ['email', [
+                    'field' => 'user.email', // 修改字段
+                    'func'  => 'trim',       // 使用函数处理值
+                    'and'   => 'like',       // 使用的连接表达式   
+                ]],
+            
+                // 复杂处理，使用匿名函数
+                [['username', 'nickname', 'name'], function ($value, $key) {
+                    return ['like', $key, $value];
+                }],
+            ];
+        }
+    ```
+#### 定义默认查询条件,指定字段`where`，必须为二维数组`array`
+
+```php
+protected function where()
+{
+    return [
+        // 定义默认查询条件
+        'where' => [['=', 'status', 1], ['=', 'type', 1]],
+    ];
+}
+```
+
+### `getQuery($where)` protected method
 > return [yii\db\Query](http://www.yiichina.com/doc/api/2.0/yii-db-query) or [yii\db\ActiveRecord](http://www.yiichina.com/doc/api/2.0/yii-db-activerecord) 
 
-<table>
-    <tr>
-        <td colspan="3">protected function getQuery() </td>
-    </tr>
-    <tr>
-        <td> $where </td>
-        <td> array </td>
-        <td> 根据前段请求数据生成的查询条件信息 </td>
-    </tr>
-</table>
-
->**如果是比较复杂的查询，可以复写这个方法(比如联表查询)**
+**如果是比较复杂的查询，可以复写这个方法(比如联表查询)**
 
 ```php 
     protected function getQuery($where)
@@ -63,7 +141,7 @@
 
 ```
 
-## afterSearch(&$array) protected method
+### `afterSearch(&$array)` protected method
 
 用来对 [getQuery ()](#getquerywhere-protected-method) 方法查询出的分页数据做进一步处理(查询使用 model 查询，其实也可以在afterFind() 方法里面处理) :
 
@@ -79,20 +157,20 @@
     }
 ```
 
-## findOne($data = []) protected method
+### `findOne($data = [])` protected method
 
 > return [yii\db\ActiveRecord](http://www.yiichina.com/doc/api/2.0/yii-db-activerecord)
 
 通过请求参数查询到对象，没有会设置错误，返回false
 
-## afterUpload($object, &$strFilePath, $strField) protected method
+### `afterUpload($filePath, $field, $object)` protected method
 
-> return boolean
+> return `string`
 
-上传文件之后的处理，处理成功需要返回 ture
+上传文件之后的处理，处理成功需要返回 文件保存地址
 
-## getExportHandleParams() protected method
-> return an array
+### getExportHandleParams() protected method
+> return `array`
 
 对导出的数据做格式化处理(因为显示数据时在视图里面做的格式化处理，如果导出数据也要做格式化处理，需要定义这个方法):
 
