@@ -63,7 +63,7 @@ buttons.create.className| string     | btn btn-white btn-primary btn-bold| 创�
 4. refresh:     刷新按钮
 5. export:      导出按钮
 
-> 每个按钮都有如下按钮配置项: **bShow, icon, className** 
+> 每个按钮都有如下按钮配置项: **icon, className** 
 
 如果想要不显示那个按钮，只需要那个按钮的配置设置为 `false` 或者 `null`,就好：
 
@@ -144,7 +144,6 @@ var m = meTables({
             // 配置show，根据情况显示删除 rows 表示这一行的数据
             delete: {
                 show: function (rows) {
-                    console.info(rows)
                     return rows.status == 1;
                 }
             }
@@ -172,11 +171,9 @@ var m = meTables({
                 cClass: "role-edit",
                 icon: "fa-pencil-square-o",
                 sClass: "yellow"
-            },   
+            }   
         }  
-    },
-       
-    ...
+    }
 });
 
 // 需要自己定义点击按钮配置项 监听class 规则 cClass + sTable
@@ -227,13 +224,12 @@ var m = meTables({
                     $(td).html(data === 1 ? "username": "name");
                 }
             }
-        ],
-    },
-    ...
+        ]
+    }
 });
 ```
 
-### meTable 提供的列的配置信息
+### meTables 提供的列的配置信息
 
 配置名称 | 配置类型 | 默认值 | 说明信息
 :------------------|:-----------|:-----------|:---------------
@@ -283,9 +279,8 @@ var m = meTables({
                 value: {"1": "管理员", "2": "用户"},
                 edit: {type: "select", required: true, number: true}
             }
-        ],
-    },
-    ...
+        ]
+    }
 });
 ```
 
@@ -344,9 +339,8 @@ var m = meTables({
                 // 验证字段必须输入，且长度为 2 到 100 个字符
                 edit: {type: "text", required: true, rangelength: "[2, 100]"}
             }
-        ],
-    },
-    ...
+        ]
+    }
 });
 ```
 ### 说明： 
@@ -370,7 +364,7 @@ var m = meTables({
 ```js
 
 var table = meTables({
- ...
+
 })
 
 $.extend(table, {
