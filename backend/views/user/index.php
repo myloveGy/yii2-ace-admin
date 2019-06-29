@@ -23,7 +23,8 @@ $this->title = '用户信息';
                     columns: [
                         {
                             title: "id",
-                            data: "id", "edit": {"type": "hidden"},
+                            data: "id",
+                            edit: {type: "hidden"},
                             sortable: false
                         },
                         {
