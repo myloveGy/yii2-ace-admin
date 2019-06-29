@@ -30,14 +30,14 @@ $this->title = '用户信息';
                             title: "用户名",
                             data: "username",
                             search: {name: "username"},
-                            edit: {type: "text", required: true, rangeLength: "[2, 255]"},
+                            edit: {type: "text", required: true, rangeLength: "[2, 255]", autocomplete: "off"},
                             sortable: false
                         },
                         {
                             title: "密码",
                             data: "password",
                             hide: true,
-                            edit: {type: "password", rangeLength: "[2, 20]"},
+                            edit: {type: "password", rangeLength: "[2, 20]", autocomplete: "new-password"},
                             sortable: false,
                             defaultContent: "",
                             view: false
