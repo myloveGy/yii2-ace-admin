@@ -99,7 +99,7 @@ php init
 
 ### 6.2 使用后台模块生成功能
 
-![使用后台模块生成功能](./docs/images/module.png '使用后台模块生成功能')
+![使用后台模块生成功能](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/module.png '使用后台模块生成功能')
 
 点击下一步下一步就好了
 
