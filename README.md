@@ -81,7 +81,7 @@ php init
 
 ## 六 使用说明
 
-#### 2.0.0 的配置说明可以查看[jinxing/yii2-admin](https://github.com/myloveGy/yii2-admin/wiki)
+#### 2.0.0 的配置说明可以查看[jinxing/yii2-admin](https://github.com/myloveGy/yii2-admin)
 #### [jinxing/yii2-admin v1.2.0 更新说明](https://github.com/myloveGy/yii2-admin/blob/master/CHANGELOG.md)
 
 ### 6.1 基本操作的权限(以管理员操作为例)：
@@ -129,7 +129,7 @@ class ChinaController extends Controller
 }
 ```
   
-#### [控制器详细使用说明>>](./docs/controller.md)
+#### [控制器详细使用说明>>](https://github.com/myloveGy/yii2-admin/blob/master/docs/controller.md)
     
 #### 6.2.2 视图文件JS配置
     
@@ -221,7 +221,7 @@ class ChinaController extends Controller
     })
 ```
 
-##### [meTables详细配置说明](./docs/metables.md)    
+##### [meTables详细配置说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/metables.md)    
 
 ## 七 预览
 
@@ -238,7 +238,7 @@ class ChinaController extends Controller
 ## 八 其他说明
 
 ### 8.1. 使用的扩展包 [jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)
-### 8.2. [常见问题解答](./docs/faq.md)
-### 8.3. [控制器使用说明](./docs/controller.md)
-### 8.4. [meTables使用说明](./docs/metables.md)
-### 8.5. [模块配置说明](./docs/module.md)
+### 8.2. [常见问题解答](https://github.com/myloveGy/yii2-admin/blob/master/docs/faq.md)
+### 8.3. [控制器使用说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/controller.md)
+### 8.4. [meTables使用说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/metables.md)
+### 8.5. [模块配置说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/module.md)
