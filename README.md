@@ -226,14 +226,14 @@ class ChinaController extends Controller
 ## 七 预览
 
 1. 登录页
-![登录页](./docs/images/docs-1.png)
+![登录页](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-1.png)
 2. 数据显示
-![数据显示](./docs/images/docs-2-1.png)
-![数据显示](./docs/images/docs-2-2.png)
+![数据显示](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-2-1.png)
+![数据显示](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-2-2.png)
 3. 权限分配
-![权限分配](./docs/images/docs-3.png)
+![权限分配](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-3.png)
 4. 模块生成
-![模块生成](./docs/images/docs-4.png)
+![模块生成](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-4.png)
 
 ## 八 其他说明
 
