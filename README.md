@@ -97,9 +97,9 @@ php init
 
 每一个请求对应一个权限，请求路径就是权限名称，权限验证在Controller beforeAction 方法中验证
 
-### 6.2 使用后台模块生成功能
+### 6.2 使用后台代码生成功能
 
-![使用后台模块生成功能](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/module.png '使用后台模块生成功能')
+![使用后台代码生成功能](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/module.png '使用后台代码生成功能')
 
 点击下一步下一步就好了
 
