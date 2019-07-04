@@ -99,7 +99,7 @@ php init
 
 ### 6.2 使用后台代码生成功能
 
-![使用后台代码生成功能](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/module.png '使用后台代码生成功能')
+![使用后台代码生成功能](https://mylovegy.github.io/yii2-admin/docs/images/module.png '使用后台代码生成功能')
 
 点击下一步下一步就好了
 
@@ -129,7 +129,7 @@ class ChinaController extends Controller
 }
 ```
   
-#### [控制器详细使用说明>>](https://github.com/myloveGy/yii2-admin/blob/master/docs/controller.md)
+#### [控制器详细使用说明>>](https://mylovegy.github.io/yii2-admin/?page=controller)
     
 #### 6.2.2 视图文件JS配置
     
@@ -221,25 +221,26 @@ class ChinaController extends Controller
     })
 ```
 
-##### [meTables详细配置说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/metables.md)    
+##### [meTables详细配置说明](https://mylovegy.github.io/yii2-admin/?page=me-table)    
 
-## 七 预览
-
-1. 登录页
-![登录页](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-login.png)
-2. 数据显示
-![数据显示](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-data.png)
-3. 数据编辑
-![数据编辑](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-update.png)
-4. 权限分配
-![权限分配](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-auth.png)
-5. 代码生成
-![代码生成](https://github.com/myloveGy/yii2-admin/blob/master/docs/images/docs-code.png)
-
-## 八 其他说明
+## 七 其他说明
 
 ### 8.1. 使用的扩展包 [jinxing/yii2-admin](https://packagist.org/packages/jinxing/yii2-admin)
-### 8.2. [常见问题解答](https://github.com/myloveGy/yii2-admin/blob/master/docs/faq.md)
-### 8.3. [控制器使用说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/controller.md)
-### 8.4. [meTables使用说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/metables.md)
-### 8.5. [模块配置说明](https://github.com/myloveGy/yii2-admin/blob/master/docs/module.md)
+### 8.2. [常见问题解答](https://mylovegy.github.io/yii2-admin/?page=faq)
+### 8.3. [控制器使用说明](https://mylovegy.github.io/yii2-admin/?page=controller)
+### 8.4. [meTables使用说明](https://mylovegy.github.io/yii2-admin/?page=me-table)
+### 8.5. [模块配置说明](https://mylovegy.github.io/yii2-admin/?page=module)
+
+## 八 预览
+
+1. 登录页面
+![登录页](https://mylovegy.github.io/yii2-admin/docs/images/docs-login.png)
+2. 数据显示
+![数据显示](https://mylovegy.github.io/yii2-admin/docs/images/docs-data.png)
+3. 数据编辑
+![数据显示](https://mylovegy.github.io/yii2-admin/docs/images/docs-update.png)
+4. 权限分配
+![权限分配](https://mylovegy.github.io/yii2-admin/docs/images/docs-auth.png)
+5. 代码生成
+![代码生成](https://mylovegy.github.io/yii2-admin/docs/images/docs-code.png)
+
