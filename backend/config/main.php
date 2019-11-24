@@ -20,20 +20,21 @@ return [
         ],
     ],
     'components'          => [
-        'request'      => [
+        'request' => [
             'csrfParam' => '_csrf-backend',
         ],
-        'user'         => [
+        'user'    => [
             'identityClass'   => 'jinxing\admin\models\Admin',
             'loginUrl'        => '/admin/default/login',
+            'returnUrl'       => '/admin/default',
             'enableAutoLogin' => true,
             'identityCookie'  => ['name' => '_identity-backend', 'httpOnly' => true],
         ],
-        'session'      => [
+        'session' => [
             // this is the name of the session cookie used for login on the backend
             'name' => 'advanced-backend',
         ],
-        'log'          => [
+        'log'     => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets'    => [
                 [
