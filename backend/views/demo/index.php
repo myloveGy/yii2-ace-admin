@@ -41,9 +41,32 @@ $this->registerJsFile($url . '/js/date-time/daterangepicker.min.js', $depends);
         var m = meTables({
             title: "用户信息",
             number: false,
+            buttons: {
+                // 不需要导出按钮
+                export: null,
+
+                // 自定义按钮配置
+                customize: {
+                    icon: "ace-icon fa fa-plus-circle yellow",
+                    className: "btn btn-white btn-primary btn-bold",
+                    text: "新页面创建",          // 按钮文字
+                    "data-func": "customize"  // 指定调用自己的那个函数
+                }
+            },
             operations: {
+                width: "auto",
                 buttons: {
-                    update: {icon: "", "button-title": "编辑"}
+                    update: {icon: "", "button-title": "编辑"},
+
+                    // 添加操作项，自定义按钮
+                    other: {
+                        title: "编辑新页面",
+                        "button-title": "编辑新页面",
+                        className: "btn-warning",
+                        cClass: "my-edit",
+                        icon: "fa-pencil-square-o",
+                        sClass: "yellow"
+                    }
                 }
             },
             editFormParams: {
@@ -137,6 +160,17 @@ $this->registerJsFile($url . '/js/date-time/daterangepicker.min.js', $depends);
 
         var editor = null;
         $.extend(m, {
+            // 自定义操作
+            customize: function () {
+                layer.open({
+                    type: 2,
+                    area: ["90%", "90%"],
+                    title: "创建数据",
+                    content: "/demo/index", // 页面url
+                    anim: 2,
+                    maxmin: true,
+                });
+            },
             // 显示的前置和后置操作
             afterShow: function (data, child) {
                 // 需要手动清除值
@@ -146,8 +180,8 @@ $this->registerJsFile($url . '/js/date-time/daterangepicker.min.js', $depends);
                     editor && editor.setContent(data["content"])
                 }
 
-                $("input[name=date-time]").val("");
-                $("input[name=time]").val("");
+                $("#edit-form input[name=date-time]").val("");
+                $("#edit-form input[name=time]").val("");
             }
         });
 
@@ -165,7 +199,26 @@ $this->registerJsFile($url . '/js/date-time/daterangepicker.min.js', $depends);
                 $("input[name=start]").val(moment(start).format("YYYY-MM-DD"))
                 $("input[name=end]").val(moment(end).format("YYYY-MM-DD"))
                 $("input[name=date-time]").val(moment(start).format("YYYY-MM-DD") + " - " + moment(end).format("YYYY-MM-DD"))
-            })
+            });
+
+            // 需要自己定义点击按钮配置项 监听class 规则 cClass + sTable
+            $(document).on('click', '.my-edit-show-table', function () {
+
+                // 获取到点击的这一行的数据
+                var data = m.table.data()[$(this).data('row')];
+
+                // 自定义处理方式
+                if (data) {
+                    layer.open({
+                        type: 2,
+                        area: ["90%", "90%"],
+                        title: "编辑数据",
+                        content: "/demo/index?id=" + data["id"], // 页面url
+                        anim: 2,
+                        maxmin: true,
+                    })
+                }
+            });
         });
     </script>
 <?php $this->endBlock(); ?>
