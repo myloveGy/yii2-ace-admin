@@ -15,8 +15,9 @@ return [
     'language'            => 'zh-CN',
     'modules'             => [
         'admin' => [
-            'class' => 'jinxing\admin\Module',
-            'user'  => 'user',
+            'class'                 => 'jinxing\admin\Module',
+            'user'                  => 'user',
+            'loginOtherRenderPaths' => [],
         ],
     ],
     'components'          => [
