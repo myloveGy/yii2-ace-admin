@@ -23,7 +23,14 @@ $this->registerJsFile($url . '/js/date-time/moment.min.js', $depends);
 $this->registerJsFile($url . '/js/date-time/bootstrap-datetimepicker.min.js', $depends);
 $this->registerJsFile($url . '/js/date-time/daterangepicker.min.js', $depends);
 ?>
-<?= MeTable::widget() ?>
+<?= MeTable::widget([
+    'buttonsTemplate' => '<p {options}></p>
+    <div class="well">
+        <div class="row">
+            <form id="search-form"></form>
+        </div>
+    </div>',
+]) ?>
 <?php $this->beginBlock('javascript') ?>
     <script type="text/javascript">
         $.extend(MeTables, {
@@ -53,6 +60,7 @@ $this->registerJsFile($url . '/js/date-time/daterangepicker.min.js', $depends);
                     "data-func": "customize"  // 指定调用自己的那个函数
                 }
             },
+            searchType: "top",
             operations: {
                 width: "auto",
                 buttons: {
@@ -141,6 +149,7 @@ $this->registerJsFile($url . '/js/date-time/daterangepicker.min.js', $depends);
                             {label: "停用", value: 0}
                         ],
                         edit: {type: "radio", required: true, number: true, default: 10},
+                        search: {type: "select"},
                         sortable: false
                     },
                     {
