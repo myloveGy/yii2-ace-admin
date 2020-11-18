@@ -37,7 +37,7 @@ Yii2 Ace Admin 后台模板
 
 * 不使用 composer 安装可以从下面地址下载打包文件，并从第3步开始安装
 
-   * [百度网盘](https://pan.baidu.com/s/1frc7FxxL1Pkf2dd06m0tlA)
+   * [百度网盘](https://pan.baidu.com/s/1-7EH_l2K2LL7G7UhklE5oA) 密码: 0g0r
    * [有道云笔记](https://note.youdao.com/ynoteshare1/index.html?id=4e1e59dd2ec2541796105d4d7afdb3c9)
    * [CSDN](https://download.csdn.net/download/myliujx/11193963)
     
